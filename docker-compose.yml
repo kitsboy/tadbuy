@@ -1,0 +1,38 @@
+# ═══════════════════════════════════════════════════════════════════════
+# TadBuy Metrics — Docker Compose
+# Multi-currency BTC-denominated ad analytics
+# ═══════════════════════════════════════════════════════════════════════
+version: "3.8"
+
+services:
+  tadbuy-metrics:
+    build: .
+    image: giveabit/tadbuy-metrics:latest
+    container_name: tadbuy-metrics
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    volumes:
+      - tadbuy-data:/data/tadbuy-metrics
+    environment:
+      - PORT=${PORT:-8080}
+      - DATA_DIR=/data/tadbuy-metrics
+      - BRAVE_API_KEY=${BRAVE_API_KEY:-}
+      - BTC_PRICE_URL=${BTC_PRICE_URL:-https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd,cad,eur,gbp}
+      - COV_ENERGY_COST_USD=${COV_ENERGY_COST_USD:-14500}
+      - COV_MINING_COST_USD=${COV_MINING_COST_USD:-9500}
+      - COV_OPPORTUNITY_COST_USD=${COV_OPPORTUNITY_COST_USD:-3000}
+      - COV_BUY_THRESHOLD=${COV_BUY_THRESHOLD:--0.20}
+      - COV_SELL_THRESHOLD=${COV_SELL_THRESHOLD:-0.30}
+      - SCRAPER_MAX_RETRIES=${SCRAPER_MAX_RETRIES:-3}
+      - SCRAPER_RETRY_DELAY=${SCRAPER_RETRY_DELAY:-10}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  tadbuy-data:
+    driver: local

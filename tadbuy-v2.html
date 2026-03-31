@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TadBuy — BTC-First Ad Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #0a0a0f; --surface: #111118; --card: #16161f; --border: #2a2a3a; --accent: #FF8C00; --lightning: #ffd700; --green: #00d4a0; --blue: #4d9fff; --purple: #a855f7; --red: #ff4560; --text: #e8e8f0; --muted: #6b6b8a; --radius: 12px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 80% 60% at 20% 10%, rgba(255,140,0,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(91,192,190,0.05) 0%, transparent 60%); pointer-events: none; z-index: 0; }
+header { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; gap: 24px; height: 64px; }
+.logo { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 800; }
+.logo-icon { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.logo-sub { font-size: 11px; color: var(--muted); font-weight: 400; font-family: 'Space Mono', monospace; margin-top: -2px; }
+.header-tabs { display: flex; gap: 4px; margin-left: auto; }
+.tab-btn { padding: 7px 18px; border-radius: 8px; border: 1px solid transparent; background: none; color: var(--muted); cursor: pointer; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+.tab-btn.active { background: var(--card); border-color: var(--border); color: var(--text); }
+.tab-btn:hover:not(.active) { color: var(--text); }
+.btc-price { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--accent); border: 1px solid rgba(255,140,0,0.3); padding: 5px 12px; border-radius: 20px; }
+.main { position: relative; z-index: 1; padding: 32px; max-width: 1440px; margin: 0 auto; }
+.mode-toggle { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+.mode-label { font-size: 13px; color: var(--muted); }
+.toggle-group { display: flex; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 4px; gap: 4px; }
+.toggle-opt { padding: 8px 20px; border-radius: 7px; cursor: pointer; font-size: 13px; font-weight: 700; transition: all 0.2s; color: var(--muted); border: none; background: none; font-family: 'Syne', sans-serif; }
+.toggle-opt.active { background: var(--accent); color: #000; }
+.view { display: none; }
+.view.active { display: block; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+.card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.card-title .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.form-group { margin-bottom: 18px; }
+label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+input, select, textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; color: var(--text); font-family: 'Syne', sans-serif; font-size: 14px; transition: border 0.2s; outline: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+.platform-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+.platform-card { background: var(--surface); border: 2px solid var(--border); border-radius: 10px; padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.platform-card:hover { border-color: var(--muted); }
+.platform-card.selected { border-color: var(--accent); background: rgba(255,140,0,0.08); }
+.platform-card.multi-selected { border-color: var(--blue); background: rgba(77,159,255,0.08); }
+.platform-icon { font-size: 24px; margin-bottom: 6px; }
+.platform-name { font-size: 11px; font-weight: 700; color: var(--muted); }
+.platform-cpm { font-size: 10px; color: var(--green); font-family: 'Space Mono', monospace; }
+.payment-methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+.pay-method { background: var(--surface); border: 2px solid var(--border); border-radius: 10px; padding: 14px; cursor: pointer; transition: all 0.2s; text-align: center; }
+.pay-method:hover { border-color: var(--muted); }
+.pay-method.selected { border-color: var(--accent); background: rgba(255,140,0,0.08); }
+.pay-method.lightning.selected { border-color: var(--lightning); background: rgba(255,215,0,0.08); }
+.pay-method.bolt12.selected { border-color: var(--purple); background: rgba(168,85,247,0.08); }
+.pay-icon { font-size: 22px; margin-bottom: 4px; }
+.pay-name { font-size: 11px; font-weight: 700; }
+.pay-sub { font-size: 10px; color: var(--muted); }
+.amount-row { display: flex; gap: 10px; align-items: flex-end; }
+.amount-row .form-group { flex: 1; margin: 0; }
+.currency-badge { background: rgba(255,140,0,0.15); border: 1px solid rgba(255,140,0,0.4); color: var(--accent); border-radius: 8px; padding: 11px 14px; font-family: 'Space Mono', monospace; font-size: 12px; white-space: nowrap; }
+.converted { font-size: 11px; color: var(--muted); margin-top: 5px; font-family: 'Space Mono', monospace; }
+.budget-presets { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.preset-btn { background: var(--surface); border: 1px solid var(--border); color: var(--muted); border-radius: 20px; padding: 5px 14px; font-size: 12px; cursor: pointer; font-weight: 700; font-family: 'Syne', sans-serif; transition: all 0.2s; }
+.preset-btn:hover, .preset-btn.active { border-color: var(--accent); color: var(--accent); }
+.metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+.metric-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; position: relative; overflow: hidden; }
+.metric-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.metric-card.green::before { background: var(--green); }
+.metric-card.blue::before { background: var(--blue); }
+.metric-card.orange::before { background: var(--accent); }
+.metric-card.purple::before { background: var(--purple); }
+.metric-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; }
+.metric-value { font-size: 26px; font-weight: 800; margin: 4px 0 2px; }
+.metric-sub { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
+.metric-change { font-size: 11px; font-weight: 700; }
+.metric-change.up { color: var(--green); }
+.estimate-box { background: rgba(0,212,160,0.06); border: 1px solid rgba(0,212,160,0.2); border-radius: 10px; padding: 16px; }
+.estimate-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; }
+.estimate-row.total { border-top: 1px solid rgba(0,212,160,0.2); margin-top: 8px; padding-top: 12px; font-weight: 800; font-size: 15px; }
+.btn { padding: 12px 24px; border-radius: 10px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s; border: none; }
+.btn-primary { background: var(--accent); color: #000; }
+.btn-primary:hover { background: #ff9f20; transform: translateY(-1px); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-full { width: 100%; }
+.btn-lg { padding: 16px 32px; font-size: 16px; }
+.ad-preview-box { background: #fff; color: #000; border-radius: 12px; padding: 16px; min-height: 120px; position: relative; overflow: hidden; }
+.ad-preview-platform { font-size: 10px; color: #666; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.ad-preview-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 4px; }
+.ad-preview-body { font-size: 13px; color: #444; line-height: 1.5; }
+.ad-preview-url { font-size: 11px; color: #1a73e8; margin-top: 8px; }
+.campaign-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.campaign-table th { text-align: left; padding: 10px 14px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 700; }
+.campaign-table td { padding: 13px 14px; border-bottom: 1px solid rgba(42,42,58,0.5); }
+.campaign-table tr:hover td { background: rgba(255,255,255,0.02); }
+.status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.status-live { background: rgba(0,212,160,0.15); color: var(--green); }
+.status-paused { background: rgba(247,147,26,0.15); color: var(--accent); }
+.status-draft { background: rgba(107,107,138,0.15); color: var(--muted); }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.inner-tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+.inner-tab { padding: 8px 16px; border-radius: 8px; background: none; border: 1px solid transparent; color: var(--muted); cursor: pointer; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; }
+.inner-tab.active { background: var(--card); border-color: var(--border); color: var(--text); }
+.checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.check-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; font-size: 12px; cursor: pointer; transition: all 0.2s; font-weight: 600; }
+.check-chip.selected { border-color: var(--accent); color: var(--accent); background: rgba(255,140,0,0.08); }
+.age-range { display: flex; gap: 8px; }
+.age-range input { flex: 1; }
+.progress-wrap { background: var(--surface); border-radius: 4px; height: 6px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+.invoice-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+.qr-placeholder { width: 140px; height: 140px; background: #fff; border-radius: 8px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+.invoice-string { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--muted); word-break: break-all; background: var(--bg); padding: 8px; border-radius: 6px; margin: 10px 0; }
+.copy-btn { background: var(--surface); border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: 'Syne', sans-serif; }
+.lightning-info { background: rgba(255,215,0,0.06); border: 1px solid rgba(255,215,0,0.2); border-radius: 10px; padding: 14px; font-size: 12px; color: var(--lightning); display: flex; align-items: flex-start; gap: 10px; }
+.bolt12-info { background: rgba(168,85,247,0.06); border: 1px solid rgba(168,85,247,0.2); border-radius: 10px; padding: 14px; font-size: 12px; color: var(--purple); display: flex; align-items: flex-start; gap: 10px; }
+.mini-chart { height: 40px; display: flex; align-items: flex-end; gap: 3px; }
+.mini-bar { flex: 1; background: var(--accent); border-radius: 2px 2px 0 0; opacity: 0.7; transition: opacity 0.2s; }
+.mini-bar:hover { opacity: 1; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.section-title { font-size: 18px; font-weight: 800; }
+.section-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.disclaimer { background: rgba(255,69,96,0.05); border: 1px solid rgba(255,69,96,0.2); border-radius: 10px; padding: 14px; font-size: 11px; color: var(--muted); margin-top: 16px; }
+.disclaimer strong { color: var(--red); }
+.export-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.export-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; cursor: pointer; transition: all 0.2s; font-family: 'Syne', sans-serif; color: var(--text); }
+.export-btn:hover { border-color: var(--accent); background: rgba(255,140,0,0.05); }
+.export-icon { font-size: 20px; margin-bottom: 4px; }
+.export-label { font-size: 11px; font-weight: 600; }
+.tax-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+.tax-summary-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border); }
+.tax-summary-row.total { border-bottom: none; border-top: 2px solid var(--accent); margin-top: 8px; padding-top: 12px; font-weight: 800; }
+.tax-deductible { color: var(--green); }
+.tax-deduction { color: var(--accent); font-weight: 700; }
+.cov-gauge { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+.cov-needle { width: 100%; height: 8px; background: linear-gradient(90deg, var(--green) 0%, var(--lightning) 50%, var(--red) 100%); border-radius: 4px; position: relative; margin: 20px 0; }
+.cov-marker { position: absolute; top: -6px; width: 4px; height: 20px; background: #fff; border-radius: 2px; transform: translateX(-50%); }
+.cov-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); }
+.cov-signal { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+.cov-signal.buy { background: rgba(0,212,160,0.15); color: var(--green); }
+.cov-signal.hold { background: rgba(255,215,0,0.15); color: var(--lightning); }
+.cov-signal.sell { background: rgba(255,69,96,0.15); color: var(--red); }
+.inner-view { display: none; }
+.inner-view.active { display: block; }
+@media (max-width: 900px) { .grid-2, .metrics-row { grid-template-columns: 1fr 1fr; } .platform-grid { grid-template-columns: repeat(3, 1fr); } .export-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .main { padding: 16px; } .grid-2, .metrics-row { grid-template-columns: 1fr; } .platform-grid { grid-template-columns: repeat(2, 1fr); } header { padding: 0 16px; } .btc-price { display: none; } .inner-tabs { overflow-x: auto; flex-wrap: nowrap; } }
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">
+ <div class="logo-icon">⚡</div>
+ <div>
+ <div>TadBuy</div>
+ <div class="logo-sub">by giveabit.io</div>
+ </div>
+ </div>
+ <div class="header-tabs">
+ <button class="tab-btn active" onclick="switchView('buy')">Buy Ads</button>
+ <button class="tab-btn" onclick="switchView('campaigns')">Campaigns</button>
+ <button class="tab-btn" onclick="switchView('metrics')">Metrics</button>
+ <button class="tab-btn" onclick="switchView('tax')">Tax</button>
+ </div>
+ <div class="btc-price">₿ $<span id="btcPrice">96,420</span></div>
+</header>
+
+<div class="main">
+
+<div class="mode-toggle">
+ <span class="mode-label">Mode:</span>
+ <div class="toggle-group">
+ <button class="toggle-opt active" onclick="setMode('simple', this)">⚡️ Simple</button>
+ <button class="toggle-opt" onclick="setMode('advanced', this)">🔬 Advanced</button>
+ </div>
+ <span class="mode-label" style="margin-left:8px; font-size:11px;">Connected to: <span style="color:var(--green)">dev.giveabit.io dashboard ✓</span></span>
+</div>
+
+<div id="view-buy" class="view active">
+
+ <!-- SIMPLE MODE -->
+ <div id="simple-mode">
+ <div class="grid-2" style="gap:24px">
+ 
+ <div>
+ <div class="card" style="margin-bottom:16px">
+ <div class="card-title"><span class="dot"></span>1. Pick your platform</div>
+ <div class="platform-grid">
+ <div class="platform-card selected" onclick="togglePlatform(this, 'Twitter/X')">
+ <div class="platform-icon">𝕏</div>
+ <div class="platform-name">Twitter/X</div>
+ <div class="platform-cpm">~$2.50 CPM</div>
+ </div>
+ <div class="platform-card" onclick="togglePlatform(this, 'Facebook')">
+ <div class="platform-icon">📘</div>
+ <div class="platform-name">Facebook</div>
+ <div class="platform-cpm">~$5.20 CPM</div>
+ </div>
+ <div class="platform-card" onclick="togglePlatform(this, 'Instagram')">
+ <div class="platform-icon">📸</div>
+ <div class="platform-name">Instagram</div>
+ <div class="platform-cpm">~$6.80 CPM</div>
+ </div>
+ <div class="platform-card" onclick="togglePlatform(this, 'Nostr')">
+ <div class="platform-icon">⚡️</div>
+ <div class="platform-name">Nostr</div>
+ <div class="platform-cpm">~$0.80 CPM</div>
+ </div>
+ </div>
+ 
+ <div class="card-title"><span class="dot"></span>2. Budget</div>
+ <div class="budget-presets">
+ <button class="preset-btn" onclick="setBudget('0.0001')">$10 (~0.0001 BTC)</button>
+ <button class="preset-btn active" onclick="setBudget('0.0005')">$50 (~0.0005 BTC)</button>
+ <button class="preset-btn" onclick="setBudget('0.001')">$100 (~0.001 BTC)</button>
+ <button class="preset-btn" onclick="setBudget('0.005')">$500 (~0.005 BTC)</button>
+ </div>
+ <div class="amount-row">
+ <div class="form-group">
+ <label>Amount (BTC)</label>
+ <input type="number" id="btcAmount" value="0.0005" step="0.0001" min="0.0001" oninput="updateConversion()">
+ </div>
+ <div class="currency-badge">₿ BTC</div>
+ <div class="form-group">
+ <label>Or in USD</label>
+ <input type="number" id="usdAmount" value="48.21" oninput="updateFromUSD()">
+ </div>
+ </div>
+ <div class="converted" id="conversion-display">≈ 0.0005 BTC · 50,000 sats · $48.21 USD · €44.55 EUR · £37.82 GBP · ₦74,933 NGN</div>
+
+ <div style="margin-top:16px">
+ <div class="card-title"><span class="dot"></span>3. Pay with</div>
+ <div class="payment-methods">
+ <div class="pay-method btc selected" onclick="selectPayment(this, 'btc')">
+ <div class="pay-icon">₿</div>
+ <div class="pay-name" style="color:var(--accent)">Bitcoin</div>
+ <div class="pay-sub">On-chain</div>
+ </div>
+ <div class="pay-method lightning" onclick="selectPayment(this, 'lightning')">
+ <div class="pay-icon">⚡️</div>
+ <div class="pay-name">Lightning</div>
+ <div class="pay-sub">Instant / Low fee</div>
+ </div>
+ <div class="pay-method bolt12" onclick="selectPayment(this, 'bolt12')">
+ <div class="pay-icon">🔮</div>
+ <div class="pay-name">BOLT 12</div>
+ <div class="pay-sub">Offers / Recurring</div>
+ </div>
+ </div>
+
+ <div id="payment-info-btc">
+ <div style="background:rgba(255,140,0,0.06);border:1px solid rgba(255,140,0,0.2);border-radius:10px;padding:12px;font-size:12px;color:var(--accent)">
+ ₿ On-chain Bitcoin. Confirmed in ~10 min. Recommended for budgets over $50.
+ </div>
+ </div>
+ <div id="payment-info-lightning" style="display:none">
+ <div class="lightning-info">
+ <span style="font-size:20px">⚡️</span>
+ <div>Lightning Network — Instant settlement, near-zero fees. Best for small spends ($1–$500).</div>
+ </div>
+ </div>
+ <div id="payment-info-bolt12" style="display:none">
+ <div class="bolt12-info">
+ <span style="font-size:20px">🔮</span>
+ <div>BOLT 12 Offers — Supports recurring payments and enhanced privacy. Ideal for monthly ad campaigns.</div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>4. Ad copy</div>
+ <div class="form-group">
+ <label>Headline</label>
+ <input type="text" value="Stack Sats Smarter — giveabit.io" maxlength="70">
+ </div>
+ <div class="form-group">
+ <label>Description</label>
+ <textarea rows="2" style="resize:none">Bitcoin tools for the people. No banks. No middlemen.</textarea>
+ </div>
+ <div class="form-group">
+ <label>Destination URL</label>
+ <input type="url" value="https://giveabit.io">
+ </div>
+ <button class="btn btn-primary btn-full btn-lg" onclick="alert('Launching ad campaign...')">⚡️ Launch Ad — Pay with Bitcoin</button>
+ <div class="disclaimer">
+ <strong>⚠️ Best Efforts Basis:</strong> Estimates are approximate. Not financial or tax advice.
+ </div>
+ </div>
+ </div>
+
+ <div>
+ <div class="card" style="margin-bottom:16px">
+ <div class="card-title"><span class="dot"></span>Live estimate</div>
+ <div class="estimate-box">
+ <div class="estimate-row"><span>Platform</span><span style="color:var(--accent)">Twitter/X</span></div>
+ <div class="estimate-row"><span>Budget</span><span>$48.21 (0.0005 ₿)</span></div>
+ <div class="estimate-row"><span>CPM rate</span><span>~$2.50</span></div>
+ <div class="estimate-row"><span>Est. impressions</span><span style="color:var(--green)">~19,284</span></div>
+ <div class="estimate-row"><span>Est. clicks (CTR 1.2%)</span><span style="color:var(--green)">~231</span></div>
+ <div class="estimate-row total"><span>Total (BTC)</span><span style="color:var(--accent)">0.00500000 ₿</span></div>
+ </div>
+ </div>
+
+ <div class="card" style="margin-bottom:16px">
+ <div class="card-title"><span class="dot"></span>Cost of Value Signal</div>
+ <div class="cov-gauge">
+ <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+ <span style="font-size:12px; color:var(--muted)">Market vs True Cost</span>
+ <span class="cov-signal hold">🟡 HOLD</span>
+ </div>
+ <div class="cov-needle">
+ <div class="cov-marker" style="left:28%;"></div>
+ </div>
+ <div class="cov-labels">
+ <span>BUY (-20%)</span>
+ <span>FAIR VALUE</span>
+ <span>SELL (+30%)</span>
+ </div>
+ </div>
+ </div>
+
+ <div class="card" style="margin-bottom:16px">
+ <div class="card-title"><span class="dot"></span>Ad preview — Twitter/X</div>
+ <div class="ad-preview-box">
+ <div class="ad-preview-platform">
+ <span>𝕏</span> <strong>giveabit.io</strong> <span style="color:#aaa">@giveabit · Promoted</span>
+ </div>
+ <div class="ad-preview-title">Stack Sats Smarter — giveabit.io</div>
+ <div class="ad-preview-body">Bitcoin tools for the people. No banks. No middlemen.</div>
+ <div class="ad-preview-url">🔗 giveabit.io</div>
+ </div>
+ </div>
+
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Export & Share</div>
+ <div class="export-grid">
+ <div class="export-btn" onclick="alert('Export PDF')">
+ <div class="export-icon">📄</div>
+ <div class="export-label">PDF</div>
+ </div>
+ <div class="export-btn" onclick="alert('Export Excel')">
+ <div class="export-icon">📊</div>
+ <div class="export-label">Excel</div>
+ </div>
+ <div class="export-btn" onclick="alert('Export Sheets')">
+ <div class="export-icon">🌐</div>
+ <div class="export-label">Sheets</div>
+ </div>
+ <div class="export-btn" onclick="alert('Share to NOSTR')">
+ <div class="export-icon">🔮</div>
+ <div class="export-label">NOSTR</div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- ADVANCED MODE -->
+ <div id="advanced-mode" style="display:none">
+ <div class="inner-tabs">
+ <button class="inner-tab active" onclick="switchInner('setup', this)">Campaign Setup</button>
+ <button class="inner-tab" onclick="switchInner('creative', this)">Creative & Copy</button>
+ <button class="inner-tab" onclick="switchInner('demographics', this)">Demographics</button>
+ <button class="inner-tab" onclick="switchInner('budget', this)">Budget & Bid</button>
+ <button class="inner-tab" onclick="switchInner('payment', this)">Bitcoin Payment</button>
+ <button class="inner-tab" onclick="switchInner('preview', this)">Preview & Launch</button>
+ </div>
+
+ <!-- SETUP TAB -->
+ <div id="inner-setup" class="inner-view active">
+ <div class="grid-2">
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Campaign details</div>
+ <div class="form-group"><label>Campaign name</label><input type="text" value="GiveaBit_BTC_Q2_2025_A"></div>
+ <div class="form-group"><label>Campaign objective</label>
+ <select><option>Traffic — Website clicks</option><option>Awareness — Impressions / Reach</option><option>Engagement</option><option>Conversions</option></select>
+ </div>
+ <div class="grid-2" style="gap:10px">
+ <div class="form-group"><label>Start date</label><input type="date" value="2025-04-15"></div>
+ <div class="form-group"><label>End date</label><input type="date" value="2025-04-30"></div>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Platform mix</div>
+ <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Select one or more platforms. Budget splits proportionally.</p>
+ <div class="platform-grid" style="grid-template-columns:repeat(4,1fr)">
+ <div class="platform-card multi-selected" onclick="this.classList.toggle('multi-selected')">
+ <div class="platform-icon">𝕏</div><div class="platform-name">Twitter/X</div><div class="platform-cpm">$2.50 CPM</div>
+ </div>
+ <div class="platform-card multi-selected" onclick="this.classList.toggle('multi-selected')">
+ <div class="platform-icon">📘</div><div class="platform-name">Facebook</div><div class="platform-cpm">$5.20 CPM</div>
+ </div>
+ <div class="platform-card" onclick="this.classList.toggle('multi-selected')">
+ <div class="platform-icon">📸</div><div class="platform-name">Instagram</div><div class="platform-cpm">$6.80 CPM</div>
+ </div>
+ <div class="platform-card" onclick="this.classList.toggle('multi-selected')">
+ <div class="platform-icon">⚡️</div><div class="platform-name">Nostr</div><div class="platform-cpm">$0.80 CPM</div>
+ </div>
+ </div>
+ <div class="form-group" style="margin-top:12px"><label>Budget split method</label>
+ <select><option>Auto-optimize (AI-weighted)</option><option>Equal split</option><option>Manual split</option></select>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- CREATIVE TAB -->
+ <div id="inner-creative" class="inner-view">
+ <div class="grid-2">
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Ad creative</div>
+ <div class="form-group"><label>Ad format</label>
+ <select><option>Text / Promoted post</option><option>Image + text</option><option>Video (15s)</option><option>Video (30s)</option><option>Carousel</option></select>
+ </div>
+ <div class="form-group"><label>Headline (max 70 chars)</label><input type="text" value="Stack Sats Smarter — giveabit.io" maxlength="70"></div>
+ <div class="form-group"><label>Primary text (max 125 chars)</label><textarea rows="3" style="resize:none">Bitcoin tools for the people. No banks. No middlemen. Start stacking today.</textarea></div>
+ <div class="form-group"><label>Destination URL</label><input type="url" value="https://giveabit.io"></div>
+ </div>
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Preview</div>
+ <div class="ad-preview-box">
+ <div class="ad-preview-platform"><span>𝕏</span> <strong>giveabit.io</strong> <span style="color:#aaa">@giveabit · Promoted</span></div>
+ <div class="ad-preview-title">Stack Sats Smarter — giveabit.io</div>
+ <div class="ad-preview-body">Bitcoin tools for the people. No banks. No middlemen. Start stacking today.</div>
+ <div class="ad-preview-url">🔗 giveabit.io</div>
+ </div>
+ <div class="form-group" style="margin-top:12px"><input type="text" placeholder="Variant B headline..." value="No Fees. No Banks. Just Bitcoin."></div>
+ </div>
+ </div>
+ </div>
+
+ <!-- DEMOGRAPHICS TAB -->
+ <div id="inner-demographics" class="inner-view">
+ <div class="grid-2">
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Age & Gender</div>
+ <div class="form-group"><label>Age range</label>
+ <div class="age-range"><input type="number" value="18"><input type="number" value="54"></div>
+ </div>
+ <div class="form-group"><label>Gender targeting</label>
+ <div class="checkbox-group">
+ <div class="check-chip selected">All</div><div class="check-chip">Male</div><div class="check-chip">Female</div>
+ </div>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Location</div>
+ <div class="form-group"><label>Countries</label>
+ <div class="checkbox-group">
+ <div class="check-chip selected">🇺🇸 US</div><div class="check-chip selected">🇬🇧 UK</div><div class="check-chip selected">🇨🇦 CA</div><div class="check-chip selected">🇦🇺 AU</div>
+ </div>
+ </div>
+ <div class="form-group"><label>Interest categories</label>
+ <div class="checkbox-group">
+ <div class="check-chip selected">₿ Bitcoin</div><div class="check-chip selected">💰 Crypto</div><div class="check-chip selected">📈 Finance</div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- BUDGET TAB -->
+ <div id="inner-budget" class="inner-view">
+ <div class="grid-2">
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Budget settings</div>
+ <div class="form-group"><label>Primary currency</label>
+ <select><option value="BTC">₿ Bitcoin (BTC)</option><option value="USD">$ US Dollar (USD)</option><option value="EUR">€ Euro (EUR)</option><option value="GBP">£ British Pound (GBP)</option><option value="NGN">₦ Nigerian Naira (NGN)</option></select>
+ </div>
+ <div class="form-group"><label>Total budget</label>
+ <div class="amount-row">
+ <div class="form-group" style="flex:2"><input type="number" id="budgetAmt" value="0.0050" step="0.0001"></div>
+ <div class="currency-badge">₿ BTC</div>
+ </div>
+ </div>
+ <div class="converted">≈ 0.0050 BTC · 500,000 sats · $482.10 USD · €445.54 EUR · £381.22 GBP · ₦749,660 NGN</div>
+ </div>
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Budget projections</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+ <div style="background:var(--surface);border-radius:10px;padding:14px">
+ <div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700">Impressions</div>
+ <div style="font-size:24px;font-weight:800;color:var(--green);margin:4px 0">~192,840</div>
+ <div style="font-size:11px;color:var(--muted)">at avg $2.50 CPM</div>
+ </div>
+ <div style="background:var(--surface);border-radius:10px;padding:14px">
+ <div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700">Clicks</div>
+ <div style="font-size:24px;font-weight:800;color:var(--blue);margin:4px 0">~2,314</div>
+ <div style="font-size:11px;color:var(--muted)">at 1.2% CTR</div>
+ </div>
+ </div>
+ <div class="card-title"><span class="dot"></span>Platform split (2 platforms)</div>
+ <div style="font-size:13px">
+ <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>𝕏 Twitter/X (50%)</span><span style="color:var(--accent)">0.0025 BTC · $241</span></div>
+ <div class="progress-wrap" style="margin-bottom:12px"><div class="progress-fill" style="width:50%;background:var(--accent)"></div></div>
+ <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>📘 Facebook (50%)</span><span style="color:var(--blue)">0.0025 BTC · $241</span></div>
+ <div class="progress-wrap"><div class="progress-fill" style="width:50%;background:var(--blue)"></div></div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- PAYMENT TAB -->
+ <div id="inner-payment" class="inner-view">
+ <div class="grid-2">
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Bitcoin payment options</div>
+ <div class="payment-methods" style="grid-template-columns:1fr 1fr 1fr">
+ <div class="pay-method btc selected" onclick="selectAdvPayment(this,'btc')">
+ <div class="pay-icon">₿</div><div class="pay-name" style="color:var(--accent)">On-chain</div><div class="pay-sub">BTC mainnet</div>
+ </div>
+ <div class="pay-method lightning" onclick="selectAdvPayment(this,'lightning')">
+ <div class="pay-icon">⚡️</div><div class="pay-name">Lightning</div><div class="pay-sub">BOLT 11 invoice</div>
+ </div>
+ <div class="pay-method bolt12" onclick="selectAdvPayment(this,'bolt12')">
+ <div class="pay-icon">🔮</div><div class="pay-name">BOLT 12</div><div class="pay-sub">Offers / recurring</div>
+ </div>
+ </div>
+ <div class="invoice-box">
+ <div class="qr-placeholder">₿</div>
+ <div style="font-size:11px;color:var(--muted)">Send exactly:</div>
+ <div style="font-size:22px;font-weight:800;color:var(--accent);margin:4px 0">0.00500000 BTC</div>
+ <div style="font-size:11px;color:var(--muted);margin-bottom:6px">= $482.10 USD</div>
+ <div class="invoice-string">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</div>
+ <button class="copy-btn">Copy address</button>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Order summary</div>
+ <div class="estimate-box" style="margin-bottom:16px">
+ <div class="estimate-row"><span>Campaign</span><span>GiveaBit_BTC_Q2_2025_A</span></div>
+ <div class="estimate-row"><span>Platforms</span><span>Twitter/X + Facebook</span></div>
+ <div class="estimate-row"><span>Budget (BTC)</span><span style="color:var(--accent)">0.00500000 ₿</span></div>
+ <div class="estimate-row"><span>Budget (USD)</span><span>$482.10</span></div>
+ <div class="estimate-row"><span>Network fee est.</span><span>~$2.40</span></div>
+ <div class="estimate-row total"><span>Total due</span><span style="color:var(--accent)">0.00502490 ₿</span></div>
+ </div>
+ <button class="btn btn-primary btn-full btn-lg">⚡️ Confirm & Generate Invoice</button>
+ <button class="btn btn-secondary btn-full" style="margin-top:8px">Save as draft</button>
+ </div>
+ </div>
+ </div>
+
+ <!-- PREVIEW TAB -->
+ <div id="inner-preview" class="inner-view">
+ <div class="grid-2">
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Campaign checklist</div>
+ <div style="font-size:13px;display:grid;gap:8px">
+ <div style="display:flex;gap:10px;align-items:center;color:var(--green)">✅ Platform selected: Twitter/X + Facebook</div>
+ <div style="display:flex;gap:10px;align-items:center;color:var(--green)">✅ Budget set: 0.0050 BTC ($482.10)</div>
+ <div style="display:flex;gap:10px;align-items:center;color:var(--green)">✅ Creative: Headline + body + URL</div>
+ <div style="display:flex;gap:10px;align-items:center;color:var(--green)">✅ Demographics: BTC audience, 18–54, US/UK/CA/AU</div>
+ <div style="display:flex;gap:10px;align-items:center;color:var(--green)">✅ Dashboard sync: dev.giveabit.io ✓</div>
+ </div>
+ <div style="margin-top:20px">
+ <button class="btn btn-primary btn-full btn-lg">🚀 Launch Campaign</button>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>What you'll track</div>
+ <div style="font-size:12px;color:var(--muted);display:grid;grid-template-columns:1fr 1fr;gap:6px">
+ <div>• Impressions / Reach</div><div>• Clicks (total & unique)</div>
+ <div>• CTR / CPM / CPC</div><div>• Conversions / ROAS</div>
+ <div>• BTC spend (live)</div><div>• Sats per click</div>
+ <div>• Platform breakdown</div><div>• Geo / Device / Age</div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+</div>
+
+<div id="view-campaigns" class="view">
+ <div class="section-header">
+ <div>
+ <div class="section-title">Active Campaigns</div>
+ <div class="section-sub">Track performance across platforms</div>
+ </div>
+ <button class="btn btn-primary" onclick="switchView('buy')">+ New Campaign</button>
+ </div>
+
+ <div class="metrics-row" style="margin-bottom:24px">
+ <div class="metric-card green">
+ <div class="metric-label">Total spend (BTC)</div>
+ <div class="metric-value">0.0423</div>
+ <div class="metric-sub">₿ this month</div>
+ <div class="metric-change up">↑ +12.4%</div>
+ </div>
+ <div class="metric-card blue">
+ <div class="metric-label">Total impressions</div>
+ <div class="metric-value">1.24M</div>
+ <div class="metric-sub">across all platforms</div>
+ <div class="metric-change up">↑ +8.1%</div>
+ </div>
+ <div class="metric-card orange">
+ <div class="metric-label">Total clicks</div>
+ <div class="metric-value">14,820</div>
+ <div class="metric-sub">avg CPC: 0.000003 ₿</div>
+ <div class="metric-change up">↑ +18.2%</div>
+ </div>
+ <div class="metric-card purple">
+ <div class="metric-label">Active campaigns</div>
+ <div class="metric-value">4</div>
+ <div class="metric-sub">2 live · 1 paused · 1 draft</div>
+ </div>
+ </div>
+
+ <div class="card">
+ <table class="campaign-table">
+ <thead>
+ <tr>
+ <th>Campaign</th>
+ <th>Platforms</th>
+ <th>Status</th>
+ <th>Spend (BTC)</th>
+ <th>Spend (USD)</th>
+ <th>Impressions</th>
+ <th>Clicks</th>
+ <th>CTR</th>
+ <th>Payment</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td><strong>GiveaBit_BTC_Q2_A</strong><br><span style="font-size:10px;color:var(--muted)">Apr 1 – Apr 30</span></td>
+ <td>𝕏 📘</td>
+ <td><span class="status-badge status-live"><span class="live-dot"></span>Live</span></td>
+ <td style="font-family:'Space Mono',monospace;color:var(--accent)">0.0120</td>
+ <td>$115.70</td>
+ <td>46,284</td>
+ <td>4,812</td>
+ <td style="color:var(--green)">10.4%</td>
+ <td>⚡️ Lightning</td>
+ </tr>
+ <tr>
+ <td><strong>Nostr_Bitcoin_Push</strong><br><span style="font-size:10px;color:var(--muted)">Mar 20 – Apr 10</span></td>
+ <td>⚡️ 🤖</td>
+ <td><span class="status-badge status-live"><span class="live-dot"></span>Live</span></td>
+ <td style="font-family:'Space Mono',monospace;color:var(--accent)">0.0085</td>
+ <td>$81.92</td>
+ <td>102,500</td>
+ <td>8,200</td>
+ <td style="color:var(--green)">8.0%</td>
+ <td>🔮 BOLT 12</td>
+ </tr>
+ <tr>
+ <td><strong>YT_Awareness_Test</strong><br><span style="font-size:10px;color:var(--muted)">Apr 5 – Apr 20</span></td>
+ <td>▶️</td>
+ <td><span class="status-badge status-paused">⏸️ Paused</span></td>
+ <td style="font-family:'Space Mono',monospace;color:var(--accent)">0.0218</td>
+ <td>$210.12</td>
+ <td>987,440</td>
+ <td>1,808</td>
+ <td style="color:var(--muted)">0.18%</td>
+ <td>₿ On-chain</td>
+ </tr>
+ <tr>
+ <td><strong>LinkedIn_B2B_Draft</strong><br><span style="font-size:10px;color:var(--muted)">Not started</span></td>
+ <td>💼</td>
+ <td><span class="status-badge status-draft">✏️ Draft</span></td>
+ <td style="font-family:'Space Mono',monospace;color:var(--muted)">0.0000</td>
+ <td>$0.00</td>
+ <td>—</td>
+ <td>—</td>
+ <td>—</td>
+ <td>⚡️ Lightning</td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+</div>
+
+<div id="view-metrics" class="view">
+ <div class="section-header">
+ <div>
+ <div class="section-title">Ad Metrics & Analytics</div>
+ <div class="section-sub">All currencies · All platforms · Live + historical</div>
+ </div>
+ <select style="width:auto;padding:8px 14px">
+ <option>Last 7 days</option>
+ <option>Last 30 days</option>
+ <option>This month</option>
+ <option>All time</option>
+ </select>
+ </div>
+
+ <div class="metrics-row">
+ <div class="metric-card green">
+ <div class="metric-label">Impressions</div>
+ <div class="metric-value" style="color:var(--green)">1.24M</div>
+ <div class="metric-sub">total reach</div>
+ <div class="metric-change up">↑ +8.1% WoW</div>
+ </div>
+ <div class="metric-card blue">
+ <div class="metric-label">Clicks</div>
+ <div class="metric-value" style="color:var(--blue)">14,820</div>
+ <div class="metric-sub">unique: 12,440</div>
+ <div class="metric-change up">↑ +18.2% WoW</div>
+ </div>
+ <div class="metric-card orange">
+ <div class="metric-label">Avg CTR</div>
+ <div class="metric-value" style="color:var(--accent)">1.20%</div>
+ <div class="metric-sub">industry avg: 0.9%</div>
+ <div class="metric-change up">↑ above benchmark</div>
+ </div>
+ <div class="metric-card purple">
+ <div class="metric-label">Conversions</div>
+ <div class="metric-value" style="color:var(--purple)">842</div>
+ <div class="metric-sub">CVR: 5.68%</div>
+ <div class="metric-change up">↑ +3.2% WoW</div>
+ </div>
+ </div>
+
+ <div class="grid-2" style="margin-bottom:20px">
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Spend breakdown — multi-currency</div>
+ <div style="display:grid;gap:10px;font-size:13px">
+ <div style="display:flex;justify-content:space-between;padding:10px;background:var(--surface);border-radius:8px">
+ <span style="color:var(--muted)">Bitcoin (BTC)</span>
+ <span style="font-family:'Space Mono',monospace;color:var(--accent);font-weight:700">0.04230000 ₿</span>
+ </div>
+ <div style="display:flex;justify-content:space-between;padding:10px;background:var(--surface);border-radius:8px">
+ <span style="color:var(--muted)">Satoshis (sats)</span>
+ <span style="font-family:'Space Mono',monospace;color:var(--lightning);font-weight:700">4,230,000 ⚡️</span>
+ </div>
+ <div style="display:flex;justify-content:space-between;padding:10px;background:var(--surface);border-radius:8px">
+ <span style="color:var(--muted)">US Dollar</span><span style="font-weight:700">$407.53</span>
+ </div>
+ <div style="display:flex;justify-content:space-between;padding:10px;background:var(--surface);border-radius:8px">
+ <span style="color:var(--muted)">Euro</span><span style="font-weight:700">€376.15</span>
+ </div>
+ <div style="display:flex;justify-content:space-between;padding:10px;background:var(--surface);border-radius:8px">
+ <span style="color:var(--muted)">British Pound</span><span style="font-weight:700">£321.95</span>
+ </div>
+ <div style="display:flex;justify-content:space-between;padding:10px;background:var(--surface);border-radius:8px">
+ <span style="color:var(--muted)">Nigerian Naira</span><span style="font-weight:700">₦632,410</span>
+ </div>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-title"><span class="dot"></span>Performance by platform</div>
+ <div style="display:grid;gap:10px">
+ <div>
+ <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+ <span>𝕏 Twitter/X</span><span style="color:var(--green)">10.4% CTR · $115.70 spend</span>
+ </div>
+ <div class="progress-wrap"><div class="progress-fill" style="width:78%;background:var(--green)"></div></div>
+ </div>
+ <div>
+ <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+ <span>⚡️ Nostr</span><span style="color:var(--accent)">8.0% CTR · $81.92 spend</span>
+ </div>
+ <div class="progress-wrap"><div class="progress-fill" style="width:62%;background:var(--accent)"></div></div>
+ </div>
+ <div>
+ <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+ <span>📘 Facebook</span><span style="color:var(--blue)">2.1% CTR · $85.22 spend</span>
+ </div>
+ <div class="progress-wrap"><div class="progress-fill" style="width:45%;background:var(--blue)"></div></div>
+ </div>
+ </div>
+ </div>
+ </div>
+</div>
+
+<div id="view-tax" class="view">
+ <div class="grid-2">
+ <div class="tax-card">
+ <div class="section-title">Tax Deduction Calculator</div>
+ <div class="section-sub">Canada 2026 Tax Year</div>
+ <div class="form-group">
+ <label>Jurisdiction</label>
+ <select>
+ <option value="CA">🇨🇦 Canada</option>
+ <option value="US">🇺🇸 United States</option>
+ <option value="UK">🇬🇧 United Kingdom</option>
+ <option value="AU">🇦🇺 Australia</option>
+ </select>
+ </div>
+ <div class="tax-summary-row">
+ <span>Q1 Ad Spend</span>
+ <span class="tax-deductible">2,500,000 sats</span>
+ </div>
+ <div class="tax-summary-row">
+ <span>Q2 Ad Spend</span>
+ <span class="tax-deductible">1,800,000 sats</span>
+ </div>
+ <div class="tax-summary-row">
+ <span>Total Deductible</span>
+ <span class="tax-deduction">4,300,000 sats</span>
+ </div>
+ <div class="tax-summary-row total">
+ <span>Est. Tax Savings</span>
+ <span class="tax-deduction">~534,000 sats</span>
+ </div>
+ <button class="btn btn-primary btn-full" style="margin-top:16px;">📄 Generate Tax Report</button>
+ </div>
+ 
+ <div class="card">
+ <div class="section-title">Cost of Value Analysis</div>
+ <div class="section-sub">Energy-backed BTC valuation</div>
+ <div class="card" style="background:var(--surface); margin-bottom:16px;">
+ <div style="font-size:10px; color:var(--muted); margin-bottom:4px;">True Cost per BTC</div>
+ <div style="font-size:26px; font-weight:800;">$52,300</div>
+ <div style="font-size:11px; color:var(--muted);">Production + Energy + Opportunity</div>
+ </div>
+ <div class="card" style="background:var(--surface); margin-bottom:16px;">
+ <div style="font-size:10px; color:var(--muted); margin-bottom:4px;">Market Price</div>
+ <div style="font-size:26px; font-weight:800; color:var(--accent);">$67,450</div>
+ <div style="font-size:11px; color:var(--muted);">+28.8% premium</div>
+ </div>
+ <div style="text-align:center; padding:20px;">
+ <span class="cov-signal hold" style="font-size:16px;">🟡 HOLD</span>
+ </div>
+ </div>
+ </div>
+</div>
+
+</div>
+
+<script>
+let btcPrice = 96420;
+setInterval(() => {
+ btcPrice += (Math.random() - 0.5) * 200;
+ document.getElementById('btcPrice').textContent = Math.round(btcPrice).toLocaleString();
+ updateConversion();
+}, 5000);
+
+function switchView(view) {
+ document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+ document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+ document.getElementById('view-' + view).classList.add('active');
+ event.target.classList.add('active');
+}
+
+function setMode(mode, btn) {
+ document.querySelectorAll('.toggle-opt').forEach(b => b.classList.remove('active'));
+ btn.classList.add('active');
+ document.getElementById('simple-mode').style.display = mode === 'simple' ? 'block' : 'none';
+ document.getElementById('advanced-mode').style.display = mode === 'advanced' ? 'block' : 'block';
+ if (mode === 'advanced') {
+   document.getElementById('advanced-mode').style.display = 'block';
+ } else {
+   document.getElementById('advanced-mode').style.display = 'none';
+ }
+}
+
+function togglePlatform(card, platform) {
+ document.querySelectorAll('#simple-mode .platform-card').forEach(c => c.classList.remove('selected'));
+ card.classList.add('selected');
+}
+
+function selectPayment(card, method) {
+ document.querySelectorAll('#simple-mode .pay-method').forEach(c => c.classList.remove('selected'));
+ card.classList.add('selected');
+ document.getElementById('payment-info-btc').style.display = 'none';
+ document.getElementById('payment-info-lightning').style.display = 'none';
+ document.getElementById('payment-info-bolt12').style.display = 'none';
+ document.getElementById('payment-info-' + method).style.display = 'block';
+}
+
+function selectAdvPayment(el, type) {
+ document.querySelectorAll('#inner-payment .pay-method').forEach(c => c.classList.remove('selected'));
+ el.classList.add('selected');
+}
+
+function setBudget(val) {
+ document.querySelectorAll('.budget-presets .preset-btn').forEach(b => b.classList.remove('active'));
+ event.target.classList.add('active');
+ if (val !== 'custom') {
+   document.getElementById('btcAmount').value = val;
+   updateConversion();
+ }
+}
+
+function updateConversion() {
+ const btc = parseFloat(document.getElementById('btcAmount').value) || 0;
+ const usd = btc * btcPrice;
+ const sats = Math.round(btc * 100000000);
+ if (document.getElementById('usdAmount')) document.getElementById('usdAmount').value = usd.toFixed(2);
+ const disp = document.getElementById('conversion-display');
+ if (disp) disp.textContent = `≈ ${btc} BTC · ${sats.toLocaleString()} sats · $${usd.toFixed(2)} USD · €${(usd*0.924).toFixed(2)} EUR · £${(usd*0.791).toFixed(2)} GBP · ₦${Math.round(usd*1554).toLocaleString()} NGN`;
+}
+
+function updateFromUSD() {
+ const usd = parseFloat(document.getElementById('usdAmount').value) || 0;
+ const btc = usd / btcPrice;
+ if (document.getElementById('btcAmount')) document.getElementById('btcAmount').value = btc.toFixed(8);
+ updateConversion();
+}
+
+function switchInner(tab, btn) {
+ document.querySelectorAll('.inner-view').forEach(v => v.classList.remove('active'));
+ document.querySelectorAll('.inner-tab').forEach(b => b.classList.remove('active'));
+ document.getElementById('inner-' + tab).classList.add('active');
+ btn.classList.add('active');
+}
+
+updateConversion();
+</script>
+</body>
+</html>

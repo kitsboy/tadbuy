@@ -1,0 +1,11 @@
+# TadBuy Metrics — Scheduled Tasks
+# ─────────────────────────────────────────────────────────
+
+# X/Twitter Ad Metrics Scraper — daily at 6 AM UTC
+0 6 * * * cd /app && python scripts/x-ads-scraper.py >> /data/tadbuy-metrics/logs/cron.log 2>&1
+
+# Cost-of-Value Calculator — hourly
+0 * * * * cd /app && python scripts/cost-of-value.py >> /data/tadbuy-metrics/logs/cron.log 2>&1
+
+# Log rotation — weekly (truncate logs over 10 MB)
+0 0 * * 0 find /data/tadbuy-metrics/logs -name "*.log" -size +10M -exec truncate -s 0 {} \;
