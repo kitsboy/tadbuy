@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Card, CardTitle, Button, Input, Textarea, Select, Label, FormGroup, Modal, FileInput, InfoTooltip } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { QRCodeSVG } from "qrcode.react";
-import { Twitter, Facebook, Instagram, Zap, Youtube, MessageSquare, Linkedin, Music, CheckCircle2, Bot, X, Monitor, Smartphone, Wifi, Globe, Calendar, Layers, Activity, Target, Settings2, Plus, Trash2 } from "lucide-react";
+import { Twitter, Facebook, Instagram, Zap, Youtube, MessageSquare, Linkedin, Music, CheckCircle2, Bot, X, Monitor, Smartphone, Wifi, Globe, Calendar, Layers, Activity, Target, Settings2, Plus, Trash2, ShieldAlert } from "lucide-react";
 
 // --- Types & Interfaces ---
 
@@ -23,6 +23,7 @@ interface TargetingSettings {
   interests: string;
   ageMin: number;
   ageMax: number;
+  sex: 'all' | 'male' | 'female';
   countries: string[];
   languages: string[];
   devices: string[]; // 'ios', 'android', 'desktop'
@@ -76,9 +77,11 @@ const paymentMethods = [
   { id: 'btc', name: 'Bitcoin', sub: 'On-chain', icon: '₿', color: 'text-accent', border: 'border-accent', bg: 'bg-accent/10' },
   { id: 'lightning', name: 'Lightning', sub: 'Instant / Low fee', icon: <Zap className="w-6 h-6 text-lightning mx-auto" />, color: 'text-lightning', border: 'border-lightning', bg: 'bg-lightning/10' },
   { id: 'bolt12', name: 'BOLT 12', sub: 'Offers / Recurring', icon: '🔮', color: 'text-purple', border: 'border-purple', bg: 'bg-purple/10' },
+  { id: 'zap', name: 'Nostr Zap', sub: 'Social / Tipping', icon: '⚡💜', color: 'text-purple-400', border: 'border-purple-400', bg: 'bg-purple-400/10' },
 ];
 
 export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }: { currency?: string, rate?: number, symbol?: string }) {
+  const [currentStep, setCurrentStep] = useState(1);
   const [mode, setMode] = useState<'simple' | 'complex'>('simple');
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['twitter']);
   const [btcAmount, setBtcAmount] = useState(0.0005);
@@ -95,6 +98,15 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   const [hashtags, setHashtags] = useState<string[]>([]);
   const [hashtagInput, setHashtagInput] = useState('');
   const [adImage, setAdImage] = useState<string | null>(null);
+  const [isAiGenerating, setIsAiGenerating] = useState(false);
+  const [mempoolFees, setMempoolFees] = useState({ fastestFee: 5, halfHourFee: 4, hourFee: 3 });
+
+  useEffect(() => {
+    fetch('https://mempool.space/api/v1/fees/recommended')
+      .then(res => res.json())
+      .then(data => setMempoolFees(data))
+      .catch(console.error);
+  }, []);
 
   // --- Advanced Mode State ---
   const [platformWeights, setPlatformWeights] = useState<Record<string, number>>({ twitter: 100 });
@@ -114,6 +126,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
     interests: 'Bitcoin & Crypto',
     ageMin: 22,
     ageMax: 45,
+    sex: 'all',
     countries: ['Global'],
     languages: ['English'],
     devices: ['ios', 'android', 'desktop'],
@@ -149,12 +162,34 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   const [showInvoice, setShowInvoice] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [invoiceCopied, setInvoiceCopied] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'waiting' | 'processing' | 'success'>('idle');
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   const [projectId] = useState(() => `PRJ-TAD-${Math.random().toString(36).substring(2, 8).toUpperCase()}`);
+  const [currentBlockHeight, setCurrentBlockHeight] = useState<number | null>(null);
+
+  const bolt11Invoice = "lnbc1u1pwz5yzpp5w6l... (demo bolt11 invoice)";
+  const bolt12Offer = "lno1qgsqv... (demo bolt12 offer)";
 
   useEffect(() => {
     setFiatAmount(btcAmount * rate);
   }, [btcAmount, rate]);
+
+  useEffect(() => {
+    const fetchBlockHeight = async () => {
+      try {
+        const res = await fetch('/api/blockchain/info');
+        const data = await res.json();
+        setCurrentBlockHeight(data.height);
+        if (scheduling.mode === 'block' && scheduling.startBlock === 834500) {
+          setScheduling(s => ({ ...s, startBlock: data.height + 1, endBlock: data.height + 1000 }));
+        }
+      } catch (e) {
+        console.error('Failed to fetch block height');
+      }
+    };
+    fetchBlockHeight();
+  }, []);
 
   // Sync simple mode state to first variant for consistency
   useEffect(() => {
@@ -223,14 +258,58 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   };
 
   const handleCopyInvoice = () => {
-    navigator.clipboard.writeText("bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
+    const textToCopy = paymentMethod === 'bolt12' ? bolt12Offer : (paymentMethod === 'lightning' ? bolt11Invoice : "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh");
+    navigator.clipboard.writeText(textToCopy);
     setInvoiceCopied(true);
     setTimeout(() => setInvoiceCopied(false), 2000);
   };
 
-  const handleDeploy = () => {
-    setShowInvoice(false);
-    setShowSuccessModal(true);
+  const generateAiCopy = async () => {
+    setIsAiGenerating(true);
+    try {
+      // In a real app, this would call a backend endpoint that uses Gemini
+      // For now, we simulate the AI response
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setHeadline("The Future of Bitcoin Advertising is Here");
+      setDescription("Experience seamless, decentralized ad buying with Tadbuy. Instant settlements, global reach, and AI-driven optimization.");
+    } catch (e) {
+      console.error("AI generation failed");
+    } finally {
+      setIsAiGenerating(false);
+    }
+  };
+
+  const handleDeploy = async () => {
+    setPaymentStatus('processing');
+    
+    // Try to fetch real invoice if Lightning
+    if (paymentMethod === 'lightning') {
+      try {
+        const amountSats = Math.round(btcAmount * 100000000);
+        const res = await fetch('/api/lightning/invoice', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amountSats, description: `Tadbuy Ad: ${headline}` })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          // In a real app, we'd update the QR code here
+          console.log('Real invoice fetched:', data.request);
+        }
+      } catch (e) {
+        console.warn('Falling back to demo invoice');
+      }
+    }
+
+    // Simulate payment processing delay
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    
+    setPaymentStatus('success');
+    setTimeout(() => {
+      setShowInvoice(false);
+      setShowSuccessModal(true);
+      setPaymentStatus('idle');
+    }, 1000);
   };
 
   const selectedPlatformsData = platforms.filter(p => selectedPlatforms.includes(p.id));
@@ -312,32 +391,40 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
     }));
   };
 
+  const totalSteps = 4;
+
+  const nextStep = () => setCurrentStep(p => Math.min(p + 1, totalSteps));
+  const prevStep = () => setCurrentStep(p => Math.max(p - 1, 1));
+
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="flex items-center gap-4 mb-7">
-        <span className="text-[13px] text-muted">Mode:</span>
-        <div className="flex bg-card border border-border rounded-lg p-1 gap-1">
-          <button
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto space-y-6">
+      
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight">Create Campaign</h1>
+          <p className="text-muted mt-1">Launch your ad across the decentralized web in minutes.</p>
+        </div>
+        <div className="flex items-center bg-surface p-1 rounded-xl border border-border">
+          <button 
             onClick={() => setMode('simple')}
-            className={cn("px-5 py-2 rounded-md text-[13px] font-bold transition-all", mode === 'simple' ? "bg-accent text-black" : "text-muted hover:text-text")}
+            className={cn("px-4 py-2 rounded-lg text-sm font-bold transition-all", mode === 'simple' ? "bg-accent text-black shadow-md" : "text-muted hover:text-text")}
           >
-            ⚡ Simple
+            Simple
           </button>
-          <button
+          <button 
             onClick={() => setMode('complex')}
-            className={cn("px-5 py-2 rounded-md text-[13px] font-bold transition-all", mode === 'complex' ? "bg-accent text-black" : "text-muted hover:text-text")}
+            className={cn("px-4 py-2 rounded-lg text-sm font-bold transition-all", mode === 'complex' ? "bg-accent text-black shadow-md" : "text-muted hover:text-text")}
           >
-            🔬 Advanced
+            Advanced
           </button>
         </div>
-        <span className="ml-2 text-[11px] text-muted">Connected to: <span className="text-green">dev.giveabit.io dashboard ✓</span></span>
       </div>
 
       <AnimatePresence mode="wait">
         {mode === 'simple' ? (
           <motion.div key="simple" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <Card>
+              <Card className="glass-panel">
                 <div className="flex items-center gap-2 mb-3">
                   <CardTitle className="mb-0">1. Pick your platforms</CardTitle>
                   <InfoTooltip content="Choose where your ads will appear. Each platform has different audiences and costs (CPM)." />
@@ -443,10 +530,22 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
                 </div>
               </Card>
 
-              <Card>
-                <div className="flex items-center gap-2 mb-3">
-                  <CardTitle className="mb-0">4. Ad copy & Media</CardTitle>
-                  <InfoTooltip content="Craft your message. PPQ.AI will automatically format this for each selected platform." />
+              <Card className="glass-panel">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="mb-0">4. Ad copy & Media</CardTitle>
+                    <InfoTooltip content="Craft your message. PPQ.AI will automatically format this for each selected platform." />
+                  </div>
+                  <Button 
+                    size="sm" 
+                    variant="secondary" 
+                    onClick={generateAiCopy}
+                    disabled={isAiGenerating}
+                    className="text-[10px] h-7 gap-1.5"
+                  >
+                    <Bot className={cn("w-3 h-3", isAiGenerating && "animate-spin")} />
+                    {isAiGenerating ? "Thinking..." : "AI Suggest"}
+                  </Button>
                 </div>
                 <div className="bg-blue/5 border border-blue/20 rounded-lg p-3.5 mb-5 flex items-start gap-3">
                   <Bot className="w-5 h-5 text-blue shrink-0 mt-0.5" />
@@ -605,92 +704,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
             </div>
 
             <div className="space-y-4">
-              <Card className="border-accent/30 shadow-[0_0_30px_-10px_rgba(247,147,26,0.15)]">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <CardTitle className="mb-0">Live estimate</CardTitle>
-                    <InfoTooltip content="Real-time projection of your campaign's reach based on current budget and targeting." />
-                  </div>
-                  <div className="text-[10px] font-mono bg-surface px-2 py-1 rounded border border-border text-muted">
-                    ID: {projectId}
-                  </div>
-                </div>
-                <div className="bg-green/5 border border-green/20 rounded-xl p-4">
-                  <div className="flex justify-between py-1 text-[13px] items-center">
-                    <span className="text-muted">Platforms ({selectedPlatformsData.length})</span>
-                    <span className="text-accent font-bold text-right flex gap-1">
-                      {selectedPlatformsData.map((p, i) => (
-                        <span key={i} className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4">{p.icon}</span>
-                      ))}
-                    </span>
-                  </div>
-                  <div className="flex justify-between py-1 text-[13px]">
-                    <span className="text-muted">Budget</span>
-                    <span>{symbol}{fiatAmount.toFixed(2)} ({btcAmount.toFixed(4)} ₿)</span>
-                  </div>
-                  <div className="flex justify-between py-1 text-[13px]">
-                    <span className="text-muted">Avg CPM</span>
-                    <span>~${(selectedPlatformsData.reduce((acc, p) => acc + p.cpm, 0) / selectedPlatformsData.length).toFixed(2)} USD</span>
-                  </div>
-                  <div className="flex justify-between py-1 text-[13px]">
-                    <span className="text-muted">Est. impressions</span>
-                    <span className="text-green font-bold">~{estimates.totalImpressions.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between py-1 text-[13px]">
-                    <span className="text-muted">Est. clicks (CTR 1.2%)</span>
-                    <span className="text-green font-bold">~{estimates.totalClicks.toLocaleString()}</span>
-                  </div>
-                  
-                  <div className="mt-3 pt-3 border-t border-green/10 space-y-2">
-                    <div className="text-[10px] uppercase tracking-wider text-muted font-bold">Audience Details</div>
-                    <div className="flex justify-between text-[11px]">
-                      <span className="text-muted">Gender split</span>
-                      <span>{estimates.audience.malePct}% M / {estimates.audience.femalePct}% F</span>
-                    </div>
-                    <div className="flex justify-between text-[11px]">
-                      <span className="text-muted">Interest affinity ({targeting.interests})</span>
-                      <span className="text-accent">{estimates.audience.topInterestPct}% high</span>
-                    </div>
-                    <div className="flex justify-between text-[11px]">
-                      <span className="text-muted">Device reach</span>
-                      <span>{targeting.devices.join(', ')}</span>
-                    </div>
-                  </div>
-
-                  {mode === 'complex' && (
-                    <div className="mt-2 pt-2 border-t border-green/10 space-y-1">
-                      <div className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1">Platform Split</div>
-                      {estimates.platformBreakdown.map(p => (
-                        <div key={p.id} className="flex justify-between text-[11px]">
-                          <span className="flex items-center gap-1">{p.icon} {p.name} ({p.weight}%)</span>
-                          <span>~{p.impressions.toLocaleString()} imp</span>
-                        </div>
-                      ))}
-                      {variants.length > 1 && (
-                        <div className="flex justify-between text-[11px] text-accent mt-1">
-                          <span>A/B Testing Enabled</span>
-                          <span>50/50 Split</span>
-                        </div>
-                      )}
-                      {ppq.autoRebalance && (
-                        <div className="text-[10px] text-blue italic mt-1">
-                          PPQ.AI Auto-Rebalance active
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <div className="flex justify-between py-1 text-[13px]">
-                    <span className="text-muted">Est. duration</span>
-                    <span>3–5 days</span>
-                  </div>
-                  <div className="flex justify-between pt-3 mt-2 border-t border-green/20 font-extrabold text-[15px]">
-                    <span>Total (BTC)</span>
-                    <span className="text-accent">{btcAmount.toFixed(8)} ₿</span>
-                  </div>
-                </div>
-              </Card>
-
-              <Card>
+              <Card className="glass-panel">
                 <div className="flex items-center gap-2 mb-3">
                   <CardTitle className="mb-0">Target demographics</CardTitle>
                   <InfoTooltip content="Define who should see your ads. Narrow targeting can improve conversion rates." />
@@ -788,6 +802,14 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
                     </Select>
                   </FormGroup>
                   <FormGroup className="mb-0">
+                    <Label>Sex</Label>
+                    <Select value={targeting.sex} onChange={e => setTargeting({ ...targeting, sex: e.target.value as 'all' | 'male' | 'female' })}>
+                      <option value="all">All</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </Select>
+                  </FormGroup>
+                  <FormGroup className="mb-0">
                     <Label>Education Level</Label>
                     <Select value={targeting.education} onChange={e => setTargeting({ ...targeting, education: e.target.value })}>
                       <option>All Education Levels</option>
@@ -838,8 +860,92 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
                   </FormGroup>
                 </div>
               </Card>
+              <Card className="border-accent/30 shadow-[0_0_30px_-10px_rgba(247,147,26,0.15)]">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="mb-0">Live estimate</CardTitle>
+                    <InfoTooltip content="Real-time projection of your campaign's reach based on current budget and targeting." />
+                  </div>
+                  <div className="text-[10px] font-mono bg-surface px-2 py-1 rounded border border-border text-muted">
+                    ID: {projectId}
+                  </div>
+                </div>
+                <div className="bg-green/5 border border-green/20 rounded-xl p-4">
+                  <div className="flex justify-between py-1 text-[13px] items-center">
+                    <span className="text-muted">Platforms ({selectedPlatformsData.length})</span>
+                    <span className="text-accent font-bold text-right flex gap-1">
+                      {selectedPlatformsData.map((p, i) => (
+                        <span key={i} className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4">{p.icon}</span>
+                      ))}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-1 text-[13px]">
+                    <span className="text-muted">Budget</span>
+                    <span>{symbol}{fiatAmount.toFixed(2)} ({btcAmount.toFixed(4)} ₿)</span>
+                  </div>
+                  <div className="flex justify-between py-1 text-[13px]">
+                    <span className="text-muted">Avg CPM</span>
+                    <span>~${(selectedPlatformsData.reduce((acc, p) => acc + p.cpm, 0) / selectedPlatformsData.length).toFixed(2)} USD</span>
+                  </div>
+                  <div className="flex justify-between py-1 text-[13px]">
+                    <span className="text-muted">Est. impressions</span>
+                    <span className="text-green font-bold">~{estimates.totalImpressions.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between py-1 text-[13px]">
+                    <span className="text-muted">Est. clicks (CTR 1.2%)</span>
+                    <span className="text-green font-bold">~{estimates.totalClicks.toLocaleString()}</span>
+                  </div>
+                  
+                  <div className="mt-3 pt-3 border-t border-green/10 space-y-2">
+                    <div className="text-[10px] uppercase tracking-wider text-muted font-bold">Audience Details</div>
+                    <div className="flex justify-between text-[11px]">
+                      <span className="text-muted">Gender split</span>
+                      <span>{estimates.audience.malePct}% M / {estimates.audience.femalePct}% F</span>
+                    </div>
+                    <div className="flex justify-between text-[11px]">
+                      <span className="text-muted">Interest affinity ({targeting.interests})</span>
+                      <span className="text-accent">{estimates.audience.topInterestPct}% high</span>
+                    </div>
+                    <div className="flex justify-between text-[11px]">
+                      <span className="text-muted">Device reach</span>
+                      <span>{targeting.devices.join(', ')}</span>
+                    </div>
+                  </div>
 
-              <Card>
+                  {mode === 'complex' && (
+                    <div className="mt-2 pt-2 border-t border-green/10 space-y-1">
+                      <div className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1">Platform Split</div>
+                      {estimates.platformBreakdown.map(p => (
+                        <div key={p.id} className="flex justify-between text-[11px]">
+                          <span className="flex items-center gap-1">{p.icon} {p.name} ({p.weight}%)</span>
+                          <span>~{p.impressions.toLocaleString()} imp</span>
+                        </div>
+                      ))}
+                      {variants.length > 1 && (
+                        <div className="flex justify-between text-[11px] text-accent mt-1">
+                          <span>A/B Testing Enabled</span>
+                          <span>50/50 Split</span>
+                        </div>
+                      )}
+                      {ppq.autoRebalance && (
+                        <div className="text-[10px] text-blue italic mt-1">
+                          PPQ.AI Auto-Rebalance active
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <div className="flex justify-between py-1 text-[13px]">
+                    <span className="text-muted">Est. duration</span>
+                    <span>3–5 days</span>
+                  </div>
+                  <div className="flex justify-between pt-3 mt-2 border-t border-green/20 font-extrabold text-[15px]">
+                    <span>Total (BTC)</span>
+                    <span className="text-accent">{btcAmount.toFixed(8)} ₿</span>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="glass-panel">
                 <CardTitle>Ad preview — {selectedPlatformsData[0]?.name} {selectedPlatformsData.length > 1 ? `(+${selectedPlatformsData.length - 1} more)` : ''}</CardTitle>
                 <div className="space-y-4">
                   {variants.map((v, idx) => (
@@ -883,7 +989,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
         ) : (
           <motion.div key="complex" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <Card>
+              <Card className="glass-panel">
                 <div className="flex items-center gap-2 mb-3">
                   <Layers className="w-5 h-5 text-accent" />
                   <CardTitle className="mb-0">Advanced Platform Control</CardTitle>
@@ -941,7 +1047,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
                 </div>
               </Card>
 
-              <Card>
+              <Card className="glass-panel">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <Activity className="w-5 h-5 text-accent" />
@@ -1014,7 +1120,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
                 </div>
               </Card>
 
-              <Card>
+              <Card className="glass-panel">
                 <div className="flex items-center gap-2 mb-4">
                   <Target className="w-5 h-5 text-accent" />
                   <CardTitle className="mb-0">Granular Context</CardTitle>
@@ -1077,7 +1183,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
             </div>
 
             <div className="space-y-4">
-              <Card>
+              <Card className="glass-panel">
                 <div className="flex items-center gap-2 mb-4">
                   <Calendar className="w-5 h-5 text-accent" />
                   <CardTitle className="mb-0">Campaign Scheduling</CardTitle>
@@ -1128,7 +1234,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
                 </div>
               </Card>
 
-              <Card>
+              <Card className="glass-panel">
                 <div className="flex items-center gap-2 mb-4">
                   <Settings2 className="w-5 h-5 text-accent" />
                   <CardTitle className="mb-0">PPQ.AI Optimization</CardTitle>
@@ -1222,7 +1328,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
                 </div>
               </Card>
 
-              <Card>
+              <Card className="glass-panel">
                 <CardTitle>Ad preview — {selectedPlatformsData[0]?.name}</CardTitle>
                 <div className="space-y-4">
                   {variants.map((v) => (
@@ -1251,29 +1357,134 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
         )}
       </AnimatePresence>
 
-      <Modal isOpen={showInvoice} onClose={() => setShowInvoice(false)}>
-        <div className="p-8 text-center">
-          <h2 className="text-xl font-extrabold mb-2">Pay Invoice</h2>
-          <p className="text-sm text-muted mb-6">Scan the QR code or copy the address to pay for project <strong className="text-text">{projectId}</strong>.</p>
-          
-          <div className="bg-white p-4 rounded-xl inline-block mb-6 shadow-lg">
-            <QRCodeSVG value={`bitcoin:bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh?amount=${btcAmount.toFixed(8)}&message=${projectId}`} size={200} />
-          </div>
-          
-          <div className="text-[11px] text-muted mb-1 uppercase tracking-widest font-bold">Send exactly:</div>
-          <div className="text-2xl font-extrabold text-accent mb-1">{btcAmount.toFixed(8)} BTC</div>
-          <div className="text-xs text-muted mb-4">≈ {symbol}{fiatAmount.toFixed(2)} {currency}</div>
-          
-          <div className="bg-bg p-3 rounded-lg font-mono text-[10px] text-muted break-all mb-4 border border-border">
-            bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
-          </div>
-          
-          <Button variant="secondary" className="w-full mb-3" onClick={handleCopyInvoice}>
-            {invoiceCopied ? "Copied ✓" : "Copy Address"}
-          </Button>
-          <Button className="w-full" onClick={handleDeploy}>
-            I have sent the payment
-          </Button>
+      <Modal isOpen={showInvoice} onClose={() => {
+        if (paymentStatus !== 'processing') setShowInvoice(false);
+      }}>
+        <div className="p-8 text-center relative overflow-hidden">
+          <AnimatePresence mode="wait">
+            {paymentStatus === 'processing' ? (
+              <motion.div 
+                key="processing"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.1 }}
+                className="py-12 flex flex-col items-center"
+              >
+                <div className="relative w-24 h-24 mb-8">
+                  <motion.div 
+                    className="absolute inset-0 border-4 border-accent/20 rounded-full"
+                  />
+                  <motion.div 
+                    className="absolute inset-0 border-4 border-t-accent rounded-full"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                  <Zap className="absolute inset-0 m-auto w-10 h-10 text-accent animate-pulse" />
+                </div>
+                <h2 className="text-2xl font-extrabold mb-2">Verifying Payment</h2>
+                <p className="text-sm text-muted">Checking the {paymentMethod === 'btc' ? 'Bitcoin network' : 'Lightning Network'} for your transaction...</p>
+                <div className="mt-8 flex gap-1 justify-center">
+                  {[0, 1, 2].map(i => (
+                    <motion.div 
+                      key={i}
+                      className="w-1.5 h-1.5 bg-accent rounded-full"
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            ) : paymentStatus === 'success' ? (
+              <motion.div 
+                key="success"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="py-12 flex flex-col items-center"
+              >
+                <div className="w-24 h-24 bg-green/20 rounded-full flex items-center justify-center mb-8">
+                  <CheckCircle2 className="w-12 h-12 text-green" />
+                </div>
+                <h2 className="text-2xl font-extrabold mb-2 text-green">Payment Received!</h2>
+                <p className="text-sm text-muted">Your campaign is being deployed to the network.</p>
+              </motion.div>
+            ) : (
+              <motion.div 
+                key="invoice"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div className="text-left">
+                    <h2 className="text-2xl font-extrabold leading-tight">
+                      {paymentMethod === 'bolt12' ? 'BOLT 12 Offer' : (paymentMethod === 'lightning' ? 'Lightning Invoice' : 'Bitcoin Invoice')}
+                    </h2>
+                    <p className="text-xs text-muted">Project: <span className="text-text font-mono">{projectId}</span></p>
+                  </div>
+                  <div className={cn(
+                    "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest",
+                    paymentMethod === 'bolt12' ? "bg-purple/10 text-purple border border-purple/20" : 
+                    (paymentMethod === 'lightning' ? "bg-lightning/10 text-lightning border border-lightning/20" : "bg-accent/10 text-accent border border-accent/20")
+                  )}>
+                    {paymentMethod === 'bolt12' ? 'Privacy Enabled' : (paymentMethod === 'lightning' ? 'Instant' : 'On-Chain')}
+                  </div>
+                </div>
+                
+                <div className="bg-white p-5 rounded-2xl inline-block mb-8 shadow-2xl relative group">
+                  <QRCodeSVG 
+                    value={paymentMethod === 'zap' ? `nostr:npub1...` : (paymentMethod === 'bolt12' ? bolt12Offer : (paymentMethod === 'lightning' ? bolt11Invoice : `bitcoin:bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh?amount=${btcAmount.toFixed(8)}&message=${projectId}`))} 
+                    size={220} 
+                    level="H"
+                    includeMargin={false}
+                  />
+                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center pointer-events-none">
+                    <Zap className="w-12 h-12 text-accent drop-shadow-lg" />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-surface border border-border rounded-xl p-3 text-left">
+                    <div className="text-[10px] text-muted uppercase font-bold mb-1">Amount to send</div>
+                    <div className="text-lg font-extrabold text-accent">{btcAmount.toFixed(8)} ₿</div>
+                    <div className="text-[10px] text-muted">≈ {symbol}{fiatAmount.toFixed(2)}</div>
+                  </div>
+                  <div className="bg-surface border border-border rounded-xl p-3 text-left">
+                    <div className="text-[10px] text-muted uppercase font-bold mb-1">Network Fee</div>
+                    <div className="text-lg font-extrabold text-green">
+                      {paymentMethod === 'btc' ? `~${((mempoolFees.fastestFee * 140) / 100000000).toFixed(8)} ₿` : '0.00000 ₿'}
+                    </div>
+                    <div className="text-[10px] text-muted">{paymentMethod === 'btc' ? `Estimated (${mempoolFees.fastestFee} sat/vB)` : 'Lightning Free'}</div>
+                  </div>
+                </div>
+                
+                <div className="relative mb-6">
+                  <div className="bg-bg p-4 rounded-xl font-mono text-[10px] text-muted break-all border border-border text-left pr-12">
+                    {paymentMethod === 'bolt12' ? bolt12Offer : (paymentMethod === 'lightning' ? bolt11Invoice : "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh")}
+                  </div>
+                  <button 
+                    onClick={handleCopyInvoice}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-surface rounded-lg transition-colors text-accent"
+                  >
+                    {invoiceCopied ? <CheckCircle2 className="w-4 h-4" /> : <Layers className="w-4 h-4" />}
+                  </button>
+                </div>
+                
+                <div className="flex gap-3">
+                  <Button variant="secondary" className="flex-1" onClick={() => setShowInvoice(false)}>
+                    Cancel
+                  </Button>
+                  <Button className="flex-[2] bg-accent text-black hover:opacity-90" onClick={handleDeploy}>
+                    {paymentMethod === 'btc' ? 'I have sent the payment' : 'Confirm Payment'}
+                  </Button>
+                </div>
+                
+                <p className="mt-6 text-[10px] text-muted flex items-center justify-center gap-1.5">
+                  <ShieldAlert className="w-3 h-3" />
+                  Payments are non-reversible. Ensure the amount is exact.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </Modal>
 
@@ -1308,9 +1519,11 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
           </div>
 
           <div className="space-y-3">
-            <Button asChild className="w-full">
-              <Link to="/campaigns">View in Campaigns</Link>
-            </Button>
+            <Link to="/campaigns" className="w-full">
+              <Button className="w-full">
+                View in Campaigns
+              </Button>
+            </Link>
             <Button variant="secondary" className="w-full" onClick={() => setShowSuccessModal(false)}>
               Create another
             </Button>

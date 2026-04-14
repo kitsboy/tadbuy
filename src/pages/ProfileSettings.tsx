@@ -22,9 +22,9 @@ export default function ProfileSettings() {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 max-w-3xl mx-auto pb-20">
       <h1 className="text-2xl font-extrabold tracking-tight">Profile & Settings</h1>
 
-      <Card>
+      <Card className="glass-panel">
         <CardTitle className="flex items-center gap-2 mb-6"><User className="w-5 h-5 text-accent" /> Account Information</CardTitle>
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <FormGroup>
             <Label>Full Name</Label>
             <input type="text" defaultValue="Felix Bitcoin" className="w-full bg-surface p-3 rounded-xl border border-border focus:border-accent outline-none" />
@@ -36,7 +36,7 @@ export default function ProfileSettings() {
         </div>
       </Card>
 
-      <Card>
+      <Card className="glass-panel">
         <CardTitle className="flex items-center gap-2 mb-6"><Wallet className="w-5 h-5 text-accent" /> Connected Wallets</CardTitle>
         <div className="space-y-4">
           {wallets.map((wallet, i) => (
@@ -54,7 +54,7 @@ export default function ProfileSettings() {
         </div>
       </Card>
 
-      <Card>
+      <Card className="glass-panel">
         <CardTitle className="flex items-center gap-2 mb-6"><Key className="w-5 h-5 text-accent" /> API Key Management</CardTitle>
         <div className="bg-surface p-4 rounded-xl border border-border flex items-center justify-between">
           <div className="font-mono text-xs text-muted">sk_live_51P...a8b9c0d1e2f3g4h5</div>
@@ -63,7 +63,7 @@ export default function ProfileSettings() {
         <p className="text-xs text-muted mt-3">Use this key to integrate Tadbuy with your own Bitcoin-native applications.</p>
       </Card>
 
-      <Card>
+      <Card className="glass-panel">
         <CardTitle className="flex items-center gap-2 mb-6"><Bell className="w-5 h-5 text-accent" /> Notification Preferences</CardTitle>
         <div className="space-y-4">
           {[

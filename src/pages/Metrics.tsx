@@ -65,7 +65,7 @@ export default function Metrics() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card className="relative group hover:border-green/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-green before:rounded-t-xl shadow-lg">
+        <Card className="glass-panel relative group hover:border-green/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-green before:rounded-t-xl shadow-lg">
           <div className="text-[10px] text-muted uppercase tracking-widest font-bold mb-2 flex items-center">
             Impressions
             <InfoTooltip content="Total number of times your ad was served to users." />
@@ -76,7 +76,7 @@ export default function Metrics() {
             <ArrowUpRight className="w-3 h-3" /> +8.1% WoW
           </div>
         </Card>
-        <Card className="relative group hover:border-blue/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-blue before:rounded-t-xl shadow-lg">
+        <Card className="glass-panel relative group hover:border-blue/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-blue before:rounded-t-xl shadow-lg">
           <div className="text-[10px] text-muted uppercase tracking-widest font-bold mb-2 flex items-center">
             Clicks
             <InfoTooltip content="Number of times users clicked on your ad to visit your destination." />
@@ -87,7 +87,7 @@ export default function Metrics() {
             <ArrowUpRight className="w-3 h-3" /> +18.2% WoW
           </div>
         </Card>
-        <Card className="relative group hover:border-accent/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-accent before:rounded-t-xl shadow-lg">
+        <Card className="glass-panel relative group hover:border-accent/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-accent before:rounded-t-xl shadow-lg">
           <div className="text-[10px] text-muted uppercase tracking-widest font-bold mb-2 flex items-center">
             Avg CTR
             <InfoTooltip content="Click-Through Rate: The percentage of impressions that resulted in a click (Clicks / Impressions)." />
@@ -98,7 +98,7 @@ export default function Metrics() {
             <ArrowUpRight className="w-3 h-3" /> above benchmark
           </div>
         </Card>
-        <Card className="relative group hover:border-purple/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-purple before:rounded-t-xl shadow-lg">
+        <Card className="glass-panel relative group hover:border-purple/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-purple before:rounded-t-xl shadow-lg">
           <div className="text-[10px] text-muted uppercase tracking-widest font-bold mb-2 flex items-center">
             Conversions
             <InfoTooltip content="Number of desired actions (e.g., signups, purchases) completed after clicking an ad." />
@@ -112,7 +112,7 @@ export default function Metrics() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <Card className="border-border/40 bg-surface/10 backdrop-blur-xl">
+        <Card className="glass-panel border-border/40 bg-surface/10 backdrop-blur-xl">
           <CardTitle className="flex items-center">
             Spend breakdown — multi-currency
             <InfoTooltip content="Real-time conversion of your ad spend across multiple global currencies and Bitcoin." />
@@ -136,7 +136,7 @@ export default function Metrics() {
           </div>
         </Card>
 
-        <Card className="border-border/40 bg-surface/10 backdrop-blur-xl">
+        <Card className="glass-panel border-border/40 bg-surface/10 backdrop-blur-xl">
           <CardTitle className="flex items-center">
             Performance by platform
             <InfoTooltip content="How your ads are performing across different social networks and protocols." />
@@ -194,7 +194,7 @@ export default function Metrics() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
+        <Card className="glass-panel">
           <CardTitle className="flex items-center">
             Audience breakdown
             <InfoTooltip content="Geographic distribution of the users who are seeing and interacting with your ads." />
@@ -220,7 +220,7 @@ export default function Metrics() {
           </div>
         </Card>
         
-        <Card>
+        <Card className="glass-panel">
           <CardTitle className="flex items-center">
             Device split
             <InfoTooltip content="The types of devices users are using when they interact with your ads." />
@@ -267,7 +267,7 @@ export default function Metrics() {
           </div>
         </Card>
 
-        <Card>
+        <Card className="glass-panel">
           <CardTitle className="flex items-center">
             Key KPIs
             <InfoTooltip content="Key Performance Indicators: Essential metrics to measure the success of your campaigns." />

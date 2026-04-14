@@ -34,32 +34,32 @@ export default function CampaignAnalytics() {
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+        <Card className="glass-panel">
           <CardTitle>Impressions vs Clicks</CardTitle>
           <div className="h-64 mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                <XAxis dataKey="name" stroke="#888" />
-                <YAxis stroke="#888" />
-                <Tooltip contentStyle={{ backgroundColor: '#111', border: 'none' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <XAxis dataKey="name" stroke="#a1a1aa" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="#a1a1aa" fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={{ backgroundColor: '#18181b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
                 <Legend />
-                <Bar dataKey="impressions" fill="#8884d8" />
-                <Bar dataKey="clicks" fill="#82ca9d" />
+                <Bar dataKey="impressions" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="clicks" fill="#10b981" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </Card>
-        <Card>
+        <Card className="glass-panel">
           <CardTitle>Performance Trends</CardTitle>
           <div className="h-64 mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                <XAxis dataKey="name" stroke="#888" />
-                <YAxis stroke="#888" />
-                <Tooltip contentStyle={{ backgroundColor: '#111', border: 'none' }} />
-                <Line type="monotone" dataKey="impressions" stroke="#8884d8" strokeWidth={2} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <XAxis dataKey="name" stroke="#a1a1aa" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="#a1a1aa" fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={{ backgroundColor: '#18181b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+                <Line type="monotone" dataKey="impressions" stroke="#ff9f1c" strokeWidth={3} dot={{ fill: '#ff9f1c', strokeWidth: 2 }} activeDot={{ r: 8, fill: '#ff9f1c' }} />
               </LineChart>
             </ResponsiveContainer>
           </div>

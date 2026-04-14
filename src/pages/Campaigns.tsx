@@ -7,30 +7,92 @@ import {
   Twitter, Facebook, Instagram, Zap, Youtube, MessageSquare, 
   Linkedin, Music, Plus, Play, Pause, Edit3, X, Download, 
   Share2, Code, ExternalLink, FileText, Table as TableIcon, 
-  CheckCircle2, Copy, Globe, MoreVertical, Sparkles
+  CheckCircle2, Copy, Globe, MoreVertical, Sparkles, CopyPlus
 } from "lucide-react";
-import { campaigns, getPlatformIcon, Campaign } from "@/data/campaigns";
-import { getOptimizationSuggestions, OptimizationSuggestion } from "@/services/geminiService";
+import { campaigns as initialCampaigns, getPlatformIcon, Campaign } from "@/data/campaigns";
+import { generateAdCreative, OptimizationSuggestion } from "@/services/geminiService";
+import { useToast } from "@/components/Toast";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export default function Campaigns() {
+  const [campaignsList, setCampaignsList] = useState<Campaign[]>(initialCampaigns);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState<number | null>(null);
   const [showOptimizeModal, setShowOptimizeModal] = useState<{ campaign: Campaign, suggestion: OptimizationSuggestion } | null>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
-  const [exportFormat, setExportFormat] = useState<'csv' | 'excel' | 'gdocs'>('csv');
+  const [exportFormat, setExportFormat] = useState<'csv' | 'pdf' | 'json'>('pdf');
   const [copied, setCopied] = useState(false);
+  const { addToast } = useToast();
 
   const toggleSelectAll = () => {
-    if (selectedIds.length === campaigns.length) {
+    if (selectedIds.length === campaignsList.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(campaigns.map(c => c.id));
+      setSelectedIds(campaignsList.map(c => c.id));
     }
   };
 
   const toggleSelect = (id: number) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const handleDuplicate = (campaign: Campaign) => {
+    const newCampaign = {
+      ...campaign,
+      id: Date.now(),
+      name: `${campaign.name} (Copy)`,
+      status: 'Draft' as const,
+      spendBtc: 0,
+      impressions: 0,
+      clicks: 0,
+      ctr: 0,
+      pacing: 0
+    };
+    setCampaignsList([newCampaign, ...campaignsList]);
+    addToast('Campaign duplicated successfully', 'success');
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    
+    // Header
+    doc.setFontSize(24);
+    doc.setTextColor(247, 147, 26); // Accent color
+    doc.text("Tadbuy", 14, 20);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text("https://tadbuy.giveabit.io", 14, 26);
+
+    doc.setFontSize(16);
+    doc.setTextColor(0);
+    doc.text("Campaign Performance Report", 14, 40);
+
+    const tableData = campaignsList
+      .filter(c => selectedIds.includes(c.id))
+      .map(c => [
+        c.name, 
+        c.platforms.join(', '), 
+        c.status, 
+        `${c.spendBtc.toFixed(4)} BTC`, 
+        c.impressions.toLocaleString(), 
+        c.clicks.toLocaleString()
+      ]);
+
+    autoTable(doc, {
+      startY: 45,
+      head: [['Campaign', 'Platforms', 'Status', 'Spend', 'Impressions', 'Clicks']],
+      body: tableData,
+      theme: 'grid',
+      headStyles: { fillColor: [247, 147, 26], textColor: [0, 0, 0] },
+      styles: { fontSize: 9 }
+    });
+
+    doc.save('tadbuy-campaigns-report.pdf');
+    addToast('PDF Exported Successfully', 'success');
+    setShowExportModal(false);
   };
 
   const handleCopyEmbed = (code: string) => {
@@ -42,7 +104,7 @@ export default function Campaigns() {
   const handleOptimize = async (campaign: Campaign) => {
     setIsOptimizing(true);
     try {
-      const suggestion = await getOptimizationSuggestions(campaign);
+      const suggestion = await generateAdCreative(campaign);
       setShowOptimizeModal({ campaign, suggestion });
     } catch (error) {
       console.error("Optimization failed:", error);
@@ -65,14 +127,14 @@ export default function Campaigns() {
           <Button variant="secondary" onClick={() => setShowExportModal(true)} disabled={selectedIds.length === 0} className="flex items-center gap-2">
             <Download className="w-4 h-4" /> Export Selected ({selectedIds.length})
           </Button>
-          <Button asChild>
-            <Link to="/" className="flex items-center gap-2"><Plus className="w-4 h-4" /> New campaign</Link>
-          </Button>
+          <Link to="/">
+            <Button className="flex items-center gap-2"><Plus className="w-4 h-4" /> New campaign</Button>
+          </Link>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card className="relative group hover:border-accent/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5 before:bg-green before:rounded-t-xl">
+        <Card className="glass-panel relative group hover:border-accent/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5 before:bg-green before:rounded-t-xl">
           <div className="flex items-center gap-1.5">
             <div className="text-[10px] text-muted uppercase tracking-widest font-bold">Total spend (BTC)</div>
             <InfoTooltip content="The total amount of Bitcoin spent across all your active and past ad campaigns." />
@@ -81,7 +143,7 @@ export default function Campaigns() {
           <div className="text-[11px] text-muted font-mono">₿ this month</div>
           <div className="text-[11px] font-bold text-green mt-2">↑ +12.4% vs last month</div>
         </Card>
-        <Card className="relative group hover:border-accent/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5 before:bg-blue before:rounded-t-xl">
+        <Card className="glass-panel relative group hover:border-accent/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5 before:bg-blue before:rounded-t-xl">
           <div className="flex items-center gap-1.5">
             <div className="text-[10px] text-muted uppercase tracking-widest font-bold">Total impressions</div>
             <InfoTooltip content="Total number of times your ads were displayed to users across all platforms." />
@@ -90,7 +152,7 @@ export default function Campaigns() {
           <div className="text-[11px] text-muted font-mono">across all platforms</div>
           <div className="text-[11px] font-bold text-green mt-2">↑ +8.1%</div>
         </Card>
-        <Card className="relative group hover:border-accent/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5 before:bg-accent before:rounded-t-xl">
+        <Card className="glass-panel relative group hover:border-accent/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5 before:bg-accent before:rounded-t-xl">
           <div className="flex items-center gap-1.5">
             <div className="text-[10px] text-muted uppercase tracking-widest font-bold">Total clicks</div>
             <InfoTooltip content="The number of times users clicked on your ads to visit your destination URL." />
@@ -99,7 +161,7 @@ export default function Campaigns() {
           <div className="text-[11px] text-muted font-mono">avg CPC: 0.000003 ₿</div>
           <div className="text-[11px] font-bold text-green mt-2">↑ +18.2%</div>
         </Card>
-        <Card className="relative group hover:border-accent/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5 before:bg-purple before:rounded-t-xl">
+        <Card className="glass-panel relative group hover:border-accent/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5 before:bg-purple before:rounded-t-xl">
           <div className="flex items-center gap-1.5">
             <div className="text-[10px] text-muted uppercase tracking-widest font-bold">Active campaigns</div>
             <InfoTooltip content="The number of ad campaigns currently running or scheduled to run." />
@@ -110,7 +172,7 @@ export default function Campaigns() {
         </Card>
       </div>
 
-      <Card className="p-0 overflow-hidden border-border/40 shadow-xl bg-surface/20 backdrop-blur-md">
+      <Card className="glass-panel p-0 overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-[13px] border-collapse">
             <thead>
@@ -119,7 +181,7 @@ export default function Campaigns() {
                   <input 
                     type="checkbox" 
                     className="w-4 h-4 rounded border-border bg-card accent-accent cursor-pointer"
-                    checked={selectedIds.length === campaigns.length}
+                    checked={selectedIds.length === campaignsList.length && campaignsList.length > 0}
                     onChange={toggleSelectAll}
                   />
                 </th>
@@ -175,7 +237,7 @@ export default function Campaigns() {
               </tr>
             </thead>
             <tbody>
-              {campaigns.map(c => (
+              {campaignsList.map(c => (
                 <tr key={c.id} className={cn(
                   "hover:bg-accent/5 transition-colors group border-b border-border/50",
                   selectedIds.includes(c.id) && "bg-accent/5"
@@ -207,7 +269,7 @@ export default function Campaigns() {
                       c.status === 'Paused' ? "bg-accent/15 text-accent" :
                       "bg-muted/15 text-muted"
                     )}>
-                      {c.status === 'Live' && <Play className="w-3 h-3" />}
+                      {c.status === 'Live' && <Play className="w-3 h-3 animate-pulse" />}
                       {c.status === 'Paused' && <Pause className="w-3 h-3" />}
                       {c.status === 'Draft' && <Edit3 className="w-3 h-3" />}
                       {c.status}
@@ -230,6 +292,15 @@ export default function Campaigns() {
                   </td>
                   <td className="p-4 text-right">
                     <div className="flex justify-end gap-2">
+                      <Button 
+                        variant="secondary" 
+                        size="sm" 
+                        className="h-8 w-8 p-0"
+                        onClick={() => handleDuplicate(c)}
+                        title="Duplicate Campaign"
+                      >
+                        <CopyPlus className="w-3.5 h-3.5" />
+                      </Button>
                       <Button 
                         variant="secondary" 
                         size="sm" 
@@ -307,8 +378,12 @@ export default function Campaigns() {
 
           <div className="space-y-3">
             <Button className="w-full" onClick={() => {
-              alert(`Exporting to ${exportFormat.toUpperCase()}...`);
-              setShowExportModal(false);
+              if (exportFormat === 'pdf') {
+                handleExportPDF();
+              } else {
+                addToast(`Exporting to ${exportFormat.toUpperCase()}...`, 'success');
+                setShowExportModal(false);
+              }
             }}>
               Confirm Export
             </Button>
@@ -324,7 +399,7 @@ export default function Campaigns() {
         {showShareModal && (
           <div className="p-6">
             <CardTitle>Share & Embed</CardTitle>
-            <p className="text-xs text-muted mb-6">Share real-time metrics for <strong>{campaigns.find(c => c.id === showShareModal)?.name}</strong>.</p>
+            <p className="text-xs text-muted mb-6">Share real-time metrics for <strong>{campaignsList.find(c => c.id === showShareModal)?.name}</strong>.</p>
             
             <div className="space-y-6">
               <div>

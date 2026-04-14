@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Twitter, Zap, ChevronDown, ChevronUp, Heart, Briefcase, ShieldAlert, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from './ui';
 
 const JOBS = [
-  { title: "Frontend Engineer (React/Vite)", desc: "Build the future of decentralized ad-tech." },
-  { title: "Lightning Protocol Dev", desc: "Scale our BOLT 12 and LN infrastructure." },
-  { title: "AI Ad-Ops Specialist", desc: "Train PPQ.AI models for better ad conversions." },
-  { title: "Nostr Integration Lead", desc: "Deepen our ties with the Nostr ecosystem." },
-  { title: "Growth Hacker", desc: "Scale Tadbuy to the next million users." }
+  { title: "Senior DevOps Engineer", desc: "Scale our containerized infrastructure on Cloud Run." },
+  { title: "Site Reliability Engineer (SRE)", desc: "Ensure 99.99% uptime for our Lightning nodes." },
+  { title: "Cloud Infrastructure Architect", desc: "Design secure, scalable multi-cloud deployments." },
+  { title: "DevOps Security Specialist", desc: "Harden our CI/CD pipelines and production environments." },
+  { title: "Platform Engineer", desc: "Build developer tools for our internal teams." },
+  { title: "Network Operations Engineer", desc: "Optimize Lightning Network routing and node performance." },
+  { title: "Automation Engineer", desc: "Automate infrastructure provisioning and monitoring." }
 ];
 
 export default function Footer() {
@@ -47,19 +50,19 @@ export default function Footer() {
             <div className="space-y-4">
               <h4 className="text-xs font-bold uppercase tracking-widest text-text">Platform</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-xs text-muted hover:text-accent transition-colors">Buy Ads</a></li>
-                <li><a href="#" className="text-xs text-muted hover:text-accent transition-colors">Campaigns</a></li>
-                <li><a href="#" className="text-xs text-muted hover:text-accent transition-colors">Metrics</a></li>
-                <li><a href="#" className="text-xs text-muted hover:text-accent transition-colors">Hubhash</a></li>
+                <li><Link to="/" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Buy Ads</Link></li>
+                <li><Link to="/campaigns" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Campaigns</Link></li>
+                <li><Link to="/metrics" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Metrics</Link></li>
+                <li><Link to="/hubhash" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Hubhash</Link></li>
               </ul>
             </div>
             <div className="space-y-4">
               <h4 className="text-xs font-bold uppercase tracking-widest text-text">Resources</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-xs text-muted hover:text-accent transition-colors">Documentation</a></li>
-                <li><a href="#" className="text-xs text-muted hover:text-accent transition-colors">API Reference</a></li>
-                <li><a href="#" className="text-xs text-muted hover:text-accent transition-colors">PPQ.AI Guide</a></li>
-                <li><a href="#" className="text-xs text-muted hover:text-accent transition-colors">BOLT 12 Info</a></li>
+                <li><Link to="/docs" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Documentation</Link></li>
+                <li><Link to="/api-docs" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">API Reference</Link></li>
+                <li><Link to="/ppq" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">PPQ.AI Guide</Link></li>
+                <li><Link to="/bolt12" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">BOLT 12 Info</Link></li>
               </ul>
             </div>
           </div>
@@ -93,7 +96,7 @@ export default function Footer() {
               ))}
             </div>
             {!showJobs && (
-              <p className="text-xs text-muted">We're hiring 5 open roles. Click to expand.</p>
+              <p className="text-xs text-muted">We're hiring 7 open roles. Click to expand.</p>
             )}
           </div>
         </div>
@@ -137,7 +140,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="text-center text-[10px] text-muted mt-8">Tadbuy v3.8</div>
+      <div className="text-center text-[10px] text-muted mt-8">Tadbuy v3.9</div>
     </footer>
   );
 }

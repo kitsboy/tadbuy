@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: campaigns
+    // Document ID: Auto-generated
+    // Fields:
+    //   - name: string (required, 1-100 chars)
+    //   - budgetSats: number (required, positive)
+    //   - status: string (required, enum: 'draft', 'live', 'paused', 'completed')
+    //   - createdAt: string (required, ISO 8601)
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isValidCampaign(data) {
+      return data.keys().hasAll(['name', 'budgetSats', 'status', 'createdAt']) &&
+             data.keys().hasOnly(['name', 'budgetSats', 'status', 'createdAt']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.budgetSats is number && data.budgetSats > 0 &&
+             data.status in ['draft', 'live', 'paused', 'completed'] &&
+             data.createdAt is string && data.createdAt.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z?$");
+    }
+
+    match /campaigns/{campaignId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidCampaign(request.resource.data);
+      allow update: if isAuthenticated() && isValidCampaign(request.resource.data) &&
+                       request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isAuthenticated();
+    }
+  }
+}

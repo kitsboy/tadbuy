@@ -1,0 +1,16 @@
+{
+  "name": "Tadbuy",
+  "short_name": "Tadbuy",
+  "description": "Bitcoin-native ad platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#f7931a",
+  "icons": [
+    {
+      "src": "https://camtaylor.ca/wp-content/uploads/2019/02/Bitcoin.svg.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

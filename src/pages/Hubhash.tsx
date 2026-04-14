@@ -59,17 +59,17 @@ export default function Hubhash() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className="bg-surface/50">
+        <Card className="glass-panel bg-surface/50">
           <Users className="w-6 h-6 text-blue mb-3" />
           <div className="font-bold mb-1">Community Funded</div>
           <div className="text-xs text-muted">Pool funds together using Lightning or ecash to run massive campaigns you couldn't afford alone.</div>
         </Card>
-        <Card className="bg-surface/50">
+        <Card className="glass-panel bg-surface/50">
           <Target className="w-6 h-6 text-accent mb-3" />
           <div className="font-bold mb-1">Threshold Triggers</div>
           <div className="text-xs text-muted">Campaigns only deploy when the target budget is reached, ensuring maximum impact.</div>
         </Card>
-        <Card className="bg-surface/50">
+        <Card className="glass-panel bg-surface/50">
           <ShieldCheck className="w-6 h-6 text-green mb-3" />
           <div className="font-bold mb-1">Provable Refunds</div>
           <div className="text-xs text-muted">If a campaign fails to reach its goal, funds are automatically routed back to the original senders.</div>
@@ -84,7 +84,7 @@ export default function Hubhash() {
           const isUnleashed = campaign.status === 'unleashed';
 
           return (
-            <Card key={campaign.id} className={cn("relative overflow-hidden transition-all hover:border-muted", isUnleashed ? "border-green/30 bg-green/5" : "")}>
+            <Card key={campaign.id} className={cn("glass-panel relative overflow-hidden transition-all hover:border-muted", isUnleashed ? "border-green/30 bg-green/5" : "")}>
               {isUnleashed && (
                 <div className="absolute top-4 right-4 bg-green/20 text-green text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5">
                   <Zap className="w-3 h-3" /> UNLEASHED

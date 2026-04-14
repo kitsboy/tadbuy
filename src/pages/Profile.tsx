@@ -5,7 +5,7 @@ export default function Profile() {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <h1 className="text-2xl font-extrabold tracking-tight">User Profile</h1>
-      <Card>
+      <Card className="glass-panel">
         <CardTitle>Bitcoin Wallet</CardTitle>
         <div className="space-y-4 mt-4">
           <div>
@@ -15,7 +15,7 @@ export default function Profile() {
           <Button>Save Address</Button>
         </div>
       </Card>
-      <Card>
+      <Card className="glass-panel">
         <CardTitle>Notifications</CardTitle>
         <div className="space-y-4 mt-4">
           <label className="flex items-center gap-2">

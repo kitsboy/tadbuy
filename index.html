@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tadbuy</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#f7931a">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -11,6 +13,11 @@
   <body>
     <div id="error-boundary" style="color: red; padding: 20px; font-family: monospace; white-space: pre-wrap;"></div>
     <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
       window.addEventListener('error', function(e) {
         document.getElementById('error-boundary').textContent += e.message + '\n' + e.error.stack + '\n\n';
       });

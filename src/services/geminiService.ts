@@ -12,13 +12,13 @@ export interface OptimizationSuggestion {
   reasoning: string;
 }
 
-export async function getOptimizationSuggestions(campaign: Campaign): Promise<OptimizationSuggestion> {
+export async function generateAdCreative(campaign: Campaign): Promise<OptimizationSuggestion> {
   const prompt = `
-    Analyze the following ad campaign and suggest improvements to increase CTR and performance.
+    Generate a new ad creative for the following campaign:
     Campaign Data: ${JSON.stringify(campaign)}
     
-    Provide suggestions for headline, description, background color (hue/lightness), and text color.
-    Also provide a brief reasoning for the suggestions.
+    Provide a compelling headline, description, and suggested design elements (bgHue, bgLightness, textColor).
+    Also provide a brief reasoning for the creative direction.
   `;
 
   const response = await ai.models.generateContent({
@@ -36,7 +36,7 @@ export async function getOptimizationSuggestions(campaign: Campaign): Promise<Op
           textColor: { type: Type.STRING },
           reasoning: { type: Type.STRING },
         },
-        required: ["reasoning"],
+        required: ["headline", "description", "reasoning"],
       },
     },
   });

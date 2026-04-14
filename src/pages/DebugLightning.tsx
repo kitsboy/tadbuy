@@ -25,7 +25,7 @@ export default function DebugLightning() {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <h1 className="text-2xl font-extrabold tracking-tight">Debug Lightning Connection</h1>
-      <Card className="p-6">
+      <Card className="glass-panel p-6">
         <button 
           onClick={testConnection}
           disabled={loading}
