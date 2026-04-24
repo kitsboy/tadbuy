@@ -20,6 +20,7 @@ import Documentation from './pages/Documentation';
 import ApiReference from './pages/ApiReference';
 import PpqGuide from './pages/PpqGuide';
 import Bolt12Info from './pages/Bolt12Info';
+import NotFound from './pages/NotFound';
 import Footer from './components/Footer';
 import CommandMenu from './components/CommandMenu';
 import LiveActivityWidget from './components/LiveActivityWidget';
@@ -141,13 +142,13 @@ function Header({ currency, setCurrency, rate }: { currency: string, setCurrency
   );
 }
 
-function MainContent({ currency, rates }: { currency: string, rates: any }) {
+function MainContent({ currency, setCurrency, rates }: { currency: string, setCurrency: (c: string) => void, rates: any }) {
   const location = useLocation();
   const isEmbed = location.pathname.startsWith('/embed');
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header currency={currency} setCurrency={() => {}} rate={rates[currency]} />
+      <Header currency={currency} setCurrency={setCurrency} rate={rates[currency]} />
       <main className={cn(
         "flex-1 relative z-10 w-full mx-auto",
         isEmbed ? "p-0 max-w-none" : "p-4 md:p-8 max-w-[1440px]"
@@ -171,6 +172,7 @@ function MainContent({ currency, rates }: { currency: string, rates: any }) {
           <Route path="/bolt12" element={<Bolt12Info />} />
           <Route path="/embed/metrics/:id" element={<MetricsEmbed />} />
           <Route path="/embed/ad/:id" element={<AdEmbed />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       {!isEmbed && <Footer />}
@@ -211,7 +213,7 @@ export default function App() {
         <ToastProvider>
           <CommandMenu />
           <LiveActivityWidget />
-          <MainContent currency={currency} rates={rates} />
+          <MainContent currency={currency} setCurrency={setCurrency} rates={rates} />
         </ToastProvider>
       </AuthProvider>
     </Router>

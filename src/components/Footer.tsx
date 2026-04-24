@@ -4,6 +4,7 @@ import { Twitter, Zap, ChevronDown, ChevronUp, Heart, Briefcase, ShieldAlert, Ma
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from './ui';
+import { BITCOIN_ADDRESS, BITCOIN_URI, APP_VERSION, TWITTER_HANDLE, SUPPORT_EMAIL } from '@/constants';
 
 const JOBS = [
   { title: "Senior DevOps Engineer", desc: "Scale our containerized infrastructure on Cloud Run." },
@@ -34,13 +35,13 @@ export default function Footer() {
               The decentralized ad-buying suite. Abstracting away the complexity of cross-platform marketing with Bitcoin, Lightning, and AI.
             </p>
             <div className="flex flex-col gap-3">
-              <a href="https://twitter.com/give_bit" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm text-muted hover:text-blue transition-colors group">
+              <a href={`https://twitter.com/${TWITTER_HANDLE.replace('@', '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm text-muted hover:text-blue transition-colors group">
                 <Twitter className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                @give_bit
+                {TWITTER_HANDLE}
               </a>
-              <a href="mailto:Kimi@giveabit.io" className="flex items-center gap-2 text-sm text-muted hover:text-purple transition-colors group">
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="flex items-center gap-2 text-sm text-muted hover:text-purple transition-colors group">
                 <Zap className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                Nostr: Kimi@giveabit.io
+                Nostr: {SUPPORT_EMAIL}
               </a>
             </div>
           </div>
@@ -131,16 +132,16 @@ export default function Footer() {
                 <div className="text-[10px] text-muted">Scan to send Bitcoin</div>
               </div>
               <div className="bg-white p-2 rounded-lg inline-block mb-3">
-                <QRCodeSVG value="bitcoin:bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad" size={120} />
+                <QRCodeSVG value={BITCOIN_URI} size={120} />
               </div>
               <div className="text-[9px] font-mono text-muted bg-surface p-2 rounded break-all text-center">
-                bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad
+                {BITCOIN_ADDRESS}
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="text-center text-[10px] text-muted mt-8">Tadbuy v3.9</div>
+      <div className="text-center text-[10px] text-muted mt-8">Tadbuy {APP_VERSION}</div>
     </footer>
   );
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, ChangeEvent } from "react";
+import { BITCOIN_ADDRESS, BITCOIN_URI } from "@/constants";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Card, CardTitle, Button, Input, Textarea, Select, Label, FormGroup, Modal, FileInput, InfoTooltip } from "@/components/ui";
@@ -258,7 +259,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   };
 
   const handleCopyInvoice = () => {
-    const textToCopy = paymentMethod === 'bolt12' ? bolt12Offer : (paymentMethod === 'lightning' ? bolt11Invoice : "bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad");
+    const textToCopy = paymentMethod === 'bolt12' ? bolt12Offer : (paymentMethod === 'lightning' ? bolt11Invoice : BITCOIN_ADDRESS);
     navigator.clipboard.writeText(textToCopy);
     setInvoiceCopied(true);
     setTimeout(() => setInvoiceCopied(false), 2000);
@@ -1432,7 +1433,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
                 
                 <div className="bg-white p-5 rounded-2xl inline-block mb-8 shadow-2xl relative group">
                   <QRCodeSVG 
-                    value={paymentMethod === 'zap' ? `nostr:npub1...` : (paymentMethod === 'bolt12' ? bolt12Offer : (paymentMethod === 'lightning' ? bolt11Invoice : `bitcoin:bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad?amount=${btcAmount.toFixed(8)}&message=${projectId}`))} 
+                    value={paymentMethod === 'zap' ? `nostr:npub1...` : (paymentMethod === 'bolt12' ? bolt12Offer : (paymentMethod === 'lightning' ? bolt11Invoice : `${BITCOIN_URI}?amount=${btcAmount.toFixed(8)}&message=${projectId}`))} 
                     size={220} 
                     level="H"
                     includeMargin={false}
@@ -1459,7 +1460,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
                 
                 <div className="relative mb-6">
                   <div className="bg-bg p-4 rounded-xl font-mono text-[10px] text-muted break-all border border-border text-left pr-12">
-                    {paymentMethod === 'bolt12' ? bolt12Offer : (paymentMethod === 'lightning' ? bolt11Invoice : "bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad")}
+                    {paymentMethod === 'bolt12' ? bolt12Offer : (paymentMethod === 'lightning' ? bolt11Invoice : BITCOIN_ADDRESS)}
                   </div>
                   <button 
                     onClick={handleCopyInvoice}

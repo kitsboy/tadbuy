@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BITCOIN_ADDRESS } from "@/constants";
 import { motion } from "motion/react";
 import { Card, CardTitle, Button, FormGroup, Label } from "@/components/ui";
 import { User, Key, Bell, Save, Wallet } from "lucide-react";
@@ -7,8 +8,8 @@ import { cn } from "@/lib/utils";
 export default function ProfileSettings() {
   const [notifications, setNotifications] = useState({ bids: true, campaigns: false, reports: true });
   const [wallets, setWallets] = useState([
-    { name: 'Main Ledger', address: 'bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad' },
-    { name: 'Savings', address: 'bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad' },
+    { name: 'Main Ledger', address: BITCOIN_ADDRESS },
+    { name: 'Savings', address: BITCOIN_ADDRESS },
   ]);
 
   const connectWallet = () => {

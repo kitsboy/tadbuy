@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { BITCOIN_ADDRESS } from "@/constants";
 import { motion } from "motion/react";
 import { Card, CardTitle, Button } from "@/components/ui";
 import { Monitor, TrendingUp, DollarSign, MousePointerClick, Zap } from "lucide-react";
@@ -91,7 +92,7 @@ export default function Dashboard() {
         <Card className="glass-panel">
           <CardTitle>Wallet Status</CardTitle>
           <div className="text-xl font-extrabold my-4 text-green">Connected</div>
-          <div className="text-[11px] text-muted font-mono truncate mb-4">bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad</div>
+          <div className="text-[11px] text-muted font-mono truncate mb-4">{BITCOIN_ADDRESS}</div>
           <Button variant="secondary" size="sm" className="w-full">Manage Profile</Button>
         </Card>
       </div>
