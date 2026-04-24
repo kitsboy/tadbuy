@@ -2,8 +2,10 @@ import { motion } from "motion/react";
 import { Code, Terminal, ExternalLink, Copy, CheckCircle2 } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui";
 import { useState } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export default function ApiReference() {
+  usePageTitle('API Reference');
   const [copied, setCopied] = useState<string | null>(null);
 
   const handleCopy = (text: string, id: string) => {

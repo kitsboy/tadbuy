@@ -1,8 +1,10 @@
 import { motion } from "motion/react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { BrainCircuit, Lock, Zap, ExternalLink, Activity } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui";
 
 export default function PpqGuide() {
+  usePageTitle('PPQ.AI Guide');
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto space-y-8">
       <div className="mb-12">

@@ -26,6 +26,9 @@ import CommandMenu from './components/CommandMenu';
 import LiveActivityWidget from './components/LiveActivityWidget';
 import { AuthProvider } from './components/AuthProvider';
 import { ToastProvider } from './components/Toast';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { useLocalStorage } from './hooks/useLocalStorage';
+import { LocalAvatar } from './components/LocalAvatar';
 
 const CURRENCY_SYMBOLS: Record<string, string> = { USD: '$', CAD: 'C$', EUR: '€', GBP: '£' };
 
@@ -110,7 +113,7 @@ function Header({ currency, setCurrency, rate }: { currency: string, setCurrency
         <div className="hidden md:block w-px h-4 bg-border" />
 
         <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=f7931a" alt="User Avatar" className="w-6 h-6 rounded-full border border-border bg-surface" referrerPolicy="no-referrer" />
+          <LocalAvatar seed="Felix Bitcoin" size={24} className="rounded-full border border-border" />
         </Link>
       </div>
 
@@ -181,11 +184,15 @@ function MainContent({ currency, setCurrency, rates }: { currency: string, setCu
 }
 
 export default function App() {
-  const [currency, setCurrency] = useState('USD');
+  const [currency, setCurrency] = useLocalStorage<string>('tadbuy_currency', 'USD');
   const [rates, setRates] = useState({ USD: 96420, CAD: 130500, EUR: 88200, GBP: 75600 });
 
   useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+
     const fetchRates = async () => {
+      // Pause polling when tab is hidden — saves network & CPU
+      if (document.hidden) return;
       try {
         const res = await fetch('https://blockchain.info/ticker');
         const data = await res.json();
@@ -198,24 +205,34 @@ export default function App() {
           });
         }
       } catch (e) {
-        console.error("Failed to fetch real-time BTC rates", e);
+        console.error('Failed to fetch real-time BTC rates', e);
       }
     };
 
     fetchRates();
-    const interval = setInterval(fetchRates, 30000); // Update every 30 seconds
-    return () => clearInterval(interval);
+    interval = setInterval(fetchRates, 30000);
+
+    // Re-fetch immediately when tab becomes visible again
+    const handleVisibility = () => { if (!document.hidden) fetchRates(); };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      if (interval) clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   return (
-    <Router>
-      <AuthProvider>
-        <ToastProvider>
-          <CommandMenu />
-          <LiveActivityWidget />
-          <MainContent currency={currency} setCurrency={setCurrency} rates={rates} />
-        </ToastProvider>
-      </AuthProvider>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <ToastProvider>
+            <CommandMenu />
+            <LiveActivityWidget />
+            <MainContent currency={currency} setCurrency={setCurrency} rates={rates} />
+          </ToastProvider>
+        </AuthProvider>
+      </Router>
+    </ErrorBoundary>
   );
 }

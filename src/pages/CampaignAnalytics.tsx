@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { motion } from "motion/react";
 import { Card, CardTitle } from "@/components/ui";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from "recharts";
@@ -14,6 +15,7 @@ const data = [
 ];
 
 export default function CampaignAnalytics() {
+  usePageTitle('Campaign Analytics');
   const [platform, setPlatform] = useState('all');
   const [dateRange, setDateRange] = useState('7d');
 

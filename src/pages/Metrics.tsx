@@ -5,6 +5,7 @@ import { Twitter, Facebook, Youtube, Zap, MessageSquare, Smartphone, Monitor, Ta
 import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const data = [
   { name: 'Mar 1', spend: 4000, sats: 120000 },
@@ -17,6 +18,7 @@ const data = [
 ];
 
 export default function Metrics() {
+  usePageTitle('Metrics & Analytics');
   const downloadPDF = () => {
     const doc = new jsPDF();
     doc.text("Ad Metrics Report", 10, 10);

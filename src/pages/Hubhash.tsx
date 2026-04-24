@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { Card, CardTitle, Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { Users, Target, Zap, ArrowRight, ShieldCheck } from "lucide-react";
@@ -40,6 +41,7 @@ const hubhashCampaigns = [
 ];
 
 export default function Hubhash() {
+  usePageTitle('Hubhash');
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-gradient-to-r from-accent/20 to-purple/20 p-8 rounded-2xl border border-accent/20">

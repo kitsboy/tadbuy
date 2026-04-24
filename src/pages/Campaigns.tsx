@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { motion, AnimatePresence } from "motion/react";
 import { Card, Button, Modal, CardTitle, FormGroup, Label, Select, InfoTooltip } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 export default function Campaigns() {
+  usePageTitle('Campaigns');
   const [campaignsList, setCampaignsList] = useState<Campaign[]>(initialCampaigns);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [showExportModal, setShowExportModal] = useState(false);

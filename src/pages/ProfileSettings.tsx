@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { BITCOIN_ADDRESS } from "@/constants";
 import { motion } from "motion/react";
 import { Card, CardTitle, Button, FormGroup, Label } from "@/components/ui";
@@ -6,6 +7,7 @@ import { User, Key, Bell, Save, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function ProfileSettings() {
+  usePageTitle('Settings');
   const [notifications, setNotifications] = useState({ bids: true, campaigns: false, reports: true });
   const [wallets, setWallets] = useState([
     { name: 'Main Ledger', address: BITCOIN_ADDRESS },

@@ -1,9 +1,11 @@
 import { motion } from "motion/react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { BookOpen, Zap, Shield, Network, ExternalLink, ArrowRight } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui";
 import { Link } from "react-router-dom";
 
 export default function Documentation() {
+  usePageTitle('Documentation');
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto space-y-8">
       <div className="mb-12">

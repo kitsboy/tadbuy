@@ -1,8 +1,10 @@
 import { motion } from "motion/react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { QrCode, RefreshCw, ShieldCheck, ExternalLink, Zap } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui";
 
 export default function Bolt12Info() {
+  usePageTitle('BOLT 12 Info');
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto space-y-8">
       <div className="mb-12">
