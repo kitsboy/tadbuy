@@ -10,7 +10,7 @@ export default function Profile() {
         <div className="space-y-4 mt-4">
           <div>
             <label className="block text-sm font-bold text-muted mb-1">Bitcoin Address</label>
-            <input type="text" className="w-full bg-surface border border-border rounded-lg p-2 font-mono text-sm" defaultValue="bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" />
+            <input type="text" className="w-full bg-surface border border-border rounded-lg p-2 font-mono text-sm" defaultValue="bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad" />
           </div>
           <Button>Save Address</Button>
         </div>

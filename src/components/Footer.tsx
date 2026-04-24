@@ -131,10 +131,10 @@ export default function Footer() {
                 <div className="text-[10px] text-muted">Scan to send Bitcoin</div>
               </div>
               <div className="bg-white p-2 rounded-lg inline-block mb-3">
-                <QRCodeSVG value="bitcoin:bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" size={120} />
+                <QRCodeSVG value="bitcoin:bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad" size={120} />
               </div>
               <div className="text-[9px] font-mono text-muted bg-surface p-2 rounded break-all text-center">
-                bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad
               </div>
             </div>
           </div>

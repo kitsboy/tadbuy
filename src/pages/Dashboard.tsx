@@ -91,7 +91,7 @@ export default function Dashboard() {
         <Card className="glass-panel">
           <CardTitle>Wallet Status</CardTitle>
           <div className="text-xl font-extrabold my-4 text-green">Connected</div>
-          <div className="text-[11px] text-muted font-mono truncate mb-4">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</div>
+          <div className="text-[11px] text-muted font-mono truncate mb-4">bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad</div>
           <Button variant="secondary" size="sm" className="w-full">Manage Profile</Button>
         </Card>
       </div>
