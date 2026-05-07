@@ -111,7 +111,7 @@ export default function LiveActivityWidget() {
         {/* Tap bar */}
         <button
           onClick={() => setMobileExpanded(v => !v)}
-          className="w-full flex items-center justify-between px-5 py-3 bg-[#18181b]/90 backdrop-blur-xl border-t border-white/10 shadow-2xl"
+          className="w-full flex items-center justify-between px-5 py-3 bg-[#18181b]/90 backdrop-blur-sm border-t border-white/10 shadow-2xl"
         >
           <div className="flex items-center gap-2 text-xs font-bold text-accent">
             <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />

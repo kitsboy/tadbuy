@@ -428,7 +428,7 @@ export default function Campaigns() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-card border border-accent/30 rounded-2xl px-6 py-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-8 backdrop-blur-xl"
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-card border border-accent/30 rounded-2xl px-6 py-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-8 backdrop-blur-sm"
           >
             <div className="flex items-center gap-3">
               <div className="bg-accent text-black w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">

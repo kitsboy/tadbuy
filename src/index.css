@@ -24,19 +24,47 @@
 @layer base {
   body {
     @apply bg-bg text-text font-sans antialiased min-h-screen selection:bg-accent/30 selection:text-accent;
-    background-image: 
+    /* fixed attachment broken on iOS — use scroll instead */
+    background-image:
       radial-gradient(circle at 15% 50%, rgba(255, 159, 28, 0.08), transparent 25%),
       radial-gradient(circle at 85% 30%, rgba(192, 132, 252, 0.08), transparent 25%);
-    background-attachment: fixed;
+    background-attachment: scroll;
+  }
+
+  /* Force GPU compositing layer so backdrop-filter doesn't bleed into content */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
 @layer utilities {
   .glass-header {
-    @apply bg-[#18181b]/70 backdrop-blur-xl border-b border-white/5 shadow-sm;
+    /* Solid fallback first, blur only where supported without bleed */
+    background-color: rgba(24, 24, 27, 0.92);
+    @apply border-b border-white/5 shadow-sm;
+    /* Only apply backdrop-blur if the browser supports it properly */
+    @supports (backdrop-filter: blur(1px)) {
+      background-color: rgba(24, 24, 27, 0.75);
+      backdrop-filter: blur(16px) saturate(1.2);
+      -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    }
+    /* Isolate this element so blur doesn't propagate to children */
+    isolation: isolate;
+    transform: translateZ(0);
+    will-change: transform;
   }
+
   .glass-panel {
-    @apply bg-surface/60 backdrop-blur-md border border-white/10 shadow-xl;
+    /* Solid fallback — no blur */
+    background-color: rgba(39, 39, 42, 0.95);
+    @apply border border-white/10 shadow-xl;
+    @supports (backdrop-filter: blur(1px)) {
+      background-color: rgba(39, 39, 42, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    isolation: isolate;
   }
 }
 

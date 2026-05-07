@@ -344,7 +344,7 @@ function SlotCard({ slot, onBid }: { slot: InventorySlot; onBid: (slot: Inventor
           ? "shadow-[0_0_0_1.5px_rgba(255,159,28,0.6),0_0_30px_rgba(255,159,28,0.15)] animate-[hotpulse_2s_ease-in-out_infinite]"
           : "border border-white/10 hover:border-accent/40 hover:shadow-[0_0_28px_rgba(255,159,28,0.1)]"
         }
-        bg-surface/60 backdrop-blur-md shadow-xl
+        bg-surface/60 backdrop-blur-sm shadow-xl
       `}
     >
       {/* Hot glow overlay */}
