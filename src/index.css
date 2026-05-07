@@ -1,4 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+/* ── Self-hosted fonts (no Google Fonts dependency) ─────────────────────── */
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/inter/800.css";
+@import "@fontsource/inter/900.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/700.css";
+
 @import "tailwindcss";
 
 @theme {
@@ -24,47 +34,21 @@
 @layer base {
   body {
     @apply bg-bg text-text font-sans antialiased min-h-screen selection:bg-accent/30 selection:text-accent;
-    /* fixed attachment broken on iOS — use scroll instead */
     background-image:
-      radial-gradient(circle at 15% 50%, rgba(255, 159, 28, 0.08), transparent 25%),
-      radial-gradient(circle at 85% 30%, rgba(192, 132, 252, 0.08), transparent 25%);
-    background-attachment: scroll;
-  }
-
-  /* Force GPU compositing layer so backdrop-filter doesn't bleed into content */
-  * {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+      radial-gradient(circle at 15% 50%, rgba(255, 159, 28, 0.06), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(192, 132, 252, 0.06), transparent 25%);
   }
 }
 
 @layer utilities {
+  /* No backdrop-blur — fully opaque, crisp, no render issues */
   .glass-header {
-    /* Solid fallback first, blur only where supported without bleed */
-    background-color: rgba(24, 24, 27, 0.92);
-    @apply border-b border-white/5 shadow-sm;
-    /* Only apply backdrop-blur if the browser supports it properly */
-    @supports (backdrop-filter: blur(1px)) {
-      background-color: rgba(24, 24, 27, 0.75);
-      backdrop-filter: blur(16px) saturate(1.2);
-      -webkit-backdrop-filter: blur(16px) saturate(1.2);
-    }
-    /* Isolate this element so blur doesn't propagate to children */
-    isolation: isolate;
-    transform: translateZ(0);
-    will-change: transform;
+    background-color: #18181b;
+    @apply border-b border-white/8 shadow-sm;
   }
 
   .glass-panel {
-    /* Solid fallback — no blur */
-    background-color: rgba(39, 39, 42, 0.95);
-    @apply border border-white/10 shadow-xl;
-    @supports (backdrop-filter: blur(1px)) {
-      background-color: rgba(39, 39, 42, 0.75);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-    isolation: isolate;
+    background-color: #27272a;
+    @apply border border-white/10 shadow-lg;
   }
 }
-

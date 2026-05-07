@@ -192,7 +192,7 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
 
       {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <div className="absolute top-12 left-0 right-0 bg-card/95 backdrop-blur-sm border-b border-border shadow-2xl p-3 flex flex-col gap-1 lg:hidden z-50">
+        <div className="absolute top-12 left-0 right-0 bg-card border-b border-border shadow-2xl p-3 flex flex-col gap-1 lg:hidden z-50">
           {navLinks.map((tab) => (
             <NavLink
               key={tab.name}

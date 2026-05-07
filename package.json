@@ -12,6 +12,8 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
     "@google/genai": "^1.29.0",
     "@sentry/node": "^10.48.0",
     "@sentry/react": "^10.48.0",
@@ -28,6 +30,7 @@
     "express-session": "^1.19.0",
     "firebase": "^12.12.0",
     "firebase-admin": "^13.8.0",
+    "i18next": "^23.0.0",
     "joi": "^18.0.2",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
@@ -35,7 +38,6 @@
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
     "qrcode.react": "^4.2.0",
-    "i18next": "^23.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^14.0.0",

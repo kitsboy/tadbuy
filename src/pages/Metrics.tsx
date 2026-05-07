@@ -114,7 +114,7 @@ export default function Metrics() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <Card className="glass-panel border-border/40 bg-surface/10 backdrop-blur-sm">
+        <Card className="glass-panel border-border/40 bg-surface/10">
           <CardTitle className="flex items-center">
             Spend breakdown — multi-currency
             <InfoTooltip content="Real-time conversion of your ad spend across multiple global currencies and Bitcoin." />
@@ -138,7 +138,7 @@ export default function Metrics() {
           </div>
         </Card>
 
-        <Card className="glass-panel border-border/40 bg-surface/10 backdrop-blur-sm">
+        <Card className="glass-panel border-border/40 bg-surface/10">
           <CardTitle className="flex items-center">
             Performance by platform
             <InfoTooltip content="How your ads are performing across different social networks and protocols." />

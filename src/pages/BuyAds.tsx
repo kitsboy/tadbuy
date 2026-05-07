@@ -519,7 +519,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-bg/90 backdrop-blur-sm overflow-hidden"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-bg overflow-hidden"
           >
             {/* CSS confetti burst */}
             <style>{`
