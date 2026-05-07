@@ -228,9 +228,11 @@ export default function Dashboard() {
             {BITCOIN_ADDRESS}
           </div>
           <p className="text-[10px] text-muted mb-4">On-chain · Mainnet</p>
-          <Button variant="secondary" size="sm" className="w-full">
-            <Zap className="w-3.5 h-3.5 mr-2" /> Manage Profile
-          </Button>
+          <Link to="/settings" className="w-full">
+            <Button variant="secondary" size="sm" className="w-full">
+              <Zap className="w-3.5 h-3.5 mr-2" /> Manage Profile
+            </Button>
+          </Link>
         </Card>
       </div>
       {/* ── Recent Transactions ── */}

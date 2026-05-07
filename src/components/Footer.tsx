@@ -39,9 +39,9 @@ export default function Footer() {
                 <Twitter className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 {TWITTER_HANDLE}
               </a>
-              <a href={`mailto:${SUPPORT_EMAIL}`} className="flex items-center gap-2 text-sm text-muted hover:text-purple transition-colors group">
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors group">
                 <Zap className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                Nostr: {SUPPORT_EMAIL}
+                Email: {SUPPORT_EMAIL}
               </a>
             </div>
           </div>

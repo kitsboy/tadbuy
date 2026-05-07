@@ -21,7 +21,7 @@ export default function Campaigns() {
   const [campaignsList, setCampaignsList] = useState<Campaign[]>(initialCampaigns);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showExportModal, setShowExportModal] = useState(false);
-  const [showShareModal, setShowShareModal] = useState<number | null>(null);
+  const [showShareModal, setShowShareModal] = useState<string | null>(null);
   const [showOptimizeModal, setShowOptimizeModal] = useState<{ campaign: Campaign, suggestion: OptimizationSuggestion } | null>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [exportFormat, setExportFormat] = useState<'csv' | 'excel' | 'gdocs'>('csv');
@@ -400,13 +400,17 @@ export default function Campaigns() {
                         <Share2 className="w-3.5 h-3.5" />
                       </Button>
                       {c.status !== 'draft' ? (
-                        <Button size="sm" className="text-[10px] px-3 h-8 bg-accent/10 text-accent border border-accent/30 hover:bg-accent hover:text-black shadow-none">
-                          ⚡ Top Up
-                        </Button>
+                        <Link to="/wallet">
+                          <Button size="sm" className="text-[10px] px-3 h-8 bg-accent/10 text-accent border border-accent/30 hover:bg-accent hover:text-black shadow-none">
+                            ⚡ Top Up
+                          </Button>
+                        </Link>
                       ) : (
-                        <Button variant="secondary" size="sm" className="text-[10px] px-3 h-8">
-                          Edit
-                        </Button>
+                        <Link to="/">
+                          <Button variant="secondary" size="sm" className="text-[10px] px-3 h-8">
+                            Edit
+                          </Button>
+                        </Link>
                       )}
                     </div>
                   </td>
@@ -461,6 +465,7 @@ export default function Campaigns() {
             <Button className="w-full" onClick={() => {
               if (exportFormat === 'gdocs') {
                 addToast('Google Sheets export coming soon', 'success');
+                setShowExportModal(false);
               } else {
                 addToast(`Exporting to ${exportFormat.toUpperCase()}...`, 'success');
                 setShowExportModal(false);
@@ -486,9 +491,9 @@ export default function Campaigns() {
               <div>
                 <Label>Social Share</Label>
                 <div className="flex gap-2 mt-2">
-                  <Button variant="secondary" size="sm" className="flex-1 gap-2"><Twitter className="w-4 h-4" /> X</Button>
-                  <Button variant="secondary" size="sm" className="flex-1 gap-2"><Linkedin className="w-4 h-4" /> LinkedIn</Button>
-                  <Button variant="secondary" size="sm" className="flex-1 gap-2"><Zap className="w-4 h-4" /> Nostr</Button>
+                  <Button variant="secondary" size="sm" className="flex-1 gap-2" onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out my campaign on Tadbuy — Bitcoin-native advertising! https://tadbuy.giveabit.io`)}`, '_blank')}><Twitter className="w-4 h-4" /> X</Button>
+                  <Button variant="secondary" size="sm" className="flex-1 gap-2" onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://tadbuy.giveabit.io')}`, '_blank')}><Linkedin className="w-4 h-4" /> LinkedIn</Button>
+                  <Button variant="secondary" size="sm" className="flex-1 gap-2" onClick={() => window.open(`https://njump.me/`, '_blank')}><Zap className="w-4 h-4" /> Nostr</Button>
                 </div>
               </div>
 
