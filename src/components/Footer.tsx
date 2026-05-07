@@ -44,6 +44,23 @@ export default function Footer() {
                 Email: {SUPPORT_EMAIL}
               </a>
             </div>
+
+            {/* GiveaBit parent company — subtle credit below socials */}
+            <a
+              href="https://giveabit.io"
+              target="_blank"
+              rel="noreferrer"
+              title="GiveaBit — Bitcoin tools for the people"
+              className="flex items-center gap-2 mt-6 opacity-30 hover:opacity-70 transition-opacity duration-300 w-fit"
+            >
+              <span className="text-[9px] text-muted font-mono tracking-wide">made by</span>
+              <img
+                src="/giveabit.png"
+                alt="GiveaBit"
+                className="h-4 w-auto object-contain"
+                style={{ filter: 'grayscale(20%) brightness(1.1)' }}
+              />
+            </a>
           </div>
 
           {/* Links Column 1 */}
@@ -153,28 +170,8 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      {/* Bottom bar: copyright + GiveaBit credit side by side */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-8 px-2">
-        <div className="text-[10px] text-muted">
-          © 2026 GiveaBit Inc. · Tadbuy {APP_VERSION} · Bitcoin-native advertising, paid in sats.
-        </div>
-
-        {/* Subtle GiveaBit parent company credit */}
-        <a
-          href="https://giveabit.io"
-          target="_blank"
-          rel="noreferrer"
-          title="GiveaBit — Bitcoin tools for the people"
-          className="flex items-center gap-1.5 opacity-30 hover:opacity-70 transition-opacity duration-300 group"
-        >
-          <span className="text-[9px] text-muted font-mono tracking-wide">made by</span>
-          <img
-            src="/giveabit.png"
-            alt="GiveaBit"
-            className="h-4 w-auto object-contain"
-            style={{ filter: 'grayscale(20%) brightness(1.1)' }}
-          />
-        </a>
+      <div className="text-center text-[10px] text-muted mt-8">
+        © 2026 GiveaBit Inc. · Tadbuy {APP_VERSION} · Bitcoin-native advertising, paid in sats.
       </div>
     </footer>
   );
