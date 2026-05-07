@@ -121,13 +121,7 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
         >
           {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
         </button>
-        <svg viewBox="0 0 24 24" className="w-6 h-6 flex-shrink-0" aria-label="Bitcoin">
-          <circle cx="12" cy="12" r="12" fill="#ff9f1c" />
-          <path
-            fill="#000"
-            d="M15.6 10.4c.3-.9-.5-1.4-1.4-1.7l.3-1.2-0.7-.2-.3 1.2-.6-.1.3-1.2-.7-.2-.3 1.2-1.5-.4-.2.8s.5.1.5.2c.3.1.3.3.3.4l-.7 2.9c0 .1-.1.3-.4.2 0 0-.5-.1-.5-.1l-.3.8 1.4.4-.3 1.2.7.2.3-1.2.6.1-.3 1.2.7.2.3-1.2c1.3.2 2.3.1 2.7-1 .3-.9 0-1.4-.7-1.8.5-.1.9-.5 1-.9zm-1.8 2.5c-.2.9-1.7.4-2.2.3l.4-1.6c.5.1 2.1.4 1.8 1.3zm.3-2.5c-.2.8-1.5.4-1.9.3l.4-1.5c.4.1 1.7.3 1.5 1.2z"
-          />
-        </svg>
+        <img src="/favicon.png" alt="Tadbuy" className="w-7 h-7 flex-shrink-0 object-contain" />
         <div className="hidden sm:block">
           <div className="leading-none tracking-tight text-text">Tadbuy</div>
           <div className="text-[9px] text-muted font-normal font-mono -mt-0.5">by giveabit.io</div>

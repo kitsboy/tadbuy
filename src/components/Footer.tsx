@@ -28,7 +28,7 @@ export default function Footer() {
           {/* Brand & Socials */}
           <div className="col-span-1">
             <div className="flex items-center gap-3 text-[22px] font-extrabold tracking-tight mb-4">
-              <img src="https://camtaylor.ca/wp-content/uploads/2019/02/Bitcoin.svg.png" alt="Bitcoin" className="w-6 h-6 object-contain" referrerPolicy="no-referrer" />
+              <img src="/favicon.png" alt="Tadbuy" className="w-7 h-7 object-contain" />
               <div className="leading-none tracking-tight">Tadbuy</div>
             </div>
             <p className="text-xs text-muted mb-6 leading-relaxed max-w-md">
@@ -155,6 +155,24 @@ export default function Footer() {
       </div>
       <div className="text-center text-[10px] text-muted mt-8">
         © 2026 GiveaBit Inc. · Tadbuy {APP_VERSION} · Bitcoin-native advertising, paid in sats.
+      </div>
+
+      {/* GiveaBit parent company credit — subtle, bottom-right */}
+      <div className="absolute bottom-4 right-6 flex items-center gap-2 opacity-30 hover:opacity-60 transition-opacity duration-300">
+        <span className="text-[9px] text-muted font-mono tracking-wide">made by</span>
+        <a
+          href="https://giveabit.io"
+          target="_blank"
+          rel="noreferrer"
+          title="GiveaBit — Bitcoin tools for the people"
+        >
+          <img
+            src="/giveabit.png"
+            alt="GiveaBit"
+            className="h-5 w-auto object-contain"
+            style={{ filter: 'grayscale(30%)' }}
+          />
+        </a>
       </div>
     </footer>
   );
