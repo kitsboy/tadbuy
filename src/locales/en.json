@@ -1,0 +1,87 @@
+{
+  "nav": {
+    "buyAds": "Buy Ads",
+    "marketplace": "Marketplace",
+    "campaigns": "Campaigns",
+    "metrics": "Metrics",
+    "publisher": "Publisher",
+    "dashboard": "Dashboard",
+    "hubhash": "Hubhash",
+    "wallet": "Wallet",
+    "settings": "Settings",
+    "search": "Search"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "submit": "Submit",
+    "close": "Close",
+    "learnMore": "Learn more",
+    "viewAll": "View all",
+    "status": {
+      "live": "Live",
+      "paused": "Paused",
+      "draft": "Draft",
+      "completed": "Completed"
+    }
+  },
+  "buyAds": {
+    "title": "Launch a Bitcoin Ad",
+    "subtitle": "Pay in sats. Reach the Bitcoin and Web3 audience globally.",
+    "budget": "Budget",
+    "targeting": "Targeting",
+    "creative": "Creative",
+    "payment": "Payment",
+    "deploy": "Deploy Campaign",
+    "deploying": "Deploying...",
+    "success": "Campaign deployed!"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "balance": "Balance",
+    "deposit": "Deposit",
+    "withdraw": "Withdraw",
+    "invoiceExpiry": "Invoice expires in 1 hour",
+    "history": "Transaction History"
+  },
+  "campaigns": {
+    "title": "My Campaigns",
+    "newCampaign": "New Campaign",
+    "export": "Export",
+    "totalSpend": "Total Spend",
+    "totalImpressions": "Total Impressions",
+    "totalClicks": "Total Clicks",
+    "activeCampaigns": "Active Campaigns"
+  },
+  "marketplace": {
+    "title": "Ad Marketplace",
+    "subtitle": "Browse and bid on premium ad placements",
+    "bidNow": "Bid Now",
+    "viewDetails": "View Details",
+    "filters": "Filters",
+    "sortBy": "Sort by"
+  },
+  "footer": {
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookie Policy",
+    "contact": "Contact",
+    "madeWith": "Made with ₿ by"
+  },
+  "legal": {
+    "terms": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last updated"
+    },
+    "privacy": {
+      "title": "Privacy Policy"
+    },
+    "cookies": {
+      "title": "Cookie Policy"
+    }
+  }
+}

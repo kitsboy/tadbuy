@@ -1,0 +1,10 @@
+{
+  "nav": { "buyAds": "Acheter des Annonces", "marketplace": "Marché", "campaigns": "Campagnes", "metrics": "Métriques", "publisher": "Éditeur", "dashboard": "Tableau de bord", "hubhash": "Hubhash", "wallet": "Portefeuille", "settings": "Paramètres", "search": "Rechercher" },
+  "common": { "save": "Enregistrer", "cancel": "Annuler", "confirm": "Confirmer", "loading": "Chargement...", "error": "Erreur", "success": "Succès", "submit": "Soumettre", "close": "Fermer", "learnMore": "En savoir plus", "viewAll": "Tout voir", "status": { "live": "Actif", "paused": "Pausé", "draft": "Brouillon", "completed": "Terminé" } },
+  "buyAds": { "title": "Lancer une Annonce Bitcoin", "subtitle": "Payez en sats. Atteignez l'audience Bitcoin et Web3 mondialement.", "budget": "Budget", "targeting": "Ciblage", "creative": "Créatif", "payment": "Paiement", "deploy": "Lancer la Campagne", "deploying": "Lancement...", "success": "Campagne lancée !" },
+  "wallet": { "title": "Portefeuille", "balance": "Solde", "deposit": "Déposer", "withdraw": "Retirer", "invoiceExpiry": "La facture expire dans 1 heure", "history": "Historique des Transactions" },
+  "campaigns": { "title": "Mes Campagnes", "newCampaign": "Nouvelle Campagne", "export": "Exporter", "totalSpend": "Dépenses Totales", "totalImpressions": "Impressions Totales", "totalClicks": "Clics Totaux", "activeCampaigns": "Campagnes Actives" },
+  "marketplace": { "title": "Marché Publicitaire", "subtitle": "Parcourez et enchérissez sur des emplacements publicitaires premium", "bidNow": "Enchérir Maintenant", "viewDetails": "Voir les Détails", "filters": "Filtres", "sortBy": "Trier par" },
+  "footer": { "terms": "Conditions d'Utilisation", "privacy": "Politique de Confidentialité", "cookies": "Politique de Cookies", "contact": "Contact", "madeWith": "Fait avec ₿ par" },
+  "legal": { "terms": { "title": "Conditions d'Utilisation", "lastUpdated": "Dernière mise à jour" }, "privacy": { "title": "Politique de Confidentialité" }, "cookies": { "title": "Politique de Cookies" } }
+}

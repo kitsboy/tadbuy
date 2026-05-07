@@ -1,0 +1,10 @@
+{
+  "nav": { "buyAds": "広告を購入", "marketplace": "マーケット", "campaigns": "キャンペーン", "metrics": "指標", "publisher": "パブリッシャー", "dashboard": "ダッシュボード", "hubhash": "ハブハッシュ", "wallet": "ウォレット", "settings": "設定", "search": "検索" },
+  "common": { "save": "保存", "cancel": "キャンセル", "confirm": "確認", "loading": "読み込み中...", "error": "エラー", "success": "成功", "submit": "送信", "close": "閉じる", "learnMore": "詳しく見る", "viewAll": "すべて見る", "status": { "live": "ライブ", "paused": "一時停止", "draft": "下書き", "completed": "完了" } },
+  "buyAds": { "title": "ビットコイン広告を出稿", "subtitle": "サトシで支払い。ビットコインとWeb3のオーディエンスにグローバルにリーチ。", "budget": "予算", "targeting": "ターゲティング", "creative": "クリエイティブ", "payment": "支払い", "deploy": "キャンペーン開始", "deploying": "開始中...", "success": "キャンペーン開始！" },
+  "wallet": { "title": "ウォレット", "balance": "残高", "deposit": "入金", "withdraw": "出金", "invoiceExpiry": "請求書は1時間で期限切れ", "history": "取引履歴" },
+  "campaigns": { "title": "マイキャンペーン", "newCampaign": "新しいキャンペーン", "export": "エクスポート", "totalSpend": "合計支出", "totalImpressions": "合計インプレッション", "totalClicks": "合計クリック", "activeCampaigns": "アクティブキャンペーン" },
+  "marketplace": { "title": "広告マーケットプレイス", "subtitle": "プレミアム広告枠を閲覧して入札", "bidNow": "今すぐ入札", "viewDetails": "詳細を見る", "filters": "フィルター", "sortBy": "並べ替え" },
+  "footer": { "terms": "利用規約", "privacy": "プライバシーポリシー", "cookies": "Cookieポリシー", "contact": "お問い合わせ", "madeWith": "₿で作られました" },
+  "legal": { "terms": { "title": "利用規約", "lastUpdated": "最終更新" }, "privacy": { "title": "プライバシーポリシー" }, "cookies": { "title": "Cookieポリシー" } }
+}

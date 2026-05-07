@@ -1,0 +1,10 @@
+{
+  "nav": { "buyAds": "Comprar Anúncios", "marketplace": "Mercado", "campaigns": "Campanhas", "metrics": "Métricas", "publisher": "Editor", "dashboard": "Painel", "hubhash": "Hubhash", "wallet": "Carteira", "settings": "Configurações", "search": "Pesquisar" },
+  "common": { "save": "Salvar", "cancel": "Cancelar", "confirm": "Confirmar", "loading": "Carregando...", "error": "Erro", "success": "Sucesso", "submit": "Enviar", "close": "Fechar", "learnMore": "Saiba mais", "viewAll": "Ver tudo", "status": { "live": "Ativo", "paused": "Pausado", "draft": "Rascunho", "completed": "Concluído" } },
+  "buyAds": { "title": "Lançar um Anúncio Bitcoin", "subtitle": "Pague em sats. Alcance o público Bitcoin e Web3 globalmente.", "budget": "Orçamento", "targeting": "Segmentação", "creative": "Criativo", "payment": "Pagamento", "deploy": "Lançar Campanha", "deploying": "Lançando...", "success": "Campanha lançada!" },
+  "wallet": { "title": "Carteira", "balance": "Saldo", "deposit": "Depositar", "withdraw": "Sacar", "invoiceExpiry": "Fatura expira em 1 hora", "history": "Histórico de Transações" },
+  "campaigns": { "title": "Minhas Campanhas", "newCampaign": "Nova Campanha", "export": "Exportar", "totalSpend": "Gasto Total", "totalImpressions": "Total de Impressões", "totalClicks": "Total de Cliques", "activeCampaigns": "Campanhas Ativas" },
+  "marketplace": { "title": "Mercado de Anúncios", "subtitle": "Navegue e lance propostas em espaços publicitários premium", "bidNow": "Fazer Lance", "viewDetails": "Ver Detalhes", "filters": "Filtros", "sortBy": "Ordenar por" },
+  "footer": { "terms": "Termos de Serviço", "privacy": "Política de Privacidade", "cookies": "Política de Cookies", "contact": "Contato", "madeWith": "Feito com ₿ por" },
+  "legal": { "terms": { "title": "Termos de Serviço", "lastUpdated": "Última atualização" }, "privacy": { "title": "Política de Privacidade" }, "cookies": { "title": "Política de Cookies" } }
+}

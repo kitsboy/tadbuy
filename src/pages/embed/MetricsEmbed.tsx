@@ -15,7 +15,7 @@ const data = [
 
 export default function MetricsEmbed() {
   const { id } = useParams();
-  const campaign = campaigns.find(c => c.id === Number(id));
+  const campaign = campaigns.find(c => c.id === id);
 
   if (!campaign) return <div className="p-4 text-red">Campaign not found</div>;
 

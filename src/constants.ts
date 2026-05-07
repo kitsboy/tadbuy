@@ -4,7 +4,7 @@
 export const APP_VERSION = "v4.0.0-ELITE";
 
 export const BITCOIN_ADDRESS =
-  "bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad";
+  "bc1p5d7rjq7g6rdk2yhzks9smlaqtedr4dekq08ge8ztwac72sfr9rusxg3297";
 
 export const BITCOIN_URI = `bitcoin:${BITCOIN_ADDRESS}`;
 

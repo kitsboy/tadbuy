@@ -1,0 +1,10 @@
+{
+  "nav": { "buyAds": "Werbung kaufen", "marketplace": "Marktplatz", "campaigns": "Kampagnen", "metrics": "Metriken", "publisher": "Publisher", "dashboard": "Dashboard", "hubhash": "Hubhash", "wallet": "Geldbörse", "settings": "Einstellungen", "search": "Suchen" },
+  "common": { "save": "Speichern", "cancel": "Abbrechen", "confirm": "Bestätigen", "loading": "Wird geladen...", "error": "Fehler", "success": "Erfolg", "submit": "Absenden", "close": "Schließen", "learnMore": "Mehr erfahren", "viewAll": "Alle anzeigen", "status": { "live": "Aktiv", "paused": "Pausiert", "draft": "Entwurf", "completed": "Abgeschlossen" } },
+  "buyAds": { "title": "Bitcoin-Werbung schalten", "subtitle": "Zahle in Sats. Erreiche die Bitcoin und Web3-Zielgruppe weltweit.", "budget": "Budget", "targeting": "Targeting", "creative": "Kreativ", "payment": "Zahlung", "deploy": "Kampagne starten", "deploying": "Wird gestartet...", "success": "Kampagne gestartet!" },
+  "wallet": { "title": "Geldbörse", "balance": "Guthaben", "deposit": "Einzahlen", "withdraw": "Abheben", "invoiceExpiry": "Rechnung läuft in 1 Stunde ab", "history": "Transaktionsverlauf" },
+  "campaigns": { "title": "Meine Kampagnen", "newCampaign": "Neue Kampagne", "export": "Exportieren", "totalSpend": "Gesamtausgaben", "totalImpressions": "Gesamtimpressionen", "totalClicks": "Gesamtklicks", "activeCampaigns": "Aktive Kampagnen" },
+  "marketplace": { "title": "Werbemarktplatz", "subtitle": "Durchsuchen und bieten Sie auf Premium-Werbeplätze", "bidNow": "Jetzt bieten", "viewDetails": "Details anzeigen", "filters": "Filter", "sortBy": "Sortieren nach" },
+  "footer": { "terms": "Nutzungsbedingungen", "privacy": "Datenschutzrichtlinie", "cookies": "Cookie-Richtlinie", "contact": "Kontakt", "madeWith": "Gemacht mit ₿ von" },
+  "legal": { "terms": { "title": "Nutzungsbedingungen", "lastUpdated": "Zuletzt aktualisiert" }, "privacy": { "title": "Datenschutzrichtlinie" }, "cookies": { "title": "Cookie-Richtlinie" } }
+}

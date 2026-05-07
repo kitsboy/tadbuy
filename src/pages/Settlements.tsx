@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import { Card, CardTitle } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -72,7 +72,7 @@ export default function Settlements() {
               if (tx) {
                 setSettlements(prev => [{
                   id: tx.txid.slice(0, 8).toUpperCase(),
-                  amount: tx.vout?.reduce((a: number, v: { value: number }) => a + v.value, 0) / 1e8 ?? 0,
+                  amount: (tx.vout?.reduce((a: number, v: { value: number }) => a + v.value, 0) ?? 0) / 1e8,
                   paymentType: "on-chain",
                   address: BITCOIN_ADDRESS,
                   txid: tx.txid,
@@ -138,7 +138,7 @@ export default function Settlements() {
           </thead>
           <tbody>
             {loading ? (
-              Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} />)
+              Array.from({ length: 4 }, (_, i) => React.createElement(SkeletonRow, { key: i }))
             ) : settlements.length === 0 ? (
               <tr>
                 <td colSpan={6} className="p-16 text-center text-muted">

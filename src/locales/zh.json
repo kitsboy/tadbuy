@@ -1,0 +1,10 @@
+{
+  "nav": { "buyAds": "购买广告", "marketplace": "市场", "campaigns": "活动", "metrics": "指标", "publisher": "发布商", "dashboard": "仪表板", "hubhash": "Hubhash", "wallet": "钱包", "settings": "设置", "search": "搜索" },
+  "common": { "save": "保存", "cancel": "取消", "confirm": "确认", "loading": "加载中...", "error": "错误", "success": "成功", "submit": "提交", "close": "关闭", "learnMore": "了解更多", "viewAll": "查看全部", "status": { "live": "上线", "paused": "暂停", "draft": "草稿", "completed": "已完成" } },
+  "buyAds": { "title": "发布比特币广告", "subtitle": "用聪支付。触达全球比特币和Web3受众。", "budget": "预算", "targeting": "定向", "creative": "创意", "payment": "支付", "deploy": "发布活动", "deploying": "发布中...", "success": "活动已发布！" },
+  "wallet": { "title": "钱包", "balance": "余额", "deposit": "存款", "withdraw": "提款", "invoiceExpiry": "发票1小时后到期", "history": "交易历史" },
+  "campaigns": { "title": "我的活动", "newCampaign": "新活动", "export": "导出", "totalSpend": "总支出", "totalImpressions": "总展示量", "totalClicks": "总点击量", "activeCampaigns": "活跃活动" },
+  "marketplace": { "title": "广告市场", "subtitle": "浏览并竞拍优质广告位", "bidNow": "立即出价", "viewDetails": "查看详情", "filters": "筛选", "sortBy": "排序方式" },
+  "footer": { "terms": "服务条款", "privacy": "隐私政策", "cookies": "Cookie政策", "contact": "联系", "madeWith": "用₿制作，作者：" },
+  "legal": { "terms": { "title": "服务条款", "lastUpdated": "最后更新" }, "privacy": { "title": "隐私政策" }, "cookies": { "title": "Cookie政策" } }
+}

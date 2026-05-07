@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ElementType } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { motion, AnimatePresence } from "motion/react";
 import { Card, Button, Modal, CardTitle, FormGroup, Label, Select, InfoTooltip } from "@/components/ui";
@@ -13,18 +13,17 @@ import {
 import { campaigns as initialCampaigns, getPlatformIcon, Campaign } from "@/data/campaigns";
 import { generateAdCreative, OptimizationSuggestion } from "@/services/geminiService";
 import { useToast } from "@/components/Toast";
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import React from 'react';
 
 export default function Campaigns() {
   usePageTitle('Campaigns');
   const [campaignsList, setCampaignsList] = useState<Campaign[]>(initialCampaigns);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState<number | null>(null);
   const [showOptimizeModal, setShowOptimizeModal] = useState<{ campaign: Campaign, suggestion: OptimizationSuggestion } | null>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
-  const [exportFormat, setExportFormat] = useState<'csv' | 'pdf' | 'json'>('pdf');
+  const [exportFormat, setExportFormat] = useState<'csv' | 'excel' | 'gdocs'>('csv');
   const [copied, setCopied] = useState(false);
   const { addToast } = useToast();
 
@@ -36,16 +35,16 @@ export default function Campaigns() {
     }
   };
 
-  const toggleSelect = (id: number) => {
+  const toggleSelect = (id: string) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   };
 
   const handleDuplicate = (campaign: Campaign) => {
     const newCampaign = {
       ...campaign,
-      id: Date.now(),
+      id: String(Date.now()),
       name: `${campaign.name} (Copy)`,
-      status: 'Draft' as const,
+      status: 'draft' as const,
       spendBtc: 0,
       impressions: 0,
       clicks: 0,
@@ -54,47 +53,6 @@ export default function Campaigns() {
     };
     setCampaignsList([newCampaign, ...campaignsList]);
     addToast('Campaign duplicated successfully', 'success');
-  };
-
-  const handleExportPDF = () => {
-    const doc = new jsPDF();
-    
-    // Header
-    doc.setFontSize(24);
-    doc.setTextColor(247, 147, 26); // Accent color
-    doc.text("Tadbuy", 14, 20);
-    
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text("https://tadbuy.giveabit.io", 14, 26);
-
-    doc.setFontSize(16);
-    doc.setTextColor(0);
-    doc.text("Campaign Performance Report", 14, 40);
-
-    const tableData = campaignsList
-      .filter(c => selectedIds.includes(c.id))
-      .map(c => [
-        c.name, 
-        c.platforms.join(', '), 
-        c.status, 
-        `${c.spendBtc.toFixed(4)} BTC`, 
-        c.impressions.toLocaleString(), 
-        c.clicks.toLocaleString()
-      ]);
-
-    autoTable(doc, {
-      startY: 45,
-      head: [['Campaign', 'Platforms', 'Status', 'Spend', 'Impressions', 'Clicks']],
-      body: tableData,
-      theme: 'grid',
-      headStyles: { fillColor: [247, 147, 26], textColor: [0, 0, 0] },
-      styles: { fontSize: 9 }
-    });
-
-    doc.save('tadbuy-campaigns-report.pdf');
-    addToast('PDF Exported Successfully', 'success');
-    setShowExportModal(false);
   };
 
   const handleCopyEmbed = (code: string) => {
@@ -116,6 +74,14 @@ export default function Campaigns() {
   };
 
   const currentOrigin = window.location.origin;
+
+  const totalSpendBtc = campaignsList.reduce((sum, c) => sum + (c.spendBtc || 0), 0);
+  const totalImpressions = campaignsList.reduce((sum, c) => sum + (c.impressions || 0), 0);
+  const totalClicks = campaignsList.reduce((sum, c) => sum + (c.clicks || 0), 0);
+  const liveCampaigns = campaignsList.filter(c => c.status === 'live').length;
+  const pausedCampaigns = campaignsList.filter(c => c.status === 'paused').length;
+  const draftCampaigns = campaignsList.filter(c => c.status === 'draft').length;
+  const avgCpc = totalClicks > 0 ? (totalSpendBtc / totalClicks) : 0;
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 pb-20">
@@ -141,7 +107,7 @@ export default function Campaigns() {
             <div className="text-[10px] text-muted uppercase tracking-widest font-bold">Total spend (BTC)</div>
             <InfoTooltip content="The total amount of Bitcoin spent across all your active and past ad campaigns." />
           </div>
-          <div className="text-[26px] font-extrabold my-1">0.0423</div>
+          <div className="text-[26px] font-extrabold my-1">{totalSpendBtc.toFixed(4)}</div>
           <div className="text-[11px] text-muted font-mono">₿ this month</div>
           <div className="text-[11px] font-bold text-green mt-2">↑ +12.4% vs last month</div>
         </Card>
@@ -150,7 +116,11 @@ export default function Campaigns() {
             <div className="text-[10px] text-muted uppercase tracking-widest font-bold">Total impressions</div>
             <InfoTooltip content="Total number of times your ads were displayed to users across all platforms." />
           </div>
-          <div className="text-[26px] font-extrabold my-1">1.24M</div>
+          <div className="text-[26px] font-extrabold my-1">
+            {totalImpressions >= 1_000_000
+              ? `${(totalImpressions / 1_000_000).toFixed(2)}M`
+              : totalImpressions.toLocaleString()}
+          </div>
           <div className="text-[11px] text-muted font-mono">across all platforms</div>
           <div className="text-[11px] font-bold text-green mt-2">↑ +8.1%</div>
         </Card>
@@ -159,8 +129,8 @@ export default function Campaigns() {
             <div className="text-[10px] text-muted uppercase tracking-widest font-bold">Total clicks</div>
             <InfoTooltip content="The number of times users clicked on your ads to visit your destination URL." />
           </div>
-          <div className="text-[26px] font-extrabold my-1">14,820</div>
-          <div className="text-[11px] text-muted font-mono">avg CPC: 0.000003 ₿</div>
+          <div className="text-[26px] font-extrabold my-1">{totalClicks.toLocaleString()}</div>
+          <div className="text-[11px] text-muted font-mono">avg CPC: {avgCpc.toFixed(8)} ₿</div>
           <div className="text-[11px] font-bold text-green mt-2">↑ +18.2%</div>
         </Card>
         <Card className="glass-panel relative group hover:border-accent/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5 before:bg-purple before:rounded-t-xl">
@@ -168,8 +138,8 @@ export default function Campaigns() {
             <div className="text-[10px] text-muted uppercase tracking-widest font-bold">Active campaigns</div>
             <InfoTooltip content="The number of ad campaigns currently running or scheduled to run." />
           </div>
-          <div className="text-[26px] font-extrabold my-1">4</div>
-          <div className="text-[11px] text-muted font-mono">2 live · 1 paused · 1 draft</div>
+          <div className="text-[26px] font-extrabold my-1">{campaignsList.length}</div>
+          <div className="text-[11px] text-muted font-mono">{liveCampaigns} live · {pausedCampaigns} paused · {draftCampaigns} draft</div>
           <div className="text-[11px] font-bold text-muted mt-2">→ stable</div>
         </Card>
       </div>
@@ -267,13 +237,13 @@ export default function Campaigns() {
                   <td className="p-4">
                     <span className={cn(
                       "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold",
-                      c.status === 'Live' ? "bg-green/15 text-green" :
-                      c.status === 'Paused' ? "bg-accent/15 text-accent" :
+                      c.status === 'live' ? "bg-green/15 text-green" :
+                      c.status === 'paused' ? "bg-accent/15 text-accent" :
                       "bg-muted/15 text-muted"
                     )}>
-                      {c.status === 'Live' && <Play className="w-3 h-3 animate-pulse" />}
-                      {c.status === 'Paused' && <Pause className="w-3 h-3" />}
-                      {c.status === 'Draft' && <Edit3 className="w-3 h-3" />}
+                      {c.status === 'live' && <Play className="w-3 h-3 animate-pulse" />}
+                      {c.status === 'paused' && <Pause className="w-3 h-3" />}
+                      {c.status === 'draft' && <Edit3 className="w-3 h-3" />}
                       {c.status}
                     </span>
                   </td>
@@ -286,7 +256,7 @@ export default function Campaigns() {
                   <td className="p-4 w-32">
                     <div className="bg-surface rounded h-1.5 overflow-hidden mb-1">
                       <div 
-                        className={cn("h-full rounded transition-all", c.status === 'Live' ? "bg-green" : c.status === 'Paused' ? "bg-blue" : "bg-muted")} 
+                        className={cn("h-full rounded transition-all", c.status === 'live' ? "bg-green" : c.status === 'paused' ? "bg-blue" : "bg-muted")}
                         style={{ width: `${c.pacing}%` }} 
                       />
                     </div>
@@ -320,7 +290,7 @@ export default function Campaigns() {
                       >
                         <Share2 className="w-3.5 h-3.5" />
                       </Button>
-                      {c.status !== 'Draft' ? (
+                      {c.status !== 'draft' ? (
                         <Button size="sm" className="text-[10px] px-3 h-8 bg-accent/10 text-accent border border-accent/30 hover:bg-accent hover:text-black shadow-none">
                           ⚡ Top Up
                         </Button>
@@ -357,14 +327,14 @@ export default function Campaigns() {
             <div>
               <Label>Format</Label>
               <div className="grid grid-cols-3 gap-3 mt-2">
-                {[
+                {([
                   { id: 'csv', name: 'CSV', icon: FileText },
                   { id: 'excel', name: 'Excel', icon: TableIcon },
                   { id: 'gdocs', name: 'GDocs', icon: Globe },
-                ].map(f => (
+                ] as { id: 'csv' | 'excel' | 'gdocs'; name: string; icon: ElementType }[]).map(f => (
                   <button
                     key={f.id}
-                    onClick={() => setExportFormat(f.id as any)}
+                    onClick={() => setExportFormat(f.id)}
                     className={cn(
                       "flex flex-col items-center gap-2 p-4 rounded-xl border transition-all",
                       exportFormat === f.id ? "border-accent bg-accent/5 text-accent" : "border-border hover:border-muted"
@@ -380,8 +350,8 @@ export default function Campaigns() {
 
           <div className="space-y-3">
             <Button className="w-full" onClick={() => {
-              if (exportFormat === 'pdf') {
-                handleExportPDF();
+              if (exportFormat === 'gdocs') {
+                addToast('Google Sheets export coming soon', 'success');
               } else {
                 addToast(`Exporting to ${exportFormat.toUpperCase()}...`, 'success');
                 setShowExportModal(false);

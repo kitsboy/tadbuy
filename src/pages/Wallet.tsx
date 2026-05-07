@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
-import { Card, CardTitle, Button } from "@/components/ui";
-import { Zap, ArrowDownCircle, ArrowUpCircle, Copy, CheckCircle2, QrCode } from "lucide-react";
+import { useState, useEffect, type FormEvent } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { Card, CardTitle, Button, Input, Label, FormGroup, Modal } from "@/components/ui";
+import { Zap, ArrowDownCircle, ArrowUpCircle, Copy, CheckCircle2, QrCode, X } from "lucide-react";
 import { useToast } from "@/components/Toast";
 import { QRCodeSVG } from "qrcode.react";
 
@@ -12,6 +12,12 @@ export default function Wallet() {
   const [copied, setCopied] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const { addToast } = useToast();
+
+  // Withdraw modal state
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [withdrawAddress, setWithdrawAddress] = useState('');
+  const [withdrawLoading, setWithdrawLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/lightning/info")
@@ -50,6 +56,35 @@ export default function Wallet() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleWithdrawSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!withdrawAmount || !withdrawAddress) {
+      addToast("Please fill in all fields", "error");
+      return;
+    }
+    setWithdrawLoading(true);
+    try {
+      const res = await fetch('/api/settle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: parseInt(withdrawAmount, 10),
+          address: withdrawAddress,
+          paymentType: 'lightning',
+        }),
+      });
+      if (!res.ok) throw new Error(`Server error ${res.status}`);
+      addToast("Withdrawal submitted successfully", "success");
+      setShowWithdrawModal(false);
+      setWithdrawAmount('');
+      setWithdrawAddress('');
+    } catch (err) {
+      addToast("Withdrawal failed — please try again", "error");
+    } finally {
+      setWithdrawLoading(false);
+    }
+  };
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 max-w-2xl mx-auto">
       <div>
@@ -72,7 +107,7 @@ export default function Wallet() {
               <ArrowDownCircle className="w-4 h-4" />
               {loading ? "Generating..." : "Fund Wallet"}
             </Button>
-            <Button variant="secondary" className="flex-1 gap-2">
+            <Button variant="secondary" className="flex-1 gap-2" onClick={() => setShowWithdrawModal(true)}>
               <ArrowUpCircle className="w-4 h-4" /> Withdraw
             </Button>
           </div>
@@ -180,11 +215,67 @@ export default function Wallet() {
             </div>
 
             <p className="text-[10px] text-muted mt-4 text-center">
-              Invoice expires in 24 hours · 1,000 sats · Scan with any Lightning wallet
+              Invoice expires in 1 hour · 1,000 sats · Scan with any Lightning wallet
             </p>
           </Card>
         </motion.div>
       )}
+      {/* Withdraw Modal */}
+      <Modal isOpen={showWithdrawModal} onClose={() => setShowWithdrawModal(false)}>
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-extrabold">Withdraw Funds</h2>
+            <button onClick={() => setShowWithdrawModal(false)} className="text-muted hover:text-text transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <form onSubmit={handleWithdrawSubmit} className="space-y-4">
+            <FormGroup>
+              <Label>Amount (sats)</Label>
+              <Input
+                type="number"
+                placeholder="e.g. 10000"
+                min="1"
+                value={withdrawAmount}
+                onChange={e => setWithdrawAmount(e.target.value)}
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>Lightning Address or BOLT11 Invoice</Label>
+              <Input
+                type="text"
+                placeholder="user@wallet.com or lnbc..."
+                value={withdrawAddress}
+                onChange={e => setWithdrawAddress(e.target.value)}
+                required
+              />
+              <p className="text-[10px] text-muted mt-1">
+                Enter a Lightning address (e.g. you@walletofsatoshi.com) or paste a BOLT11 invoice.
+              </p>
+            </FormGroup>
+            <div className="flex gap-3 pt-2">
+              <Button
+                type="button"
+                variant="secondary"
+                className="flex-1"
+                onClick={() => setShowWithdrawModal(false)}
+                disabled={withdrawLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 gap-2 bg-lightning text-black hover:opacity-90"
+                disabled={withdrawLoading}
+              >
+                <Zap className="w-4 h-4" />
+                {withdrawLoading ? "Sending..." : "Withdraw"}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </Modal>
     </motion.div>
   );
 }

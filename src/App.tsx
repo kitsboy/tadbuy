@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, NavLink, useLocation, Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { Megaphone, Layers, BarChart2, LayoutDashboard, Network, Zap, Globe, Search, Menu, X } from 'lucide-react';
+import { useState, useEffect, type ReactNode } from 'react';
+import { Megaphone, Layers, BarChart2, LayoutDashboard, Network, Zap, Globe, MapPin, Search, Menu, X } from 'lucide-react';
 import { cn } from './lib/utils';
 import Dashboard from './pages/Dashboard';
 import BuyAds from './pages/BuyAds';
@@ -14,6 +14,7 @@ import DebugLightning from './pages/DebugLightning';
 import CampaignAnalytics from './pages/CampaignAnalytics';
 import Wallet from './pages/Wallet';
 import Profile from './pages/Profile';
+import ProfileSettings from './pages/ProfileSettings';
 import Settlements from './pages/Settlements';
 import Marketplace from './pages/Marketplace';
 import Documentation from './pages/Documentation';
@@ -21,16 +22,56 @@ import ApiReference from './pages/ApiReference';
 import PpqGuide from './pages/PpqGuide';
 import Bolt12Info from './pages/Bolt12Info';
 import NotFound from './pages/NotFound';
+import GeoTargeting from './pages/GeoTargeting';
+import Terms from './pages/legal/Terms';
+import Privacy from './pages/legal/Privacy';
+import Cookies from './pages/legal/Cookies';
 import Footer from './components/Footer';
+import { LanguageSwitcher } from './components/LanguageSwitcher';
 import CommandMenu from './components/CommandMenu';
 import LiveActivityWidget from './components/LiveActivityWidget';
-import { AuthProvider } from './components/AuthProvider';
+import { AuthProvider, useAuth } from './components/AuthProvider';
 import { ToastProvider } from './components/Toast';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { LocalAvatar } from './components/LocalAvatar';
 
 const CURRENCY_SYMBOLS: Record<string, string> = { USD: '$', CAD: 'C$', EUR: '€', GBP: '£' };
+
+function ProtectedRoute({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4 text-muted">
+          <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+          <p className="text-sm">Loading…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center max-w-sm space-y-4">
+          <div className="text-4xl">🔐</div>
+          <h2 className="text-xl font-extrabold">Sign in required</h2>
+          <p className="text-sm text-muted">You need to be signed in to access this page.</p>
+          <a
+            href="/profile"
+            className="inline-block mt-2 px-6 py-2 bg-accent text-black font-bold rounded-xl hover:opacity-90 transition-opacity"
+          >
+            Sign In
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}
 
 function Header({ currency, setCurrency, rate }: { currency: string, setCurrency: (c: string) => void, rate: number }) {
   const location = useLocation();
@@ -49,9 +90,11 @@ function Header({ currency, setCurrency, rate }: { currency: string, setCurrency
     { name: 'Marketplace', path: '/marketplace', icon: Globe },
     { name: 'Campaigns', path: '/campaigns', icon: Layers },
     { name: 'Metrics', path: '/metrics', icon: BarChart2 },
+    { name: 'Wallet', path: '/wallet', icon: Zap },
     { name: 'Publisher', path: '/publisher', icon: Globe },
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Hubhash', path: '/hubhash', icon: Network },
+    { name: 'Geo', path: '/geo', icon: MapPin },
   ];
 
   return (
@@ -112,6 +155,10 @@ function Header({ currency, setCurrency, rate }: { currency: string, setCurrency
 
         <div className="hidden md:block w-px h-4 bg-border" />
 
+        <LanguageSwitcher />
+
+        <div className="hidden md:block w-px h-4 bg-border" />
+
         <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <LocalAvatar seed="Felix Bitcoin" size={24} className="rounded-full border border-border" />
         </Link>
@@ -158,21 +205,26 @@ function MainContent({ currency, setCurrency, rates }: { currency: string, setCu
       )}>
         <Routes>
           <Route path="/" element={<BuyAds currency={currency} rate={rates[currency]} symbol={CURRENCY_SYMBOLS[currency]} />} />
-          <Route path="/campaigns" element={<Campaigns />} />
+          <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
           <Route path="/metrics" element={<Metrics />} />
           <Route path="/publisher" element={<PublisherPortal />} />
-          <Route path="/wallet" element={<Wallet />} />
+          <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/analytics" element={<CampaignAnalytics />} />
+          <Route path="/settings" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
+          <Route path="/analytics" element={<ProtectedRoute><CampaignAnalytics /></ProtectedRoute>} />
           <Route path="/debug-lightning" element={<DebugLightning />} />
-          <Route path="/settlements" element={<Settlements />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/settlements" element={<ProtectedRoute><Settlements /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/hubhash" element={<Hubhash />} />
           <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/docs" element={<Documentation />} />
           <Route path="/api-docs" element={<ApiReference />} />
           <Route path="/ppq" element={<PpqGuide />} />
           <Route path="/bolt12" element={<Bolt12Info />} />
+          <Route path="/geo" element={<GeoTargeting />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/cookies" element={<Cookies />} />
           <Route path="/embed/metrics/:id" element={<MetricsEmbed />} />
           <Route path="/embed/ad/:id" element={<AdEmbed />} />
           <Route path="*" element={<NotFound />} />

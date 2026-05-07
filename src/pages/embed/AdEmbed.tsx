@@ -4,7 +4,7 @@ import { Card, CardTitle } from '@/components/ui';
 
 export default function AdEmbed() {
   const { id } = useParams();
-  const campaign = campaigns.find(c => c.id === Number(id));
+  const campaign = campaigns.find(c => c.id === id);
 
   if (!campaign) return <div className="p-4 text-red">Campaign not found</div>;
 

@@ -127,7 +127,7 @@ export default function Marketplace() {
                 <div className="text-sm font-bold flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-lightning" /> {item.type}</div>
               </div>
             </div>
-            <Link to="/" className="w-full">
+            <Link to={`/?slot=${item.id}`} className="w-full">
               <Button className="w-full relative z-10 group-hover:shadow-[0_0_20px_rgba(255,159,28,0.3)] transition-all flex items-center justify-center gap-2">
                 <Zap className="w-4 h-4" /> Bid Now <ArrowUpRight className="w-4 h-4" />
               </Button>

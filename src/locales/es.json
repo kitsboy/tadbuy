@@ -1,0 +1,80 @@
+{
+  "nav": {
+    "buyAds": "Comprar Anuncios",
+    "marketplace": "Mercado",
+    "campaigns": "Campañas",
+    "metrics": "Métricas",
+    "publisher": "Editorial",
+    "dashboard": "Panel",
+    "hubhash": "Hubhash",
+    "wallet": "Billetera",
+    "settings": "Configuración",
+    "search": "Buscar"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "submit": "Enviar",
+    "close": "Cerrar",
+    "learnMore": "Más información",
+    "viewAll": "Ver todo",
+    "status": {
+      "live": "Activo",
+      "paused": "Pausado",
+      "draft": "Borrador",
+      "completed": "Completado"
+    }
+  },
+  "buyAds": {
+    "title": "Lanzar un Anuncio Bitcoin",
+    "subtitle": "Paga en sats. Llega a la audiencia de Bitcoin y Web3 globalmente.",
+    "budget": "Presupuesto",
+    "targeting": "Segmentación",
+    "creative": "Creatividad",
+    "payment": "Pago",
+    "deploy": "Lanzar Campaña",
+    "deploying": "Lanzando...",
+    "success": "¡Campaña lanzada!"
+  },
+  "wallet": {
+    "title": "Billetera",
+    "balance": "Saldo",
+    "deposit": "Depositar",
+    "withdraw": "Retirar",
+    "invoiceExpiry": "La factura expira en 1 hora",
+    "history": "Historial de Transacciones"
+  },
+  "campaigns": {
+    "title": "Mis Campañas",
+    "newCampaign": "Nueva Campaña",
+    "export": "Exportar",
+    "totalSpend": "Gasto Total",
+    "totalImpressions": "Impresiones Totales",
+    "totalClicks": "Clics Totales",
+    "activeCampaigns": "Campañas Activas"
+  },
+  "marketplace": {
+    "title": "Mercado de Anuncios",
+    "subtitle": "Explora y puja por espacios publicitarios premium",
+    "bidNow": "Pujar Ahora",
+    "viewDetails": "Ver Detalles",
+    "filters": "Filtros",
+    "sortBy": "Ordenar por"
+  },
+  "footer": {
+    "terms": "Términos de Servicio",
+    "privacy": "Política de Privacidad",
+    "cookies": "Política de Cookies",
+    "contact": "Contacto",
+    "madeWith": "Hecho con ₿ por"
+  },
+  "legal": {
+    "terms": { "title": "Términos de Servicio", "lastUpdated": "Última actualización" },
+    "privacy": { "title": "Política de Privacidad" },
+    "cookies": { "title": "Política de Cookies" }
+  }
+}

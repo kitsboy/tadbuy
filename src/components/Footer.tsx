@@ -54,6 +54,7 @@ export default function Footer() {
                 <li><Link to="/" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Buy Ads</Link></li>
                 <li><Link to="/campaigns" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Campaigns</Link></li>
                 <li><Link to="/metrics" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Metrics</Link></li>
+                <li><Link to="/geo" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Global Reach</Link></li>
                 <li><Link to="/hubhash" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Hubhash</Link></li>
               </ul>
             </div>
@@ -104,6 +105,17 @@ export default function Footer() {
 
         {/* Bottom Bar: Legal & Donate */}
         <div className="pt-8 border-t border-border flex flex-col items-center justify-center gap-6 text-center">
+          {/* Legal links row */}
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
+            <Link to="/terms" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Terms of Service</Link>
+            <span className="text-border text-xs hidden sm:inline">·</span>
+            <Link to="/privacy" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Privacy Policy</Link>
+            <span className="text-border text-xs hidden sm:inline">·</span>
+            <Link to="/cookies" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Cookie Policy</Link>
+            <span className="text-border text-xs hidden sm:inline">·</span>
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="text-xs text-muted hover:text-accent transition-colors">Contact</a>
+          </div>
+
           <div className="flex flex-col items-center gap-2 text-xs text-muted max-w-2xl">
             <ShieldAlert className="w-5 h-5 mb-1" />
             <span>
@@ -141,7 +153,9 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="text-center text-[10px] text-muted mt-8">Tadbuy {APP_VERSION}</div>
+      <div className="text-center text-[10px] text-muted mt-8">
+        © 2026 GiveaBit Inc. · Tadbuy {APP_VERSION} · Bitcoin-native advertising, paid in sats.
+      </div>
     </footer>
   );
 }

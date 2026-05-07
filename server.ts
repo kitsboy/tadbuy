@@ -21,15 +21,26 @@ if (process.env.SENTRY_DSN) {
   });
 }
 
-// ... (rest of the file)
-import Joi from "joi";
+// Initialize Firebase Admin
+if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+  try {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+    if (admin.apps.length === 0) {
+      admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+    }
+  } catch (e) {
+    console.warn('Warning: Could not parse FIREBASE_SERVICE_ACCOUNT_KEY');
+  }
+} else {
+  console.warn('Warning: FIREBASE_SERVICE_ACCOUNT_KEY not set — admin features disabled');
+}
 
-// Campaign validation schema
+// Campaign validation schema (used for both agent and POST /api/campaigns routes)
 const campaignSchema = Joi.object({
   name: Joi.string().min(1).max(100).required(),
   budgetSats: Joi.number().positive().required(),
-  status: Joi.string().valid('draft', 'live', 'paused', 'completed').required(),
-  createdAt: Joi.string().isoDate().required()
+  status: Joi.string().valid('draft', 'live', 'paused', 'completed').optional(),
+  createdAt: Joi.string().isoDate().optional()
 });
 
 async function startServer() {
@@ -46,17 +57,11 @@ async function startServer() {
     cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true, sameSite: 'strict' }
   }));
 
-  // Centralized Error Handling
-  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.error(err.stack);
-    res.status(500).json({ error: 'Internal Server Error', message: err.message });
-  });
-
   // Admin API Routes
   app.post("/api/admin/backup", agentAuthMiddleware('admin'), async (req, res) => {
     try {
-      const db = admin.firestore();
-      const collections = await db.listCollections();
+      const adminDb = admin.firestore();
+      const collections = await adminDb.listCollections();
       const backup: any = {};
       for (const collection of collections) {
         const snapshot = await collection.get();
@@ -81,13 +86,13 @@ async function startServer() {
       ctr: 1.2,
       spend: 0.0423,
       trend: [
-        { name: 'Mon', impressions: 4000 },
-        { name: 'Tue', impressions: 3000 },
-        { name: 'Wed', impressions: 5000 },
-        { name: 'Thu', impressions: 2780 },
-        { name: 'Fri', impressions: 6890 },
-        { name: 'Sat', impressions: 4390 },
-        { name: 'Sun', impressions: 7490 },
+        { name: 'Mon', impressions: 4000, clicks: 48 },
+        { name: 'Tue', impressions: 3000, clicks: 36 },
+        { name: 'Wed', impressions: 5000, clicks: 60 },
+        { name: 'Thu', impressions: 2780, clicks: 33 },
+        { name: 'Fri', impressions: 6890, clicks: 82 },
+        { name: 'Sat', impressions: 4390, clicks: 52 },
+        { name: 'Sun', impressions: 7490, clicks: 89 },
       ]
     });
   });
@@ -132,11 +137,6 @@ async function startServer() {
     amount: Joi.number().positive().required(),
     address: Joi.string().alphanum().min(26).max(62).required(),
     paymentType: Joi.string().valid('on-chain', 'lightning').required()
-  });
-
-  const campaignSchema = Joi.object({
-    name: Joi.string().required(),
-    budgetSats: Joi.number().positive().required()
   });
 
   // In-memory storage for settlements
@@ -224,7 +224,7 @@ async function startServer() {
 
     const { amount, address, paymentType } = req.body;
     const txid = "tx_" + Math.random().toString(36).substring(2, 15);
-    
+
     if (paymentType === 'lightning') {
       console.log(`Initiating Lightning payment of ${amount} BTC to ${address}`);
     } else {
@@ -244,18 +244,38 @@ async function startServer() {
     res.json({ status: "success", txid });
   });
 
-  // Environment Variable Warning
-  const requiredEnvVars = ['GEMINI_API_KEY', 'FIREBASE_PROJECT_ID'];
+  // Gemini AI proxy — keeps GEMINI_API_KEY server-side
+  app.post("/api/ai/optimize", async (req, res) => {
+    const { campaign } = req.body;
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(503).json({ error: 'AI service not configured' });
+    }
+    try {
+      const { GoogleGenAI } = await import("@google/genai");
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const response = await ai.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: `Generate a new ad creative for this campaign: ${JSON.stringify(campaign)}. Return JSON with fields: headline, description, bgHue, bgLightness, textColor, reasoning`,
+        config: { responseMimeType: "application/json" }
+      });
+      res.json(JSON.parse(response.text || "{}"));
+    } catch (error: any) {
+      res.status(500).json({ error: 'AI optimization failed', message: error.message });
+    }
+  });
+
+  // Environment Variable Warnings
+  const requiredEnvVars = ['GEMINI_API_KEY', 'FIREBASE_PROJECT_ID', 'SESSION_SECRET'];
   requiredEnvVars.forEach(varName => {
     if (!process.env[varName]) {
       console.warn(`Warning: Missing environment variable: ${varName}`);
     }
   });
 
-  // Centralized Error Handler
+  // Centralized Error Handler (must be registered after all routes)
   app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error(err.stack);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal Server Error', message: err.message });
   });
 
   // Vite middleware for development

@@ -165,11 +165,12 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   const [invoiceCopied, setInvoiceCopied] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'waiting' | 'processing' | 'success'>('idle');
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [bolt11Invoice, setBolt11Invoice] = useState("lnbc1u1pwz5yzpp5w6l... (demo bolt11 invoice)");
+  const [invoiceId, setInvoiceId] = useState<string | null>(null);
 
   const [projectId] = useState(() => `PRJ-TAD-${Math.random().toString(36).substring(2, 8).toUpperCase()}`);
   const [currentBlockHeight, setCurrentBlockHeight] = useState<number | null>(null);
 
-  const bolt11Invoice = "lnbc1u1pwz5yzpp5w6l... (demo bolt11 invoice)";
   const bolt12Offer = "lno1qgsqv... (demo bolt12 offer)";
 
   useEffect(() => {
@@ -281,12 +282,12 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   };
 
   const handleDeploy = async () => {
-    setPaymentStatus('processing');
-    
-    // Try to fetch real invoice if Lightning
+    setPaymentError(null);
+
     if (paymentMethod === 'lightning') {
+      // Step 1: Fetch a real invoice from the backend
       try {
-        const amountSats = Math.round(btcAmount * 100000000);
+        const amountSats = Math.round(btcAmount * 100_000_000);
         const res = await fetch('/api/lightning/invoice', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -294,29 +295,70 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
         });
         if (res.ok) {
           const data = await res.json();
-          // In a real app, we'd update the QR code here
-          console.log('Real invoice fetched:', data.request);
+          if (data.request) setBolt11Invoice(data.request);
+          if (data.id) setInvoiceId(data.id);
         }
       } catch (e) {
-        console.warn('Falling back to demo invoice');
+        console.warn('Could not fetch real invoice — using demo fallback');
       }
-    }
 
-    // Simulate payment processing delay
-    await new Promise(resolve => setTimeout(resolve, 2500));
-    
-    setPaymentStatus('success');
-    setTimeout(() => {
-      setShowInvoice(false);
-      setShowSuccessModal(true);
-      setPaymentStatus('idle');
-    }, 1000);
+      // Step 2: Show waiting state while user scans / pays
+      setPaymentStatus('waiting');
+
+      // Step 3: Poll for payment confirmation every 3 seconds
+      const pollId = await new Promise<'success' | 'timeout'>((resolve) => {
+        let attempts = 0;
+        const MAX_ATTEMPTS = 40; // 2 minutes max
+        const poll = setInterval(async () => {
+          attempts++;
+          setPaymentStatus('processing');
+          try {
+            const checkRes = await fetch(`/api/lightning/check/${invoiceId ?? 'pending'}`);
+            if (checkRes.ok) {
+              const checkData = await checkRes.json();
+              if (checkData.paid === true || checkData.status === 'settled') {
+                clearInterval(poll);
+                resolve('success');
+                return;
+              }
+            }
+          } catch (e) {
+            // transient error — keep polling
+          }
+          if (attempts >= MAX_ATTEMPTS) {
+            clearInterval(poll);
+            resolve('timeout');
+          }
+        }, 3000);
+      });
+
+      if (pollId === 'success') {
+        setPaymentStatus('success');
+        setTimeout(() => {
+          setShowInvoice(false);
+          setShowSuccessModal(true);
+          setPaymentStatus('idle');
+        }, 1000);
+      } else {
+        setPaymentError('Payment not detected within timeout. Please check your wallet and try again.');
+        setPaymentStatus('idle');
+      }
+    } else {
+      // On-chain / BOLT12: user confirms manually
+      setPaymentStatus('processing');
+      setPaymentStatus('success');
+      setTimeout(() => {
+        setShowInvoice(false);
+        setShowSuccessModal(true);
+        setPaymentStatus('idle');
+      }, 1000);
+    }
   };
 
   const selectedPlatformsData = platforms.filter(p => selectedPlatforms.includes(p.id));
   
   // --- Live Estimate Logic ---
-  const budgetInUsd = btcAmount * 96420;
+  const budgetInUsd = btcAmount * rate;
   
   const estimates = useMemo(() => {
     let totalImpressions = 0;

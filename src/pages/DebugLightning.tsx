@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+import { useState } from "react";
 import { motion } from "motion/react";
 import { Card, Button } from "@/components/ui";
 import { ShieldAlert, Home } from "lucide-react";
@@ -43,7 +45,6 @@ export default function DebugLightning() {
 }
 
 function LightningDebugPanel() {
-  const { useState } = require("react");
   const [info, setInfo]       = useState<Record<string, unknown> | null>(null);
   const [error, setError]     = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

@@ -1,25 +1,29 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
+import React from 'react';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
 
-interface Props { children: ReactNode; }
-interface State { hasError: boolean; error: Error | null; }
+type Props = { children: React.ReactNode };
+type State = { hasError: boolean; error: Error | null };
 
-export class ErrorBoundary extends Component<Props, State> {
+// Using React.Component with explicit type params to satisfy TS strict class field checks
+class EB extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    (this as unknown as { state: State }).state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
     console.error('[ErrorBoundary]', error, info.componentStack);
   }
 
-  render() {
-    if (this.state.hasError) {
+  render(): React.ReactNode {
+    const state = (this as unknown as { state: State }).state;
+    const props = (this as unknown as { props: Props }).props;
+
+    if (state.hasError) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-[#18181b] p-8">
           <div className="max-w-md w-full bg-[#202024] border border-[#3f3f46] rounded-2xl p-8 text-center shadow-2xl">
@@ -32,9 +36,9 @@ export class ErrorBoundary extends Component<Props, State> {
             <p className="text-sm text-[#a1a1aa] mb-6 leading-relaxed">
               An unexpected error occurred. The incident has been logged. Please reload and try again.
             </p>
-            {this.state.error?.message && (
+            {state.error?.message && (
               <div className="bg-[#18181b] border border-[#3f3f46] rounded-lg p-3 font-mono text-xs text-red mb-6 text-left break-all leading-relaxed">
-                {this.state.error.message}
+                {state.error.message}
               </div>
             )}
             <button
@@ -48,6 +52,8 @@ export class ErrorBoundary extends Component<Props, State> {
         </div>
       );
     }
-    return this.props.children;
+    return props.children;
   }
 }
+
+export { EB as ErrorBoundary };

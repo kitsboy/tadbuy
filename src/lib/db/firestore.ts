@@ -1,5 +1,5 @@
 import { db } from "../../firebase.ts";
-import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, runTransaction } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, deleteDoc, runTransaction } from "firebase/firestore";
 import { Campaign, CampaignRepository } from "./types";
 
 export class FirestoreCampaignRepository implements CampaignRepository {

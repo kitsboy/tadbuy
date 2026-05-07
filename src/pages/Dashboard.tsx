@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ComponentType } from "react";
 import { motion } from "motion/react";
 import { Card, CardTitle, Button } from "@/components/ui";
 import { Monitor, TrendingUp, DollarSign, MousePointerClick, Zap, RefreshCw } from "lucide-react";
@@ -37,7 +37,7 @@ const MOCK_METRICS: Metrics = {
 interface MetricCardProps {
   title: string;
   value: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   trend?: string;
   loading?: boolean;
 }
