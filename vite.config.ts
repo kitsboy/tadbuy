@@ -1,23 +1,55 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig, loadEnv} from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 
-export default defineConfig(({mode}) => {
+export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
     plugins: [react(), tailwindcss()],
+
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     },
+
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
       },
     },
+
+    build: {
+      // Raise the warning threshold so build output is clean
+      chunkSizeWarningLimit: 600,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // React core — loaded immediately
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+
+            // Firebase — large, only needed once auth loads
+            'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+
+            // Charts — only loaded on dashboard/metrics pages
+            'vendor-charts': ['recharts', 'd3'],
+
+            // i18n — loaded after first render
+            'vendor-i18n': ['i18next', 'react-i18next'],
+
+            // Animation + UI utilities
+            'vendor-ui': ['motion', 'lucide-react', 'clsx', 'tailwind-merge'],
+
+            // PDF generation — only used on export action
+            'vendor-pdf': ['jspdf', 'jspdf-autotable'],
+
+            // QR codes — only used on wallet/payment pages
+            'vendor-qr': ['qrcode.react'],
+          },
+        },
+      },
+    },
+
     server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
     },
   };

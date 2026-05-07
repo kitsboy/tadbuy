@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, ChangeEvent } from "react";
+import { useState, useEffect, useMemo, useRef, ChangeEvent } from "react";
 import { BITCOIN_ADDRESS, BITCOIN_URI } from "@/constants";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
@@ -6,6 +6,7 @@ import { Card, CardTitle, Button, Input, Textarea, Select, Label, FormGroup, Mod
 import { cn } from "@/lib/utils";
 import { QRCodeSVG } from "qrcode.react";
 import { Twitter, Facebook, Instagram, Zap, Youtube, MessageSquare, Linkedin, Music, CheckCircle2, Bot, X, Monitor, Smartphone, Wifi, Globe, Calendar, Layers, Activity, Target, Settings2, Plus, Trash2, ShieldAlert } from "lucide-react";
+import { FirestoreCampaignRepository } from "@/lib/db/firestore";
 
 // --- Types & Interfaces ---
 
@@ -88,6 +89,10 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   const [btcAmount, setBtcAmount] = useState(0.0005);
   const [fiatAmount, setFiatAmount] = useState(0.0005 * rate);
   const [paymentMethod, setPaymentMethod] = useState('btc');
+  const [campaignName, setCampaignName] = useState("My Campaign");
+  // Seconds remaining until invoice expires (3600 = 1 hour)
+  const [invoiceSecondsLeft, setInvoiceSecondsLeft] = useState(3600);
+  const invoiceTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // --- Simple Mode State ---
   const [headline, setHeadline] = useState("Stack Sats Smarter — giveabit.io");
@@ -281,6 +286,52 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
     }
   };
 
+  const startInvoiceCountdown = () => {
+    setInvoiceSecondsLeft(3600);
+    if (invoiceTimerRef.current) clearInterval(invoiceTimerRef.current);
+    invoiceTimerRef.current = setInterval(() => {
+      setInvoiceSecondsLeft(s => {
+        if (s <= 1) {
+          clearInterval(invoiceTimerRef.current!);
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+  };
+
+  const stopInvoiceCountdown = () => {
+    if (invoiceTimerRef.current) {
+      clearInterval(invoiceTimerRef.current);
+      invoiceTimerRef.current = null;
+    }
+  };
+
+  const handleCancelPayment = () => {
+    stopInvoiceCountdown();
+    setPaymentStatus('idle');
+    setPaymentError(null);
+  };
+
+  const writeCampaignToFirestore = async () => {
+    try {
+      const repo = new FirestoreCampaignRepository();
+      await repo.create({
+        name: campaignName,
+        budgetSats: Math.round(btcAmount * 100_000_000),
+        status: 'live',
+        createdAt: new Date().toISOString(),
+        headline,
+        description,
+        url,
+        platforms: selectedPlatforms,
+        payment: paymentMethod,
+      });
+    } catch (err) {
+      console.error('Firestore write failed:', err);
+    }
+  };
+
   const handleDeploy = async () => {
     setPaymentError(null);
 
@@ -303,6 +354,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
       }
 
       // Step 2: Show waiting state while user scans / pays
+      startInvoiceCountdown();
       setPaymentStatus('waiting');
 
       // Step 3: Poll for payment confirmation every 3 seconds
@@ -332,13 +384,12 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
         }, 3000);
       });
 
+      stopInvoiceCountdown();
+
       if (pollId === 'success') {
+        await writeCampaignToFirestore();
         setPaymentStatus('success');
-        setTimeout(() => {
-          setShowInvoice(false);
-          setShowSuccessModal(true);
-          setPaymentStatus('idle');
-        }, 1000);
+        setShowInvoice(false);
       } else {
         setPaymentError('Payment not detected within timeout. Please check your wallet and try again.');
         setPaymentStatus('idle');
@@ -346,12 +397,9 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
     } else {
       // On-chain / BOLT12: user confirms manually
       setPaymentStatus('processing');
+      await writeCampaignToFirestore();
       setPaymentStatus('success');
-      setTimeout(() => {
-        setShowInvoice(false);
-        setShowSuccessModal(true);
-        setPaymentStatus('idle');
-      }, 1000);
+      setShowInvoice(false);
     }
   };
 
@@ -439,9 +487,176 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   const nextStep = () => setCurrentStep(p => Math.min(p + 1, totalSteps));
   const prevStep = () => setCurrentStep(p => Math.max(p - 1, 1));
 
+  const formatCountdown = (secs: number) => {
+    const m = Math.floor(secs / 60).toString().padStart(2, '0');
+    const s = (secs % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
+  const resetForm = () => {
+    setPaymentStatus('idle');
+    setCampaignName("My Campaign");
+    setHeadline("Stack Sats Smarter — giveabit.io");
+    setDescription("Bitcoin tools for the people. No banks. No middlemen.");
+    setUrl("https://giveabit.io");
+    setSelectedPlatforms(['twitter']);
+    setBtcAmount(0.0005);
+    setFiatAmount(0.0005 * rate);
+    setHashtags([]);
+    setAdImage(null);
+    setCurrentStep(1);
+  };
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto space-y-6">
-      
+
+      {/* ── SUCCESS SCREEN ─────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {paymentStatus === 'success' && (
+          <motion.div
+            key="success-overlay"
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-bg/90 backdrop-blur-sm overflow-hidden"
+          >
+            {/* CSS confetti burst */}
+            <style>{`
+              @keyframes confetti-fly {
+                0%   { transform: translate(0,0) rotate(0deg) scale(1);   opacity: 1; }
+                100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0); opacity: 0; }
+              }
+              .confetti-piece {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 10px;
+                height: 10px;
+                border-radius: 2px;
+                animation: confetti-fly 1.2s ease-out forwards;
+              }
+            `}</style>
+            {/* Confetti pieces */}
+            {[
+              { color: '#F7931A', tx: '-180px', ty: '-220px', rot: '720deg',  delay: '0s'    },
+              { color: '#22c55e', tx:  '190px', ty: '-200px', rot: '-540deg', delay: '0.05s' },
+              { color: '#3b82f6', tx: '-150px', ty:  '230px', rot: '480deg',  delay: '0.1s'  },
+              { color: '#a855f7', tx:  '160px', ty:  '210px', rot: '-600deg', delay: '0.05s' },
+              { color: '#F7931A', tx:   '80px', ty: '-260px', rot: '360deg',  delay: '0.15s' },
+              { color: '#22c55e', tx:  '-90px', ty: '-240px', rot: '-420deg', delay: '0.2s'  },
+              { color: '#f43f5e', tx:  '230px', ty:  '-80px', rot: '660deg',  delay: '0s'    },
+              { color: '#3b82f6', tx: '-220px', ty:   '90px', rot: '-360deg', delay: '0.1s'  },
+              { color: '#fbbf24', tx:   '50px', ty:  '270px', rot: '540deg',  delay: '0.15s' },
+              { color: '#a855f7', tx: '-100px', ty:  '250px', rot: '-480deg', delay: '0.2s'  },
+              { color: '#F7931A', tx:  '140px', ty: '-170px', rot: '300deg',  delay: '0.25s' },
+              { color: '#22c55e', tx: '-200px', ty: '-140px', rot: '-660deg', delay: '0.1s'  },
+            ].map((c, i) => (
+              <div
+                key={i}
+                className="confetti-piece"
+                style={{
+                  backgroundColor: c.color,
+                  '--tx': c.tx,
+                  '--ty': c.ty,
+                  '--rot': c.rot,
+                  animationDelay: c.delay,
+                } as object}
+              />
+            ))}
+
+            <div className="relative z-10 text-center px-6 max-w-md w-full">
+              {/* Animated checkmark ring */}
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
+                className="mx-auto mb-8 relative w-28 h-28"
+              >
+                <div className="absolute inset-0 rounded-full bg-green/20 animate-pulse" />
+                <div className="absolute inset-2 rounded-full bg-green/10 border-4 border-green flex items-center justify-center">
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.3, duration: 0.3 }}
+                  >
+                    <CheckCircle2 className="w-14 h-14 text-green" strokeWidth={1.5} />
+                  </motion.div>
+                </div>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
+                className="text-4xl font-extrabold tracking-tight mb-2"
+              >
+                Your campaign is live!
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45 }}
+                className="text-muted text-sm mb-8"
+              >
+                PPQ.AI is now distributing your ad across the decentralized web.
+              </motion.p>
+
+              {/* Campaign summary pill */}
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="bg-surface border border-border rounded-2xl p-5 mb-8 text-left space-y-3"
+              >
+                <div className="text-[10px] uppercase tracking-widest text-muted font-bold">Campaign Summary</div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted">Name</span>
+                  <span className="font-bold">{campaignName}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted">Budget</span>
+                  <span className="font-bold text-accent">{btcAmount.toFixed(8)} ₿</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted">Platforms</span>
+                  <span className="flex gap-1.5">
+                    {selectedPlatformsData.map((p, i) => (
+                      <span key={i} className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4 text-accent">{p.icon}</span>
+                    ))}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted">Est. impressions</span>
+                  <span className="font-bold text-green">~{estimates.totalImpressions.toLocaleString()}</span>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="flex gap-3"
+              >
+                <Link to="/campaigns" className="flex-1">
+                  <Button className="w-full bg-gradient-to-r from-accent to-accent2 text-black border-0 hover:opacity-90 shadow-[0_0_20px_rgba(247,147,26,0.3)]" size="lg">
+                    View Campaign
+                  </Button>
+                </Link>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="flex-1"
+                  onClick={resetForm}
+                >
+                  Launch Another
+                </Button>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Create Campaign</h1>
@@ -463,11 +678,75 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
         </div>
       </div>
 
+      {/* ── STEPPER ─────────────────────────────────────────────────── */}
+      {(() => {
+        const steps = [
+          { label: 'Budget',    icon: '₿' },
+          { label: 'Targeting', icon: '🎯' },
+          { label: 'Creative',  icon: '✏️' },
+          { label: 'Payment',   icon: '⚡' },
+        ];
+        return (
+          <div className="flex items-center gap-0 mb-2 select-none">
+            {steps.map((step, idx) => {
+              const stepNum = idx + 1;
+              const isCompleted = currentStep > stepNum;
+              const isActive = currentStep === stepNum;
+              return (
+                <div key={step.label} className="flex items-center flex-1 min-w-0">
+                  <button
+                    onClick={() => setCurrentStep(stepNum)}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold transition-all w-full",
+                      isActive
+                        ? "bg-accent/15 text-accent border border-accent/40 shadow-[0_0_12px_rgba(247,147,26,0.15)]"
+                        : isCompleted
+                          ? "text-green hover:bg-green/10"
+                          : "text-muted hover:text-text hover:bg-surface"
+                    )}
+                  >
+                    <span className={cn(
+                      "flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-extrabold shrink-0 transition-all",
+                      isActive
+                        ? "bg-accent text-black"
+                        : isCompleted
+                          ? "bg-green/20 text-green"
+                          : "bg-surface border border-border text-muted"
+                    )}>
+                      {isCompleted ? <CheckCircle2 className="w-3.5 h-3.5" /> : stepNum}
+                    </span>
+                    <span className="hidden sm:block truncate">{step.label}</span>
+                  </button>
+                  {idx < steps.length - 1 && (
+                    <div className={cn(
+                      "h-px flex-1 mx-1 transition-colors",
+                      currentStep > stepNum + 1
+                        ? "bg-green/40"
+                        : currentStep > stepNum
+                          ? "bg-accent/40"
+                          : "bg-border"
+                    )} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()}
+
       <AnimatePresence mode="wait">
         {mode === 'simple' ? (
           <motion.div key="simple" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="space-y-4">
               <Card className="glass-panel">
+                <FormGroup className="mb-5">
+                  <Label>Campaign name</Label>
+                  <Input
+                    value={campaignName}
+                    onChange={e => setCampaignName(e.target.value)}
+                    placeholder="e.g. Summer Bitcoin Push"
+                  />
+                </FormGroup>
                 <div className="flex items-center gap-2 mb-3">
                   <CardTitle className="mb-0">1. Pick your platforms</CardTitle>
                   <InfoTooltip content="Choose where your ads will appear. Each platform has different audiences and costs (CPM)." />
@@ -1405,8 +1684,91 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
       }}>
         <div className="p-8 text-center relative overflow-hidden">
           <AnimatePresence mode="wait">
-            {paymentStatus === 'processing' ? (
-              <motion.div 
+            {paymentStatus === 'waiting' ? (
+              /* ── WAITING: scan QR, countdown, pulse ── */
+              <motion.div
+                key="waiting"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className="py-6 flex flex-col items-center"
+              >
+                <div className="flex items-center justify-between w-full mb-5">
+                  <div>
+                    <h2 className="text-xl font-extrabold leading-tight">Scan to pay</h2>
+                    <p className="text-xs text-muted mt-0.5">Lightning invoice — open in your wallet</p>
+                  </div>
+                  <div className={cn(
+                    "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border",
+                    "bg-lightning/10 text-lightning border-lightning/20"
+                  )}>
+                    Instant
+                  </div>
+                </div>
+
+                {/* QR code */}
+                <div className="bg-white p-4 rounded-2xl inline-block mb-4 shadow-2xl">
+                  <QRCodeSVG value={bolt11Invoice} size={200} level="H" includeMargin={false} />
+                </div>
+
+                {/* Countdown */}
+                <div className="flex items-center gap-2 mb-4">
+                  <div className={cn(
+                    "font-mono text-3xl font-extrabold tabular-nums",
+                    invoiceSecondsLeft < 120 ? "text-red-400" : "text-text"
+                  )}>
+                    {formatCountdown(invoiceSecondsLeft)}
+                  </div>
+                  <div className="text-xs text-muted leading-tight">
+                    until<br />expires
+                  </div>
+                </div>
+
+                {/* Pulsing waiting indicator */}
+                <div className="flex items-center gap-2.5 mb-6 px-4 py-2.5 bg-lightning/5 border border-lightning/20 rounded-full">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lightning opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-lightning" />
+                  </span>
+                  <span className="text-xs text-lightning font-semibold">Waiting for payment…</span>
+                </div>
+
+                {/* Invoice string */}
+                <div className="relative w-full mb-5">
+                  <div className="bg-bg border border-border rounded-xl p-3 font-mono text-[9px] text-muted break-all text-left pr-10 max-h-16 overflow-hidden">
+                    {bolt11Invoice}
+                  </div>
+                  <button
+                    onClick={handleCopyInvoice}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 hover:bg-surface rounded-lg transition-colors text-accent"
+                  >
+                    {invoiceCopied ? <CheckCircle2 className="w-4 h-4" /> : <Layers className="w-4 h-4" />}
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 w-full mb-2 text-left">
+                  <div className="bg-surface border border-border rounded-xl p-3">
+                    <div className="text-[10px] text-muted uppercase font-bold mb-1">Amount</div>
+                    <div className="text-base font-extrabold text-accent">{btcAmount.toFixed(8)} ₿</div>
+                    <div className="text-[10px] text-muted">≈ {symbol}{fiatAmount.toFixed(2)}</div>
+                  </div>
+                  <div className="bg-surface border border-border rounded-xl p-3">
+                    <div className="text-[10px] text-muted uppercase font-bold mb-1">Network</div>
+                    <div className="text-base font-extrabold text-lightning">Lightning</div>
+                    <div className="text-[10px] text-muted">Near-zero fees</div>
+                  </div>
+                </div>
+
+                <Button
+                  variant="secondary"
+                  className="w-full mt-2"
+                  onClick={handleCancelPayment}
+                >
+                  Cancel
+                </Button>
+              </motion.div>
+            ) : paymentStatus === 'processing' ? (
+              <motion.div
                 key="processing"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -1414,10 +1776,10 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
                 className="py-12 flex flex-col items-center"
               >
                 <div className="relative w-24 h-24 mb-8">
-                  <motion.div 
+                  <motion.div
                     className="absolute inset-0 border-4 border-accent/20 rounded-full"
                   />
-                  <motion.div 
+                  <motion.div
                     className="absolute inset-0 border-4 border-t-accent rounded-full"
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
@@ -1428,7 +1790,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
                 <p className="text-sm text-muted">Checking the {paymentMethod === 'btc' ? 'Bitcoin network' : 'Lightning Network'} for your transaction...</p>
                 <div className="mt-8 flex gap-1 justify-center">
                   {[0, 1, 2].map(i => (
-                    <motion.div 
+                    <motion.div
                       key={i}
                       className="w-1.5 h-1.5 bg-accent rounded-full"
                       animate={{ opacity: [0.3, 1, 0.3] }}
@@ -1436,19 +1798,6 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
                     />
                   ))}
                 </div>
-              </motion.div>
-            ) : paymentStatus === 'success' ? (
-              <motion.div 
-                key="success"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="py-12 flex flex-col items-center"
-              >
-                <div className="w-24 h-24 bg-green/20 rounded-full flex items-center justify-center mb-8">
-                  <CheckCircle2 className="w-12 h-12 text-green" />
-                </div>
-                <h2 className="text-2xl font-extrabold mb-2 text-green">Payment Received!</h2>
-                <p className="text-sm text-muted">Your campaign is being deployed to the network.</p>
               </motion.div>
             ) : (
               <motion.div 

@@ -21,7 +21,7 @@ const MOCK_METRICS: Metrics = {
   impressions: 47_382,
   clicks: 1_204,
   ctr: 2.54,
-  spend: 8_820,
+  spend: 0.04230000, // BTC
   trend: [
     { name: 'Mon', impressions: 4200,  clicks: 240 },
     { name: 'Tue', impressions: 3800,  clicks: 195 },
@@ -114,29 +114,40 @@ export default function Dashboard() {
         <MetricCard title="Impressions" value={metrics.impressions.toLocaleString()} icon={Monitor} trend="↑ 18% vs last week" loading={loading} />
         <MetricCard title="Clicks"      value={metrics.clicks.toLocaleString()}      icon={MousePointerClick} trend="↑ 6% vs last week" loading={loading} />
         <MetricCard title="CTR"         value={`${metrics.ctr}%`}                    icon={TrendingUp} trend="Industry avg: 1.9%" loading={loading} />
-        <MetricCard title="Spend (Sats)" value={metrics.spend.toLocaleString()}      icon={DollarSign} trend={`≈ ${(metrics.spend / 100_000_000).toFixed(6)} BTC`} loading={loading} />
+        <MetricCard title="Spend (₿)" value={`₿ ${metrics.spend.toFixed(8)}`}         icon={DollarSign} trend={`≈ ${Math.round(metrics.spend * 100_000_000).toLocaleString()} sats`} loading={loading} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2 glass-panel">
-          <CardTitle>Performance Trend</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="mb-0">Performance Trend</CardTitle>
+            <div className="flex items-center gap-4 text-[11px] font-mono text-muted">
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: '#f7931a' }} />Impressions</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: '#10b981' }} />Clicks</span>
+            </div>
+          </div>
           {loading ? (
-            <div className="h-64 mt-4 bg-surface/50 rounded-xl animate-pulse" />
+            <div className="h-64 mt-5 bg-surface/50 rounded-xl animate-pulse" />
           ) : (
-            <div className="h-64 mt-4">
+            <div className="h-64 mt-5">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={metrics.trend}>
                   <defs>
                     <linearGradient id="colorImpressions" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%"  stopColor="#ff9f1c" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#ff9f1c" stopOpacity={0}   />
+                      <stop offset="5%"  stopColor="#f7931a" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#f7931a" stopOpacity={0}   />
+                    </linearGradient>
+                    <linearGradient id="colorClicks" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%"  stopColor="#10b981" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}   />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                   <XAxis dataKey="name" stroke="#a1a1aa" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="#a1a1aa" fontSize={12} tickLine={false} axisLine={false} />
                   <Tooltip contentStyle={{ backgroundColor: '#18181b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', fontSize: '12px' }} />
-                  <Area type="monotone" dataKey="impressions" stroke="#ff9f1c" fillOpacity={1} fill="url(#colorImpressions)" strokeWidth={3} />
+                  <Area type="monotone" dataKey="impressions" stroke="#f7931a" fillOpacity={1} fill="url(#colorImpressions)" strokeWidth={3} name="Impressions" />
+                  <Area type="monotone" dataKey="clicks"      stroke="#10b981" fillOpacity={1} fill="url(#colorClicks)"      strokeWidth={3} name="Clicks" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
