@@ -1,4 +1,4 @@
-import { useState, useMemo, type ElementType } from "react";
+import { useState, useMemo, useEffect, type ElementType } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { motion, AnimatePresence } from "motion/react";
 import { Card, Button, Modal, CardTitle, FormGroup, Label, Select, InfoTooltip } from "@/components/ui";
@@ -19,6 +19,25 @@ import React from 'react';
 export default function Campaigns() {
   usePageTitle('Campaigns');
   const [campaignsList, setCampaignsList] = useState<Campaign[]>(initialCampaigns);
+
+  // Load real campaigns from API on mount — fall back to mock data if unavailable
+  useEffect(() => {
+    const loadCampaigns = async () => {
+      try {
+        const res = await fetch('/api/campaigns');
+        if (res.ok) {
+          const data: Campaign[] = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setCampaignsList(data);
+            return;
+          }
+        }
+      } catch {
+        // Firestore unavailable — keep showing mock data silently
+      }
+    };
+    loadCampaigns();
+  }, []);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState<string | null>(null);

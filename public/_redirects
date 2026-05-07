@@ -1,2 +1,12 @@
-# Cloudflare Pages serves index.html for all unmatched routes automatically (SPA mode)
-# No redirect rules needed here
+# Cloudflare Pages SPA routing — serve index.html for all unmatched routes
+/*    /index.html   200
+
+# Canonical www → non-www
+https://www.tadbuy.giveabit.io/*   https://tadbuy.giveabit.io/:splat   301
+
+# Common alternate paths
+/home          /       301
+/buy           /       301
+/advertise     /       301
+/buy-ads       /       301
+/start         /       301

@@ -8,9 +8,10 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react(), tailwindcss()],
 
-    define: {
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-    },
+    // NOTE: GEMINI_API_KEY is intentionally NOT exposed here.
+    // The server-side proxy at POST /api/ai/optimize keeps it safe.
+    // Never add server-only secrets to the `define` block — they end up in the JS bundle.
+    define: {},
 
     resolve: {
       alias: {

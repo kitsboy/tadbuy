@@ -285,7 +285,7 @@ function BidModal({ slot, onClose }: { slot: InventorySlot; onClose: () => void 
     if (!validate()) return;
     setLoading(true);
     try {
-      await fetch("/api/campaigns", {
+      await fetch("/api/marketplace/bid", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

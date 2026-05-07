@@ -35,6 +35,10 @@ export default function Settlements() {
   const [wsStatus, setWsStatus]       = useState<"connecting" | "live" | "error">("connecting");
   const socketRef = useRef<WebSocket | null>(null);
 
+  // Allow user to track any Bitcoin address — defaults to the project address
+  const [trackedAddress, setTrackedAddress] = useState(BITCOIN_ADDRESS);
+  const [addressInput, setAddressInput]     = useState(BITCOIN_ADDRESS);
+
   // ── REST fetch ──────────────────────────────────────────────────────────────
   useEffect(() => {
     fetch("/api/settlements")
@@ -59,7 +63,7 @@ export default function Settlements() {
           // Track only our specific address — not all global mempool activity
           socket.send(JSON.stringify({
             action: "track-address",
-            data: BITCOIN_ADDRESS,
+            data: trackedAddress,
           }));
         };
 
@@ -74,7 +78,7 @@ export default function Settlements() {
                   id: tx.txid.slice(0, 8).toUpperCase(),
                   amount: (tx.vout?.reduce((a: number, v: { value: number }) => a + v.value, 0) ?? 0) / 1e8,
                   paymentType: "on-chain",
-                  address: BITCOIN_ADDRESS,
+                  address: trackedAddress,
                   txid: tx.txid,
                   status: "pending",
                 }, ...prev]);
@@ -103,10 +107,35 @@ export default function Settlements() {
       clearTimeout(retryTimeout);
       socketRef.current?.close();
     };
-  }, []);
+  }, [trackedAddress]); // Re-connect whenever the tracked address changes
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+
+      {/* Address Tracker */}
+      <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+        <input
+          type="text"
+          value={addressInput}
+          onChange={e => setAddressInput(e.target.value)}
+          placeholder="Enter Bitcoin address to track…"
+          className="flex-1 font-mono text-xs bg-surface border border-border rounded-xl px-4 py-2.5 focus:border-accent outline-none"
+        />
+        <button
+          onClick={() => {
+            const trimmed = addressInput.trim();
+            if (trimmed) {
+              setTrackedAddress(trimmed);
+              setSettlements([]);
+              setWsStatus("connecting");
+            }
+          }}
+          className="px-4 py-2.5 bg-accent text-black font-bold text-xs rounded-xl hover:bg-accent/80 transition-colors whitespace-nowrap"
+        >
+          Track Address
+        </button>
+      </div>
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight">Settlement History</h1>

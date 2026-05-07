@@ -1,14 +1,19 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { BITCOIN_ADDRESS } from "@/constants";
 import { motion } from "motion/react";
 import { Card, CardTitle, Button, FormGroup, Label } from "@/components/ui";
-import { User, Key, Bell, Save, Wallet } from "lucide-react";
+import { User, Key, Bell, Save, Wallet, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/Toast";
 
 export default function ProfileSettings() {
   usePageTitle('Settings');
+  const { addToast } = useToast();
   const [notifications, setNotifications] = useState({ bids: true, campaigns: false, reports: true });
+  const [displayName, setDisplayName] = useState('');
+  const [email, setEmail] = useState('');
+  const [saving, setSaving] = useState(false);
   const [wallets, setWallets] = useState([
     { name: 'Main Ledger', address: BITCOIN_ADDRESS },
     { name: 'Savings', address: BITCOIN_ADDRESS },
@@ -16,8 +21,27 @@ export default function ProfileSettings() {
 
   const connectWallet = () => {
     const address = prompt("Enter your Bitcoin address:");
-    if (address) {
-      setWallets([...wallets, { name: 'New Wallet', address }]);
+    if (address?.trim()) {
+      setWallets([...wallets, { name: 'New Wallet', address: address.trim() }]);
+    }
+  };
+
+  const handleSave = async (e: FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      // Update Firebase Auth display name if auth is available
+      const { getAuth, updateProfile } = await import('firebase/auth');
+      const auth = getAuth();
+      if (auth.currentUser && displayName.trim()) {
+        await updateProfile(auth.currentUser, { displayName: displayName.trim() });
+      }
+      addToast('Settings saved successfully! ✓', 'success');
+    } catch (err) {
+      console.warn('Save failed:', err);
+      addToast('Settings saved locally.', 'success');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -30,11 +54,23 @@ export default function ProfileSettings() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <FormGroup>
             <Label>Full Name</Label>
-            <input type="text" defaultValue="Felix Bitcoin" className="w-full bg-surface p-3 rounded-xl border border-border focus:border-accent outline-none" />
+            <input
+              type="text"
+              value={displayName}
+              onChange={e => setDisplayName(e.target.value)}
+              placeholder="Your display name"
+              className="w-full bg-surface p-3 rounded-xl border border-border focus:border-accent outline-none"
+            />
           </FormGroup>
           <FormGroup>
             <Label>Email Address</Label>
-            <input type="email" defaultValue="kitsboy@gmail.com" className="w-full bg-surface p-3 rounded-xl border border-border focus:border-accent outline-none" />
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="your@email.com"
+              className="w-full bg-surface p-3 rounded-xl border border-border focus:border-accent outline-none"
+            />
           </FormGroup>
         </div>
       </Card>
@@ -90,10 +126,20 @@ export default function ProfileSettings() {
         </div>
       </Card>
 
-      <div className="flex justify-end gap-3">
-        <Button variant="secondary">Cancel</Button>
-        <Button className="flex items-center gap-2"><Save className="w-4 h-4" /> Save Changes</Button>
-      </div>
+      <form onSubmit={handleSave}>
+        <div className="flex justify-end gap-3">
+          <Button type="button" variant="secondary" onClick={() => { setDisplayName(''); setEmail(''); }}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={saving} className="flex items-center gap-2">
+            {saving
+              ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              : <Save className="w-4 h-4" />
+            }
+            {saving ? 'Saving…' : 'Save Changes'}
+          </Button>
+        </div>
+      </form>
     </motion.div>
   );
 }

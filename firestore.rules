@@ -1,40 +1,106 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // ===============================================================
-    // Assumed Data Model
-    // ===============================================================
-    //
-    // Collection: campaigns
-    // Document ID: Auto-generated
-    // Fields:
-    //   - name: string (required, 1-100 chars)
-    //   - budgetSats: number (required, positive)
-    //   - status: string (required, enum: 'draft', 'live', 'paused', 'completed')
-    //   - createdAt: string (required, ISO 8601)
-    //
-    // ===============================================================
 
-    // Helper Functions
+    // ─── Helper Functions ───────────────────────────────────────────────────
     function isAuthenticated() {
       return request.auth != null;
     }
 
-    function isValidCampaign(data) {
-      return data.keys().hasAll(['name', 'budgetSats', 'status', 'createdAt']) &&
-             data.keys().hasOnly(['name', 'budgetSats', 'status', 'createdAt']) &&
-             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
-             data.budgetSats is number && data.budgetSats > 0 &&
-             data.status in ['draft', 'live', 'paused', 'completed'] &&
-             data.createdAt is string && data.createdAt.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z?$");
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
     }
 
-    match /campaigns/{campaignId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isValidCampaign(request.resource.data);
-      allow update: if isAuthenticated() && isValidCampaign(request.resource.data) &&
-                       request.resource.data.createdAt == resource.data.createdAt;
-      allow delete: if isAuthenticated();
+    // Validates a campaign write — allows all fields from Campaign interface
+    // (src/lib/db/types.ts + extended fields written by BuyAds.tsx)
+    function isValidCampaign(data) {
+      let allowed = [
+        'name', 'budgetSats', 'status', 'createdAt', 'updatedAt',
+        // Analytics / display
+        'dates', 'platforms', 'spendBtc', 'spendUsd', 'impressions', 'clicks',
+        'ctr', 'cpc', 'pacing', 'payment',
+        // Creative
+        'headline', 'description', 'url', 'targetUrl',
+        'bgHue', 'bgLightness', 'textColor',
+        // Ownership / payment tracking
+        'userId', 'invoiceId', 'paymentConfirmedAt',
+        // Targeting (written by StepTargeting)
+        'targeting', 'targeting.interests', 'targeting.ageMin', 'targeting.ageMax',
+        'targeting.countries', 'targeting.languages', 'targeting.devices',
+        'targeting.networks', 'targeting.sex', 'targeting.education',
+        'targeting.income', 'targeting.behaviors', 'targeting.industries',
+        'targeting.pixelUrl',
+        // Scheduling
+        'scheduling', 'scheduleStart', 'scheduleEnd', 'blockHeight',
+        // PPQ / A/B
+        'ppq', 'ppqEnabled', 'ppqGoal', 'abVariants', 'weights', 'advancedMode',
+        // Extra fields that may be added
+        'imageUrl', 'hashtags',
+      ];
+      return data.keys().hasOnly(allowed) &&
+             data.name is string &&
+             data.name.size() > 0 &&
+             data.name.size() <= 100 &&
+             data.budgetSats is number &&
+             data.budgetSats >= 0 &&
+             data.status in ['draft', 'live', 'paused', 'completed'] &&
+             data.createdAt is string;
     }
+
+    // ─── Campaigns Collection ───────────────────────────────────────────────
+    match /campaigns/{campaignId} {
+      // Users can read their own campaigns; also allow campaigns with no userId
+      // (legacy / server-created campaigns)
+      allow read: if isAuthenticated() && (
+        !('userId' in resource.data) ||
+        resource.data.userId == null ||
+        resource.data.userId == request.auth.uid
+      );
+
+      // Allow create if authenticated and campaign data is valid
+      allow create: if isAuthenticated() && isValidCampaign(request.resource.data) && (
+        !('userId' in request.resource.data) ||
+        request.resource.data.userId == null ||
+        request.resource.data.userId == request.auth.uid
+      );
+
+      // Allow update only by the campaign owner
+      allow update: if isAuthenticated() && (
+        !('userId' in resource.data) ||
+        resource.data.userId == null ||
+        resource.data.userId == request.auth.uid
+      );
+
+      // Allow delete only by the campaign owner
+      allow delete: if isAuthenticated() && (
+        !('userId' in resource.data) ||
+        resource.data.userId == null ||
+        resource.data.userId == request.auth.uid
+      );
+    }
+
+    // ─── Bids Collection ────────────────────────────────────────────────────
+    match /bids/{bidId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() &&
+        request.resource.data.keys().hasAll(['slotId', 'bidSats']) &&
+        request.resource.data.bidSats is number &&
+        request.resource.data.bidSats > 0;
+      allow update, delete: if isAuthenticated() && (
+        !('userId' in resource.data) ||
+        resource.data.userId == request.auth.uid
+      );
+    }
+
+    // ─── Publisher Settings ─────────────────────────────────────────────────
+    match /publisher_settings/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // ─── User Profiles ───────────────────────────────────────────────────────
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
   }
 }

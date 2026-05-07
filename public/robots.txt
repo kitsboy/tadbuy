@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+Allow: /marketplace
+Allow: /metrics
+Allow: /publisher
+Allow: /docs
+Allow: /api-docs
+Allow: /ppq
+Allow: /bolt12
+Allow: /geo
+Allow: /hubhash
+Allow: /terms
+Allow: /privacy
+Allow: /cookies
+
+# Require auth — no value for crawlers
+Disallow: /campaigns
+Disallow: /wallet
+Disallow: /settings
+Disallow: /analytics
+Disallow: /settlements
+Disallow: /dashboard
+Disallow: /debug-lightning
+Disallow: /embed/
+
+# Sitemap location
+Sitemap: https://tadbuy.giveabit.io/sitemap.xml
+
+# Crawl delay for bots
+Crawl-delay: 1

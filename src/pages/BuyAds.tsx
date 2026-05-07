@@ -6,7 +6,6 @@ import { Card, CardTitle, Button, Input, Textarea, Select, Label, FormGroup, Mod
 import { cn } from "@/lib/utils";
 import { QRCodeSVG } from "qrcode.react";
 import { Twitter, Facebook, Instagram, Zap, Youtube, MessageSquare, Linkedin, Music, CheckCircle2, Bot, X, Monitor, Smartphone, Wifi, Globe, Calendar, Layers, Activity, Target, Settings2, Plus, Trash2, ShieldAlert } from "lucide-react";
-import { FirestoreCampaignRepository } from "@/lib/db/firestore";
 import SuccessScreen from "@/components/buyads/SuccessScreen";
 import PaymentModal from "@/components/buyads/PaymentModal";
 import StepPlatformBudget from "@/components/buyads/StepPlatformBudget";
@@ -280,13 +279,34 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   const generateAiCopy = async () => {
     setIsAiGenerating(true);
     try {
-      // In a real app, this would call a backend endpoint that uses Gemini
-      // For now, we simulate the AI response
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setHeadline("The Future of Bitcoin Advertising is Here");
-      setDescription("Experience seamless, decentralized ad buying with Tadbuy. Instant settlements, global reach, and AI-driven optimization.");
+      const res = await fetch('/api/ai/optimize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          campaign: {
+            headline,
+            description,
+            platforms: selectedPlatforms,
+            budget: btcAmount,
+          },
+          prompt: `Generate compelling ad copy for a Bitcoin/crypto advertising campaign targeting ${selectedPlatforms.join(', ')}.
+Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy and Bitcoin-native) and "description" (max 150 characters, conversion-focused). No extra fields.`,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.headline) setHeadline(data.headline);
+        if (data.description) setDescription(data.description);
+      } else {
+        // Fallback copy if AI service unavailable
+        setHeadline("The Future of Bitcoin Advertising is Here");
+        setDescription("Experience seamless, decentralized ad buying with Tadbuy. Instant settlements, global reach, AI-driven optimization.");
+      }
     } catch (e) {
-      console.error("AI generation failed");
+      console.error("AI generation failed", e);
+      // Fallback
+      setHeadline("Buy Ads with Bitcoin. Pay in Sats.");
+      setDescription("Tadbuy — the world's first Lightning-native DSP. Deploy to 8 platforms instantly.");
     } finally {
       setIsAiGenerating(false);
     }
@@ -320,22 +340,28 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   };
 
   const writeCampaignToFirestore = async () => {
-    try {
-      const repo = new FirestoreCampaignRepository();
-      await repo.create({
-        name: campaignName,
-        budgetSats: Math.round(btcAmount * 100_000_000),
-        status: 'live',
-        createdAt: new Date().toISOString(),
-        headline,
-        description,
-        url,
-        platforms: selectedPlatforms,
-        payment: paymentMethod,
-      });
-    } catch (err) {
-      console.error('Firestore write failed:', err);
+    const campaignData = {
+      name: campaignName || `Campaign_${Date.now()}`,
+      budgetSats: Math.round(btcAmount * 100_000_000),
+      status: 'live' as const,
+      createdAt: new Date().toISOString(),
+      headline,
+      description,
+      url,
+      platforms: selectedPlatforms,
+      payment: paymentMethod,
+      invoiceId: invoiceId || null,
+    };
+    const res = await fetch('/api/campaigns', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(campaignData),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error((err as { error?: string }).error || 'Failed to create campaign');
     }
+    return res.json();
   };
 
   const handleDeploy = async () => {

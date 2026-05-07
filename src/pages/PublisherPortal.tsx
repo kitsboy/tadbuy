@@ -115,10 +115,25 @@ export default function PublisherPortal() {
     setTimeout(() => setToastVisible(false), 3000);
   };
 
-  const handleSavePayment = (e: FormEvent) => {
+  const handleSavePayment = async (e: FormEvent) => {
     e.preventDefault();
-    // TODO: wire to real API
-    showToast('Lightning address saved successfully!');
+    try {
+      const res = await fetch('/api/publisher/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: 'publisher_default', // TODO: use real Firebase auth uid
+          lightningAddress,
+        }),
+      });
+      if (res.ok) {
+        showToast('Lightning address saved successfully! ⚡');
+      } else {
+        showToast('Failed to save. Please try again.');
+      }
+    } catch {
+      showToast('Failed to save. Please try again.');
+    }
   };
 
   return (

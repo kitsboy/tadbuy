@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="60%" style="stop-color:#0f0f1a"/>
+      <stop offset="100%" style="stop-color:#1a0a00"/>
+    </linearGradient>
+    <linearGradient id="bolt" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffb347"/>
+      <stop offset="100%" style="stop-color:#ff9f1c"/>
+    </linearGradient>
+    <!-- Subtle grid pattern -->
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#ffffff08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Grid overlay -->
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <!-- Orange accent bar top -->
+  <rect width="1200" height="5" fill="#ff9f1c"/>
+  <!-- Orange glow orb -->
+  <ellipse cx="600" cy="280" rx="320" ry="200" fill="#ff9f1c" opacity="0.05"/>
+
+  <!-- Large lightning bolt icon -->
+  <path d="M630 110L550 290h70l-45 130L720 220h-72l45-110z" fill="url(#bolt)" opacity="0.95"/>
+
+  <!-- Tadbuy wordmark -->
+  <text x="600" y="460" font-family="Arial Black, Arial, sans-serif" font-size="96" font-weight="900" fill="white" text-anchor="middle" letter-spacing="-2">Tadbuy</text>
+
+  <!-- Tagline -->
+  <text x="600" y="515" font-family="Arial, sans-serif" font-size="30" fill="#ff9f1c" text-anchor="middle" letter-spacing="1">Buy Ads with Bitcoin. Pay in Sats. ⚡</text>
+
+  <!-- Platform pills -->
+  <rect x="200" y="547" width="110" height="28" rx="14" fill="#ffffff10"/>
+  <text x="255" y="566" font-family="Arial, sans-serif" font-size="13" fill="#888" text-anchor="middle">Lightning</text>
+
+  <rect x="325" y="547" width="110" height="28" rx="14" fill="#ffffff10"/>
+  <text x="380" y="566" font-family="Arial, sans-serif" font-size="13" fill="#888" text-anchor="middle">BOLT12</text>
+
+  <rect x="450" y="547" width="120" height="28" rx="14" fill="#ffffff10"/>
+  <text x="510" y="566" font-family="Arial, sans-serif" font-size="13" fill="#888" text-anchor="middle">Nostr Zap</text>
+
+  <rect x="585" y="547" width="120" height="28" rx="14" fill="#ffffff10"/>
+  <text x="645" y="566" font-family="Arial, sans-serif" font-size="13" fill="#888" text-anchor="middle">8 Platforms</text>
+
+  <rect x="720" y="547" width="120" height="28" rx="14" fill="#ffffff10"/>
+  <text x="780" y="566" font-family="Arial, sans-serif" font-size="13" fill="#888" text-anchor="middle">AI Powered</text>
+
+  <rect x="855" y="547" width="140" height="28" rx="14" fill="#ffffff10"/>
+  <text x="925" y="566" font-family="Arial, sans-serif" font-size="13" fill="#888" text-anchor="middle">No Banks Ever</text>
+
+  <!-- URL watermark -->
+  <text x="600" y="615" font-family="Arial, sans-serif" font-size="16" fill="#444" text-anchor="middle">tadbuy.giveabit.io</text>
+</svg>

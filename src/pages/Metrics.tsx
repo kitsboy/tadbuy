@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Card, CardTitle, Button, Select, InfoTooltip } from "@/components/ui";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -7,7 +8,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
-const data = [
+const STATIC_DATA = [
   { name: 'Mar 1', spend: 4000, sats: 120000 },
   { name: 'Mar 2', spend: 3000, sats: 180000 },
   { name: 'Mar 3', spend: 2000, sats: 220000 },
@@ -17,8 +18,42 @@ const data = [
   { name: 'Mar 7', spend: 3490, sats: 360000 },
 ];
 
+interface ApiMetrics {
+  impressions: number;
+  clicks: number;
+  ctr: number;
+  spend: number;
+  trend?: Array<{ name: string; impressions: number; clicks: number; sats: number }>;
+  fallback?: boolean;
+  liveCampaigns?: number;
+  totalCampaigns?: number;
+}
+
 export default function Metrics() {
   usePageTitle('Metrics & Analytics');
+  const [apiMetrics, setApiMetrics] = useState<ApiMetrics | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const res = await fetch('/api/metrics');
+        if (res.ok) {
+          const data: ApiMetrics = await res.json();
+          setApiMetrics(data);
+          setLastUpdated(new Date());
+        }
+      } catch {
+        // Keep showing static data silently
+      }
+    };
+    fetchMetrics();
+    const interval = setInterval(fetchMetrics, 60_000); // refresh every 60s
+    return () => clearInterval(interval);
+  }, []);
+
+  const data = apiMetrics?.trend?.map(t => ({ name: t.name, spend: t.impressions, sats: t.sats })) ?? STATIC_DATA;
+  const isLive = apiMetrics !== null && !apiMetrics.fallback;
   const downloadPDF = () => {
     const doc = new jsPDF();
     doc.text("Ad Metrics Report", 10, 10);
@@ -45,8 +80,22 @@ export default function Metrics() {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">Ad Metrics & Analytics</h1>
-          <p className="text-sm text-muted mt-1">All currencies · All platforms · Live + historical · Pipes to dev.giveabit.io</p>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-extrabold tracking-tight">Ad Metrics & Analytics</h1>
+            <span className={cn(
+              "flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border",
+              isLive
+                ? "text-green bg-green/10 border-green/20"
+                : "text-muted bg-surface border-border"
+            )}>
+              <span className={cn("w-1.5 h-1.5 rounded-full", isLive ? "bg-green animate-pulse" : "bg-muted")} />
+              {isLive ? "Live Data" : "Sample Data"}
+            </span>
+          </div>
+          <p className="text-sm text-muted mt-1">
+            All currencies · All platforms · Live + historical
+            {lastUpdated && <span> · Updated {lastUpdated.toLocaleTimeString()}</span>}
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="secondary" onClick={downloadPDF} className="flex items-center gap-2"><Download className="w-4 h-4" /> PDF</Button>
@@ -72,7 +121,9 @@ export default function Metrics() {
             Impressions
             <InfoTooltip content="Total number of times your ad was served to users." />
           </div>
-          <div className="text-3xl font-extrabold my-1 text-green group-hover:scale-105 transition-transform origin-left">1.24M</div>
+          <div className="text-3xl font-extrabold my-1 text-green group-hover:scale-105 transition-transform origin-left">
+            {apiMetrics ? (apiMetrics.impressions >= 1_000_000 ? `${(apiMetrics.impressions / 1_000_000).toFixed(2)}M` : apiMetrics.impressions.toLocaleString()) : '1.24M'}
+          </div>
           <div className="text-[11px] text-muted font-mono">total reach</div>
           <div className="text-[11px] font-bold text-green mt-3 flex items-center gap-1.5 bg-green/10 w-fit px-2 py-0.5 rounded-full">
             <ArrowUpRight className="w-3 h-3" /> +8.1% WoW

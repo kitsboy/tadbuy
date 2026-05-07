@@ -3,12 +3,16 @@ import { Twitter, Facebook, Instagram, Zap, Youtube, MessageSquare, Linkedin, Mu
 export type { Campaign } from '../lib/db/types';  // Re-export canonical type
 import type { Campaign } from '../lib/db/types';
 
+// NOTE: These are demo campaigns used as fallback when Firestore is unavailable.
+// The Campaigns page will replace these with live data from /api/campaigns on mount.
+const now = Date.now();
+
 export const campaigns: Campaign[] = [
   {
     id: '1',
     name: 'GiveaBit_BTC_Q2_A',
-    budgetSats: 0,
-    createdAt: '',
+    budgetSats: 500000,
+    createdAt: new Date(now - 7 * 86400000).toISOString(),
     dates: 'Apr 1 – Apr 30',
     platforms: ['twitter', 'facebook'],
     status: 'live',
@@ -30,8 +34,8 @@ export const campaigns: Campaign[] = [
   {
     id: '2',
     name: 'Nostr_Bitcoin_Push',
-    budgetSats: 0,
-    createdAt: '',
+    budgetSats: 850000,
+    createdAt: new Date(now - 14 * 86400000).toISOString(),
     dates: 'Mar 20 – Apr 10',
     platforms: ['nostr', 'reddit'],
     status: 'live',
@@ -53,8 +57,8 @@ export const campaigns: Campaign[] = [
   {
     id: '3',
     name: 'YT_Awareness_Test',
-    budgetSats: 0,
-    createdAt: '',
+    budgetSats: 2180000,
+    createdAt: new Date(now - 30 * 86400000).toISOString(),
     dates: 'Apr 5 – Apr 20',
     platforms: ['youtube'],
     status: 'paused',
@@ -76,8 +80,8 @@ export const campaigns: Campaign[] = [
   {
     id: '4',
     name: 'LinkedIn_B2B_Draft',
-    budgetSats: 0,
-    createdAt: '',
+    budgetSats: 100000,
+    createdAt: new Date(now - 45 * 86400000).toISOString(),
     dates: 'Not started',
     platforms: ['linkedin'],
     status: 'draft',
@@ -100,14 +104,14 @@ export const campaigns: Campaign[] = [
 
 export const getPlatformIcon = (id: string) => {
   switch (id) {
-    case 'twitter': return Twitter;
-    case 'facebook': return Facebook;
+    case 'twitter':   return Twitter;
+    case 'facebook':  return Facebook;
     case 'instagram': return Instagram;
-    case 'nostr': return Zap;
-    case 'youtube': return Youtube;
-    case 'reddit': return MessageSquare;
-    case 'linkedin': return Linkedin;
-    case 'tiktok': return Music;
-    default: return Zap;
+    case 'nostr':     return Zap;
+    case 'youtube':   return Youtube;
+    case 'reddit':    return MessageSquare;
+    case 'linkedin':  return Linkedin;
+    case 'tiktok':    return Music;
+    default:          return Zap;
   }
 };

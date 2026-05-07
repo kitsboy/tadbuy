@@ -1,16 +1,59 @@
 {
-  "name": "Tadbuy",
+  "name": "Tadbuy — Bitcoin Ad Platform",
   "short_name": "Tadbuy",
-  "description": "Bitcoin-native ad platform",
+  "description": "The world's first Bitcoin-native DSP. Buy ads across 8 platforms, pay in sats with Lightning Network, BOLT12, or Nostr Zap.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#f7931a",
+  "background_color": "#0a0a0f",
+  "theme_color": "#ff9f1c",
+  "orientation": "portrait-primary",
+  "categories": ["business", "finance", "productivity"],
+  "lang": "en",
+  "dir": "ltr",
   "icons": [
     {
-      "src": "https://camtaylor.ca/wp-content/uploads/2019/02/Bitcoin.svg.png",
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image.svg",
+      "sizes": "1200x630",
+      "type": "image/svg+xml",
+      "label": "Tadbuy Campaign Creation"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Buy Ads",
+      "short_name": "Buy Ads",
+      "description": "Launch a new Bitcoin ad campaign",
+      "url": "/",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Marketplace",
+      "short_name": "Market",
+      "description": "Browse ad inventory slots",
+      "url": "/marketplace",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }

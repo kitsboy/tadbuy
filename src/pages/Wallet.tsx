@@ -208,6 +208,9 @@ export default function Wallet() {
                 variant="lightning"
                 size="sm"
                 className="flex-1 gap-2"
+                onClick={() => {
+                  if (invoice) window.open(`lightning:${invoice}`, '_blank');
+                }}
               >
                 <Zap className="w-4 h-4" />
                 Open in Wallet
