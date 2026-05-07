@@ -153,24 +153,26 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="text-center text-[10px] text-muted mt-8">
-        © 2026 GiveaBit Inc. · Tadbuy {APP_VERSION} · Bitcoin-native advertising, paid in sats.
-      </div>
+      {/* Bottom bar: copyright + GiveaBit credit side by side */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-8 px-2">
+        <div className="text-[10px] text-muted">
+          © 2026 GiveaBit Inc. · Tadbuy {APP_VERSION} · Bitcoin-native advertising, paid in sats.
+        </div>
 
-      {/* GiveaBit parent company credit — subtle, bottom-right */}
-      <div className="absolute bottom-4 right-6 flex items-center gap-2 opacity-30 hover:opacity-60 transition-opacity duration-300">
-        <span className="text-[9px] text-muted font-mono tracking-wide">made by</span>
+        {/* Subtle GiveaBit parent company credit */}
         <a
           href="https://giveabit.io"
           target="_blank"
           rel="noreferrer"
           title="GiveaBit — Bitcoin tools for the people"
+          className="flex items-center gap-1.5 opacity-30 hover:opacity-70 transition-opacity duration-300 group"
         >
+          <span className="text-[9px] text-muted font-mono tracking-wide">made by</span>
           <img
             src="/giveabit.png"
             alt="GiveaBit"
-            className="h-5 w-auto object-contain"
-            style={{ filter: 'grayscale(30%)' }}
+            className="h-4 w-auto object-contain"
+            style={{ filter: 'grayscale(20%) brightness(1.1)' }}
           />
         </a>
       </div>
