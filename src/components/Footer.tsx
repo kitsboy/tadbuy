@@ -57,7 +57,7 @@ export default function Footer() {
               <img
                 src="/giveabit.png"
                 alt="GiveaBit"
-                className="h-4 w-auto object-contain"
+                className="h-6 w-auto object-contain"
                 style={{ filter: 'grayscale(20%) brightness(1.1)' }}
               />
             </a>
