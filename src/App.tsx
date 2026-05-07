@@ -8,7 +8,9 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { LocalAvatar } from './components/LocalAvatar';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
+import { NotificationCenter } from './components/NotificationCenter';
 import Footer from './components/Footer';
+import { PriceTicker } from './components/PriceTicker';
 
 // ── Eagerly loaded: above-the-fold critical path ──────────────────────────────
 import BuyAds from './pages/BuyAds';
@@ -113,25 +115,26 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
     <header className="sticky top-0 z-50 glass-header px-3 md:px-6 h-12 flex items-center justify-between gap-3 md:gap-4">
       <div className="flex items-center gap-2 text-[18px] font-extrabold tracking-tight">
         <button
-          className="lg:hidden p-1.5 text-muted hover:text-text rounded-lg hover:bg-surface transition-colors"
+          className="md:hidden p-1.5 text-muted hover:text-text rounded-lg hover:bg-surface transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle menu"
         >
           {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
         </button>
-        <img
-          src="https://camtaylor.ca/wp-content/uploads/2019/02/Bitcoin.svg.png"
-          alt="Bitcoin"
-          className="w-6 h-6 object-contain"
-          referrerPolicy="no-referrer"
-        />
+        <svg viewBox="0 0 24 24" className="w-6 h-6 flex-shrink-0" aria-label="Bitcoin">
+          <circle cx="12" cy="12" r="12" fill="#ff9f1c" />
+          <path
+            fill="#000"
+            d="M15.6 10.4c.3-.9-.5-1.4-1.4-1.7l.3-1.2-0.7-.2-.3 1.2-.6-.1.3-1.2-.7-.2-.3 1.2-1.5-.4-.2.8s.5.1.5.2c.3.1.3.3.3.4l-.7 2.9c0 .1-.1.3-.4.2 0 0-.5-.1-.5-.1l-.3.8 1.4.4-.3 1.2.7.2.3-1.2.6.1-.3 1.2.7.2.3-1.2c1.3.2 2.3.1 2.7-1 .3-.9 0-1.4-.7-1.8.5-.1.9-.5 1-.9zm-1.8 2.5c-.2.9-1.7.4-2.2.3l.4-1.6c.5.1 2.1.4 1.8 1.3zm.3-2.5c-.2.8-1.5.4-1.9.3l.4-1.5c.4.1 1.7.3 1.5 1.2z"
+          />
+        </svg>
         <div className="hidden sm:block">
           <div className="leading-none tracking-tight text-text">Tadbuy</div>
           <div className="text-[9px] text-muted font-normal font-mono -mt-0.5">by giveabit.io</div>
         </div>
       </div>
 
-      <nav className="hidden lg:flex gap-1">
+      <nav className="hidden md:flex gap-1">
         {navLinks.map((tab) => (
           <NavLink
             key={tab.name}
@@ -183,6 +186,8 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
 
         <LanguageSwitcher />
 
+        <NotificationCenter />
+
         <div className="hidden md:block w-px h-4 bg-border" />
 
         <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
@@ -192,7 +197,7 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
 
       {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <div className="absolute top-12 left-0 right-0 bg-card border-b border-border shadow-2xl p-3 flex flex-col gap-1 lg:hidden z-50">
+        <div className="absolute top-12 left-0 right-0 bg-card border-b border-border shadow-2xl p-3 flex flex-col gap-1 md:hidden z-50">
           {navLinks.map((tab) => (
             <NavLink
               key={tab.name}
@@ -230,6 +235,7 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
   return (
     <div className="min-h-screen flex flex-col">
       <Header currency={currency} setCurrency={setCurrency} rate={rates[currency]} />
+      {!isEmbed && <PriceTicker rates={rates} />}
       <main className={cn(
         'flex-1 relative z-10 w-full mx-auto',
         isEmbed ? 'p-0 max-w-none' : 'p-4 md:p-8 max-w-[1440px]'

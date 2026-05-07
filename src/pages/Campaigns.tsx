@@ -1,14 +1,15 @@
-import { useState, type ElementType } from "react";
+import { useState, useMemo, type ElementType } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { motion, AnimatePresence } from "motion/react";
 import { Card, Button, Modal, CardTitle, FormGroup, Label, Select, InfoTooltip } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { 
-  Twitter, Facebook, Instagram, Zap, Youtube, MessageSquare, 
-  Linkedin, Music, Plus, Play, Pause, Edit3, X, Download, 
-  Share2, Code, ExternalLink, FileText, Table as TableIcon, 
-  CheckCircle2, Copy, Globe, MoreVertical, Sparkles, CopyPlus
+import {
+  Twitter, Facebook, Instagram, Zap, Youtube, MessageSquare,
+  Linkedin, Music, Plus, Play, Pause, Edit3, X, Download,
+  Share2, Code, ExternalLink, FileText, Table as TableIcon,
+  CheckCircle2, Copy, Globe, MoreVertical, Sparkles, CopyPlus,
+  ChevronUp, ChevronDown
 } from "lucide-react";
 import { campaigns as initialCampaigns, getPlatformIcon, Campaign } from "@/data/campaigns";
 import { generateAdCreative, OptimizationSuggestion } from "@/services/geminiService";
@@ -25,6 +26,8 @@ export default function Campaigns() {
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [exportFormat, setExportFormat] = useState<'csv' | 'excel' | 'gdocs'>('csv');
   const [copied, setCopied] = useState(false);
+  const [sortCol, setSortCol] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const { addToast } = useToast();
 
   const toggleSelectAll = () => {
@@ -37,6 +40,30 @@ export default function Campaigns() {
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const toggleStatus = (id: string) => {
+    setCampaignsList(prev => prev.map(c => {
+      if (c.id !== id) return c;
+      const next = c.status === 'live' ? 'paused' : c.status === 'paused' ? 'live' : 'live';
+      return { ...c, status: next };
+    }));
+  };
+
+  const pauseSelected = () => {
+    setCampaignsList(prev => prev.map(c =>
+      selectedIds.includes(c.id) && c.status === 'live' ? { ...c, status: 'paused' as const } : c
+    ));
+    setSelectedIds([]);
+  };
+
+  const handleSort = (col: string) => {
+    if (sortCol === col) {
+      setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortCol(col);
+      setSortDir('asc');
+    }
   };
 
   const handleDuplicate = (campaign: Campaign) => {
@@ -82,6 +109,30 @@ export default function Campaigns() {
   const pausedCampaigns = campaignsList.filter(c => c.status === 'paused').length;
   const draftCampaigns = campaignsList.filter(c => c.status === 'draft').length;
   const avgCpc = totalClicks > 0 ? (totalSpendBtc / totalClicks) : 0;
+
+  const sortedCampaigns = useMemo(() => {
+    if (!sortCol) return campaignsList;
+    return [...campaignsList].sort((a, b) => {
+      let av: number | string = 0;
+      let bv: number | string = 0;
+      if (sortCol === 'name')        { av = a.name;        bv = b.name; }
+      else if (sortCol === 'spend')  { av = a.spendBtc;    bv = b.spendBtc; }
+      else if (sortCol === 'impr')   { av = a.impressions;  bv = b.impressions; }
+      else if (sortCol === 'clicks') { av = a.clicks;       bv = b.clicks; }
+      else if (sortCol === 'ctr')    { av = a.ctr;          bv = b.ctr; }
+      if (typeof av === 'string' && typeof bv === 'string') {
+        return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+      }
+      return sortDir === 'asc' ? (av as number) - (bv as number) : (bv as number) - (av as number);
+    });
+  }, [campaignsList, sortCol, sortDir]);
+
+  const SortIcon = ({ col }: { col: string }) => {
+    if (sortCol !== col) return <ChevronUp className="w-3 h-3 opacity-20" />;
+    return sortDir === 'asc'
+      ? <ChevronUp className="w-3 h-3 text-accent" />
+      : <ChevronDown className="w-3 h-3 text-accent" />;
+  };
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 pb-20">
@@ -159,7 +210,13 @@ export default function Campaigns() {
                 </th>
                 <th className="text-left p-4 text-[10px] uppercase tracking-widest text-muted border-b border-border font-bold">
                   <div className="flex items-center gap-1">
-                    Campaign
+                    <button
+                      onClick={() => handleSort('name')}
+                      className="flex items-center gap-1 hover:text-text transition-colors"
+                    >
+                      Campaign
+                      <SortIcon col="name" />
+                    </button>
                     <InfoTooltip content="The unique name identifying your ad campaign." />
                   </div>
                 </th>
@@ -177,25 +234,49 @@ export default function Campaigns() {
                 </th>
                 <th className="text-left p-4 text-[10px] uppercase tracking-widest text-muted border-b border-border font-bold">
                   <div className="flex items-center gap-1">
-                    Spend (BTC)
+                    <button
+                      onClick={() => handleSort('spend')}
+                      className="flex items-center gap-1 hover:text-text transition-colors"
+                    >
+                      Spend (BTC)
+                      <SortIcon col="spend" />
+                    </button>
                     <InfoTooltip content="Total Bitcoin consumed by this campaign to date." />
                   </div>
                 </th>
                 <th className="text-left p-4 text-[10px] uppercase tracking-widest text-muted border-b border-border font-bold">
                   <div className="flex items-center gap-1">
-                    Impressions
+                    <button
+                      onClick={() => handleSort('impr')}
+                      className="flex items-center gap-1 hover:text-text transition-colors"
+                    >
+                      Impressions
+                      <SortIcon col="impr" />
+                    </button>
                     <InfoTooltip content="Number of times this specific campaign's ads have been seen." />
                   </div>
                 </th>
                 <th className="text-left p-4 text-[10px] uppercase tracking-widest text-muted border-b border-border font-bold">
                   <div className="flex items-center gap-1">
-                    Clicks
+                    <button
+                      onClick={() => handleSort('clicks')}
+                      className="flex items-center gap-1 hover:text-text transition-colors"
+                    >
+                      Clicks
+                      <SortIcon col="clicks" />
+                    </button>
                     <InfoTooltip content="Number of user interactions (clicks) with this campaign's ads." />
                   </div>
                 </th>
                 <th className="text-left p-4 text-[10px] uppercase tracking-widest text-muted border-b border-border font-bold">
                   <div className="flex items-center gap-1">
-                    CTR
+                    <button
+                      onClick={() => handleSort('ctr')}
+                      className="flex items-center gap-1 hover:text-text transition-colors"
+                    >
+                      CTR
+                      <SortIcon col="ctr" />
+                    </button>
                     <InfoTooltip content="Click-Through Rate: The percentage of impressions that resulted in a click." />
                   </div>
                 </th>
@@ -209,20 +290,44 @@ export default function Campaigns() {
               </tr>
             </thead>
             <tbody>
-              {campaignsList.map(c => (
+              {sortedCampaigns.map(c => (
                 <tr key={c.id} className={cn(
                   "hover:bg-accent/5 transition-colors group border-b border-border/50",
                   selectedIds.includes(c.id) && "bg-accent/5"
                 )}>
                   <td className="p-4">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       className="w-4 h-4 rounded border-border bg-card accent-accent cursor-pointer"
                       checked={selectedIds.includes(c.id)}
                       onChange={() => toggleSelect(c.id)}
                     />
                   </td>
-                  <td className="p-4">
+                  <td className="p-4 relative">
+                    {/* Hover tooltip */}
+                    <div className="absolute left-1/2 -translate-x-1/2 -top-16 w-48 bg-card border border-border rounded-xl p-2 text-[11px] hidden group-hover:block z-50 shadow-xl pointer-events-none">
+                      <div className="font-bold text-text truncate mb-1">{c.name}</div>
+                      <div className="flex gap-1 text-muted mb-1.5">
+                        {c.platforms.map((pid, i) => {
+                          const Icon = getPlatformIcon(pid);
+                          return <Icon key={i} className="w-3.5 h-3.5" />;
+                        })}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className={cn(
+                          "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold",
+                          c.status === 'live' ? "bg-green/15 text-green" :
+                          c.status === 'paused' ? "bg-accent/15 text-accent" :
+                          "bg-muted/15 text-muted"
+                        )}>
+                          {c.status === 'live' && <Play className="w-2.5 h-2.5" />}
+                          {c.status === 'paused' && <Pause className="w-2.5 h-2.5" />}
+                          {c.status === 'draft' && <Edit3 className="w-2.5 h-2.5" />}
+                          {c.status}
+                        </span>
+                        <span className="text-muted font-mono">CTR: {c.ctr > 0 ? `${c.ctr}%` : '—'}</span>
+                      </div>
+                    </div>
                     <div className="font-bold text-text">{c.name}</div>
                     <div className="text-[10px] text-muted mt-0.5">{c.dates}</div>
                   </td>
@@ -235,12 +340,16 @@ export default function Campaigns() {
                     </div>
                   </td>
                   <td className="p-4">
-                    <span className={cn(
-                      "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold",
-                      c.status === 'live' ? "bg-green/15 text-green" :
-                      c.status === 'paused' ? "bg-accent/15 text-accent" :
-                      "bg-muted/15 text-muted"
-                    )}>
+                    <span
+                      onClick={() => toggleStatus(c.id)}
+                      title={c.status !== 'draft' ? 'Click to toggle status' : 'Draft — click to go live'}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold cursor-pointer select-none transition-opacity hover:opacity-75",
+                        c.status === 'live' ? "bg-green/15 text-green" :
+                        c.status === 'paused' ? "bg-accent/15 text-accent" :
+                        "bg-muted/15 text-muted"
+                      )}
+                    >
                       {c.status === 'live' && <Play className="w-3 h-3 animate-pulse" />}
                       {c.status === 'paused' && <Pause className="w-3 h-3" />}
                       {c.status === 'draft' && <Edit3 className="w-3 h-3" />}
@@ -441,7 +550,7 @@ export default function Campaigns() {
               <Button size="sm" variant="secondary" onClick={() => setShowExportModal(true)} className="gap-2">
                 <Download className="w-4 h-4" /> Export
               </Button>
-              <Button size="sm" variant="secondary" className="gap-2 text-red hover:bg-red/10 hover:border-red/30">
+              <Button size="sm" variant="secondary" onClick={pauseSelected} className="gap-2 text-red hover:bg-red/10 hover:border-red/30">
                 <Pause className="w-4 h-4" /> Pause
               </Button>
               <Button size="sm" variant="secondary" onClick={() => setSelectedIds([])}>

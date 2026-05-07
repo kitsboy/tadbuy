@@ -1,7 +1,8 @@
 import { useState, useEffect, type ComponentType } from "react";
 import { motion } from "motion/react";
+import { Link } from "react-router-dom";
 import { Card, CardTitle, Button } from "@/components/ui";
-import { Monitor, TrendingUp, DollarSign, MousePointerClick, Zap, RefreshCw } from "lucide-react";
+import { Monitor, TrendingUp, DollarSign, MousePointerClick, Zap, RefreshCw, Plus, BarChart2, UserPlus } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { BITCOIN_ADDRESS } from "@/constants";
 import { usePageTitle } from "@/hooks/usePageTitle";
@@ -33,31 +34,79 @@ const MOCK_METRICS: Metrics = {
   ],
 };
 
+// ─── Hooks ────────────────────────────────────────────────────────────────────
+function useCountUp(target: number, duration = 1200) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    let start: number | null = null;
+    const step = (timestamp: number) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      setValue(target * ease);
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [target, duration]);
+  return value;
+}
+
+// ─── Mock transaction data ────────────────────────────────────────────────────
+const MOCK_TRANSACTIONS = [
+  { date: 'May 5, 2025', type: 'Campaign Top-Up', amount: '₿0.00250000', status: 'confirmed' },
+  { date: 'May 4, 2025', type: 'Ad Spend',        amount: '₿0.00089200', status: 'confirmed' },
+  { date: 'May 3, 2025', type: 'Campaign Top-Up', amount: '₿0.00500000', status: 'confirmed' },
+  { date: 'May 2, 2025', type: 'Ad Spend',        amount: '₿0.00112400', status: 'confirmed' },
+  { date: 'May 1, 2025', type: 'Refund',          amount: '₿0.00030000', status: 'pending'   },
+];
+
+// ─── Quick Actions ────────────────────────────────────────────────────────────
+const QUICK_ACTIONS = [
+  { label: 'New Campaign',      icon: Plus,      to: '/'          },
+  { label: 'Top Up Wallet',     icon: Zap,       to: '/wallet'    },
+  { label: 'View Reports',      icon: BarChart2, to: '/analytics' },
+  { label: 'Invite Publisher',  icon: UserPlus,  to: '/publisher' },
+] as const;
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 interface MetricCardProps {
   title: string;
-  value: string;
+  /** Raw numeric target — formatting is handled internally */
+  raw: number;
+  /** Format descriptor: 'integer' | 'ctr' | 'btc' */
+  fmt: 'integer' | 'ctr' | 'btc';
   icon: ComponentType<{ className?: string }>;
   trend?: string;
   loading?: boolean;
 }
 
-const MetricCard = ({ title, value, icon: Icon, trend, loading }: MetricCardProps) => (
-  <Card className="glass-panel p-4">
-    <div className="flex items-center justify-between mb-2">
-      <div className="text-muted text-xs font-bold uppercase tracking-wider">{title}</div>
-      <Icon className="w-4 h-4 text-accent" />
-    </div>
-    {loading ? (
-      <div className="h-8 w-28 bg-surface rounded-lg animate-pulse mt-1" />
-    ) : (
-      <div className="text-2xl font-extrabold tracking-tight">{value}</div>
-    )}
-    {trend && !loading && (
-      <div className="text-[10px] text-green mt-1 font-mono">{trend}</div>
-    )}
-  </Card>
-);
+const MetricCard = ({ title, raw, fmt, icon: Icon, trend, loading }: MetricCardProps) => {
+  const animated = useCountUp(raw);
+
+  const display = (() => {
+    if (fmt === 'integer') return Math.round(animated).toLocaleString();
+    if (fmt === 'ctr')     return `${animated.toFixed(2)}%`;
+    // btc
+    return `₿${animated.toFixed(8)}`;
+  })();
+
+  return (
+    <Card className="glass-panel p-4">
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-muted text-xs font-bold uppercase tracking-wider">{title}</div>
+        <Icon className="w-4 h-4 text-accent" />
+      </div>
+      {loading ? (
+        <div className="h-8 w-28 bg-surface rounded-lg animate-pulse mt-1" />
+      ) : (
+        <div className="text-2xl font-extrabold tracking-tight font-mono">{display}</div>
+      )}
+      {trend && !loading && (
+        <div className="text-[10px] text-green mt-1 font-mono">{trend}</div>
+      )}
+    </Card>
+  );
+};
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function Dashboard() {
@@ -110,11 +159,26 @@ export default function Dashboard() {
         </Button>
       </div>
 
+      {/* ── Quick Actions ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {QUICK_ACTIONS.map(({ label, icon: Icon, to }) => (
+          <Link
+            key={label}
+            to={to}
+            className="flex flex-col items-center gap-1.5 p-3 bg-surface border border-border rounded-[16px] cursor-pointer hover:border-accent/50 hover:bg-white/5 transition-all text-center no-underline"
+          >
+            <Icon className="w-5 h-5 text-accent" />
+            <span className="text-[11px] font-semibold text-muted leading-tight">{label}</span>
+          </Link>
+        ))}
+      </div>
+
+      {/* ── Stat cards ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard title="Impressions" value={metrics.impressions.toLocaleString()} icon={Monitor} trend="↑ 18% vs last week" loading={loading} />
-        <MetricCard title="Clicks"      value={metrics.clicks.toLocaleString()}      icon={MousePointerClick} trend="↑ 6% vs last week" loading={loading} />
-        <MetricCard title="CTR"         value={`${metrics.ctr}%`}                    icon={TrendingUp} trend="Industry avg: 1.9%" loading={loading} />
-        <MetricCard title="Spend (₿)" value={`₿ ${metrics.spend.toFixed(8)}`}         icon={DollarSign} trend={`≈ ${Math.round(metrics.spend * 100_000_000).toLocaleString()} sats`} loading={loading} />
+        <MetricCard title="Impressions" raw={metrics.impressions} fmt="integer" icon={Monitor}           trend="↑ 18% vs last week"                                                           loading={loading} />
+        <MetricCard title="Clicks"      raw={metrics.clicks}      fmt="integer" icon={MousePointerClick} trend="↑ 6% vs last week"                                                            loading={loading} />
+        <MetricCard title="CTR"         raw={metrics.ctr}         fmt="ctr"     icon={TrendingUp}        trend="Industry avg: 1.9%"                                                           loading={loading} />
+        <MetricCard title="Spend (₿)"   raw={metrics.spend}       fmt="btc"     icon={DollarSign}        trend={`≈ ${Math.round(metrics.spend * 100_000_000).toLocaleString()} sats`} loading={loading} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -169,6 +233,42 @@ export default function Dashboard() {
           </Button>
         </Card>
       </div>
+      {/* ── Recent Transactions ── */}
+      <Card className="glass-panel">
+        <CardTitle>Recent Transactions</CardTitle>
+        <div className="overflow-x-auto mt-3">
+          <table className="w-full text-[12px]">
+            <thead>
+              <tr className="text-left text-muted text-[10px] font-bold uppercase tracking-wider border-b border-border">
+                <th className="pb-2 pr-4 font-bold">Date</th>
+                <th className="pb-2 pr-4 font-bold">Type</th>
+                <th className="pb-2 pr-4 font-bold">Amount</th>
+                <th className="pb-2 font-bold">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {MOCK_TRANSACTIONS.map((tx, i) => (
+                <tr key={i} className="border-b border-border last:border-0">
+                  <td className="py-2.5 pr-4 text-muted font-mono whitespace-nowrap">{tx.date}</td>
+                  <td className="py-2.5 pr-4 font-medium whitespace-nowrap">{tx.type}</td>
+                  <td className="py-2.5 pr-4 font-mono whitespace-nowrap">{tx.amount}</td>
+                  <td className="py-2.5">
+                    {tx.status === 'confirmed' ? (
+                      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-green/15 text-green">
+                        confirmed
+                      </span>
+                    ) : (
+                      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-yellow-400/15 text-yellow-400">
+                        pending
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
     </motion.div>
   );
 }
