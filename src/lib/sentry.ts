@@ -1,9 +1,13 @@
 import * as Sentry from "@sentry/react";
 
 export const initSentry = () => {
-  if (process.env.SENTRY_DSN) {
+  const dsn = typeof process !== "undefined" && process?.env
+    ? process.env.SENTRY_DSN
+    : (import.meta.env ? import.meta.env.VITE_SENTRY_DSN : undefined);
+
+  if (dsn) {
     Sentry.init({
-      dsn: process.env.SENTRY_DSN,
+      dsn,
       integrations: [
         Sentry.browserTracingIntegration(),
         Sentry.replayIntegration(),

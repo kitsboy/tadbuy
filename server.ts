@@ -102,7 +102,7 @@ const publisherSettingsSchema = Joi.object({
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = process.env.PORT || 3000;
   const campaignRepo = new AdminFirestoreCampaignRepository();
 
   app.use(express.json());
