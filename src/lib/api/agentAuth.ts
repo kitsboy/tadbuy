@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 
 // AGENT_API_KEYS must be a JSON string mapping keys to roles.
 // Example: AGENT_API_KEYS={"my-agent-key": "agent", "my-admin-key": "admin"}

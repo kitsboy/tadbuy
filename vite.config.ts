@@ -51,7 +51,11 @@ export default defineConfig(({ mode }) => {
     },
 
     server: {
-      hmr: process.env.DISABLE_HMR !== 'true',
+      host: '127.0.0.1',
+      hmr: process.env.DISABLE_HMR !== 'true' ? {
+        host: '127.0.0.1',
+        port: process.env.VITE_HMR_PORT ? Number(process.env.VITE_HMR_PORT) : 24679
+      } : false,
     },
   };
 });

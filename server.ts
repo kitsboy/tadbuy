@@ -580,8 +580,9 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`🚀 Tadbuy server running on http://localhost:${PORT}`);
+  const HOST = process.env.HOST || "127.0.0.1";
+  app.listen(Number(PORT), HOST, () => {
+    console.log(`🚀 Tadbuy server running on http://${HOST}:${PORT}`);
     console.log(`   ENV: ${process.env.NODE_ENV || 'development'}`);
   });
 }
