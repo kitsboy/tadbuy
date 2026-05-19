@@ -23,6 +23,16 @@ export interface Campaign {
   bgHue?: number;
   bgLightness?: number;
   textColor?: string;
+  // Core 20-Point Phase Upgrades
+  biddingStrategy?: 'maximize_clicks' | 'target_cpa' | 'manual';
+  targetCpa?: number;
+  keywords?: string[];
+  frequencyCapPer24h?: number;
+  s2sPostbackUrl?: string;
+  retargetingEnabled?: boolean;
+  // Financial & Security
+  splitPayments?: { address: string; percentage: number }[];
+  auditLogs?: { timestamp: string; action: string; userId: string }[];
 }
 
 export interface CampaignRepository {

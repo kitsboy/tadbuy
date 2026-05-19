@@ -40,6 +40,10 @@ interface TargetingSettings {
   income: string;
   behaviors: string;
   industries: string;
+  // 20-Point Upgrades
+  biddingStrategy: 'maximize_clicks' | 'target_cpa' | 'manual';
+  keywords: string;
+  frequencyCap: number;
 }
 
 interface SchedulingSettings {
@@ -148,7 +152,10 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
     education: 'All Education Levels',
     income: 'All Incomes',
     behaviors: 'All Behaviors',
-    industries: 'All Industries'
+    industries: 'All Industries',
+    biddingStrategy: 'manual',
+    keywords: '',
+    frequencyCap: 3
   });
   const [scheduling, setScheduling] = useState<SchedulingSettings>({
     mode: 'calendar',
@@ -760,6 +767,23 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                   <span className="bg-green/10 text-green px-2 py-0.5 rounded-full border border-green/20">Est. ROAS: {expectedRoas}x</span>
                 </div>
 
+                {mode === 'complex' && (
+                  <div className="grid grid-cols-2 gap-4 mt-4 border-t border-border pt-4">
+                    <FormGroup className="mb-0">
+                      <Label>Bidding Strategy</Label>
+                      <Select value={targeting.biddingStrategy} onChange={e => setTargeting({ ...targeting, biddingStrategy: e.target.value as any })}>
+                        <option value="manual">Manual Bidding</option>
+                        <option value="maximize_clicks">PPQ.AI Maximize Clicks</option>
+                        <option value="target_cpa">Target CPA</option>
+                      </Select>
+                    </FormGroup>
+                    <FormGroup className="mb-0">
+                      <Label>Freq Cap (24h)</Label>
+                      <Input type="number" min="1" max="20" value={targeting.frequencyCap} onChange={e => setTargeting({ ...targeting, frequencyCap: parseInt(e.target.value) || 3 })} />
+                    </FormGroup>
+                  </div>
+                )}
+
                 <div className="mt-4">
                   <div className="flex items-center gap-2 mb-3">
                     <CardTitle className="mb-0">3. Pay with</CardTitle>
@@ -1001,6 +1025,13 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                       <option>Automotive</option>
                       <option>Entertainment & Media</option>
                     </Select>
+                  </FormGroup>
+                  <FormGroup className="mb-0">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Label className="mb-0">Contextual Keywords</Label>
+                      <InfoTooltip content="Bid strictly on exact keywords appearing in publisher content." />
+                    </div>
+                    <Input placeholder="e.g. bitcoin, hardware wallet, security" value={targeting.keywords} onChange={e => setTargeting({ ...targeting, keywords: e.target.value })} />
                   </FormGroup>
                   <FormGroup className="mb-0">
                   <div className="flex items-center gap-2 mb-1.5">
