@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(python3 *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(git stash *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "mcp__ide__getDiagnostics",
+      "Bash(host tadbuy.com)",
+      "Bash(nslookup tadbuy.com)",
+      "Bash(host tadbuy.pages.dev)",
+      "Bash(nslookup tadbuy.pages.dev)",
+      "Bash(curl -s https://tadbuy.pages.dev)",
+      "Bash(curl *)",
+      "Bash(gh auth *)",
+      "Bash(gh repo *)",
+      "Bash(git --version)",
+      "Bash(git config *)",
+      "Bash(git ls-remote *)",
+      "Bash(brew install *)",
+      "Bash(gh --version)",
+      "Bash(grep -E '\\\\.\\(ts|js|json|rules|env|example\\)$')",
+      "Bash(grep -v \"^$\")",
+      "Bash(git commit *)"
+    ]
+  }
+}
