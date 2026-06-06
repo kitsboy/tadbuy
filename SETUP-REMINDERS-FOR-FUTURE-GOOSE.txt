@@ -1,0 +1,18 @@
+
+## New Lesson Learned - 2026-06-05 (Add to All Future Sessions)
+- When the app shows a black screen with "document is not defined" or "Cannot read properties of undefined (reading 'onAuthStateChanged')":
+  - The cause is Firebase trying to initialize too early (before the browser DOM is ready).
+  - **Immediate Fix**: Update `src/firebase.ts` to include `typeof window !== 'undefined'` check and export a `getSafeAuth()` function that returns `null` if auth is not available.
+  - Then update `src/components/AuthProvider.tsx` to use `getSafeAuth()` and check if auth exists before calling `onAuthStateChanged`.
+  - After the fix, run `npm run build` then `npm run preview` (or `npm run dev` for live editing).
+  - This prevents the crash and lets the full UI (wizard, map, wallet, dashboards) render on the dark gradient background.
+
+- Preferred local workflow:
+  - `npm run dev` for editing with hot reload (best for Goose).
+  - `npm run build && npm run preview` for production-like testing.
+  - Always stop previous servers with Control + C before starting a new one.
+
+- When starting a new session: First read SETUP-REMINDERS-FOR-FUTURE-GOOSE.txt, then PROJECT-CONTEXT.md, SOURCE-OF-TRUTH.md, latest KIMI-HANDOFF, and run the giveabit-project-handoff skill if needed.
+
+This lesson is now part of the permanent knowledge base. Future Goose instances must discover and apply it immediately when black screens or Firebase errors appear.
+
