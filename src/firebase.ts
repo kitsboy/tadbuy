@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, type User } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -8,13 +8,12 @@ const firebaseConfig = {
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Robust initialization with guards
-let app: any = null;
-let auth: any = null;
-let db: any = null;
+let app;
+let auth;
+let db;
 let initialized = false;
 
 export const initializeFirebase = () => {
@@ -40,7 +39,6 @@ export const initializeFirebase = () => {
   }
 };
 
-// Safe auth getter with window check and error handling
 export const getSafeAuth = () => {
   if (typeof window === 'undefined') {
     console.warn('[Firebase] getSafeAuth called on server-side');
@@ -48,22 +46,12 @@ export const getSafeAuth = () => {
   }
 
   if (!initialized) {
-    const result = initializeFirebase();
-    if (!result.auth) {
-      console.error('[Firebase] Failed to get auth instance');
-      return null;
-    }
+    initializeFirebase();
   }
 
-  if (!auth) {
-    console.error('[Firebase] Auth instance is undefined');
-    return null;
-  }
-
-  return auth;
+  return auth || null;
 };
 
-// Get Firestore instance safely
 export const getSafeFirestore = () => {
   if (typeof window === 'undefined' || !initialized) {
     initializeFirebase();
@@ -71,8 +59,8 @@ export const getSafeFirestore = () => {
   return db;
 };
 
-// Legacy exports for backward compatibility
-export { app, auth as defaultAuth, db as defaultDb };
+// Export 'auth' directly for backward compatibility with Profile.tsx and other files
+export { auth as defaultAuth };
+export { auth };
 
-// Export types
-export type { User };
+export { app, db };
