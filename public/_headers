@@ -18,3 +18,10 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(self)
+
+# giveabit.io — Cloudflare Pages _headers
+/assets/*.css
+  Content-Type: text/css
+
+/assets/*.js
+  Content-Type: application/javascript
