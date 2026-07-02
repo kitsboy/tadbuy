@@ -7,10 +7,10 @@ owner: Kimi / Qwen (每周审计)
 update_frequency: 每周（周一）
 ---
 
-# SEO — Tadbuy (tadbuy.io)
+# SEO — Tadbuy (tadbuy.giveabit.io)
 
 ## 实时网址
-https://tadbuy.io
+https://tadbuy.giveabit.io
 
 ## 目标关键词
 | 主要关键词 | 搜索意图 |

@@ -7,10 +7,10 @@ owner: Kimi / Qwen (Wöchentliches Audit)
 update_frequency: Wöchentlich (Montag)
 ---
 
-# SEO — Tadbuy (tadbuy.io)
+# SEO — Tadbuy (tadbuy.giveabit.io)
 
 ## Live URL
-https://tadbuy.io
+https://tadbuy.giveabit.io
 
 ## Ziel-Suchbegriffe
 | Primärer Suchbegriff | Suchabsicht |

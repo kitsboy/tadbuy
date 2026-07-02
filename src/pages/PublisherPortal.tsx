@@ -55,7 +55,7 @@ const StatCard = ({ label, value, icon: Icon, color }: StatCardProps) => (
 // ─── Embed Snippet ────────────────────────────────────────────────────────────
 function EmbedSnippet({ slotId }: { slotId: string }) {
   const [copied, setCopied] = useState(false);
-  const snippet = `<script src="https://tadbuy.io/embed.js" data-slot="${slotId}"><\/script>`;
+  const snippet = `<script src="https://tadbuy.giveabit.io/embed.js" data-slot="${slotId}"><\/script>`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(snippet).then(() => {

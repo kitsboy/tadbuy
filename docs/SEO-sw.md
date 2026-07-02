@@ -7,10 +7,10 @@ owner: Kimi / Qwen (Ukaguzi wa Wiki)
 update_frequency: Wiki (Ijumaa)
 ---
 
-# SEO — Tadbuy (tadbuy.io)
+# SEO — Tadbuy (tadbuy.giveabit.io)
 
 ## URL inayofanya kazi
-https://tadbuy.io
+https://tadbuy.giveabit.io
 
 ## Maneno Yanayotafutwa
 | Maneno Muhimu | Nia ya Kutafuta |
