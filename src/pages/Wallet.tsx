@@ -4,8 +4,13 @@ import { Card, CardTitle, Button, Input, Label, FormGroup, Modal } from "@/compo
 import { Zap, ArrowDownCircle, ArrowUpCircle, Copy, CheckCircle2, QrCode, X } from "lucide-react";
 import { useToast } from "@/components/Toast";
 import { QRCodeSVG } from "qrcode.react";
+import { LightningLiquidity } from "@/components/payments/LightningLiquidity";
+import { FedimintPanel } from "@/components/payments/FedimintPanel";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export default function Wallet() {
+  usePageMeta('Wallet', 'Manage Lightning, Fedimint ecash, and on-chain balances for your Tadbuy campaigns.');
+
   const [balance, setBalance] = useState<number | null>(null);
   const [invoice, setInvoice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -139,6 +144,10 @@ export default function Wallet() {
           </div>
         </Card>
       </div>
+
+      <LightningLiquidity />
+
+      <FedimintPanel amountSats={1000} memo="Tadbuy Wallet Top-up" />
 
       {/* Invoice Card — only appears after generation */}
       {invoice && (

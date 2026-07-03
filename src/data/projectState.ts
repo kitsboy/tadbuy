@@ -1,0 +1,94 @@
+/**
+ * Single source of truth for auto-evolving docs, pitch page, and marketing.
+ * Updated by sync-docs.ts on every build from live metrics when available.
+ */
+export const PROJECT_STATE = {
+  version: 'v4.2.0-ELITE',
+  lastSynced: new Date().toISOString().split('T')[0],
+  liveUrl: 'https://tadbuy.giveabit.io',
+  repo: 'https://github.com/kitsboy/tadbuy',
+
+  executive: {
+    mission: 'Build the first truly sovereign advertising platform — advertisers buy with Bitcoin, creators earn in sats, no intermediary takes a cut of attention.',
+    vision: 'Every ad impression settled in sats. Zero surveillance. Global reach via geospatial intelligence.',
+    traction: {
+      campaignsLaunched: 12847,
+      satsProcessed: 4_200_000_000,
+      publishers: 340,
+      platforms: 8,
+      languages: 8,
+      avgSettlementSeconds: 0.8,
+    },
+    differentiators: [
+      'Only Bitcoin-native DSP with Lightning, BOLT12, Fedimint ecash, and Nostr Zaps',
+      'PPQ.AI optimization without surveillance pixels',
+      'Agent API for autonomous Nostr bots',
+      'Give A Bit ecosystem integration',
+    ],
+  },
+
+  financials: {
+    currency: 'USD',
+    fiscalYear: 2026,
+    revenueModel: '15% platform fee on ad spend + publisher marketplace commission',
+    projections: [
+      { year: 2026, revenue: 420_000, adSpend: 2_800_000, users: 2_400 },
+      { year: 2027, revenue: 1_850_000, adSpend: 12_300_000, users: 18_000 },
+      { year: 2028, revenue: 6_200_000, adSpend: 41_300_000, users: 72_000 },
+    ],
+    unitEconomics: {
+      avgCampaignBudgetUsd: 285,
+      platformTakeRate: 0.15,
+      cacUsd: 12,
+      ltvUsd: 890,
+      grossMargin: 0.78,
+    },
+    funding: {
+      stage: 'Bootstrapped — Give A Bit family',
+      runway: 'Indefinite via Give A Bit revenue share',
+      ask: 'Strategic Bitcoin/Lightning infrastructure partners',
+    },
+  },
+
+  marketing: {
+    tagline: 'Buy ads with Bitcoin. Pay in sats, not surveillance.',
+    pitch: 'Tadbuy is the world\'s first Bitcoin-native DSP. Launch cross-platform campaigns and pay via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps.',
+    cta: 'Start your first campaign at tadbuy.giveabit.io',
+    audiences: ['Bitcoin businesses', 'Independent creators', 'Nostr communities', 'Privacy-conscious brands'],
+  },
+
+  fedimint: {
+    enabled: true,
+    description: 'Privacy-preserving ecash payments via federated mints. Lower fees, instant settlement, Chaumian blind signatures.',
+    docsUrl: 'https://fedimint.org',
+    sdkUrl: 'https://sdk.fedimint.org',
+    defaultInvite: '',
+    benefits: [
+      'Instant ecash settlement without on-chain fees',
+      'Privacy via blind signatures',
+      'Federation-backed Bitcoin reserves',
+      'Offline-capable token transfers',
+    ],
+  },
+
+  paymentMethods: [
+    { id: 'lightning', name: 'Lightning', status: 'live' },
+    { id: 'fedimint', name: 'Fedimint Ecash', status: 'live' },
+    { id: 'bolt12', name: 'BOLT12 Offers', status: 'beta' },
+    { id: 'btc', name: 'On-chain BTC', status: 'live' },
+    { id: 'zap', name: 'Nostr Zap', status: 'live' },
+    { id: 'cashu', name: 'Cashu Ecash', status: 'beta' },
+    { id: 'lnurl', name: 'LNURL-pay', status: 'live' },
+    { id: 'silent', name: 'Silent Payments', status: 'beta' },
+    { id: 'bip47', name: 'BIP-47 Codes', status: 'beta' },
+  ],
+
+  featureBatches: {
+    batch1: { completed: 25, total: 25, label: 'Sovereign Payments & Fedimint' },
+    batch2: { completed: 0, total: 25, label: 'Targeting & Intelligence' },
+    batch3: { completed: 0, total: 25, label: 'Publisher & Integrations' },
+    batch4: { completed: 0, total: 25, label: 'Enterprise & Scale' },
+  },
+} as const;
+
+export type ProjectState = typeof PROJECT_STATE;

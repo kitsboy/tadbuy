@@ -1,7 +1,7 @@
 // ─── App-wide constants ──────────────────────────────────────────────────────
 // Edit values here — they propagate to every page, footer, and QR code.
 
-export const APP_VERSION = "v4.1.0-ELITE";
+export const APP_VERSION = "v4.2.0-ELITE";
 
 export const BITCOIN_ADDRESS =
   "bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad";

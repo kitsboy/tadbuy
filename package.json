@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "tsx server.ts",
     "start": "tsx server.ts",
+    "sync-docs": "tsx scripts/sync-docs.ts",
+    "prebuild": "tsx scripts/sync-docs.ts",
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",

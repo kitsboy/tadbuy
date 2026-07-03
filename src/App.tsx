@@ -38,6 +38,7 @@ const Documentation    = lazy(() => import('./pages/Documentation'));
 const ApiReference     = lazy(() => import('./pages/ApiReference'));
 const PpqGuide         = lazy(() => import('./pages/PpqGuide'));
 const Bolt12Info       = lazy(() => import('./pages/Bolt12Info'));
+const Pitch            = lazy(() => import('./pages/Pitch'));
 const GeoTargeting     = lazy(() => import('./pages/GeoTargeting'));
 const CommandMenu      = lazy(() => import('./components/CommandMenu'));
 const LiveActivityWidget = lazy(() => import('./components/LiveActivityWidget'));
@@ -259,6 +260,7 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
             <Route path="/api-docs"    element={<ApiReference />} />
             <Route path="/ppq"         element={<PpqGuide />} />
             <Route path="/bolt12"      element={<Bolt12Info />} />
+            <Route path="/pitch"      element={<Pitch />} />
             <Route path="/geo"         element={<GeoTargeting />} />
             <Route path="/terms"       element={<Terms />} />
             <Route path="/privacy"     element={<Privacy />} />

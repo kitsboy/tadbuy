@@ -18,6 +18,11 @@ import StepPlatformBudget from "@/components/buyads/StepPlatformBudget";
 import StepTargeting from "@/components/buyads/StepTargeting";
 import StepCreative from "@/components/buyads/StepCreative";
 import StepReviewPay from "@/components/buyads/StepReviewPay";
+import { PAYMENT_METHODS } from "@/lib/payments/registry";
+import { FedimintPanel } from "@/components/payments/FedimintPanel";
+import { FeeEstimator } from "@/components/widgets/FeeEstimator";
+import { CurrencyDisplay } from "@/components/widgets/CurrencyDisplay";
+import { HalvingCountdown } from "@/components/widgets/HalvingCountdown";
 
 // --- Types & Interfaces ---
 
@@ -92,12 +97,15 @@ const platforms = [
   { id: 'tiktok', name: 'TikTok', icon: <Music className="w-6 h-6" />, cpm: 5.75 * BASE_FEE_MARKUP },
 ];
 
-const paymentMethods = [
-  { id: 'btc', name: 'Bitcoin', sub: 'On-chain', icon: '₿', color: 'text-accent', border: 'border-accent', bg: 'bg-accent/10' },
-  { id: 'lightning', name: 'Lightning', sub: 'Instant / Low fee', icon: <Zap className="w-6 h-6 text-lightning mx-auto" />, color: 'text-lightning', border: 'border-lightning', bg: 'bg-lightning/10' },
-  { id: 'bolt12', name: 'BOLT 12', sub: 'Offers / Recurring', icon: '🔮', color: 'text-purple', border: 'border-purple', bg: 'bg-purple/10' },
-  { id: 'zap', name: 'Nostr Zap', sub: 'Social / Tipping', icon: '⚡💜', color: 'text-purple-400', border: 'border-purple-400', bg: 'bg-purple-400/10' },
-];
+const paymentMethods = PAYMENT_METHODS.map(pm => ({
+  id: pm.id,
+  name: pm.name,
+  sub: pm.subtitle,
+  icon: typeof pm.icon === 'string' ? pm.icon : <pm.icon className={`w-6 h-6 ${pm.color} mx-auto`} />,
+  color: pm.color,
+  border: pm.border,
+  bg: pm.bg,
+}));
 
 export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }: { currency?: string, rate?: number, symbol?: string }) {
   usePageMeta('Buy Ads', 'Launch Bitcoin-native ad campaigns across 8 platforms. Pay in sats via Lightning, BOLT12, on-chain, or Nostr Zaps.');
@@ -617,6 +625,10 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
         <div>
           <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">Create Campaign</h2>
           <p className="text-muted mt-1 mb-3">Launch your ad across the decentralized web in minutes.</p>
+          <div className="flex flex-wrap items-center gap-3 mb-3">
+            <HalvingCountdown currentHeight={currentBlockHeight} />
+            <CurrencyDisplay sats={Math.round(btcAmount * 100_000_000)} btcRate={rate} fiatSymbol={symbol} />
+          </div>
           <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-2 w-full max-w-sm">
             <span className="text-xs font-bold text-muted">Ad Score</span>
             <div className="flex-1 h-2 bg-black/20 rounded-full overflow-hidden">
@@ -840,6 +852,26 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                     <div className="bg-purple/5 border border-purple/20 rounded-lg p-3.5 text-xs text-purple flex items-start gap-2.5">
                       <span className="text-xl leading-none">🔮</span>
                       <div>BOLT 12 Offers — Supports recurring payments, invoice reuse, and enhanced privacy. Works with compatible wallets (CLN, Phoenix 2.0+). Ideal for recurring ad campaigns.</div>
+                    </div>
+                  )}
+                  {paymentMethod === 'fedimint' && (
+                    <FedimintPanel
+                      amountSats={Math.round(btcAmount * 100_000_000)}
+                      memo={`Tadbuy Campaign: ${campaignName}`}
+                      onSuccess={() => setPaymentStatus('success')}
+                    />
+                  )}
+                  {paymentMethod === 'btc' && (
+                    <FeeEstimator className="mt-3" />
+                  )}
+                  {paymentMethod === 'cashu' && (
+                    <div className="bg-lightning/5 border border-lightning/20 rounded-lg p-3 text-xs text-lightning">
+                      Paste your Cashu ecash token at checkout to redeem ad credits instantly.
+                    </div>
+                  )}
+                  {paymentMethod === 'zap' && (
+                    <div className="bg-purple/5 border border-purple/20 rounded-lg p-3 text-xs text-purple">
+                      NIP-57 Zaps — Pay via Nostr with Lightning. Connect your Nostr extension to sign.
                     </div>
                   )}
                 </div>

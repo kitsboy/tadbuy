@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from './ui';
 import { BITCOIN_ADDRESS, BITCOIN_URI, APP_VERSION, TWITTER_HANDLE, SUPPORT_EMAIL } from '@/constants';
+import { BlockHeightTicker } from '@/components/widgets/BlockHeightTicker';
 
 const JOBS = [
   { title: "Senior DevOps Engineer", desc: "Scale our containerized infrastructure on Cloud Run." },
@@ -82,6 +83,7 @@ export default function Footer() {
                 <li><Link to="/api-docs" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">API Reference</Link></li>
                 <li><Link to="/ppq" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">PPQ.AI Guide</Link></li>
                 <li><Link to="/bolt12" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">BOLT 12 Info</Link></li>
+                <li><Link to="/pitch" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Investor Pitch</Link></li>
               </ul>
             </div>
           </div>
@@ -170,8 +172,9 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="text-center text-[10px] text-muted mt-8">
-        © 2026 GiveaBit Inc. · Tadbuy {APP_VERSION} · Bitcoin-native advertising, paid in sats.
+      <div className="text-center text-[10px] text-muted mt-8 flex flex-col items-center gap-2">
+        <BlockHeightTicker />
+        <span>© 2026 GiveaBit Inc. · Tadbuy {APP_VERSION} · Bitcoin-native advertising, paid in sats.</span>
       </div>
     </footer>
   );

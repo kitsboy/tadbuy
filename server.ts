@@ -6,6 +6,8 @@ import path from "path";
 import rateLimit from "express-rate-limit";
 import Joi from "joi";
 import { agentAuthMiddleware } from "./src/lib/api/agentAuth.ts";
+import { nip98AuthMiddleware } from "./src/lib/api/nip98Auth.ts";
+import { registerBatch1Routes } from "./server/routes/batch1.ts";
 import { getLightningNodeInfo, createLightningInvoice, executeLightningPayment } from "./src/services/lightningService.ts";
 import { AdminFirestoreCampaignRepository, getAdminDb } from "./src/lib/db/firestoreAdmin.ts";
 import fs from "fs";
@@ -559,6 +561,15 @@ app.get("/api/campaigns", async (req, res) => {
       const msg = error instanceof Error ? error.message : 'AI failed';
       res.status(500).json({ error: 'AI optimization failed', message: msg });
     }
+  });
+
+  // ─── Batch 1: Sovereign Payments (Fedimint, Nostr, LNURL, etc.) ───────────
+  registerBatch1Routes(app);
+
+  // NIP-98 protected agent endpoint example
+  app.get('/api/nostr/nip98/protected', nip98AuthMiddleware, (req, res) => {
+    const auth = (req as express.Request & { nostrAuth?: { pubkey: string } }).nostrAuth;
+    res.json({ authenticated: true, pubkey: auth?.pubkey });
   });
 
   // ─── Phase 1-5: 20-Point Upgrades Public API ─────────────────────────────
