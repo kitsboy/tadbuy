@@ -1,3 +1,24 @@
+## Latest Session Summary (from 2026-07-03 goodbye)
+
+**Chat topic:** Phase 1 complete; Supabase swap; Fedi guidance; blockers parked.
+
+**Finished this session:**
+- Phase 1 verified live (`api.giveabit.io`, Supabase, PM2, cloudflared)
+- M3 Supabase migration + docs through Session 7
+- Cam briefed on Fedi: keep installed, wait for invite
+
+**Still to do (Cam wants this completed soon):**
+- Roll **Fedi/Fedimint** to all 5 Give A Bit apps **and all future apps** (one Give A Bit Mint)
+- Phase 2 when Fedi updates (Andrea `t_8ee7c976`)
+- Phase 3 Umbrel when node syncs (Rosa `t_46208fbe`)
+- Phase 4 propagate env vars (Andrea `t_ec77b1e5`)
+
+**Next for Kimi:** Obsidian journal synced. When Andrea clears Fedi blocker → issue `fm-invite://` to Cam. Grok can wire sibling repos + new apps on M3.
+
+**Recovery:** `/whatsup` or read `docs/SESSION-SUMMARY-2026-07-03.md`
+
+---
+
 ## Handoff to Kimi — 2026-07-03 (Session 7 — Phase 1 verified, Phases 2–3 parked)
 
 **Machine:** M3 (Grok) — syncing Kimi confirmation + blockers

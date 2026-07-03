@@ -80,7 +80,8 @@ For automated agents (Grok, Kimi, Qwen):
 - [ ] M4 Phase 2: Fedimint mint — **blocked** (Fedi 0.10 vs Guardian 0.11, Andrea `t_8ee7c976`)
 - [ ] M4 Phase 3: Umbrel LND — **blocked** (node offline 93d, Rosa `t_46208fbe`)
 - [ ] Automated E2E tests
-- [ ] Propagate ecosystemConfig to sibling repos
+- [ ] **Cam priority (soon):** Fedi/Fedimint on all 5 apps + **every future Give A Bit app** — one mint, one invite
+- [ ] Propagate `VITE_FEDIMINT_INVITE` + `VITE_API_BASE_URL` to sibling CF Pages (Andrea `t_ec77b1e5`)
 
 ## How to Start (M3)
 ```bash
