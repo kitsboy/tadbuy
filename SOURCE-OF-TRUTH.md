@@ -37,7 +37,7 @@ Phased checklist (API proxy → Fedimint mint → Umbrel LND):
 | GitHub (Grok maintains) | [docs/KIMI-M4-SETUP-CHECKLIST.md](./docs/KIMI-M4-SETUP-CHECKLIST.md) |
 | Obsidian (Kimi maintains) | `MASTER-BRAIN/Obsidian/03-Projects/M3/Tadbuy/M4-SETUP-CHECKLIST.md` |
 
-**Status:** Phase 1 COMPLETE ✅ — API proxy live, Supabase migrated, `VITE_API_BASE_URL` set on CF Pages. Phases 2–5 pending (Fedimint, Umbrel, multi-app, verification).
+**Status:** Phase 1 COMPLETE ✅ (verified by Kimi). Phases 2 & 3 **parked** on external blockers — see Kanban below.
 
 Also: [docs/M4-SERVER-REF.md](./docs/M4-SERVER-REF.md) · [docs/SETUP-GUIDE.md](./docs/SETUP-GUIDE.md) · [/beta](https://tadbuy.giveabit.io/beta)
 
@@ -55,9 +55,19 @@ For automated agents (Grok, Kimi, Qwen):
 ## Give A Bit Mint (Fedimint)
 
 - **Name:** Give A Bit Mint · **Domain:** giveabit.io
-- **Status:** staged (M4 not live yet)
+- **Status:** staged — **blocked** (see Phase 2 blocker)
 - **Shared by:** tadbuy, giveabit, satohash, motopass, openstrata
 - **Config:** `src/data/ecosystemConfig.ts`
+
+## Phase Blockers (Kanban — high priority)
+
+| Phase | Blocker | Assignee | Task ID |
+|-------|---------|----------|---------|
+| 2 — Fedimint Mint | Fedi app 26.6.0 ships Fedimint **0.10.0**. Guardian **0.11.0** needed for single-guardian mode. Invite format incompatible until Fedi updates. | Andrea | `t_8ee7c976` |
+| 3 — Umbrel LND | Umbrel offline **93 days**. Node must sync before LND env vars. | Rosa | `t_46208fbe` |
+| 4 — Multi-app | Propagate `VITE_API_BASE_URL` + Fedimint invite to all 5 CF Pages projects | Andrea | `t_ec77b1e5` |
+
+**Cam (Fedi phone):** Keep app installed; do not join a federation until Andrea's task clears and Kimi issues `fm-invite://`.
 
 ## Key Files
 - `src/` — React 19 + Vite + TypeScript
@@ -67,8 +77,8 @@ For automated agents (Grok, Kimi, Qwen):
 
 ## Gaps / Next
 - [x] M4 Phase 1: API proxy live (`api.giveabit.io`)
-- [ ] M4 Phase 2: Fedimint mint + fm-invite
-- [ ] M4 Phase 3: Umbrel LND
+- [ ] M4 Phase 2: Fedimint mint — **blocked** (Fedi 0.10 vs Guardian 0.11, Andrea `t_8ee7c976`)
+- [ ] M4 Phase 3: Umbrel LND — **blocked** (node offline 93d, Rosa `t_46208fbe`)
 - [ ] Automated E2E tests
 - [ ] Propagate ecosystemConfig to sibling repos
 

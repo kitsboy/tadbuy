@@ -153,7 +153,11 @@ Trigger redeploy.
 
 ---
 
-## Phase 2 — Give A Bit Fedimint Mint
+## Phase 2 — Give A Bit Fedimint Mint ⏸ PARKED
+
+> **Blocker (2026-07-03):** Fedi app 26.6.0 ships Fedimint 0.10.0. Guardian 0.11.0 needed for single-guardian mode — invite format incompatible. Kanban: **Andrea** `t_8ee7c976` — deploy when Fedi updates.
+>
+> **Cam:** Keep Fedi installed. Do not join a federation until invite is issued post-blocker.
 
 ### 2.1 Install Fedimint guardian on M4
 
@@ -240,9 +244,9 @@ VITE_FEDIMINT_GATEWAY_URL=https://mint.giveabit.io
 
 ---
 
-## Phase 3 — Umbrel Lightning (when node is ready)
+## Phase 3 — Umbrel Lightning ⏸ PARKED
 
-Umbrel status today: **not ready**. Skip until synced.
+> **Blocker (2026-07-03):** Umbrel offline **93 days**. Kanban: **Rosa** `t_46208fbe` — Lightning when node syncs.
 
 ### 3.1 Enable LND on Umbrel
 

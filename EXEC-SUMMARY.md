@@ -25,8 +25,8 @@ Tadbuy is the world's first Bitcoin-native DSP. Buy ads across 8 platforms. Pay 
 ## Current Status (BETA)
 - **UI:** Live at https://tadbuy.giveabit.io (Cloudflare Pages)
 - **Phase 1:** API proxy live — `api.giveabit.io` → Cloudflare Tunnel → M4 PM2 ✅
-- **Phase 2 (next):** Give A Bit Fedimint Mint on M4 → `mint.giveabit.io`
-- **Phase 3 (queued):** Umbrel LND when full node is synced
+- **Phase 2 (parked):** Fedimint mint — blocked until Fedi app updates (FM 0.10 vs Guardian 0.11). Andrea `t_8ee7c976`
+- **Phase 3 (parked):** Umbrel LND — node offline 93 days. Rosa `t_46208fbe`
 
 ## Strategic Direction
 - **M3:** Code, docs, git, Cloudflare deploy

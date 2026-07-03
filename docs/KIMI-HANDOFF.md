@@ -1,3 +1,40 @@
+## Handoff to Kimi — 2026-07-03 (Session 7 — Phase 1 verified, Phases 2–3 parked)
+
+**Machine:** M3 (Grok) — syncing Kimi confirmation + blockers
+**Project:** tadbuy
+
+### Phase 1 — CONFIRMED LIVE ✅ (Kimi verified)
+- [x] `api.giveabit.io` → `{"ok":true}`
+- [x] Supabase 5 tables + RLS (no Firebase Admin, no Gemini on server)
+- [x] Tadbuy SPA redeployed with `VITE_API_BASE_URL`
+- [x] PM2 + cloudflared tunnel on M4
+- [x] Server at `~/.hermes/servers/tadbuy-api/` — **no clone in `~/projects/`**
+- [x] Desktop QRs cleaned up
+
+### Phases 2 & 3 — PARKED (external blockers)
+
+**Phase 2 — Fedimint (Andrea, `t_8ee7c976`)**
+- Fedi app **26.6.0** = Fedimint **0.10.0**
+- Guardian **0.11.0** required for single-guardian mode
+- Invite format incompatible until Fedi app updates
+- **Cam:** keep Fedi installed, wait for `fm-invite://` after blocker clears
+
+**Phase 3 — Umbrel LND (Rosa, `t_46208fbe`)**
+- Umbrel offline **93 days**
+- Deploy when node syncs
+
+**Phase 4 — Propagate (Andrea, `t_ec77b1e5`)**
+- `VITE_API_BASE_URL` + Fedimint invite to all 5 CF Pages projects
+
+### Done on M3 (Grok)
+- [x] Docs synced with blockers + kanban task IDs
+
+### Git State
+- Last commit SHA: (after push)
+- Branch: main
+
+---
+
 ## Handoff to Kimi — 2026-07-03 (Session 6 — Phase 1 COMPLETE)
 
 **Machine:** M3 (Grok) — acknowledging Kimi M4 deployment

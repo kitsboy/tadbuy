@@ -24,7 +24,7 @@
 
 - **Name:** Give A Bit Mint
 - **Domain:** giveabit.io
-- **Status:** staged (M4 not live yet)
+- **Status:** staged — **blocked** (Fedi 26.6.0 / FM 0.10 incompatible with Guardian 0.11 invite; Andrea `t_8ee7c976`)
 - **Shared by:** tadbuy, giveabit, satohash, motopass, openstrata
 - **Gateway:** mint.giveabit.io (planned M4)
 - **Env:** `VITE_FEDIMINT_INVITE`, `FEDIMINT_GATEWAY_URL`
@@ -83,7 +83,7 @@ Payment step = **staged** until M4 mint + Umbrel connected.
 |---------|--------|---------|
 | API proxy | live | M4 (`api.giveabit.io`) |
 | Fedimint mint | staged | M4 (Phase 2) |
-| Umbrel LND | not_ready | M4 (Phase 3) |
+| Umbrel LND | offline 93d | M4 (Phase 3, Rosa `t_46208fbe`) |
 | Fedi wallet | user phone | — |
 | Firebase | live | cloud |
 | Cloudflare Pages | live | cloud |

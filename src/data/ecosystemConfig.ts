@@ -40,14 +40,17 @@ export const GIVEABIT_ECOSYSTEM = {
       refDoc: 'docs/M4-SERVER-REF.md',
     },
     umbrel: {
-      status: 'not_ready' as const,
+      status: 'offline' as const, // offline 93d — Rosa t_46208fbe
       purpose: 'LND Lightning node for real invoices',
       envVars: ['UMBREL_LND_CERT', 'UMBREL_LND_MACAROON', 'UMBREL_LND_SOCKET'],
     },
     fedi: {
-      status: 'staged' as const,
-      purpose: 'Mobile/desktop wallet for Fedimint ecash',
+      status: 'waiting' as const, // Fedi 26.6.0 = FM 0.10; need Guardian 0.11 — Andrea t_8ee7c976
+      purpose: 'Mobile/desktop wallet for Fedimint ecash — Cam keeps installed, wait for fm-invite',
       url: 'https://fedi.xyz',
+      appVersion: '26.6.0',
+      fedimintSdk: '0.10.0',
+      guardianTarget: '0.11.0',
     },
   },
 

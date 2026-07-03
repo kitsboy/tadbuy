@@ -30,7 +30,7 @@ export default function Beta() {
         </div>
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">What Works Right Now</h1>
         <p className="text-sm text-muted mt-2 leading-relaxed">
-          Tadbuy UI is live on Cloudflare Pages. API proxy is live at <code className="text-accent">api.giveabit.io</code>. Fedimint mint and Umbrel LND are still staged (Phases 2–3).
+          Tadbuy UI is live on Cloudflare Pages. API proxy is live at <code className="text-accent">api.giveabit.io</code>. Fedimint mint is parked until the Fedi app updates (FM 0.10 → Guardian 0.11). Umbrel LND parked until the node syncs.
         </p>
       </div>
 
