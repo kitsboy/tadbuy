@@ -227,8 +227,20 @@ export default function Pitch() {
         </div>
       </section>
 
+      <section>
+        <h2 className="text-lg font-extrabold mb-4">100-Feature Roadmap Progress</h2>
+        <div className="grid md:grid-cols-4 gap-3">
+          {Object.entries(PROJECT_STATE.featureBatches).map(([key, batch]) => (
+            <div key={key} className="p-4 rounded-xl border border-border bg-surface text-center">
+              <div className="text-2xl font-extrabold text-accent">{batch.completed}/{batch.total}</div>
+              <div className="text-[10px] text-muted font-bold uppercase mt-1">{batch.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <p className="text-center text-[10px] text-muted font-mono">
-        This page auto-updates from projectState.ts + live /api/metrics on every build.
+        Auto-updates from projectState.ts + live /api/metrics on every build.
         Last synced: {PROJECT_STATE.lastSynced}
       </p>
     </motion.div>

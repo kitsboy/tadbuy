@@ -15,6 +15,9 @@ import { ScrollToTop } from './components/ScrollToTop';
 import { ScrollProgress } from './components/ScrollProgress';
 import { BackToTop } from './components/BackToTop';
 import { SkipToContent } from './components/SkipToContent';
+import { ThemeProvider } from './components/ThemeProvider';
+import { ThemeToggle } from './components/ThemeToggle';
+import { BtcPriceChart } from './components/widgets/BtcPriceChart';
 
 // ── Eagerly loaded: above-the-fold critical path ──────────────────────────────
 import BuyAds from './pages/BuyAds';
@@ -39,6 +42,9 @@ const ApiReference     = lazy(() => import('./pages/ApiReference'));
 const PpqGuide         = lazy(() => import('./pages/PpqGuide'));
 const Bolt12Info       = lazy(() => import('./pages/Bolt12Info'));
 const Pitch            = lazy(() => import('./pages/Pitch'));
+const Intelligence     = lazy(() => import('./pages/Intelligence'));
+const Integrations     = lazy(() => import('./pages/Integrations'));
+const Enterprise       = lazy(() => import('./pages/Enterprise'));
 const GeoTargeting     = lazy(() => import('./pages/GeoTargeting'));
 const CommandMenu      = lazy(() => import('./components/CommandMenu'));
 const LiveActivityWidget = lazy(() => import('./components/LiveActivityWidget'));
@@ -188,6 +194,12 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
 
         <div className="hidden md:block w-px h-4 bg-border" />
 
+        <div className="hidden lg:block w-24">
+          <BtcPriceChart />
+        </div>
+
+        <ThemeToggle className="hidden md:flex" />
+
         <LanguageSwitcher />
 
         <NotificationCenter />
@@ -260,7 +272,10 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
             <Route path="/api-docs"    element={<ApiReference />} />
             <Route path="/ppq"         element={<PpqGuide />} />
             <Route path="/bolt12"      element={<Bolt12Info />} />
-            <Route path="/pitch"      element={<Pitch />} />
+            <Route path="/pitch"         element={<Pitch />} />
+            <Route path="/intelligence"  element={<Intelligence />} />
+            <Route path="/integrations"  element={<Integrations />} />
+            <Route path="/enterprise"    element={<Enterprise />} />
             <Route path="/geo"         element={<GeoTargeting />} />
             <Route path="/terms"       element={<Terms />} />
             <Route path="/privacy"     element={<Privacy />} />
@@ -323,6 +338,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <Router>
+        <ThemeProvider>
         <SkipToContent />
         <ScrollToTop />
         <ScrollProgress />
@@ -336,6 +352,7 @@ export default function App() {
             <BackToTop />
           </ToastProvider>
         </AuthProvider>
+        </ThemeProvider>
       </Router>
     </ErrorBoundary>
   );

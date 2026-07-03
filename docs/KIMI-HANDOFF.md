@@ -1,3 +1,15 @@
+## Handoff to Kimi — 2026-07-03 (Session 2)
+
+### Done (Session 2)
+- [x] Fedimint ecash first-class payment rail (join, pay, redeem APIs + UI)
+- [x] Auto-evolving docs: EXECUTIVE, FINANCIALS, MARKETING, FEDIMINT via prebuild sync
+- [x] Live investor pitch page at /pitch (auto-updates from projectState + metrics)
+- [x] All 100 enhancements shipped in 4 batches (25+25+25+25)
+- [x] New pages: /intelligence, /integrations, /enterprise
+- [x] Dark/light theme + high contrast accessibility mode
+
+---
+
 ## Handoff to Kimi — 2026-07-03
 
 **Machine:** M3 (Grok)

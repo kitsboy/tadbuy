@@ -8,6 +8,9 @@ import Joi from "joi";
 import { agentAuthMiddleware } from "./src/lib/api/agentAuth.ts";
 import { nip98AuthMiddleware } from "./src/lib/api/nip98Auth.ts";
 import { registerBatch1Routes } from "./server/routes/batch1.ts";
+import { registerBatch2Routes } from "./server/routes/batch2.ts";
+import { registerBatch3Routes } from "./server/routes/batch3.ts";
+import { registerBatch4Routes } from "./server/routes/batch4.ts";
 import { getLightningNodeInfo, createLightningInvoice, executeLightningPayment } from "./src/services/lightningService.ts";
 import { AdminFirestoreCampaignRepository, getAdminDb } from "./src/lib/db/firestoreAdmin.ts";
 import fs from "fs";
@@ -565,6 +568,9 @@ app.get("/api/campaigns", async (req, res) => {
 
   // ─── Batch 1: Sovereign Payments (Fedimint, Nostr, LNURL, etc.) ───────────
   registerBatch1Routes(app);
+  registerBatch2Routes(app);
+  registerBatch3Routes(app);
+  registerBatch4Routes(app);
 
   // NIP-98 protected agent endpoint example
   app.get('/api/nostr/nip98/protected', nip98AuthMiddleware, (req, res) => {
