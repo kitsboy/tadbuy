@@ -1,4 +1,10 @@
 import { useState, useEffect, useMemo, useRef, ChangeEvent } from "react";
+import { usePageMeta } from "@/hooks/usePageMeta";
+import { HeroBanner } from "@/components/HeroBanner";
+import { TrustBadges } from "@/components/TrustBadges";
+import { StatsBar } from "@/components/StatsBar";
+import { PlatformMarquee } from "@/components/PlatformMarquee";
+import { FloatingCampaignCTA } from "@/components/FloatingCampaignCTA";
 import { BITCOIN_ADDRESS, BITCOIN_URI } from "@/constants";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
@@ -94,6 +100,8 @@ const paymentMethods = [
 ];
 
 export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }: { currency?: string, rate?: number, symbol?: string }) {
+  usePageMeta('Buy Ads', 'Launch Bitcoin-native ad campaigns across 8 platforms. Pay in sats via Lightning, BOLT12, on-chain, or Nostr Zaps.');
+
   const [currentStep, setCurrentStep] = useState(1);
   const [mode, setMode] = useState<'simple' | 'complex'>('simple');
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['twitter']);
@@ -582,6 +590,17 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto space-y-6">
 
+      {paymentStatus !== 'success' && (
+        <>
+          <HeroBanner />
+          <StatsBar />
+          <TrustBadges />
+          <PlatformMarquee />
+        </>
+      )}
+
+      <FloatingCampaignCTA />
+
       {/* ── SUCCESS SCREEN ─────────────────────────────────────────────── */}
       {paymentStatus === 'success' && (
         <SuccessScreen
@@ -594,9 +613,9 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
         />
       )}
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div id="campaign-builder" className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 scroll-mt-24">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Create Campaign</h1>
+          <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">Create Campaign</h2>
           <p className="text-muted mt-1 mb-3">Launch your ad across the decentralized web in minutes.</p>
           <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-2 w-full max-w-sm">
             <span className="text-xs font-bold text-muted">Ad Score</span>

@@ -13,11 +13,11 @@ export default function NotFound() {
     >
       {/* Glowing 404 */}
       <div className="relative mb-8">
-        <div className="text-[140px] font-extrabold tracking-tighter leading-none text-surface select-none pointer-events-none">
+        <div className="text-[80px] sm:text-[120px] md:text-[140px] font-extrabold tracking-tighter leading-none text-surface select-none pointer-events-none">
           404
         </div>
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-[140px] font-extrabold tracking-tighter leading-none bg-gradient-to-br from-accent via-accent/60 to-transparent bg-clip-text text-transparent select-none">
+          <div className="text-[80px] sm:text-[120px] md:text-[140px] font-extrabold tracking-tighter leading-none bg-gradient-to-br from-accent via-accent/60 to-transparent bg-clip-text text-transparent select-none">
             404
           </div>
         </div>

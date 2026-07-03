@@ -4,7 +4,7 @@
   "description": "The world's first Bitcoin-native DSP. Buy ads across 8 platforms, pay in sats with Lightning Network, BOLT12, or Nostr Zap.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0f",
+  "background_color": "#18181b",
   "theme_color": "#ff9f1c",
   "orientation": "portrait-primary",
   "categories": ["business", "finance", "productivity"],

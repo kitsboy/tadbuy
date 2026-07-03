@@ -11,6 +11,10 @@ import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { NotificationCenter } from './components/NotificationCenter';
 import Footer from './components/Footer';
 import { PriceTicker } from './components/PriceTicker';
+import { ScrollToTop } from './components/ScrollToTop';
+import { ScrollProgress } from './components/ScrollProgress';
+import { BackToTop } from './components/BackToTop';
+import { SkipToContent } from './components/SkipToContent';
 
 // ── Eagerly loaded: above-the-fold critical path ──────────────────────────────
 import BuyAds from './pages/BuyAds';
@@ -97,6 +101,11 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
 
   useEffect(() => { setIsMobileMenuOpen(false); }, [location.pathname]);
 
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isMobileMenuOpen]);
+
   if (isEmbed) return null;
 
   const navLinks = [
@@ -112,7 +121,7 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
   ];
 
   return (
-    <header className="sticky top-0 z-50 glass-header px-3 md:px-6 h-12 flex items-center justify-between gap-3 md:gap-4">
+    <header className="sticky top-0 z-50 glass-header px-3 md:px-6 h-12 md:h-14 flex items-center justify-between gap-3 md:gap-4 pt-safe">
       <div className="flex items-center gap-2 text-[18px] font-extrabold tracking-tight">
         <button
           className="md:hidden p-1.5 text-muted hover:text-text rounded-lg hover:bg-surface transition-colors"
@@ -191,7 +200,7 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
 
       {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <div className="absolute top-12 left-0 right-0 bg-card border-b border-border shadow-2xl p-3 flex flex-col gap-1 md:hidden z-50">
+        <div className="absolute top-12 md:top-14 left-0 right-0 bg-card border-b border-border shadow-2xl p-3 flex flex-col gap-1 md:hidden z-50 max-h-[calc(100dvh-3rem)] overflow-y-auto pb-safe">
           {navLinks.map((tab) => (
             <NavLink
               key={tab.name}
@@ -230,10 +239,13 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
     <div className="min-h-screen flex flex-col">
       <Header currency={currency} setCurrency={setCurrency} rate={rates[currency]} />
       {!isEmbed && <PriceTicker rates={rates} />}
-      <main className={cn(
-        'flex-1 relative z-10 w-full mx-auto',
-        isEmbed ? 'p-0 max-w-none' : 'p-4 md:p-8 max-w-[1440px]'
-      )}>
+      <main
+        id="main-content"
+        className={cn(
+          'flex-1 relative z-10 w-full mx-auto',
+          isEmbed ? 'p-0 max-w-none' : 'p-4 md:p-8 max-w-[1440px] pb-24 md:pb-8'
+        )}
+      >
         <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* Public */}
@@ -309,6 +321,9 @@ export default function App() {
   return (
     <ErrorBoundary>
       <Router>
+        <SkipToContent />
+        <ScrollToTop />
+        <ScrollProgress />
         <AuthProvider>
           <ToastProvider>
             <Suspense fallback={null}>
@@ -316,6 +331,7 @@ export default function App() {
               <LiveActivityWidget />
             </Suspense>
             <MainContent currency={currency} setCurrency={setCurrency} rates={rates} />
+            <BackToTop />
           </ToastProvider>
         </AuthProvider>
       </Router>

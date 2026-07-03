@@ -1,6 +1,6 @@
 # SOURCE-OF-TRUTH.md — Tadbuy (Give A Bit Project)
 
-**Last Updated**: 2026-06-05
+**Last Updated**: 2026-07-03
 
 ## Project Overview (Marketing Pitch)
 Tadbuy is a Bitcoin-native advertising platform (DSP). Normal people and AI/Nostr agents can buy ads on Twitter/X, Facebook, Instagram, YouTube, Reddit, LinkedIn, TikTok, and decentralized Nostr. Pay only in Bitcoin using Lightning, BOLT12, on-chain, or Nostr Zaps - no banks or credit cards. Features: step-by-step campaign builder with targeting (world map), AI creative (Gemini) and optimization (PPQ.AI), publisher portal, dashboards for campaigns/analytics/wallet/settlements, real-time BTC ticker and mempool fees, PDF/CSV reports, A/B testing, 8 languages support, Agent API for Nostr agents. Built as part of Give A Bit (giveabit.io) with strong focus on Bitcoin sovereignty and private money. Excellent SEO, multi-lang, Lightning/Nostr focus.
@@ -8,7 +8,7 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Normal people and AI/Nost
 ## GitHub (Single Source of Truth)
 - Repo: https://github.com/kitsboy/tadbuy.git
 - Branch: main (production)
-- Current status: Clean after fresh pull and Firebase auth fix.
+- Current status: v4.1.0-ELITE — 30 premium UI/UX upgrades, full SEO, PWA service worker, mobile polish.
 - Recent commits include the 20-point enterprise roadmap, Give A Bit branding, Lightning/AI integration.
 
 ## Deployment Details
@@ -44,10 +44,10 @@ Strong Give A Bit branding: Bitcoin sovereignty, Lightning/Nostr Zaps for privac
 - Future rule: When seeing these errors, immediately check Firebase initialization order and add safe browser checks.
 
 ## Gaps / Improvements
-- Add tests.
+- Add automated tests (unit + E2E).
 - Make deeper privacy features (PYNYM, BIP-47, Silent Payments) more prominent.
-- Sync all docs with live site.
-- Add more robust error handling for missing env vars.
+- Per-page BreadcrumbList and FAQPage structured data.
+- Real Lightning node integration (currently demo invoices).
 
 ## How to Start and Edit in the Future (New Section)
 1. Open terminal: `cd ~/projects/tadbuy`

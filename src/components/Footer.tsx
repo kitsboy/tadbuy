@@ -22,7 +22,7 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-border bg-surface/30 mt-20 pt-12 pb-8 relative overflow-hidden">
-      <div className="max-w-[1440px] mx-auto px-8 relative z-10">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           
           {/* Brand & Socials */}

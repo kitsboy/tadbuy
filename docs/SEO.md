@@ -1,48 +1,44 @@
----
-title: SEO Strategy & Audit
-project: [Project Name]
-version: 0.1.0
-tags: [project, seo, audit, keywords, search-optimization]
-last_updated: YYYY-MM-DD
-owner: Kimi (Orchestrator) / Qwen (Weekly Audit)
-update_frequency: Weekly (Monday)
----
-
-# SEO — [Project Name]
+# SEO — Tadbuy
 
 ## Live URL
-[deployed-url.io]
+https://tadbuy.giveabit.io
 
 ## Target Keywords
-| Primary Keyword | Search Intent | Current Rank |
-|----------------|--------------|-------------|
-| [keyword 1]    | [info/commercial/transactional] | — |
-| [keyword 2]    | [info/commercial/transactional] | — |
+
+| Primary Keyword | Search Intent | Status |
+|----------------|--------------|--------|
+| bitcoin advertising platform | Commercial | Optimized |
+| lightning network ads | Commercial | Optimized |
+| buy ads with bitcoin | Transactional | Optimized |
+| nostr advertising | Commercial | Optimized |
+| bitcoin native DSP | Commercial | Optimized |
+| decentralized advertising | Informational | Optimized |
 
 ## Current Meta Tags
-| Tag | Current Value | Status |
-|-----|--------------|--------|
-| Title | `[current title tag]` | ✅/❌ |
-| Description | `[current meta desc]` | ✅/❌ |
+
+| Tag | Value | Status |
+|-----|-------|--------|
+| Title | Tadbuy — Bitcoin-Native Ad Buying Platform | ✅ |
+| Description | Buy ads across 8 platforms. Pay in sats via Lightning, BOLT12, on-chain, or Nostr Zaps. | ✅ |
+| OG Image | /og-image.svg | ✅ |
+| Canonical | https://tadbuy.giveabit.io | ✅ |
 
 ## Structured Data
-- [ ] Organization Schema
-- [ ] Website Schema
-- [ ] BreadcrumbList
-- [ ] Article (if blog/content)
-- [ ] FAQPage (if applicable)
+- [x] Organization Schema
+- [x] WebSite Schema with SearchAction
+- [x] SoftwareApplication Schema
+- [ ] BreadcrumbList (per-page, future)
+- [ ] FAQPage (future)
+
+## Sitemap
+`public/sitemap.xml` — auto-served at `/sitemap.xml`
 
 ## Weekly Audit Log
+
 | Date | Auditor | Findings | Recommendations |
 |------|---------|----------|----------------|
-| YYYY-MM-DD | Qwen | [summary] | [top 3 fixes] |
+| 2026-07-03 | Grok | Missing OG image, placeholder docs | Fixed OG image, full meta tags, JSON-LD |
 
 ---
 
-*Auto-updated weekly by Qwen3.5-9B (local LLM). Part of the [Give A Bit](https://giveabit.io) family.*
-
-```
-Safe Harbour Statement: This project is provided for educational and informational purposes only.
-Nothing herein constitutes legal, financial, or investment advice. Use at your own risk.
-© Give A Bit — Bitcoin sovereignty first.
-```
+*Part of the [Give A Bit](https://giveabit.io) family.*

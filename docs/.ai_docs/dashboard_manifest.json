@@ -1,0 +1,10 @@
+{
+  "projectName": "tadbuy",
+  "projectType": "advertising-dsp",
+  "deployType": "manual",
+  "primaryPort": "5173",
+  "status": "active",
+  "lastDocAudit": "2026-07-03T03:11:57Z",
+  "automationReady": true,
+  "entryPoints": ["src/", "docs/", "public/"]
+}

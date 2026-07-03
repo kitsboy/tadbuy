@@ -1,19 +1,10 @@
----
-title: Marketing One-Liner
-project: [Project Name]
-version: 0.1.0
-audience: users
-last_updated: YYYY-MM-DD
-owner: Nova (Product Management & Documentation)
----
+# Tadbuy — Marketing One-Liner
 
-# [Project Name] — Marketing One-Liner
+**Tagline:** Buy ads with Bitcoin. Pay in sats, not surveillance.
 
-**Tagline:** [One punchy sentence — 8-12 words]
+**Pitch:** Tadbuy is the world's first Bitcoin-native DSP. Launch cross-platform ad campaigns on Twitter, Facebook, Instagram, YouTube, Reddit, LinkedIn, TikTok, and Nostr — paying instantly via Lightning, BOLT12, on-chain, or Nostr Zaps. No banks. No credit cards. No tracking pixels. AI-powered creative and PPQ.AI optimization included.
 
-**Pitch:** [2-3 sentence value proposition — what, why, who]
-
-**Call to Action:** [What you want people to do]
+**Call to Action:** Start your first campaign at [tadbuy.giveabit.io](https://tadbuy.giveabit.io)
 
 ---
 

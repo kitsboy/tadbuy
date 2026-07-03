@@ -33,10 +33,16 @@ export function PriceTicker({ rates }: PriceTickerProps) {
           100% { transform: translateX(-50%); }
         }
         .ticker-track { animation: ticker 30s linear infinite; }
+        .ticker-wrap:hover .ticker-track { animation-play-state: paused; }
+        @media (prefers-reduced-motion: reduce) {
+          .ticker-track { animation: none; }
+        }
       `}</style>
       <div
-        className="h-7 overflow-hidden flex items-center border-b border-border"
+        className="ticker-wrap h-7 overflow-hidden flex items-center border-b border-border"
         style={{ backgroundColor: '#27272a' }}
+        aria-label="Live Bitcoin price ticker"
+        role="marquee"
       >
         <div className="ticker-track flex items-center whitespace-nowrap">
           {allItems.map((item, i) => (
