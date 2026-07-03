@@ -1,3 +1,34 @@
+## Handoff to Kimi — 2026-07-03 (Session 5 — Supabase swap)
+
+**Machine:** M3 (Grok)
+**Project:** tadbuy
+
+### Done
+- [x] Created `src/lib/db/supabaseAdmin.ts` — `SupabaseCampaignRepository` + helpers (webhook, bids, publisher settings, backup)
+- [x] Added `supabase-schema.sql` (5 tables: campaigns, bids, publisher_settings, fedimint_sessions, settlements + RLS)
+- [x] Updated `server.ts` — swapped Firestore admin → Supabase; removed firebase-admin init + Gemini `/api/ai/optimize`
+- [x] Added `@supabase/supabase-js`; updated `.env.example` with `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+- [x] `npm run lint` + `npm run build` pass clean
+
+### Decisions
+- Frontend Firebase client SDK unchanged (auth only); server-side DB is now Supabase
+- Firestore routes rewritten: backup, lightning webhook, marketplace bids, publisher settings
+- `getByUserId` preserved on `SupabaseCampaignRepository` (not in interface, same as Firestore)
+- Gemini endpoint removed per M4 deployment spec (can re-add later if needed)
+
+### What's Next (Kimi / Cam on M4)
+1. **Cam:** Run `supabase-schema.sql` in Supabase dashboard (project `cegzfjbsadwchonpxwmv`)
+2. **Cam:** Enable Tailscale Funnel → Kimi runs `tailscale funnel 3000` → DNS `api.giveabit.io`
+3. **Kimi:** Redeploy bundle from `main` to `~/.hermes/servers/tadbuy-api/` (`npm install && npm run build && pm2 restart tadbuy-api`)
+4. **Kimi:** Optional PM2 auto-start via launchd
+5. Set `VITE_API_BASE_URL=https://api.giveabit.io` on Cloudflare Pages when funnel is live
+
+### Git State
+- Last commit SHA: (see below after push)
+- Branch: main
+
+---
+
 ## Handoff to Kimi — 2026-07-03 (Session 4 — Obsidian synced)
 
 ### Done on M4 (Kimi)

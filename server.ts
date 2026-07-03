@@ -14,10 +14,15 @@ import { registerBatch4Routes } from "./server/routes/batch4.ts";
 import { registerBatch5Routes } from "./server/routes/batch5.ts";
 import { registerBatch6Routes } from "./server/routes/batch6.ts";
 import { getLightningNodeInfo, createLightningInvoice, executeLightningPayment } from "./src/services/lightningService.ts";
-import { AdminFirestoreCampaignRepository, getAdminDb } from "./src/lib/db/firestoreAdmin.ts";
+import {
+  SupabaseCampaignRepository,
+  activateCampaignByInvoice,
+  backupAllTables,
+  createBid,
+  upsertPublisherSettings,
+} from "./src/lib/db/supabaseAdmin.ts";
 import fs from "fs";
 import { jsPDF } from "jspdf";
-import admin from "firebase-admin";
 import * as Sentry from "@sentry/node";
 
 // ─── Startup Guards ────────────────────────────────────────────────────────────
@@ -33,22 +38,6 @@ if (process.env.SENTRY_DSN) {
     tracesSampleRate: 1.0,
   });
 }
-
-// Initialize Firebase Admin (shared singleton)
-function initAdmin() {
-  if (admin.apps.length > 0) return;
-  if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
-    try {
-      const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
-      admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-    } catch (e) {
-      console.warn('Warning: Could not parse FIREBASE_SERVICE_ACCOUNT_KEY');
-    }
-  } else {
-    console.warn('Warning: FIREBASE_SERVICE_ACCOUNT_KEY not set — admin features disabled');
-  }
-}
-initAdmin();
 
 // ─── Joi Validation Schemas ────────────────────────────────────────────────────
 
@@ -110,7 +99,7 @@ const publisherSettingsSchema = Joi.object({
 async function startServer() {
   const app = express();
   const PORT = process.env.PORT || 3000;
-  const campaignRepo = new AdminFirestoreCampaignRepository();
+  const campaignRepo = new SupabaseCampaignRepository();
 
   app.use(express.json());
   app.use(cookieParser());
@@ -142,13 +131,7 @@ async function startServer() {
   // ─── Admin Routes ───────────────────────────────────────────────────────────
   app.post("/api/admin/backup", agentAuthMiddleware('admin'), async (req, res) => {
     try {
-      const adminDb = admin.firestore();
-      const collections = await adminDb.listCollections();
-      const backup: Record<string, unknown[]> = {};
-      for (const collection of collections) {
-        const snapshot = await collection.get();
-        backup[collection.id] = snapshot.docs.map(doc => doc.data());
-      }
+      const backup = await backupAllTables();
       const backupDir = path.join(process.cwd(), 'backups');
       if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
       const backupPath = path.join(backupDir, `backup-${new Date().toISOString()}.json`);
@@ -159,7 +142,7 @@ async function startServer() {
     }
   });
 
-  // ─── Metrics — Real data from Firestore ────────────────────────────────────
+  // ─── Metrics — Real data from Supabase ─────────────────────────────────────
   app.get("/api/metrics", async (req, res) => {
     try {
       const campaigns = await campaignRepo.getAll();
@@ -209,7 +192,7 @@ async function startServer() {
         fallback: campaigns.length === 0,
       });
     } catch (error) {
-      // Fallback data if Firestore is unavailable
+      // Fallback data if Supabase is unavailable
       res.json({
         impressions: 1240000, clicks: 14820, ctr: 1.2, spend: 0.0423,
         fallback: true,
@@ -276,7 +259,7 @@ async function startServer() {
   app.use("/api/agent", agentRouter);
 
   // ─── Settlement Endpoints ───────────────────────────────────────────────────
-  // In-memory settlements (persisted to Firestore when admin SDK is available)
+  // In-memory settlements (Supabase settlements table available for future persistence)
   const settlements: Record<string, unknown>[] = [];
 
   app.get("/api/settlements", (req, res) => {
@@ -413,27 +396,16 @@ app.get("/api/campaigns", async (req, res) => {
     });
   });
 
-  // ✅ FIXED: Lightning webhook — update campaign status in Firestore
+  // ✅ Lightning webhook — update campaign status in Supabase
   app.post("/api/webhooks/lightning", async (req, res) => {
     try {
       const { payment_hash, id, status } = req.body;
       const invoiceId = payment_hash || id;
 
       if (invoiceId && (status === 'paid' || status === 'settled' || req.body.settled)) {
-        // Find campaign by invoiceId and mark as live
         try {
-          const adminDb = getAdminDb();
-          const snap = await adminDb.collection('campaigns')
-            .where('invoiceId', '==', invoiceId)
-            .limit(1)
-            .get();
-
-          if (!snap.empty) {
-            await snap.docs[0].ref.update({
-              status: 'live',
-              updatedAt: new Date().toISOString(),
-              paymentConfirmedAt: new Date().toISOString(),
-            });
+          const activated = await activateCampaignByInvoice(invoiceId);
+          if (activated) {
             console.log(`Campaign activated via webhook for invoice: ${invoiceId}`);
           }
         } catch (dbErr) {
@@ -506,13 +478,8 @@ app.get("/api/campaigns", async (req, res) => {
       return res.status(400).json({ error: error.details[0].message });
     }
     try {
-      const adminDb = getAdminDb();
-      const docRef = await adminDb.collection('bids').add({
-        ...value,
-        status:    'pending',
-        createdAt: new Date().toISOString(),
-      });
-      res.json({ success: true, id: docRef.id, message: 'Bid placed successfully' });
+      const { id } = await createBid(value);
+      res.json({ success: true, id, message: 'Bid placed successfully' });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
       res.status(500).json({ error: 'Failed to store bid', details: msg });
@@ -526,45 +493,11 @@ app.get("/api/campaigns", async (req, res) => {
       return res.status(400).json({ error: error.details[0].message });
     }
     try {
-      const adminDb = getAdminDb();
-      await adminDb.collection('publisher_settings').doc(value.userId).set(value, { merge: true });
+      await upsertPublisherSettings(value);
       res.json({ success: true });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
       res.status(500).json({ error: 'Failed to save settings', details: msg });
-    }
-  });
-
-  // ─── Gemini AI Proxy — key stays server-side ───────────────────────────────
-  app.post("/api/ai/optimize", async (req, res) => {
-    const { campaign, prompt } = req.body;
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(503).json({ error: 'AI service not configured' });
-    }
-    try {
-      const { GoogleGenAI } = await import("@google/genai");
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-      const userPrompt = prompt ||
-        `Generate compelling ad copy for this Bitcoin/crypto campaign: ${JSON.stringify(campaign)}.
-         Return valid JSON with these fields only: headline (max 60 chars), description (max 150 chars).
-         Make it punchy, Bitcoin-native, and conversion-focused.`;
-
-      const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: userPrompt,
-        config: { responseMimeType: "application/json" }
-      });
-
-      const text = response.text || "{}";
-      try {
-        res.json(JSON.parse(text));
-      } catch {
-        res.json({ text });
-      }
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'AI failed';
-      res.status(500).json({ error: 'AI optimization failed', message: msg });
     }
   });
 
@@ -631,7 +564,7 @@ app.get("/api/campaigns", async (req, res) => {
   });
 
   // ─── Environment Variable Warnings ─────────────────────────────────────────
-  const requiredEnvVars = ['GEMINI_API_KEY', 'FIREBASE_PROJECT_ID', 'SESSION_SECRET',
+  const requiredEnvVars = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'SESSION_SECRET',
                            'UMBREL_LND_CERT', 'UMBREL_LND_MACAROON', 'UMBREL_LND_SOCKET'];
   requiredEnvVars.forEach(v => {
     if (!process.env[v]) console.warn(`Warning: Missing environment variable: ${v}`);

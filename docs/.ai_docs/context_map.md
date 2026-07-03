@@ -16,7 +16,8 @@
 | Frontend | React 19 + Vite + Tailwind v4 |
 | Hosting | Cloudflare Pages (static SPA) |
 | API | Express server.ts — M3 dev or M4 proxy |
-| DB | Firebase Firestore |
+| DB (server) | Supabase (`cegzfjbsadwchonpxwmv`) via `supabaseAdmin.ts` |
+| DB (client auth) | Firebase (`tadbuy-e3555`) — client SDK only |
 | Payments | Lightning (Umbrel), Fedimint ecash, BTC, Nostr Zap |
 
 ## Give A Bit Mint (Fedimint)

@@ -1,4 +1,4 @@
 # tadbuy — Last Updated 2026-07-03 by Grok
 
-Brief: v4.4.0-ELITE — Fedimint + auto-evolving docs + pitch page
-Docs synced: 2026-07-03
+Brief: Supabase swap — server.ts off Firebase Admin
+Commit: (pending push)

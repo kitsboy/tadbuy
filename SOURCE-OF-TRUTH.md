@@ -16,8 +16,9 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Tw
 - **Platform**: Cloudflare Pages (static SPA)
   - Build: `npm run build` → `dist/`
   - Node 20, auto-deploy on push to `main`
-- **API proxy (staged)**: M4 HERMES → `api.giveabit.io` (see M4 Setup below)
-- **Firebase**: Project ID `tadbuy-e3555`
+- **API proxy**: M4 HERMES → `localhost:3000` (PM2 `tadbuy-api`) → Tailscale Funnel → `api.giveabit.io`
+- **Supabase**: Project `cegzfjbsadwchonpxwmv` (server-side DB via service_role)
+- **Firebase**: Project ID `tadbuy-e3555` (client auth only — VITE_FIREBASE_*)
 - **Local dev**: `npm run dev` or `npm start` on M3
 
 ## Platform Split
@@ -36,7 +37,7 @@ Phased checklist (API proxy → Fedimint mint → Umbrel LND):
 | GitHub (Grok maintains) | [docs/KIMI-M4-SETUP-CHECKLIST.md](./docs/KIMI-M4-SETUP-CHECKLIST.md) |
 | Obsidian (Kimi maintains) | `MASTER-BRAIN/Obsidian/03-Projects/M3/Tadbuy/M4-SETUP-CHECKLIST.md` |
 
-**Status:** Obsidian vault synced ✅ — Phase 1 execution pending on M4.
+**Status:** M4 API deployed ✅ (PM2 `tadbuy-api` on :3000). Cam: run `supabase-schema.sql` + enable Tailscale Funnel. Grok: Supabase swap pushed to main.
 
 Also: [docs/M4-SERVER-REF.md](./docs/M4-SERVER-REF.md) · [docs/SETUP-GUIDE.md](./docs/SETUP-GUIDE.md) · [/beta](https://tadbuy.giveabit.io/beta)
 
