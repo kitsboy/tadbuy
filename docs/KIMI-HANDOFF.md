@@ -24,7 +24,7 @@
 5. Set `VITE_API_BASE_URL=https://api.giveabit.io` on Cloudflare Pages when funnel is live
 
 ### Git State
-- Last commit SHA: (see below after push)
+- Last commit SHA: a031a22
 - Branch: main
 
 ---
