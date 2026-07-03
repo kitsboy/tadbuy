@@ -91,10 +91,31 @@
   <!-- BOLT12 Info -->
   <url>
     <loc>https://tadbuy.giveabit.io/bolt12</loc>
-    <lastmod>2025-05-07</lastmod>
+    <lastmod>2026-07-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+
+  <!-- BETA Status -->
+  <url>
+    <loc>https://tadbuy.giveabit.io/beta</loc>
+    <lastmod>2026-07-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Investor Pitch -->
+  <url>
+    <loc>https://tadbuy.giveabit.io/pitch</loc>
+    <lastmod>2026-07-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Intelligence / Integrations / Enterprise -->
+  <url><loc>https://tadbuy.giveabit.io/intelligence</loc><lastmod>2026-07-03</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tadbuy.giveabit.io/integrations</loc><lastmod>2026-07-03</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tadbuy.giveabit.io/enterprise</loc><lastmod>2026-07-03</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
 
   <!-- Legal -->
   <url>

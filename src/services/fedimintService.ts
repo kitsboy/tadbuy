@@ -19,16 +19,21 @@ export interface FedimintPaymentResult {
   message?: string;
 }
 
+import { apiFetch } from '@/lib/apiBase';
+import { getDefaultFedimintInvite } from '@/data/ecosystemConfig';
+
 const API = '/api/fedimint';
 
+export { getDefaultFedimintInvite };
+
 export async function getFedimintStatus(): Promise<FedimintStatus> {
-  const res = await fetch(`${API}/status`);
+  const res = await apiFetch(`${API}/status`);
   if (!res.ok) return { connected: false, balanceMsats: 0, message: 'Fedimint unavailable' };
   return res.json();
 }
 
 export async function joinFederation(inviteCode: string): Promise<FedimintStatus> {
-  const res = await fetch(`${API}/join`, {
+  const res = await apiFetch(`${API}/join`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ invite: inviteCode }),
@@ -41,7 +46,7 @@ export async function joinFederation(inviteCode: string): Promise<FedimintStatus
 }
 
 export async function payWithFedimint(amountSats: number, memo: string): Promise<FedimintPaymentResult> {
-  const res = await fetch(`${API}/pay`, {
+  const res = await apiFetch(`${API}/pay`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ amountSats, memo }),
@@ -54,7 +59,7 @@ export async function payWithFedimint(amountSats: number, memo: string): Promise
 }
 
 export async function redeemEcash(notes: string): Promise<{ balanceMsats: number }> {
-  const res = await fetch(`${API}/redeem`, {
+  const res = await apiFetch(`${API}/redeem`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ notes }),

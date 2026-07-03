@@ -87,6 +87,7 @@ export default function Footer() {
                 <li><Link to="/intelligence" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">PPQ Intelligence</Link></li>
                 <li><Link to="/integrations" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Integrations</Link></li>
                 <li><Link to="/enterprise" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Enterprise</Link></li>
+                <li><Link to="/beta" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">BETA Status</Link></li>
               </ul>
             </div>
           </div>

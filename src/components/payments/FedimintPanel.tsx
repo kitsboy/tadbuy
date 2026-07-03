@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Shield, Loader2, CheckCircle2, ExternalLink } from 'lucide-react';
 import { Button, Input, Label, FormGroup } from '@/components/ui';
-import { getFedimintStatus, joinFederation, payWithFedimint, formatEcashBalance } from '@/services/fedimintService';
+import { getFedimintStatus, joinFederation, payWithFedimint, formatEcashBalance, getDefaultFedimintInvite } from '@/services/fedimintService';
+import { GIVEABIT_ECOSYSTEM } from '@/data/ecosystemConfig';
 import { useToast } from '@/components/Toast';
 
 export function FedimintPanel({
@@ -14,7 +15,7 @@ export function FedimintPanel({
   onSuccess?: () => void;
 }) {
   const [status, setStatus] = useState<Awaited<ReturnType<typeof getFedimintStatus>> | null>(null);
-  const [invite, setInvite] = useState(import.meta.env.VITE_FEDIMINT_INVITE ?? '');
+  const [invite, setInvite] = useState(getDefaultFedimintInvite());
   const [loading, setLoading] = useState(false);
   const [paying, setPaying] = useState(false);
   const { addToast } = useToast();
@@ -90,7 +91,8 @@ export function FedimintPanel({
       ) : (
         <div className="space-y-3">
           <p className="text-xs text-muted leading-relaxed">
-            Join a Fedimint federation to pay with private ecash. Your invite code connects you to a community mint backed by Bitcoin.
+            Join the <strong>{GIVEABIT_ECOSYSTEM.federation.name}</strong> ({GIVEABIT_ECOSYSTEM.federation.status}) —
+            shared across all Give A Bit apps. Mint runs on M4 HERMES.
           </p>
           <FormGroup>
             <Label>Federation Invite</Label>

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, NavLink, useLocation, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink, useLocation, Link, Navigate } from 'react-router-dom';
 import { useState, useEffect, lazy, Suspense, type ReactNode } from 'react';
 import { Megaphone, Layers, BarChart2, LayoutDashboard, Network, Zap, Globe, MapPin, Search, Menu, X } from 'lucide-react';
 import { cn } from './lib/utils';
@@ -18,6 +18,7 @@ import { SkipToContent } from './components/SkipToContent';
 import { ThemeProvider } from './components/ThemeProvider';
 import { ThemeToggle } from './components/ThemeToggle';
 import { BtcPriceChart } from './components/widgets/BtcPriceChart';
+import { BetaBanner } from './components/BetaBanner';
 
 // ── Eagerly loaded: above-the-fold critical path ──────────────────────────────
 import BuyAds from './pages/BuyAds';
@@ -45,6 +46,7 @@ const Pitch            = lazy(() => import('./pages/Pitch'));
 const Intelligence     = lazy(() => import('./pages/Intelligence'));
 const Integrations     = lazy(() => import('./pages/Integrations'));
 const Enterprise       = lazy(() => import('./pages/Enterprise'));
+const Beta             = lazy(() => import('./pages/Beta'));
 const GeoTargeting     = lazy(() => import('./pages/GeoTargeting'));
 const CommandMenu      = lazy(() => import('./components/CommandMenu'));
 const LiveActivityWidget = lazy(() => import('./components/LiveActivityWidget'));
@@ -86,12 +88,12 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
           <div className="text-4xl">🔐</div>
           <h2 className="text-xl font-extrabold">Sign in required</h2>
           <p className="text-sm text-muted">You need to be signed in to access this page.</p>
-          <a
-            href="/profile"
+          <Link
+            to="/profile"
             className="inline-block mt-2 px-6 py-2 bg-accent text-black font-bold rounded-xl hover:opacity-90 transition-opacity"
           >
             Sign In
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -251,6 +253,7 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
   return (
     <div className="min-h-screen flex flex-col">
       <Header currency={currency} setCurrency={setCurrency} rate={rates[currency]} />
+      {!isEmbed && <BetaBanner />}
       {!isEmbed && <PriceTicker rates={rates} />}
       <main
         id="main-content"
@@ -276,6 +279,9 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
             <Route path="/intelligence"  element={<Intelligence />} />
             <Route path="/integrations"  element={<Integrations />} />
             <Route path="/enterprise"    element={<Enterprise />} />
+            <Route path="/beta"          element={<Beta />} />
+            <Route path="/start"         element={<Navigate to="/" replace />} />
+            <Route path="/buy"           element={<Navigate to="/" replace />} />
             <Route path="/geo"         element={<GeoTargeting />} />
             <Route path="/terms"       element={<Terms />} />
             <Route path="/privacy"     element={<Privacy />} />
