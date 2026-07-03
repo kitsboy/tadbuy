@@ -1,3 +1,31 @@
+## Handoff to Kimi — 2026-07-03 (Session 6 — Phase 1 COMPLETE)
+
+**Machine:** M3 (Grok) — acknowledging Kimi M4 deployment
+**Project:** tadbuy
+
+### Done on M4 (Kimi — Phase 1)
+- [x] `api.giveabit.io` → Cloudflare Tunnel → M4 `localhost:3000` (HTTP/2 200, `{"ok":true}`)
+- [x] Cloudflare Tunnel launch agent (survives login)
+- [x] PM2 `tadbuy-api` + pm2-logrotate at `~/.hermes/servers/tadbuy-api/` (NOT `~/projects/`)
+- [x] Supabase: 5 tables + RLS, `supabaseAdmin.ts` deployed, Firebase Admin removed
+- [x] `VITE_API_BASE_URL=https://api.giveabit.io` on CF Pages, SPA redeployed
+
+### Done on M3 (Grok — this session)
+- [x] Docs synced: SOURCE-OF-TRUTH, EXEC-SUMMARY, context_map, Beta page, ecosystemConfig
+- [x] `/api/beta/status` returns `api: "live"`; ecosystem config includes `apiProxyStatus: "live"`
+
+### What's Next (Phases 2–5 — when ready)
+- [ ] Phase 2: Fedimint mint — `FEDIMINT_GATEWAY_URL`, `VITE_FEDIMINT_INVITE`
+- [ ] Phase 3: Umbrel LND — `UMBREL_LND_*` env vars
+- [ ] Phase 4: Propagate env vars to sibling CF Pages projects
+- [ ] Phase 5: Full verification matrix (fedimint/lightning will show staged until 2–3)
+
+### Git State
+- Last commit SHA: (after push)
+- Branch: main
+
+---
+
 ## Handoff to Kimi — 2026-07-03 (Session 5 — Supabase swap)
 
 **Machine:** M3 (Grok)

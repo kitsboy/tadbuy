@@ -15,7 +15,7 @@
 |-------|-----------|
 | Frontend | React 19 + Vite + Tailwind v4 |
 | Hosting | Cloudflare Pages (static SPA) |
-| API | Express server.ts — M3 dev or M4 proxy |
+| API | Express server.ts — M3 dev or M4 proxy (`api.giveabit.io` live ✅) |
 | DB (server) | Supabase (`cegzfjbsadwchonpxwmv`) via `supabaseAdmin.ts` |
 | DB (client auth) | Firebase (`tadbuy-e3555`) — client SDK only |
 | Payments | Lightning (Umbrel), Fedimint ecash, BTC, Nostr Zap |
@@ -36,16 +36,15 @@
 | `/` | live — campaign builder |
 | `/beta` | live — BETA status + consumer workflow |
 | `/pitch` | live — auto-updating investor deck |
-| `/wallet` | beta — needs API |
+| `/wallet` | beta — API live, Lightning/Fedimint staged |
 | `/intelligence` | live UI, beta API |
 | `/integrations` | live — ApiExplorer |
 | `/enterprise` | live |
 
 ## API Architecture
 
-Cloudflare Pages = **static only**. `/api/*` requires:
-- `npm run dev` on M3, OR
-- M4 proxy at `api.giveabit.io` with `VITE_API_BASE_URL`
+Cloudflare Pages = **static SPA**. `/api/*` routed via `VITE_API_BASE_URL=https://api.giveabit.io` → M4 PM2 (live ✅).
+Local dev: `npm run dev` on M3.
 
 ## Agent-Automatable Endpoints
 
@@ -82,8 +81,9 @@ Payment step = **staged** until M4 mint + Umbrel connected.
 
 | Service | Status | Machine |
 |---------|--------|---------|
-| Fedimint mint | staged | M4 |
-| Umbrel LND | not_ready | M4 |
+| API proxy | live | M4 (`api.giveabit.io`) |
+| Fedimint mint | staged | M4 (Phase 2) |
+| Umbrel LND | not_ready | M4 (Phase 3) |
 | Fedi wallet | user phone | — |
 | Firebase | live | cloud |
 | Cloudflare Pages | live | cloud |

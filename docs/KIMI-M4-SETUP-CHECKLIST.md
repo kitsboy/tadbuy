@@ -33,9 +33,13 @@
 
 ---
 
-## Phase 1 — Clone & API Proxy (do this first)
+## Phase 1 — Clone & API Proxy ✅ COMPLETE (2026-07-03)
 
 Gets `/api/*` working for the live Cloudflare site.
+
+**Actual deployment (Kimi):** `~/.hermes/servers/tadbuy-api/` — NOT `~/projects/tadbuy`.  
+**Public URL:** `api.giveabit.io` via Cloudflare Tunnel → `localhost:3000`.  
+**DB:** Supabase (`cegzfjbsadwchonpxwmv`) — not Firebase Admin.
 
 ### 1.1 Clone repo on M4
 
@@ -130,7 +134,7 @@ Option C — **Public IP + port forward** (least preferred)
 
 Point `api.giveabit.io` → M4 proxy.
 
-- [ ] `curl https://api.giveabit.io/api/health` returns OK from internet
+- [x] `curl https://api.giveabit.io/api/health` returns OK from internet
 
 ### 1.7 Cloudflare Pages env vars (Cam or Kimi via CF dashboard)
 
@@ -142,7 +146,7 @@ VITE_API_BASE_URL=https://api.giveabit.io
 
 Trigger redeploy.
 
-- [ ] Live site at tadbuy.giveabit.io/beta shows "API Online"
+- [x] Live site at tadbuy.giveabit.io/beta shows "API Online"
 - [ ] Integrations page "Try API" buttons return JSON
 
 **Handoff to Cam:** "API proxy is live at api.giveabit.io"

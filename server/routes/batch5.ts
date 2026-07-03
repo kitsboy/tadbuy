@@ -15,6 +15,7 @@ export function registerBatch5Routes(app: Express) {
       projects: ['tadbuy', 'giveabit', 'satohash', 'motopass', 'openstrata'],
       umbrel: { configured: !!(process.env.UMBREL_LND_SOCKET && process.env.UMBREL_LND_CERT) },
       apiProxy: process.env.VITE_API_BASE_URL || 'https://api.giveabit.io',
+      apiProxyStatus: 'live',
     });
   });
 
@@ -23,7 +24,7 @@ export function registerBatch5Routes(app: Express) {
       version: 'v4.4.0-ELITE',
       phase: 'BETA',
       ui: 'live',
-      api: 'conditional',
+      api: 'live',
       fedimint: process.env.FEDIMINT_GATEWAY_URL ? 'beta' : 'staged',
       lightning: process.env.UMBREL_LND_SOCKET ? 'beta' : 'staged',
       cloudflare: 'static-spa',

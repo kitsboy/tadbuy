@@ -52,10 +52,10 @@ export const GIVEABIT_ECOSYSTEM = {
   },
 
   api: {
-    /** Production API — empty = same-origin. Set VITE_API_BASE_URL when M4 proxy is live. */
+    status: 'live' as const,
+    baseUrl: 'https://api.giveabit.io',
     baseUrlEnvVar: 'VITE_API_BASE_URL',
-    stagedProxy: 'https://api.giveabit.io',
-    cloudflareNote: 'Cloudflare Pages serves static SPA only — /api/* needs M4 proxy or Cloudflare Workers.',
+    cloudflareNote: 'Cloudflare Pages serves static SPA — /api/* proxied to M4 via api.giveabit.io.',
   },
 } as const;
 

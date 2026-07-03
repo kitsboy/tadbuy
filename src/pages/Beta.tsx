@@ -30,7 +30,7 @@ export default function Beta() {
         </div>
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">What Works Right Now</h1>
         <p className="text-sm text-muted mt-2 leading-relaxed">
-          Tadbuy UI is live on Cloudflare Pages. Payment APIs need the M4 server (Fedimint mint + Umbrel) or local <code className="text-accent">npm run dev</code>.
+          Tadbuy UI is live on Cloudflare Pages. API proxy is live at <code className="text-accent">api.giveabit.io</code>. Fedimint mint and Umbrel LND are still staged (Phases 2–3).
         </p>
       </div>
 
@@ -72,7 +72,7 @@ export default function Beta() {
           <ul className="text-xs text-muted space-y-2">
             <li>• Fedimint guardian + mint</li>
             <li>• Umbrel full BTC node (when ready)</li>
-            <li>• API proxy at api.giveabit.io</li>
+            <li>• API proxy at api.giveabit.io ✅</li>
             <li>• Fedi gateway for mint.giveabit.io</li>
           </ul>
           <p className="text-[10px] text-muted mt-3 font-mono">Ref: docs/M4-SERVER-REF.md</p>

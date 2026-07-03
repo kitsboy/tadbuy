@@ -14,7 +14,7 @@ const STEPS: WorkflowStep[] = [
   { id: 'pay-lightning', title: 'Pay via Lightning', description: 'Real when Umbrel LND env vars set on M4', status: 'beta' },
   { id: 'pay-fedimint', title: 'Pay via Fedimint', description: 'Demo now — real when Give A Bit Mint live on M4', status: 'staged' },
   { id: 'pay-btc', title: 'Pay On-chain', description: 'Manual confirm — needs node broadcast on M4', status: 'beta' },
-  { id: 'live', title: 'Campaign Goes Live', description: 'Firestore + webhook activation', status: 'beta' },
+  { id: 'live', title: 'Campaign Goes Live', description: 'Supabase + Lightning webhook via api.giveabit.io', status: 'beta' },
   { id: 'analytics', title: 'Track Results', description: 'Metrics, funnel, PPQ Intelligence', status: 'live' },
 ];
 

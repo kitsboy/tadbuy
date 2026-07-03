@@ -16,7 +16,7 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Tw
 - **Platform**: Cloudflare Pages (static SPA)
   - Build: `npm run build` → `dist/`
   - Node 20, auto-deploy on push to `main`
-- **API proxy**: M4 HERMES → `localhost:3000` (PM2 `tadbuy-api`) → Tailscale Funnel → `api.giveabit.io`
+- **API proxy**: `api.giveabit.io` → Cloudflare Tunnel → M4 `localhost:3000` (PM2 `tadbuy-api` at `~/.hermes/servers/tadbuy-api/`) ✅
 - **Supabase**: Project `cegzfjbsadwchonpxwmv` (server-side DB via service_role)
 - **Firebase**: Project ID `tadbuy-e3555` (client auth only — VITE_FIREBASE_*)
 - **Local dev**: `npm run dev` or `npm start` on M3
@@ -37,7 +37,7 @@ Phased checklist (API proxy → Fedimint mint → Umbrel LND):
 | GitHub (Grok maintains) | [docs/KIMI-M4-SETUP-CHECKLIST.md](./docs/KIMI-M4-SETUP-CHECKLIST.md) |
 | Obsidian (Kimi maintains) | `MASTER-BRAIN/Obsidian/03-Projects/M3/Tadbuy/M4-SETUP-CHECKLIST.md` |
 
-**Status:** M4 API deployed ✅ (PM2 `tadbuy-api` on :3000). Cam: run `supabase-schema.sql` + enable Tailscale Funnel. Grok: Supabase swap pushed to main.
+**Status:** Phase 1 COMPLETE ✅ — API proxy live, Supabase migrated, `VITE_API_BASE_URL` set on CF Pages. Phases 2–5 pending (Fedimint, Umbrel, multi-app, verification).
 
 Also: [docs/M4-SERVER-REF.md](./docs/M4-SERVER-REF.md) · [docs/SETUP-GUIDE.md](./docs/SETUP-GUIDE.md) · [/beta](https://tadbuy.giveabit.io/beta)
 
@@ -66,7 +66,7 @@ For automated agents (Grok, Kimi, Qwen):
 - `docs/KIMI-HANDOFF.md` — Cross-agent handoff log
 
 ## Gaps / Next
-- [ ] M4 Phase 1: API proxy live
+- [x] M4 Phase 1: API proxy live (`api.giveabit.io`)
 - [ ] M4 Phase 2: Fedimint mint + fm-invite
 - [ ] M4 Phase 3: Umbrel LND
 - [ ] Automated E2E tests
