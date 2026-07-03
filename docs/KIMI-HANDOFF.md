@@ -1,3 +1,24 @@
+## Handoff to Kimi — 2026-07-03 (Session 3)
+
+**ACTION REQUIRED ON M4:** Follow `docs/KIMI-M4-SETUP-CHECKLIST.md`
+
+### Your checklist (in order)
+1. Phase 1 — Clone tadbuy on M4, run API proxy with PM2, expose api.giveabit.io
+2. Phase 2 — Install Fedimint, create "Give A Bit Mint", generate fm-invite, configure Fedi
+3. Phase 3 — Connect Umbrel LND when node is ready (not yet)
+4. Phase 4 — Propagate VITE_FEDIMINT_INVITE to all 5 Give A Bit apps
+5. Phase 5 — Run verification matrix, update handoff
+
+### Done on M3 (Grok)
+- [x] KIMI-M4-SETUP-CHECKLIST.md written with checkboxes, commands, verify steps
+- [x] Batches 5+6 shipped (BETA page, ecosystem config, agent .ai_docs)
+- [x] Give A Bit Mint staged for tadbuy, satohash, giveabit, motopass, openstrata
+
+### Tell Cam when Phase 1 is done
+> "API proxy live at api.giveabit.io — /beta page will show green"
+
+---
+
 ## Handoff to Kimi — 2026-07-03 (Session 2)
 
 ### Done (Session 2)

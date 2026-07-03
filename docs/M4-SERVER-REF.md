@@ -39,6 +39,12 @@ UMBREL_LND_MACAROON=...
 UMBREL_LND_SOCKET=umbrel.local:10009
 ```
 
+## Setup Checklist for Kimi
+
+Full step-by-step: **[KIMI-M4-SETUP-CHECKLIST.md](./KIMI-M4-SETUP-CHECKLIST.md)**
+
+Priority: API proxy → Fedimint mint → Umbrel LND
+
 ## Staged — Not Live Yet
 
 All Fedimint and Umbrel integrations in Tadbuy UI are **staged**. The app works in demo mode until M4 services are online.

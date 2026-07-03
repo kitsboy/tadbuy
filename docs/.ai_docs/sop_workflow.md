@@ -35,6 +35,12 @@ git add -A && git commit -m "feat: ..." && git push origin main
 3. Pay ecash → server `/api/fedimint/pay`
 4. Campaign saved to Firestore → status live
 
+## Kimi M4 Setup (server work)
+Follow `docs/KIMI-M4-SETUP-CHECKLIST.md` in order:
+1. API proxy (Phase 1)
+2. Fedimint mint (Phase 2)
+3. Umbrel LND (Phase 3, when ready)
+
 ## Agent Automation SOP
 - Fetch `GET /api/agent/manifest` for capabilities
 - Use `apiFetch()` from `src/lib/apiBase.ts` (handles M4 proxy fallback)

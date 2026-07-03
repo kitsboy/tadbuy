@@ -25,6 +25,12 @@ Open http://127.0.0.1:3000 — full API + UI works locally.
 
 ---
 
+## Kimi on M4?
+
+Use the full checkbox checklist: **[KIMI-M4-SETUP-CHECKLIST.md](./KIMI-M4-SETUP-CHECKLIST.md)**
+
+---
+
 ## Step 2 — Create Give A Bit Mint (M4, when ready)
 
 On **M4 only**, install Fedimint and create a federation for `giveabit.io`:

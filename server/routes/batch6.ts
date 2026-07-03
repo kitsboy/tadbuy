@@ -12,6 +12,7 @@ export function registerBatch6Routes(app: Express) {
         beta: 'docs/BETA.md',
         setup: 'docs/SETUP-GUIDE.md',
         m4_ref: 'docs/M4-SERVER-REF.md',
+        kimi_checklist: 'docs/KIMI-M4-SETUP-CHECKLIST.md',
         ecosystem: 'docs/ECOSYSTEM.md',
         fedimint: 'docs/FEDIMINT.md',
       },

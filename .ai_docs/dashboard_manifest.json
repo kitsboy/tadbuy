@@ -33,6 +33,7 @@
     "/api/metrics",
     "/api/checkout/readiness"
   ],
+  "kimi_checklist": "docs/KIMI-M4-SETUP-CHECKLIST.md",
   "docs_auto_sync": [
     "docs/EXECUTIVE.md",
     "docs/FINANCIALS.md",
