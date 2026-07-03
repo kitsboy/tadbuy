@@ -33,7 +33,8 @@
     "/api/metrics",
     "/api/checkout/readiness"
   ],
-  "kimi_checklist": "docs/KIMI-M4-SETUP-CHECKLIST.md",
+  "kimi_checklist_github": "docs/KIMI-M4-SETUP-CHECKLIST.md",
+  "kimi_checklist_obsidian": "MASTER-BRAIN/Obsidian/03-Projects/M3/Tadbuy/M4-SETUP-CHECKLIST.md",
   "docs_auto_sync": [
     "docs/EXECUTIVE.md",
     "docs/FINANCIALS.md",

@@ -1,3 +1,28 @@
+## Handoff to Kimi — 2026-07-03 (Session 4 — Obsidian synced)
+
+### Done on M4 (Kimi)
+- [x] Obsidian canonical copy: `MASTER-BRAIN/Obsidian/03-Projects/M3/Tadbuy/M4-SETUP-CHECKLIST.md`
+- [x] SOURCE-OF-TRUTH.md updated (M4 Setup + Agent Docs sections)
+- [x] EXEC-SUMMARY.md updated (M4 strategy, Phase 1/2 status)
+- [x] README.md updated (platform split, NO-clone rule)
+- [x] tadbuy-ai-orientation skill references corrected
+
+### Still to execute on M4 (Phases 1–5)
+- [ ] Phase 1: API proxy + `api.giveabit.io`
+- [ ] Phase 2: Give A Bit Fedimint Mint
+- [ ] Phase 3: Umbrel LND (when ready)
+- [ ] Phase 4: Propagate invite to 5 apps
+- [ ] Phase 5: Verification matrix
+
+### Done on M3 (Grok — this session)
+- [x] M3 repo synced to acknowledge Obsidian dual-canonical setup
+- [x] Dual-copy note added to GitHub checklist
+
+### Handoff signal when Phase 1 complete
+> "API proxy live at api.giveabit.io — /beta shows green"
+
+---
+
 ## Handoff to Kimi — 2026-07-03 (Session 3)
 
 **ACTION REQUIRED ON M4:** Follow `docs/KIMI-M4-SETUP-CHECKLIST.md`

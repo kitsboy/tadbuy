@@ -5,6 +5,12 @@
 **Code lives on M3:** `~/projects/tadbuy/` — pull only, do not develop here  
 **Goal:** One shared Fedimint mint + API proxy for all Give A Bit apps
 
+> **Dual canonical copies**
+> - **GitHub (M3 edits):** `docs/KIMI-M4-SETUP-CHECKLIST.md` in tadbuy repo
+> - **Obsidian (M4/Kimi):** `MASTER-BRAIN/Obsidian/03-Projects/M3/Tadbuy/M4-SETUP-CHECKLIST.md`
+>
+> Keep both in sync when phases complete. Kimi owns Obsidian; Grok owns GitHub.
+
 ---
 
 ## Before You Start

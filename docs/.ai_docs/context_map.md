@@ -68,7 +68,8 @@ Cloudflare Pages = **static only**. `/api/*` requires:
 | Fedimint | docs/FEDIMINT.md |
 | Executive | docs/EXECUTIVE.md |
 | Handoff | docs/KIMI-HANDOFF.md |
-| **Kimi M4 setup checklist** | **docs/KIMI-M4-SETUP-CHECKLIST.md** |
+| **Kimi M4 setup (GitHub)** | `docs/KIMI-M4-SETUP-CHECKLIST.md` |
+| **Kimi M4 setup (Obsidian)** | `MASTER-BRAIN/Obsidian/03-Projects/M3/Tadbuy/M4-SETUP-CHECKLIST.md` |
 
 ## Consumer Workflow
 

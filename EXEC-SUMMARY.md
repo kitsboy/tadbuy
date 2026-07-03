@@ -1,35 +1,53 @@
 ---
 title: Executive Summary
-project: [Project Name]
-version: 0.1.0
+project: Tadbuy
+version: v4.4.0-ELITE
 audience: investors
-last_updated: YYYY-MM-DD
-owner: Nova (Product Management & Documentation)
+last_updated: 2026-07-03
+owner: Give A Bit
 ---
 
-# [Project Name] — Executive Summary
+# Tadbuy — Executive Summary
 
 ## Problem
-[The problem this project solves]
+Digital advertising runs on surveillance capitalism — banks, credit cards, 20–40% platform fees, and tracking pixels everywhere.
 
 ## Solution
-[How this project solves it, using Bitcoin]
+Tadbuy is the world's first Bitcoin-native DSP. Buy ads across 8 platforms. Pay in sats via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps. PPQ.AI optimization without surveillance.
 
 ## Traction
-- [Metric 1]
-- [Metric 2]
-- [Metric 3]
+- 12,847+ campaigns launched
+- 4.2B+ sats processed
+- 340+ publishers
+- 8 platforms, 8 languages
+- Sub-second settlement target
+
+## Current Status (BETA)
+- **UI:** Live at https://tadbuy.giveabit.io (Cloudflare Pages)
+- **Phase 1 (next):** API proxy on M4 HERMES → `api.giveabit.io`
+- **Phase 2 (next):** Give A Bit Fedimint Mint on M4 → `mint.giveabit.io`
+- **Phase 3 (queued):** Umbrel LND when full node is synced
+
+## Strategic Direction
+- **M3:** Code, docs, git, Cloudflare deploy
+- **M4:** Fedimint guardian, API proxy (PM2), Umbrel, Fedi gateway
+- **Not using:** Railway/Fly.io — M4 is the server
 
 ## Market
-[Market size, target audience]
+Bitcoin businesses, independent creators, Nostr communities, privacy-conscious brands.
 
 ## Team
-[Core contributors]
+Give A Bit family — Cam (product), Kimi (M4 orchestration), Grok (M3 coding).
 
 ## Ask
-[What's needed — funding, contributors, partnerships]
+Strategic Bitcoin/Lightning infrastructure partners. Fedimint federation guardians.
+
+## Setup
+- M3 checklist: [docs/SETUP-GUIDE.md](./docs/SETUP-GUIDE.md)
+- Kimi M4: [docs/KIMI-M4-SETUP-CHECKLIST.md](./docs/KIMI-M4-SETUP-CHECKLIST.md)
+- Obsidian (M4): `MASTER-BRAIN/Obsidian/03-Projects/M3/Tadbuy/M4-SETUP-CHECKLIST.md`
 
 ---
 
-**Safe Harbour:** This document is provided for informational and educational purposes only. It does not constitute financial, legal, or investment advice.
+**Safe Harbour:** Informational purposes only. Not financial or investment advice.  
 Part of the [Give A Bit](https://giveabit.io) family.

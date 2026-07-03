@@ -3,64 +3,79 @@
 **Last Updated**: 2026-07-03
 
 ## Project Overview (Marketing Pitch)
-Tadbuy is a Bitcoin-native advertising platform (DSP). Normal people and AI/Nostr agents can buy ads on Twitter/X, Facebook, Instagram, YouTube, Reddit, LinkedIn, TikTok, and decentralized Nostr. Pay only in Bitcoin using Lightning, BOLT12, on-chain, or Nostr Zaps - no banks or credit cards. Features: step-by-step campaign builder with targeting (world map), AI creative (Gemini) and optimization (PPQ.AI), publisher portal, dashboards for campaigns/analytics/wallet/settlements, real-time BTC ticker and mempool fees, PDF/CSV reports, A/B testing, 8 languages support, Agent API for Nostr agents. Built as part of Give A Bit (giveabit.io) with strong focus on Bitcoin sovereignty and private money. Excellent SEO, multi-lang, Lightning/Nostr focus.
+Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Twitter/X, Facebook, Instagram, YouTube, Reddit, LinkedIn, TikTok, and Nostr. Pay in Bitcoin via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps. Features: campaign builder, geospatial targeting, AI creative (Gemini), PPQ.AI, publisher portal, analytics, wallet, settlements, 8 languages, Agent API. Part of Give A Bit (giveabit.io).
 
-## GitHub (Single Source of Truth)
+## GitHub (Code Source of Truth)
 - Repo: https://github.com/kitsboy/tadbuy.git
 - Branch: main (production)
-- Current status: v4.1.0-ELITE — 30 premium UI/UX upgrades, full SEO, PWA service worker, mobile polish.
-- Recent commits include the 20-point enterprise roadmap, Give A Bit branding, Lightning/AI integration.
+- Version: **v4.4.0-ELITE** (BETA phase)
+- M3 workspace: `~/projects/tadbuy/`
 
 ## Deployment Details
 - **Live URL**: https://tadbuy.giveabit.io/
-- **Platform**: Cloudflare Pages
-  - Build command: `npm run build`
-  - Output directory: `dist`
-  - Branch: main (auto-deploy)
-  - Node version: 20
-  - Compatibility date: May 7 2026
-  - Fail open: enabled
+- **Platform**: Cloudflare Pages (static SPA)
+  - Build: `npm run build` → `dist/`
+  - Node 20, auto-deploy on push to `main`
+- **API proxy (staged)**: M4 HERMES → `api.giveabit.io` (see M4 Setup below)
 - **Firebase**: Project ID `tadbuy-e3555`
-  - Environment variables: VITE_FIREBASE_* (API key and app ID are secrets — do not commit)
-- **Local run**:
-  - `npm install`
-  - `npm run dev` (starts on http://127.0.0.1:5173 or similar)
-  - Or `npm start` (runs server.ts on http://127.0.0.1:3000)
-  - For editing: Use `npm run dev` for hot reload while working in Goose.
+- **Local dev**: `npm run dev` or `npm start` on M3
+
+## Platform Split
+
+| Machine | Role | Do | Don't |
+|---------|------|-----|-------|
+| **M3** | Dev (Grok) | Code, git, docs, CF deploy | Install Fedimint/Umbrel |
+| **M4** | Server (Kimi) | API proxy, Fedimint mint, Umbrel | Clone repo for development |
+
+## M4 Setup (Kimi — HERMES)
+
+Phased checklist (API proxy → Fedimint mint → Umbrel LND):
+
+| Copy | Location |
+|------|----------|
+| GitHub (Grok maintains) | [docs/KIMI-M4-SETUP-CHECKLIST.md](./docs/KIMI-M4-SETUP-CHECKLIST.md) |
+| Obsidian (Kimi maintains) | `MASTER-BRAIN/Obsidian/03-Projects/M3/Tadbuy/M4-SETUP-CHECKLIST.md` |
+
+**Status:** Obsidian vault synced ✅ — Phase 1 execution pending on M4.
+
+Also: [docs/M4-SERVER-REF.md](./docs/M4-SERVER-REF.md) · [docs/SETUP-GUIDE.md](./docs/SETUP-GUIDE.md) · [/beta](https://tadbuy.giveabit.io/beta)
+
+## Agent Docs (.ai_docs)
+
+For automated agents (Grok, Kimi, Qwen):
+
+| File | Purpose |
+|------|---------|
+| `docs/.ai_docs/context_map.md` | Stack, routes, M3/M4 roles, Fedimint |
+| `docs/.ai_docs/sop_workflow.md` | Dev, deploy, payment SOPs |
+| `docs/.ai_docs/dashboard_manifest.json` | Endpoints, pages, kimi_checklist path |
+| `GET /api/agent/manifest` | Runtime discovery (when API online) |
+
+## Give A Bit Mint (Fedimint)
+
+- **Name:** Give A Bit Mint · **Domain:** giveabit.io
+- **Status:** staged (M4 not live yet)
+- **Shared by:** tadbuy, giveabit, satohash, motopass, openstrata
+- **Config:** `src/data/ecosystemConfig.ts`
 
 ## Key Files
-- `src/` — Main React 19 + Vite + TypeScript code (App.tsx, components/buyads/, pages/, services/lightningService.ts, geminiService.ts, firebase.ts)
-- `package.json` — Scripts: dev, build, preview, start (server.ts)
-- `vite.config.ts` — Vite config with Tailwind, React plugin, aliases
-- `server.ts` — Express server for local development
-- `NOTES.md`, `TECHNICAL_DOCUMENTATION.md`, `PROJECT-CONTEXT.md`, `STATUS.md`
+- `src/` — React 19 + Vite + TypeScript
+- `server.ts` + `server/routes/` — Express API (runs M3 dev or M4 production)
+- `scripts/sync-docs.ts` — Auto-syncs docs on build
+- `docs/KIMI-HANDOFF.md` — Cross-agent handoff log
 
-## Mission Alignment
-Strong Give A Bit branding: Bitcoin sovereignty, Lightning/Nostr Zaps for privacy, giveabit.io links, Safe Harbour language. Deeper privacy (PYNYM, BIP-47, Silent Payments) can be expanded.
+## Gaps / Next
+- [ ] M4 Phase 1: API proxy live
+- [ ] M4 Phase 2: Fedimint mint + fm-invite
+- [ ] M4 Phase 3: Umbrel LND
+- [ ] Automated E2E tests
+- [ ] Propagate ecosystemConfig to sibling repos
 
-## Recent Changes & Lessons Learned
-- Long black screen / "document is not defined" and "onAuthStateChanged of undefined" errors were caused by Firebase initializing too early.
-- **Fix**: Updated `src/firebase.ts` with `typeof window !== 'undefined'` check and `getSafeAuth()` wrapper. Also updated `AuthProvider.tsx`.
-- Future rule: When seeing these errors, immediately check Firebase initialization order and add safe browser checks.
+## How to Start (M3)
+```bash
+cd ~/projects/tadbuy && npm install && npm run dev
+```
 
-## Gaps / Improvements
-- Add automated tests (unit + E2E).
-- Make deeper privacy features (PYNYM, BIP-47, Silent Payments) more prominent.
-- Per-page BreadcrumbList and FAQPage structured data.
-- Real Lightning node integration (currently demo invoices).
+**This file is the M3 code source of truth.** Obsidian on M4 is the server/ops source of truth for Kimi.
 
-## How to Start and Edit in the Future (New Section)
-1. Open terminal: `cd ~/projects/tadbuy`
-2. `npm install` (if first time or after changes)
-3. `npm run dev` — starts the full interactive app with hot reload (best for editing in Goose).
-4. Or `npm start` — runs the server on port 3000.
-5. Open the URL shown in terminal.
-6. Edit files in `src/` (components, pages, services). Changes appear live with `npm run dev`.
-7. To build for production: `npm run build` then `npm run preview`.
-8. Always run the giveabit-project-handoff skill at the end of sessions to update documentation.
-
-**This file is the single source of truth.** All future work must update this file first. Use the giveabit-project-handoff skill for every project.
-
-**Template Rule for All Future Give A Bit Projects**: Every project must have at least this much information (GitHub, live URL, deployment details, key docs, simple pitch, Git snapshot, mission alignment, gaps, hand-off notes, startup instructions).
-
-**Done ✅** (hand-off ready for Kimi on M4).
+*Safe Harbour · Part of the [Give A Bit](https://giveabit.io) family.*

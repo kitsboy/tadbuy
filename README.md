@@ -23,7 +23,20 @@ Tadbuy is a sovereign Demand-Side Platform (DSP) built for the Bitcoin era. Adve
 - Publisher portal, analytics dashboard, wallet, and settlements
 - 8 languages, Agent API for Nostr bots, real-time BTC ticker
 
-## Quick Start
+## Platform Split (M3 vs M4)
+
+| Machine | Role | Location |
+|---------|------|----------|
+| **M3** | Code & docs (Grok) | `~/projects/tadbuy/` |
+| **M4** | Server ops (Kimi/HERMES) | Fedimint, API proxy, Umbrel |
+
+**Rule:** Do **not** clone this repo on M4 for development. M4 pulls only to run `server.ts` via PM2. All code edits happen on M3.
+
+| Doc | M3 (GitHub) | M4 (Obsidian) |
+|-----|-------------|---------------|
+| M4 setup checklist | [docs/KIMI-M4-SETUP-CHECKLIST.md](./docs/KIMI-M4-SETUP-CHECKLIST.md) | `MASTER-BRAIN/.../Tadbuy/M4-SETUP-CHECKLIST.md` |
+
+## Quick Start (M3 only)
 
 **Prerequisites:** Node.js 20+
 
@@ -32,7 +45,7 @@ git clone https://github.com/kitsboy/tadbuy.git
 cd tadbuy
 npm install
 cp .env.example .env.local   # add GEMINI_API_KEY and VITE_FIREBASE_* vars
-npm run dev                  # http://127.0.0.1:5173
+npm run dev                  # http://127.0.0.1:3000
 ```
 
 ## Scripts
@@ -72,8 +85,11 @@ docs/             # SEO, mission, handoff docs
 ## Documentation
 
 - [SOURCE-OF-TRUTH.md](./SOURCE-OF-TRUTH.md) — canonical project reference
-- [TECHNICAL_DOCUMENTATION.md](./TECHNICAL_DOCUMENTATION.md) — architecture details
-- [docs/tadbuy_MISSION.md](./docs/tadbuy_MISSION.md) — mission and values
+- [EXEC-SUMMARY.md](./EXEC-SUMMARY.md) — investor one-pager
+- [docs/KIMI-M4-SETUP-CHECKLIST.md](./docs/KIMI-M4-SETUP-CHECKLIST.md) — Kimi M4 server setup (5 phases)
+- [docs/SETUP-GUIDE.md](./docs/SETUP-GUIDE.md) — M3 + M4 + Fedi + Umbrel
+- [docs/BETA.md](./docs/BETA.md) — what works now vs staged
+- [docs/.ai_docs/](./docs/.ai_docs/) — agent automation (context_map, sop, manifest)
 - [CONTRIBUTING.md](./CONTRIBUTING.md) — how to contribute
 
 ## License
