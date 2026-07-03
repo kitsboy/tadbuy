@@ -1,10 +1,45 @@
 {
-  "projectName": "tadbuy",
-  "projectType": "advertising-dsp",
-  "deployType": "manual",
-  "primaryPort": "5173",
-  "status": "active",
-  "lastDocAudit": "2026-07-03T03:11:57Z",
-  "automationReady": true,
-  "entryPoints": ["src/", "docs/", "public/"]
+  "project": "tadbuy",
+  "version": "v4.4.0-ELITE",
+  "phase": "BETA",
+  "live_url": "https://tadbuy.giveabit.io",
+  "api_proxy": "https://api.giveabit.io",
+  "fedimint_mint": {
+    "name": "Give A Bit Mint",
+    "domain": "giveabit.io",
+    "status": "staged",
+    "gateway": "https://mint.giveabit.io",
+    "shared_projects": ["tadbuy", "giveabit", "satohash", "motopass", "openstrata"]
+  },
+  "machines": {
+    "m3": { "role": "dev", "path": "~/projects/tadbuy" },
+    "m4": { "role": "server", "services": ["fedimint", "umbrel", "api-proxy", "fedi-gateway"] }
+  },
+  "pages": {
+    "campaign_builder": "/",
+    "beta_status": "/beta",
+    "pitch": "/pitch",
+    "wallet": "/wallet",
+    "intelligence": "/intelligence",
+    "integrations": "/integrations",
+    "enterprise": "/enterprise"
+  },
+  "agent_endpoints": [
+    "/api/agent/manifest",
+    "/api/beta/status",
+    "/api/ecosystem/config",
+    "/api/fedimint/status",
+    "/api/fedimint/pay",
+    "/api/metrics",
+    "/api/checkout/readiness"
+  ],
+  "docs_auto_sync": [
+    "docs/EXECUTIVE.md",
+    "docs/FINANCIALS.md",
+    "docs/MARKETING.md",
+    "docs/FEDIMINT.md",
+    "docs/BETA.md",
+    "docs/ECOSYSTEM.md",
+    "docs/SETUP-GUIDE.md"
+  ]
 }

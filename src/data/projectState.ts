@@ -3,7 +3,8 @@
  * Updated by sync-docs.ts on every build from live metrics when available.
  */
 export const PROJECT_STATE = {
-  version: 'v4.3.0-ELITE',
+  version: 'v4.4.0-ELITE',
+  phase: 'BETA' as const,
   lastSynced: new Date().toISOString().split('T')[0],
   liveUrl: 'https://tadbuy.giveabit.io',
   repo: 'https://github.com/kitsboy/tadbuy',
@@ -88,6 +89,8 @@ export const PROJECT_STATE = {
     batch2: { completed: 25, total: 25, label: 'Targeting & Intelligence' },
     batch3: { completed: 25, total: 25, label: 'Publisher & Integrations' },
     batch4: { completed: 25, total: 25, label: 'Enterprise & Scale' },
+    batch5: { completed: 25, total: 25, label: 'Ecosystem Pipes & BETA' },
+    batch6: { completed: 25, total: 25, label: 'Agent Automation & Onboarding' },
   },
 } as const;
 

@@ -1,34 +1,86 @@
-# tadbuy — Context Map
+# tadbuy — Agent Context Map
+
+**Phase:** BETA · **Version:** v4.4.0-ELITE · **Updated:** auto-sync on build
+
+## Machine Roles
+
+| Machine | Role | Path |
+|---------|------|------|
+| M3 | Dev (Grok) | `~/projects/tadbuy/` |
+| M4 | Server (Kimi/HERMES) | Obsidian — Fedimint, Umbrel, API proxy |
 
 ## Stack
+
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React |
-| Styling | Tailwind CSS |
-| Backend | Firebase / Firestore |
-| Payments | Lightning Network |
-| Identity | Nostr Zaps |
+| Frontend | React 19 + Vite + Tailwind v4 |
+| Hosting | Cloudflare Pages (static SPA) |
+| API | Express server.ts — M3 dev or M4 proxy |
+| DB | Firebase Firestore |
+| Payments | Lightning (Umbrel), Fedimint ecash, BTC, Nostr Zap |
 
-## Ports
-| Service | Port |
-|---------|------|
-| Dev server | 5173 |
-| Firebase | Cloud-hosted |
+## Give A Bit Mint (Fedimint)
 
-## Key Architecture
-- Bitcoin-native advertising DSP (Demand-Side Platform)
-- Lightning Network for ad micropayments
-- Nostr Zaps integration for creator payouts
-- Multi-platform ad buying (web, Nostr, Lightning)
-- Privacy-first: no user tracking, no surveillance
-- Zero KYC: no registration data stored
+- **Name:** Give A Bit Mint
+- **Domain:** giveabit.io
+- **Status:** staged (M4 not live yet)
+- **Shared by:** tadbuy, giveabit, satohash, motopass, openstrata
+- **Gateway:** mint.giveabit.io (planned M4)
+- **Env:** `VITE_FEDIMINT_INVITE`, `FEDIMINT_GATEWAY_URL`
+
+## Key Routes
+
+| Route | Status |
+|-------|--------|
+| `/` | live — campaign builder |
+| `/beta` | live — BETA status + consumer workflow |
+| `/pitch` | live — auto-updating investor deck |
+| `/wallet` | beta — needs API |
+| `/intelligence` | live UI, beta API |
+| `/integrations` | live — ApiExplorer |
+| `/enterprise` | live |
+
+## API Architecture
+
+Cloudflare Pages = **static only**. `/api/*` requires:
+- `npm run dev` on M3, OR
+- M4 proxy at `api.giveabit.io` with `VITE_API_BASE_URL`
+
+## Agent-Automatable Endpoints
+
+| Endpoint | Purpose |
+|----------|---------|
+| GET /api/agent/manifest | Agent discovery |
+| GET /api/beta/status | BETA phase info |
+| GET /api/ecosystem/config | Shared mint config |
+| POST /api/fedimint/pay | Ecash payment |
+| POST /api/agent/campaigns | Create campaign |
+| GET /api/metrics | Live metrics |
+
+## Docs for Agents
+
+| Doc | Path |
+|-----|------|
+| BETA status | docs/BETA.md |
+| Setup (M3/M4/Fedi/Umbrel) | docs/SETUP-GUIDE.md |
+| M4 server ref | docs/M4-SERVER-REF.md |
+| Ecosystem | docs/ECOSYSTEM.md |
+| Fedimint | docs/FEDIMINT.md |
+| Executive | docs/EXECUTIVE.md |
+| Handoff | docs/KIMI-HANDOFF.md |
+
+## Consumer Workflow
+
+1. Browse → 2. Create campaign → 3. Pay (Lightning/Fedimint/BTC) → 4. Live → 5. Analytics
+
+Payment step = **staged** until M4 mint + Umbrel connected.
 
 ## External Services
-| Service | Purpose |
-|---------|---------|
-| Firebase/Firestore | Ad data, campaign storage |
-| Lightning Network | Ad payment settlement |
 
-## Hosting
-Cloudflare Pages — manual deploy from M4
-Custom domain: tadbuy.giveabit.io
+| Service | Status | Machine |
+|---------|--------|---------|
+| Fedimint mint | staged | M4 |
+| Umbrel LND | not_ready | M4 |
+| Fedi wallet | user phone | — |
+| Firebase | live | cloud |
+| Cloudflare Pages | live | cloud |

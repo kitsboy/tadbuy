@@ -155,6 +155,61 @@ FEDIMINT_GATEWAY_URL=https://your-mint-gateway
 *Tadbuy ${PROJECT_STATE.version}*
 `);
 
+  writeDoc('BETA.md', `# Tadbuy — BETA Status
+
+**Auto-generated:** ${today} · **Version:** ${PROJECT_STATE.version}
+
+## Phase: BETA
+
+| Component | Status |
+|-----------|--------|
+| UI (Cloudflare Pages) | ✅ Live |
+| Campaign Builder | ✅ Live |
+| Metrics / Analytics UI | ✅ Live |
+| API (/api/*) | ⏳ Needs M4 proxy or \`npm run dev\` |
+| Fedimint (Give A Bit Mint) | ⏳ Staged on M4 |
+| Umbrel Lightning | ⏳ Not ready |
+| Real payments | 🔶 Demo mode |
+
+## Consumer Workflow
+1. Browse & plan → 2. Create campaign → 3. Pay → 4. Go live → 5. Track results
+
+See https://tadbuy.giveabit.io/beta for live status.
+
+## Setup
+See [SETUP-GUIDE.md](./SETUP-GUIDE.md) and [M4-SERVER-REF.md](./M4-SERVER-REF.md).
+
+---
+*Part of the [Give A Bit](https://giveabit.io) family.*
+`);
+
+  writeDoc('ECOSYSTEM.md', `# Give A Bit Ecosystem
+
+**Auto-generated:** ${today}
+
+## Shared Fedimint Mint
+- **Name:** Give A Bit Mint
+- **Domain:** giveabit.io
+- **Gateway:** mint.giveabit.io (M4 HERMES)
+- **Status:** staged
+
+## Projects Using This Mint
+| Project | URL |
+|---------|-----|
+| Tadbuy | https://tadbuy.giveabit.io |
+| Give A Bit | https://giveabit.io |
+| Satohash | https://satohash.giveabit.io |
+| MotoPass | https://motopass.giveabit.io |
+| OpenStrata | https://openstrata.giveabit.io |
+
+## M3 vs M4
+- **M3:** Code in ~/projects/ — never install Fedimint/Umbrel here
+- **M4:** Server — Fedimint guardian, Umbrel, API proxy, Fedi gateway
+
+---
+*See SETUP-GUIDE.md for connection instructions.*
+`);
+
   // Update LATEST-UPDATE one-liner
   const latestPath = path.join(ROOT, 'LATEST-UPDATE.md');
   fs.writeFileSync(latestPath, `# tadbuy — Last Updated ${today} by Grok

@@ -11,6 +11,8 @@ import { registerBatch1Routes } from "./server/routes/batch1.ts";
 import { registerBatch2Routes } from "./server/routes/batch2.ts";
 import { registerBatch3Routes } from "./server/routes/batch3.ts";
 import { registerBatch4Routes } from "./server/routes/batch4.ts";
+import { registerBatch5Routes } from "./server/routes/batch5.ts";
+import { registerBatch6Routes } from "./server/routes/batch6.ts";
 import { getLightningNodeInfo, createLightningInvoice, executeLightningPayment } from "./src/services/lightningService.ts";
 import { AdminFirestoreCampaignRepository, getAdminDb } from "./src/lib/db/firestoreAdmin.ts";
 import fs from "fs";
@@ -571,6 +573,8 @@ app.get("/api/campaigns", async (req, res) => {
   registerBatch2Routes(app);
   registerBatch3Routes(app);
   registerBatch4Routes(app);
+  registerBatch5Routes(app);
+  registerBatch6Routes(app);
 
   // NIP-98 protected agent endpoint example
   app.get('/api/nostr/nip98/protected', nip98AuthMiddleware, (req, res) => {

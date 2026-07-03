@@ -1,31 +1,42 @@
-# tadbuy — Standard Operating Procedure
+# tadbuy — SOP Workflow for Agents
 
-## Build
-```bash
-cd ~/projects/tadbuy && npm run build
-```
+## Session Start
+1. Read `GROK-SESSION-PROTOCOL.md`
+2. Read `docs/.ai_docs/context_map.md`
+3. Check `docs/BETA.md` for what's live vs staged
 
-## Dev Server
+## Development (M3 only)
 ```bash
-cd ~/projects/tadbuy && npm run dev
-```
-
-## Pre-Deploy Checks
-```bash
-cd ~/projects/tadbuy && git status && npm run build
-```
-## Deploy (Manual — wrangler from M4)
-### Step 1: Sync dist from M3 to M4
-```bash
-rsync -avz --delete ~/projects/tadbuy/dist/ m4:~/tmp-tadbuy-dist/
+cd ~/projects/tadbuy
+npm run dev   # Full UI + API at :3000
+npm run lint
+npm run build # Auto-syncs docs via prebuild
 ```
 
-### Step 2: On M4, deploy
+## Never on M3
+- Fedimint guardian install
+- Umbrel node operations
+- Long-running production daemons
+
+## Commit & Deploy
 ```bash
-wrangler pages deploy ~/tmp-tadbuy-dist/ --project-name tadbuy
+git add -A && git commit -m "feat: ..." && git push origin main
+# Cloudflare auto-deploys static SPA
 ```
 
-## Post-Deploy Verify
-```bash
-curl -s ## Stack\n| Layer | Technology |\n|-------|-----------|\n| Frontend | React |\n| Styling | Tailwind CSS |\n| Backend | Firebase/Firestore |\n\n## Ports\n| Service | Port |\n|---------|------|\n| Dev server | 5173 |\n\n## Key Architecture\n- Bitcoin-native ad DSP\n- Lightning micropayments\n- Nostr Zaps integration\n- Multi-platform ad buying\n- Privacy-first\n\n## Hosting\nCloudflare Pages manual deploy — tadbuy.giveabit.io | grep -q 'tadbuy'
-```
+## End of Session
+1. Append `docs/KIMI-HANDOFF.md`
+2. Update `LATEST-UPDATE.md`
+3. Echo to `~/projects/PROJECT-UPDATE-LOG.md`
+
+## Consumer Payment SOP (when M4 ready)
+1. User selects Fedimint at checkout
+2. Join Give A Bit Mint via fm-invite
+3. Pay ecash → server `/api/fedimint/pay`
+4. Campaign saved to Firestore → status live
+
+## Agent Automation SOP
+- Fetch `GET /api/agent/manifest` for capabilities
+- Use `apiFetch()` from `src/lib/apiBase.ts` (handles M4 proxy fallback)
+- Read `src/data/ecosystemConfig.ts` for cross-project mint config
+- Run `npm run sync-docs` to refresh all markdown docs

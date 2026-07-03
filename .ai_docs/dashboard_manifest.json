@@ -1,113 +1,45 @@
 {
-  "name": "Tadbuy",
-  "description": "Bitcoin-native ad platform (DSP) — Lightning Network payments, Firestore backend, real-time analytics",
-  "domain": "tadbuy.giveabit.io",
-  "type": "fullstack",
-  "stack": {
-    "frontend": ["React", "TypeScript", "Vite", "Tailwind CSS"],
-    "backend": ["Express", "TypeScript", "Firebase Admin"],
-    "database": ["Firestore"],
-    "payments": ["Lightning Network", "LND (ln-service)", "BOLT12"],
-    "ai": ["Google Gemini (genai)"],
-    "analytics": ["D3", "Recharts"],
-    "i18n": ["i18next", "8 languages"],
-    "observability": ["Sentry"],
-    "infrastructure": ["Docker Compose", "Cloudflare Pages"]
+  "project": "tadbuy",
+  "version": "v4.4.0-ELITE",
+  "phase": "BETA",
+  "live_url": "https://tadbuy.giveabit.io",
+  "api_proxy": "https://api.giveabit.io",
+  "fedimint_mint": {
+    "name": "Give A Bit Mint",
+    "domain": "giveabit.io",
+    "status": "staged",
+    "gateway": "https://mint.giveabit.io",
+    "shared_projects": ["tadbuy", "giveabit", "satohash", "motopass", "openstrata"]
   },
-  "port": 3000,
-  "scripts": {
-    "dev": "tsx server.ts",
-    "start": "tsx server.ts",
-    "build": "vite build",
-    "preview": "vite preview",
-    "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+  "machines": {
+    "m3": { "role": "dev", "path": "~/projects/tadbuy" },
+    "m4": { "role": "server", "services": ["fedimint", "umbrel", "api-proxy", "fedi-gateway"] }
   },
-  "api_routes": {
-    "campaigns": ["GET /api/campaigns", "POST /api/campaigns"],
-    "metrics": ["GET /api/metrics"],
-    "lightning": [
-      "GET /api/lightning/info",
-      "POST /api/lightning/invoice",
-      "GET /api/lightning/check/:id",
-      "POST /api/lightning/offer",
-      "POST /api/webhooks/lightning"
-    ],
-    "settlements": ["GET /api/settlements", "POST /api/settle"],
-    "marketplace": ["POST /api/marketplace/bid"],
-    "publisher": ["POST /api/publisher/settings"],
-    "ai": ["POST /api/ai/optimize"],
-    "admin": ["POST /api/admin/backup"],
-    "v1_analytics": [
-      "POST /api/v1/retargeting/track",
-      "POST /api/v1/conversions",
-      "POST /api/v1/ads/view",
-      "POST /api/v1/analytics/heatmap",
-      "POST /api/v1/lightning/split",
-      "POST /api/v1/lightning/jit-channel",
-      "POST /api/v1/fiat/onramp",
-      "POST /api/v1/fraud/audit"
-    ],
-    "docs": ["GET /api/docs/pdf"]
+  "pages": {
+    "campaign_builder": "/",
+    "beta_status": "/beta",
+    "pitch": "/pitch",
+    "wallet": "/wallet",
+    "intelligence": "/intelligence",
+    "integrations": "/integrations",
+    "enterprise": "/enterprise"
   },
-  "env_vars": {
-    "required": ["SESSION_SECRET"],
-    "client_firebase": [
-      "VITE_FIREBASE_API_KEY",
-      "VITE_FIREBASE_AUTH_DOMAIN",
-      "VITE_FIREBASE_PROJECT_ID",
-      "VITE_FIREBASE_STORAGE_BUCKET",
-      "VITE_FIREBASE_MESSAGING_SENDER_ID",
-      "VITE_FIREBASE_APP_ID"
-    ],
-    "server_firebase": ["FIREBASE_SERVICE_ACCOUNT_KEY", "FIREBASE_PROJECT_ID"],
-    "lightning": ["UMBREL_LND_CERT", "UMBREL_LND_MACAROON", "UMBREL_LND_SOCKET"],
-    "ai": ["GEMINI_API_KEY"],
-    "observability": ["SENTRY_DSN"],
-    "agents": ["AGENT_API_KEYS"]
-  },
-  "features": [
-    "Bitcoin-native demand-side platform (DSP)",
-    "Lightning Network payments via LND (BOLT11 + BOLT12)",
-    "Campaign management with multi-step creation wizard",
-    "Ad slot marketplace with bidding system",
-    "Real-time analytics dashboard (impressions, clicks, CTR, spend)",
-    "AI-powered ad creative generation (Gemini API)",
-    "Multi-platform ad distribution",
-    "Geo-targeting capabilities",
-    "Publisher portal with Lightning settlement",
-    "Agent API for Nostr AI agents",
-    "Internationalization (8 languages)",
-    "Firestore repository pattern (swappable DB layer)",
-    "Firebase Auth for user management",
-    "Service worker + PWA manifest",
-    "Sentry error tracking",
-    "Rate limiting + Joi validation",
-    "PDF report generation (jsPDF)",
-    "Settlements (on-chain + Lightning)",
-    "Android Lightning wallet companion app (LightningPay)"
+  "agent_endpoints": [
+    "/api/agent/manifest",
+    "/api/beta/status",
+    "/api/ecosystem/config",
+    "/api/fedimint/status",
+    "/api/fedimint/pay",
+    "/api/metrics",
+    "/api/checkout/readiness"
   ],
-  "pages": [
-    "Dashboard",
-    "Campaigns",
-    "BuyAds (4-step wizard)",
-    "Marketplace",
-    "Metrics",
-    "Wallet",
-    "PublisherPortal",
-    "Settlements",
-    "Profile",
-    "ProfileSettings",
-    "GeoTargeting",
-    "Bolt12Info",
-    "Hubhash",
-    "PpqGuide",
-    "DebugLightning",
-    "ApiReference",
-    "Documentation",
-    "CampaignAnalytics",
-    "NotFound"
-  ],
-  "created_at": "2025-05-28T00:00:00.000Z",
-  "audited_at": "2026-07-02T00:00:00.000Z"
+  "docs_auto_sync": [
+    "docs/EXECUTIVE.md",
+    "docs/FINANCIALS.md",
+    "docs/MARKETING.md",
+    "docs/FEDIMINT.md",
+    "docs/BETA.md",
+    "docs/ECOSYSTEM.md",
+    "docs/SETUP-GUIDE.md"
+  ]
 }
