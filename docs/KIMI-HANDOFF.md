@@ -21,7 +21,7 @@
 - [ ] Phase 5: Full verification matrix (fedimint/lightning will show staged until 2–3)
 
 ### Git State
-- Last commit SHA: (after push)
+- Last commit SHA: 80094da
 - Branch: main
 
 ---
