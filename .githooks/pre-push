@@ -24,5 +24,11 @@ REMOTE="${1:-origin}"
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 echo "📤 Pushing v${VERSION} to ${REMOTE}/${BRANCH}…"
-SKIP_VERSION_BUMP=1 git push "$REMOTE" "$BRANCH"
-exit $?
+if SKIP_VERSION_BUMP=1 git push "$REMOTE" "$BRANCH"; then
+  echo "✅ Live footer will show v${VERSION} after deploy"
+  # Abort the outer push — we already pushed including the version commit
+  exit 1
+fi
+
+echo "❌ Version bump push failed"
+exit 1
