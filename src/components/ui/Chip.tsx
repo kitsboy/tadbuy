@@ -1,24 +1,23 @@
-import type { ReactNode } from 'react';
+import { forwardRef, type ReactNode, type ButtonHTMLAttributes } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export function Chip({
-  children,
-  onRemove,
-  active,
-  onClick,
-  className,
-}: {
+type ChipProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
   onRemove?: () => void;
   active?: boolean;
-  onClick?: () => void;
-  className?: string;
-}) {
+};
+
+export const Chip = forwardRef<HTMLButtonElement, ChipProps>(function Chip(
+  { children, onRemove, active, onClick, className, ...props },
+  ref
+) {
   const Comp = onClick ? 'button' : 'span';
   return (
     <Comp
+      ref={onClick ? ref : undefined}
       onClick={onClick}
+      type={onClick ? 'button' : undefined}
       className={cn(
         'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition-all',
         active
@@ -27,6 +26,7 @@ export function Chip({
         onClick && 'cursor-pointer',
         className
       )}
+      {...(onClick ? props : {})}
     >
       {children}
       {onRemove && (
@@ -41,4 +41,5 @@ export function Chip({
       )}
     </Comp>
   );
-}
+});
+Chip.displayName = 'Chip';

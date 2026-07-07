@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Megaphone, Layers, BarChart2, Globe, Zap, Network, X, Brain, Plug, Shield, FlaskConical, Presentation } from 'lucide-react';
+import {
+  Search, Megaphone, Layers, BarChart2, Globe, Zap, Network, X, Brain, Plug, Shield,
+  FlaskConical, Presentation, Wallet, MapPin, FileText, Code2, Receipt, BookOpen, Target,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function CommandMenu() {
@@ -21,18 +24,26 @@ export default function CommandMenu() {
   }, []);
 
   const actions = [
-    { id: 'buy', name: 'Buy Ads', icon: Megaphone, path: '/' },
-    { id: 'market', name: 'Marketplace', icon: Globe, path: '/marketplace' },
-    { id: 'campaigns', name: 'Campaigns', icon: Layers, path: '/campaigns' },
-    { id: 'metrics', name: 'Metrics', icon: BarChart2, path: '/metrics' },
-    { id: 'wallet', name: 'Wallet', icon: Zap, path: '/wallet' },
-    { id: 'hubhash', name: 'Hubhash', icon: Network, path: '/hubhash' },
-    { id: 'publisher', name: 'Publisher Portal', icon: Globe, path: '/publisher' },
-    { id: 'pitch', name: 'Investor Pitch', icon: Presentation, path: '/pitch' },
-    { id: 'beta', name: 'BETA Status', icon: FlaskConical, path: '/beta' },
-    { id: 'intel', name: 'PPQ Intelligence', icon: Brain, path: '/intelligence' },
-    { id: 'integrations', name: 'Integrations', icon: Plug, path: '/integrations' },
-    { id: 'enterprise', name: 'Enterprise', icon: Shield, path: '/enterprise' },
+    { id: 'buy', name: 'Buy Ads', icon: Megaphone, path: '/', group: 'Campaigns' },
+    { id: 'market', name: 'Marketplace', icon: Globe, path: '/marketplace', group: 'Campaigns' },
+    { id: 'campaigns', name: 'Campaigns', icon: Layers, path: '/campaigns', group: 'Campaigns' },
+    { id: 'metrics', name: 'Metrics', icon: BarChart2, path: '/metrics', group: 'Analytics' },
+    { id: 'geo', name: 'Global Reach', icon: MapPin, path: '/geo', group: 'Analytics' },
+    { id: 'analytics', name: 'Campaign Analytics', icon: Target, path: '/analytics', group: 'Analytics' },
+    { id: 'wallet', name: 'Wallet', icon: Wallet, path: '/wallet', group: 'Payments' },
+    { id: 'settlements', name: 'Settlements', icon: Receipt, path: '/settlements', group: 'Payments' },
+    { id: 'hubhash', name: 'Hubhash', icon: Network, path: '/hubhash', group: 'Tools' },
+    { id: 'publisher', name: 'Publisher Portal', icon: Globe, path: '/publisher', group: 'Publisher' },
+    { id: 'api', name: 'API Reference', icon: Code2, path: '/api-reference', group: 'Developer' },
+    { id: 'docs', name: 'Documentation', icon: BookOpen, path: '/docs', group: 'Developer' },
+    { id: 'pitch', name: 'Investor Pitch', icon: Presentation, path: '/pitch', group: 'Info' },
+    { id: 'beta', name: 'BETA Status', icon: FlaskConical, path: '/beta', group: 'Info' },
+    { id: 'intel', name: 'PPQ Intelligence', icon: Brain, path: '/intelligence', group: 'Info' },
+    { id: 'integrations', name: 'Integrations', icon: Plug, path: '/integrations', group: 'Info' },
+    { id: 'enterprise', name: 'Enterprise', icon: Shield, path: '/enterprise', group: 'Info' },
+    { id: 'dashboard', name: 'Dashboard', icon: BarChart2, path: '/dashboard', group: 'Campaigns' },
+    { id: 'bolt12', name: 'BOLT12 Info', icon: Zap, path: '/bolt12', group: 'Payments' },
+    { id: 'ppq', name: 'PPQ Guide', icon: FileText, path: '/ppq', group: 'Info' },
   ];
 
   const filtered = actions.filter(a => a.name.toLowerCase().includes(search.toLowerCase()));
@@ -68,7 +79,8 @@ export default function CommandMenu() {
                     <button key={action.id} onClick={() => handleSelect(action.path)}
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-text hover:bg-white/5 transition-colors">
                       <action.icon className="w-4 h-4 text-muted" />
-                      {action.name}
+                      <span className="flex-1">{action.name}</span>
+                      <span className="text-[10px] text-muted/60">{action.group}</span>
                     </button>
                   ))}
                 </div>
