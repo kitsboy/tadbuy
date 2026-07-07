@@ -1,6 +1,6 @@
 # Tadbuy — Executive Summary
 
-**Auto-generated:** 2026-07-07 · **Version:** v5.0.3
+**Auto-generated:** 2026-07-07 · **Version:** v5.0.4
 
 ## Mission
 Build the first truly sovereign advertising platform — advertisers buy with Bitcoin, creators earn in sats, no intermediary takes a cut of attention.
@@ -11,7 +11,7 @@ Every ad impression settled in sats. Zero surveillance. Global reach via geospat
 ## Traction (Live)
 | Metric | Value |
 |--------|-------|
-| Campaigns | 12,847+ |
+| Campaigns | 0+ |
 | Impressions | 1,240,000+ |
 | Publishers | 340+ |
 | Platforms | 8 |

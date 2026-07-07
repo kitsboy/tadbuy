@@ -23,6 +23,13 @@ npm run dev
 
 Open http://127.0.0.1:3000 — full API + UI works locally.
 
+Key pages to verify:
+- `/` — campaign builder
+- `/geo` — Global Reach (25 markets, map, insights)
+- `/beta` — live/staged component status
+
+Docs auto-sync on build: `npm run sync-docs` (from `src/data/projectState.ts`).
+
 ---
 
 ## Kimi on M4?
@@ -85,7 +92,8 @@ Cloudflare Pages serves **static files only**. For live payments:
 
 ```
 Visit tadbuy.giveabit.io
-  → Create campaign (4 steps)
+  → Explore markets at /geo (optional)
+  → Create campaign (4 steps) — or hand off from /geo via ?geo=CODE
   → Choose payment: Lightning | Fedimint | BTC | Zap
   → Pay (needs API + mint/node online)
   → Campaign goes live

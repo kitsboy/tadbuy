@@ -1,9 +1,9 @@
 ---
 title: Executive Summary
 project: Tadbuy
-version: v4.4.0-ELITE
+version: v5.0.4
 audience: investors
-last_updated: 2026-07-03
+last_updated: 2026-07-07
 owner: Give A Bit
 ---
 
@@ -13,7 +13,7 @@ owner: Give A Bit
 Digital advertising runs on surveillance capitalism — banks, credit cards, 20–40% platform fees, and tracking pixels everywhere.
 
 ## Solution
-Tadbuy is the world's first Bitcoin-native DSP. Buy ads across 8 platforms. Pay in sats via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps. PPQ.AI optimization without surveillance.
+Tadbuy is the world's first Bitcoin-native DSP. Buy ads across 8 platforms. Pay in sats via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps. PPQ.AI optimization without surveillance. **Global Reach** (`/geo`) — 25-market geo dashboard with map, insights, and CSV export.
 
 ## Traction
 - 12,847+ campaigns launched
@@ -22,8 +22,10 @@ Tadbuy is the world's first Bitcoin-native DSP. Buy ads across 8 platforms. Pay 
 - 8 platforms, 8 languages
 - Sub-second settlement target
 
-## Current Status (BETA)
+## Current Status (BETA v5.0.4)
 - **UI:** Live at https://tadbuy.giveabit.io (Cloudflare Pages)
+- **Global Reach:** https://tadbuy.giveabit.io/geo — 100 enhancements shipped
+- **SPA routing:** Fixed — nav clicks update content immediately
 - **Phase 1:** API proxy live — `api.giveabit.io` → Cloudflare Tunnel → M4 PM2 ✅
 - **Phase 2 (parked):** Fedimint mint — blocked until Fedi app updates (FM 0.10 vs Guardian 0.11). Andrea `t_8ee7c976`
 - **Phase 3 (parked):** Umbrel LND — node offline 93 days. Rosa `t_46208fbe`

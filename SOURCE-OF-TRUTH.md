@@ -1,25 +1,35 @@
 # SOURCE-OF-TRUTH.md — Tadbuy (Give A Bit Project)
 
-**Last Updated**: 2026-07-06
+**Last Updated**: 2026-07-07
 
 ## Project Overview (Marketing Pitch)
-Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Twitter/X, Facebook, Instagram, YouTube, Reddit, LinkedIn, TikTok, and Nostr. Pay in Bitcoin via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps. Features: campaign builder, geospatial targeting, AI creative (Gemini), PPQ.AI, publisher portal, analytics, wallet, settlements, 8 languages, Agent API. Part of Give A Bit (giveabit.io).
+Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Twitter/X, Facebook, Instagram, YouTube, Reddit, LinkedIn, TikTok, and Nostr. Pay in Bitcoin via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps. Features: campaign builder, **Global Reach geo dashboard** (`/geo`), geospatial targeting, AI creative (Gemini), PPQ.AI, publisher portal, analytics, wallet, settlements, 8 languages, Agent API. Part of Give A Bit (giveabit.io).
 
 ## GitHub (Code Source of Truth)
 - Repo: https://github.com/kitsboy/tadbuy.git
 - Branch: main (production)
-- Version: **v5.0.0-PLATINUM** (BETA phase — 350 enhancements shipped)
+- Version: **v5.0.4** (BETA phase — 535+ enhancements shipped)
 - M3 workspace: `~/projects/tadbuy/`
+- Last commit: `13cfb81` (geo page 100 enhancements)
 
 ## Deployment Details
 - **Live URL**: https://tadbuy.giveabit.io/
+- **Geo Reach**: https://tadbuy.giveabit.io/geo
 - **Platform**: Cloudflare Pages (static SPA)
-  - Build: `npm run build` → `dist/`
+  - Build: `npm run build` → `dist/` (runs `sync-docs` via prebuild)
   - Node 20, auto-deploy on push to `main`
 - **API proxy**: `api.giveabit.io` → Cloudflare Tunnel → M4 `localhost:3000` (PM2 `tadbuy-api` at `~/.hermes/servers/tadbuy-api/`) ✅
 - **Supabase**: Project `cegzfjbsadwchonpxwmv` (server-side DB via service_role)
 - **Firebase**: Project ID `tadbuy-e3555` (client auth only — VITE_FIREBASE_*)
 - **Local dev**: `npm run dev` or `npm start` on M3
+
+## Recent M3 Work (2026-07-06)
+- [x] Router fix — URL changes now update page content (`unstable_useTransitions={false}`)
+- [x] Header/nav click fixes (More menu backdrop, Search command palette)
+- [x] **/geo page — 100 enhancements** (batch 24): map, 25 markets, insights, export
+- [x] Buy Ads `?geo=CODE` handoff from geo page
+- [x] Batches 15–23 (85 enhancements): health, analytics, marketplace, mobile polish
+- [x] Auto version bump on push (pre-push hook)
 
 ## Platform Split
 
@@ -52,6 +62,13 @@ For automated agents (Grok, Kimi, Qwen):
 | `docs/.ai_docs/dashboard_manifest.json` | Endpoints, pages, kimi_checklist path |
 | `GET /api/agent/manifest` | Runtime discovery (when API online) |
 
+## Enhancement Manifests
+| Doc | Scope |
+|-----|-------|
+| [docs/ENHANCEMENTS-V5.md](./docs/ENHANCEMENTS-V5.md) | Batches 7–14 (200 items) |
+| [docs/ENHANCEMENTS-85.md](./docs/ENHANCEMENTS-85.md) | Batches 15–23 (85 items) |
+| [docs/GEO-PAGE-100.md](./docs/GEO-PAGE-100.md) | Batch 24 — /geo page only |
+
 ## Give A Bit Mint (Fedimint)
 
 - **Name:** Give A Bit Mint · **Domain:** giveabit.io
@@ -71,15 +88,19 @@ For automated agents (Grok, Kimi, Qwen):
 
 ## Key Files
 - `src/` — React 19 + Vite + TypeScript
-- `server.ts` + `server/routes/` — Express API (runs M3 dev or M4 production)
+- `src/pages/GeoTargeting.tsx` — Global Reach page
+- `src/data/geoMarkets.ts` — 25-country geo dataset
+- `server.ts` + `server/routes/` — Express API (batch1–batch24)
 - `scripts/sync-docs.ts` — Auto-syncs docs on build
 - `docs/KIMI-HANDOFF.md` — Cross-agent handoff log
 
 ## Gaps / Next
 - [x] M4 Phase 1: API proxy live (`api.giveabit.io`)
+- [x] /geo page — 100 enhancements
+- [x] SPA routing fix
 - [ ] M4 Phase 2: Fedimint mint — **blocked** (Fedi 0.10 vs Guardian 0.11, Andrea `t_8ee7c976`)
 - [ ] M4 Phase 3: Umbrel LND — **blocked** (node offline 93d, Rosa `t_46208fbe`)
-- [ ] Automated E2E tests
+- [ ] Automated E2E tests (Playwright stub ready)
 - [ ] **Cam priority (soon):** Fedi/Fedimint on all 5 apps + **every future Give A Bit app** — one mint, one invite
 - [ ] Propagate `VITE_FEDIMINT_INVITE` + `VITE_API_BASE_URL` to sibling CF Pages (Andrea `t_ec77b1e5`)
 

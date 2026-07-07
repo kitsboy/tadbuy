@@ -13,6 +13,8 @@ https://tadbuy.giveabit.io
 | nostr advertising | Commercial | Optimized |
 | bitcoin native DSP | Commercial | Optimized |
 | decentralized advertising | Informational | Optimized |
+| geo targeting bitcoin ads | Commercial | Optimized (/geo) |
+| global bitcoin ad reach | Commercial | Optimized (/geo) |
 
 ## Current Meta Tags
 
@@ -38,6 +40,16 @@ https://tadbuy.giveabit.io
 | Date | Auditor | Findings | Recommendations |
 |------|---------|----------|----------------|
 | 2026-07-03 | Grok | Missing OG image, placeholder docs | Fixed OG image, full meta tags, JSON-LD |
+| 2026-07-06 | Grok | /geo page launch | usePageMeta on GeoTargeting, sitemap lastmod, geo keywords |
+| 2026-07-07 | Grok | Full docs sync | Locale SEO refresh, EXEC-SUMMARY, context maps, tadbuy_* aliases |
+
+## Priority Pages
+| Page | URL | Priority |
+|------|-----|----------|
+| Buy Ads | / | 1.0 |
+| Marketplace | /marketplace | 0.9 |
+| Global Reach | /geo | 0.8 |
+| BETA | /beta | 0.8 |
 
 ---
 

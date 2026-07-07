@@ -1,6 +1,9 @@
 # Tadbuy v5.0.0-PLATINUM — 200 Enhancement Manifest
 
-**Released:** 2026-07-06 · **Total enhancements:** 350 (batches 1–14)
+**Released:** 2026-07-06 · **Total enhancements:** 535+ (batches 1–24)
+
+> Batches 15–23: see [ENHANCEMENTS-85.md](./ENHANCEMENTS-85.md)  
+> Batch 24 (/geo only): see [GEO-PAGE-100.md](./GEO-PAGE-100.md)
 
 ## Batch 7 (151–175) — Premium Design System
 UI primitives library, CSS animations, design token API, Button/Modal/Card upgrades.
@@ -25,6 +28,12 @@ ApiReference Tabs, ApiExplorer method badges, CommandMenu expansion, agent manif
 
 ## Batch 14 (326–350) — Docs & Platinum Polish
 Version bump, CHANGELOG, SOURCE-OF-TRUTH, release APIs, manifest sync, favicon restore.
+
+## Batches 15–23 (351–435) — See ENHANCEMENTS-85.md
+Foundation, campaign builder, payments, analytics, marketplace, SEO, mobile.
+
+## Batch 24 (436–535) — Geo Reach Page
+100 enhancements exclusive to `/geo`. See GEO-PAGE-100.md.
 
 ---
 *Safe Harbour · Part of the [Give A Bit](https://giveabit.io) family.*

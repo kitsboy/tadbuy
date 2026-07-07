@@ -1,3 +1,50 @@
+## Handoff to Kimi — 2026-07-07 (v5.0.4 — full docs sync)
+
+**Machine:** M3 (Grok)
+**Project:** tadbuy
+
+### Done
+- [x] Ran `npm run sync-docs` — regenerated EXECUTIVE, FINANCIALS, MARKETING, FEDIMINT, BETA, ECOSYSTEM, GEO, LATEST-UPDATE
+- [x] Updated EXEC-SUMMARY, tadbuy_MISSION, tadbuy_SEO, all locale SEO files (de/es/fr/pt/sw/zh)
+- [x] Synced `.ai_docs/context_map.md` and `docs/.ai_docs/context_map.md` to v5.0.4
+- [x] SETUP-GUIDE, CONTRIBUTING, MARKETING-ONELINER, sitemap lastmod refresh
+
+### Git State
+- Last commit SHA: (after push — run `git log -1 --format=%H`)
+- Branch: main
+- Version: v5.0.4
+
+### What's Next
+- Fedi rollout when Andrea blocker clears (`t_8ee7c976`)
+- Playwright E2E install + run
+- Real Lightning when Umbrel syncs (Rosa `t_46208fbe`)
+
+---
+
+## Handoff to Kimi — 2026-07-06 (v5.0.4 — docs sync + geo 100)
+
+**Machine:** M3 (Grok)
+**Project:** tadbuy
+
+### Done
+- [x] /geo page — 100 enhancements (batch 24): map, 25 markets, insights, export, BuyAds handoff
+- [x] Router fix — nav clicks update content (not just URL)
+- [x] Header fixes — More menu, Search command palette
+- [x] All docs updated: README, SOURCE-OF-TRUTH, CHANGELOG, BETA, GEO, context_map, SEO, sitemap
+- [x] `npm run sync-docs` enhanced with batch table + GEO.md
+
+### Git State
+- Last commit SHA: 13cfb81
+- Branch: main
+- Version: v5.0.4
+
+### What's Next
+- Fedi rollout when Andrea blocker clears (`t_8ee7c976`)
+- Playwright E2E install + run
+- Real Lightning when Umbrel syncs (Rosa `t_46208fbe`)
+
+---
+
 ## Handoff to Kimi — 2026-07-06 (v5.0.3 — 85 enhancements + mobile polish)
 
 **Machine:** M3 (Grok)

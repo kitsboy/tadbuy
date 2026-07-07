@@ -12,7 +12,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open http://127.0.0.1:5173 and edit files in `src/`. Changes hot-reload automatically.
+Open http://127.0.0.1:3000 and edit files in `src/`. Changes hot-reload automatically.
 
 ## Before You Commit
 
@@ -20,6 +20,7 @@ Open http://127.0.0.1:5173 and edit files in `src/`. Changes hot-reload automati
 2. Run `npm run build` — must complete successfully
 3. Update `CHANGELOG.md` for user-facing changes
 4. Update `SOURCE-OF-TRUTH.md` if deployment or architecture changes
+5. Run `npm run sync-docs` when changing `src/data/projectState.ts` or feature batches
 
 ## Pull Request Guidelines
 

@@ -2,6 +2,28 @@
 
 All notable changes to Tadbuy are documented here.
 
+## [5.0.4] — 2026-07-06
+
+### Added
+- **Global Reach (/geo)** — 100 enhancements (batch 24): 25 markets, interactive map, filters, insights, CSV export, compare, FAQ
+- Geo page API routes (`/api/geo/page/*`) in batch24
+- Buy Ads `?geo=CODE` handoff from geo page
+- `docs/GEO-PAGE-100.md` and `docs/GEO.md` manifests
+- Full documentation sync: EXEC-SUMMARY, locale SEO, context maps, sitemap, KIMI-HANDOFF
+
+### Fixed
+- **SPA routing** — URL changes now update page content immediately (`unstable_useTransitions={false}`)
+- Desktop nav clicks blocked by More-menu fullscreen backdrop
+- Search chip opens command palette via CustomEvent (not synthetic keyboard events)
+- Service worker navigation uses network-first for HTML
+
+## [5.0.3] — 2026-07-06
+
+### Added
+- 85 enhancements (batches 15–23): health page, analytics, marketplace auctions, SEO pages, mobile polish
+- Auto version bump on git push (pre-push hook)
+- 13 workflow audit fixes (Quick Launch, Full Control wizard, auth gate)
+
 ## [5.0.0-PLATINUM] — 2026-07-06
 
 ### Added — 200 enhancements (batches 7–14)

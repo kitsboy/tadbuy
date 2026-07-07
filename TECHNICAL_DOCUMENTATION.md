@@ -1,43 +1,38 @@
 # Tadbuy Technical Documentation
 
+**Version:** v5.0.4 · **Last updated:** 2026-07-07
+
 ## Overview
-Tadbuy is a decentralized demand-side platform (DSP) for Bitcoin-native advertising. It abstracts cross-platform marketing complexity using Bitcoin, Lightning, and AI.
+Tadbuy is a Bitcoin-native demand-side platform (DSP). Advertisers launch cross-platform campaigns and pay via Lightning, Fedimint ecash, BOLT12, on-chain BTC, or Nostr Zaps. The **Global Reach** page (`/geo`) provides geospatial market intelligence across 25 countries.
 
 ## Tech Stack
-- **Frontend:** React 19, Vite, Tailwind CSS, Motion (framer-motion), Lucide React
-- **Backend:** Node.js, Express, TypeScript
-- **Database:** Firestore (NoSQL)
-- **Payments:** Lightning Network (ln-service, BOLT 12)
-- **AI/ML:** Gemini API, PPQ.AI (Proprietary edge-based Federated Learning)
-- **Infrastructure:** Cloud Run (Containerized)
+- **Frontend:** React 19, Vite, Tailwind v4, React Router v7, Motion, Lucide React, D3 (world map)
+- **Backend:** Node.js, Express, TypeScript (`server.ts` + `server/routes/`)
+- **Database:** Supabase (server-side via `supabaseAdmin.ts`); Firebase Auth (client SDK only)
+- **Payments:** Lightning (Umbrel LND), Fedimint ecash, BOLT12, on-chain, Nostr Zap
+- **AI/ML:** Gemini API, PPQ.AI (edge-based federated learning)
+- **Infrastructure:** Cloudflare Pages (static SPA) + M4 API proxy at `api.giveabit.io`
 
 ## Core Architecture
 - **Repository Pattern:** Decouples business logic from database implementation for swappability.
 - **Serverless API:** Express-based backend for handling sensitive operations (payments, API key management).
 - **Edge AI:** PPQ.AI runs quantized models on publisher nodes to ensure user privacy.
 
-## Implementation Status (20-Point Roadmap)
-1. [x] Setup secure backend (Express/Node.js)
-2. [x] Configure Firestore database (Repository pattern)
-3. [x] Develop campaign creation API (Backend)
-4. [x] Implement user authentication (Firebase Auth)
-5. [x] Develop campaign management dashboard
-6. [x] Implement BOLT 12 Offer generation
-7. [x] Implement Lightning invoice generation
-8. [x] Setup payment webhook listeners
-9. [x] Develop settlement logic
-10. [x] Integrate Gemini API for ad creative
-11. [x] Implement In-app Lightning Wallet
-12. [ ] Implement PPQ.AI optimization logic
-13. [ ] Create publisher portal
-14. [ ] Implement ad slot bidding/auction logic
-15. [ ] Connect frontend forms to API
-16. [ ] Implement real-time metrics updates
-17. [ ] Finalize and deploy firestore.rules
-18. [x] Implement error handling/logging
-19. [ ] Set up Production Monitoring (Sentry)
-20. [x] Enforce server-side Environment Variable management
-21. [ ] Load/Security testing
+## Implementation Status (BETA v5.0.4)
+| Area | Status |
+|------|--------|
+| Campaign builder UI | ✅ Live |
+| Global Reach `/geo` | ✅ Live (batch 24 — 100 enhancements) |
+| Marketplace auctions | ✅ Live UI |
+| Publisher portal | ✅ Live UI |
+| API proxy (M4) | ✅ Live at api.giveabit.io |
+| Fedimint payments | ⏳ Staged — Fedi 0.10 blocker |
+| Umbrel Lightning | ⏳ Staged — node offline |
+| Real payments | 🔶 Demo mode |
+| Sentry monitoring | ✅ Integrated |
+| Docs auto-sync | ✅ `npm run sync-docs` on build |
+
+535+ enhancements shipped across batches 1–24. See `docs/ENHANCEMENTS-V5.md`, `docs/ENHANCEMENTS-85.md`, `docs/GEO-PAGE-100.md`.
 
 ## Agent API (For AI Agents)
 The Tadbuy platform provides a secure API for AI agents (e.g., Nostr agents) to interact with the platform.
@@ -69,6 +64,7 @@ To ensure platform security and reliability, the following hardening measures ha
 - **Input Validation**: All API endpoints now use `Joi` schema validation to prevent malformed data and injection attacks.
 - **Centralized Error Handling**: A global error handling middleware has been implemented to capture and log errors, preventing sensitive information leakage.
 - **Role-Based Access Control (RBAC)**: The Agent API now supports role-based access, allowing us to distinguish between `agent` and `admin` roles.
-- **Atomic Transactions**: Critical Firestore operations (create, update) now use atomic transactions to guarantee data consistency and prevent race conditions.
+- **SPA Routing**: `BrowserRouter` uses `unstable_useTransitions={false}` so lazy-loaded routes render on navigation without manual refresh.
+- **Atomic Transactions**: Critical database operations use atomic transactions to guarantee data consistency.
 - **Real-Time Metrics**: The dashboard now implements polling (every 5 seconds) to fetch and display real-time ad performance metrics from the backend.
 - **Centralized Error Logging**: A new `/api/logs` endpoint allows client-side errors to be captured and logged on the server, facilitating easier debugging and future integration with Sentry.

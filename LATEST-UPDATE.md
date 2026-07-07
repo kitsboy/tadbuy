@@ -1,4 +1,5 @@
-# tadbuy — Last Updated 2026-07-06 by Grok
+# tadbuy — Last Updated 2026-07-07 by Grok
 
-Brief: v5.0.4 — 85 enhancements done, mobile polish shipped
-Commit: df5b1e6
+Brief: v5.0.4 — /geo 100 enhancements + docs sync
+Commit: 13cfb81
+Docs synced: 2026-07-07

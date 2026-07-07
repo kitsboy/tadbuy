@@ -2,7 +2,7 @@
   <img src="/public/favicon.png" alt="Tadbuy" width="80" height="80" />
   <h1>Tadbuy</h1>
   <p><strong>The world's first Bitcoin-native advertising platform.</strong></p>
-  <p><code>v5.0.0-PLATINUM</code> · 350 enhancements · BETA</p>
+  <p><code>v5.0.4</code> · 535+ enhancements · BETA</p>
   <p>Buy ads across 8 platforms. Pay in sats via Lightning, BOLT12, on-chain, or Nostr Zaps.</p>
   <p>
     <a href="https://tadbuy.giveabit.io">Live Site</a> ·
@@ -19,6 +19,7 @@ Tadbuy is a sovereign Demand-Side Platform (DSP) built for the Bitcoin era. Adve
 
 **Key features:**
 - Step-by-step campaign builder with geospatial targeting
+- **Global Reach** (`/geo`) — 25-market map, filters, insights, CSV export
 - AI creative optimization (Gemini) and PPQ.AI bidding
 - Lightning Network, BOLT12, on-chain, and Nostr Zap payments
 - Publisher portal, analytics dashboard, wallet, and settlements
@@ -57,6 +58,7 @@ npm run dev                  # http://127.0.0.1:3000
 | `npm run build` | Production build → `dist/` |
 | `npm run preview` | Preview production build locally |
 | `npm run lint` | TypeScript type check |
+| `npm run sync-docs` | Regenerate auto-evolving docs from projectState |
 | `npm start` | Production server on port 3000 |
 
 ## Deployment

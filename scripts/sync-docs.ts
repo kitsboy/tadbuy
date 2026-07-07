@@ -155,6 +155,10 @@ FEDIMINT_GATEWAY_URL=https://your-mint-gateway
 *Tadbuy ${PROJECT_STATE.version}*
 `);
 
+  const batches = Object.entries(PROJECT_STATE.featureBatches)
+    .map(([k, v]) => `| ${k} | ${v.label} | ${v.completed}/${v.total} |`)
+    .join('\n');
+
   writeDoc('BETA.md', `# Tadbuy — BETA Status
 
 **Auto-generated:** ${today} · **Version:** ${PROJECT_STATE.version}
@@ -165,7 +169,9 @@ FEDIMINT_GATEWAY_URL=https://your-mint-gateway
 |-----------|--------|
 | UI (Cloudflare Pages) | ✅ Live |
 | Campaign Builder | ✅ Live |
+| Global Reach (/geo) | ✅ Live — 100 enhancements, 25 markets |
 | Metrics / Analytics UI | ✅ Live |
+| SPA routing | ✅ Fixed (React Router v7 sync) |
 | API (/api/*) | ⏳ Needs M4 proxy or \`npm run dev\` |
 | Fedimint (Give A Bit Mint) | ⏳ Staged on M4 |
 | Umbrel Lightning | ⏳ Not ready |
@@ -173,6 +179,19 @@ FEDIMINT_GATEWAY_URL=https://your-mint-gateway
 
 ## Consumer Workflow
 1. Browse & plan → 2. Create campaign → 3. Pay → 4. Go live → 5. Track results
+
+## Key Pages
+| Page | URL |
+|------|-----|
+| Buy Ads | ${PROJECT_STATE.liveUrl}/ |
+| Global Reach | ${PROJECT_STATE.liveUrl}/geo |
+| Marketplace | ${PROJECT_STATE.liveUrl}/marketplace |
+| BETA Status | ${PROJECT_STATE.liveUrl}/beta |
+
+## Enhancement Batches (summary)
+| Batch | Label | Status |
+|-------|-------|--------|
+${batches}
 
 See https://tadbuy.giveabit.io/beta for live status.
 
@@ -210,11 +229,41 @@ See [SETUP-GUIDE.md](./SETUP-GUIDE.md) and [M4-SERVER-REF.md](./M4-SERVER-REF.md
 *See SETUP-GUIDE.md for connection instructions.*
 `);
 
-  // Update LATEST-UPDATE one-liner
+  writeDoc('GEO.md', `# Tadbuy — Global Reach (/geo)
+
+**Auto-generated:** ${today} · **Version:** ${PROJECT_STATE.version}
+
+## Overview
+Interactive geo-targeting dashboard at [${PROJECT_STATE.liveUrl}/geo](${PROJECT_STATE.liveUrl}/geo).
+
+## Features (100 enhancements — batch 24)
+- 25-country market dataset with spend, CPM, trends, BTC adoption
+- Interactive world map with country selection
+- Region filters, search, sort, min-CTR slider
+- Watchlist, compare up to 3 markets, export CSV
+- Tabs: Overview · Insights · Learn
+- Buy Ads handoff via \`?geo=CODE\`
+
+## API Endpoints
+| Endpoint | Description |
+|----------|-------------|
+| GET /api/geo/page/stats | Aggregate geo stats |
+| GET /api/geo/page/insights | Recommendations |
+| GET /api/geo/page/trends | Regional trends |
+| GET /api/geo/countries | Country list |
+
+Full manifest: [GEO-PAGE-100.md](./GEO-PAGE-100.md)
+
+---
+*Part of the [Give A Bit](https://giveabit.io) family.*
+`);
+
+  const sha = process.env.GIT_SHA?.slice(0, 7) ?? 'sync';
   const latestPath = path.join(ROOT, 'LATEST-UPDATE.md');
   fs.writeFileSync(latestPath, `# tadbuy — Last Updated ${today} by Grok
 
-Brief: ${PROJECT_STATE.version} — Fedimint + auto-evolving docs + pitch page
+Brief: ${PROJECT_STATE.version} — /geo 100 enhancements + docs sync
+Commit: ${sha}
 Docs synced: ${today}
 `, 'utf-8');
 

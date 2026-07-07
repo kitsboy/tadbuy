@@ -1,40 +1,33 @@
 ---
 title: Mission
-project: [Project Name]
-version: 0.1.0
+project: Tadbuy
+version: 5.0.4
 audience: internal
-tags: [project, mission, purpose, values]
-last_updated: YYYY-MM-DD
-owner: Nova (Product Management & Documentation)
+tags: [tadbuy, mission, bitcoin, advertising]
+last_updated: 2026-07-07
+owner: Give A Bit
 ---
 
-# [Project Name] — Mission
+# Tadbuy — Mission
 
 ## Our Purpose
-[One paragraph — why this project exists. What gap does it fill in the world?]
+Build the first truly sovereign advertising platform — where advertisers buy with Bitcoin, creators earn in sats, and no intermediary takes a cut of attention.
 
 ## Core Values
-1. **Bitcoin Sovereignty First** — [How this project puts Bitcoin self-custody and permissionless access first]
-2. **Privacy by Design** — [Zero-knowledge, client-side, no tracking]
-3. **Open Source** — [License, community model]
-4. **Safe Harbour** — [How it protects users legally and ethically]
+1. **Bitcoin Sovereignty First** — Pay and settle in sats via Lightning, Fedimint ecash, on-chain, or Nostr Zaps
+2. **Privacy by Design** — PPQ.AI optimization without surveillance pixels
+3. **Open Source** — Transparent codebase, agent APIs, community-driven growth
+4. **Safe Harbour** — Honest BETA status, demo-mode clarity, Give A Bit family standards
 
 ## The Problem We Solve
-[What broken system or unmet need does this address?]
+Traditional ad platforms extract rent, surveil users, and lock advertisers into fiat rails. Bitcoin businesses have no native DSP.
 
 ## Our Solution
-[How Bitcoin + the specific project architecture solves it]
+Tadbuy is a Bitcoin-native DSP: cross-platform campaigns, geospatial targeting via `/geo`, Lightning settlement, and Fedimint privacy when the Give A Bit Mint is live.
 
 ## Who It Serves
-[Target users, communities, or use cases]
+- Bitcoin businesses and independent creators
+- Nostr communities and privacy-conscious brands
+- Publishers monetizing attention in sats
 
----
-
-**Part of the [Give A Bit](https://giveabit.io) family — Bitcoin education, services, and hope.**
-
-```
-Safe Harbour Statement: This project is provided for educational and informational purposes only.
-Nothing herein constitutes legal, financial, or investment advice. Use at your own risk.
-Always consult qualified professionals for legal and financial decisions.
-© Give A Bit — Bitcoin sovereignty first.
-```
+*Safe Harbour · Part of the [Give A Bit](https://giveabit.io) family.*
