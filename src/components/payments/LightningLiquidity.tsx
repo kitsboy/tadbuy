@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Zap, ArrowDown, ArrowUp } from 'lucide-react';
 import { Card, CardTitle } from '@/components/ui';
+import { StatCard, Progress } from '@/components/ui/index';
 
 interface ChannelInfo {
   localBalance: number;
@@ -37,23 +38,13 @@ export function LightningLiquidity() {
       </CardTitle>
 
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <div className="text-center p-3 rounded-lg bg-surface border border-border">
-          <ArrowUp className="w-4 h-4 text-green mx-auto mb-1" />
-          <div className="text-lg font-bold font-mono">{totalLocal.toLocaleString()}</div>
-          <div className="text-[10px] text-muted uppercase">Outbound</div>
-        </div>
-        <div className="text-center p-3 rounded-lg bg-surface border border-border">
-          <ArrowDown className="w-4 h-4 text-blue mx-auto mb-1" />
-          <div className="text-lg font-bold font-mono">{totalRemote.toLocaleString()}</div>
-          <div className="text-[10px] text-muted uppercase">Inbound</div>
-        </div>
+        <StatCard icon={ArrowUp} label="Outbound" value={totalLocal.toLocaleString()} sub="sats local" color="text-green" />
+        <StatCard icon={ArrowDown} label="Inbound" value={totalRemote.toLocaleString()} sub="sats remote" color="text-blue" />
       </div>
 
-      <div className="h-2 bg-surface rounded-full overflow-hidden flex">
-        <div className="bg-green h-full transition-all" style={{ width: `${100 - inboundPct}%` }} />
-        <div className="bg-blue h-full transition-all" style={{ width: `${inboundPct}%` }} />
-      </div>
-      <div className="flex justify-between text-[10px] text-muted mt-1">
+      <Progress value={inboundPct} showLabel variant="lightning" />
+
+      <div className="flex justify-between text-[10px] text-muted mt-2">
         <span>{channels.length} channels</span>
         <span>{inboundPct}% inbound capacity</span>
       </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import { Card, CardTitle } from "@/components/ui";
+import { Badge } from "@/components/ui/index";
 import { cn } from "@/lib/utils";
 import { BITCOIN_ADDRESS } from "@/constants";
 import { usePageTitle } from "@/hooks/usePageTitle";
@@ -187,7 +188,11 @@ export default function Settlements() {
                 <tr key={s.id} className="border-t border-border/50 hover:bg-surface/30 transition-colors">
                   <td className="px-4 py-3 font-mono text-xs text-muted">{s.id}</td>
                   <td className="px-4 py-3 font-mono text-xs font-bold">{s.amount.toFixed(8)}</td>
-                  <td className="px-4 py-3 text-xs capitalize">{s.paymentType}</td>
+                  <td className="px-4 py-3">
+                    <Badge variant={s.paymentType === 'lightning' ? 'warning' : 'info'} className="normal-case">
+                      {s.paymentType}
+                    </Badge>
+                  </td>
                   <td className="px-4 py-3 font-mono text-xs text-muted hidden md:table-cell">
                     {s.address.slice(0, 12)}…{s.address.slice(-6)}
                   </td>
@@ -195,17 +200,16 @@ export default function Settlements() {
                     {s.txid ? `${s.txid.slice(0, 10)}…` : "—"}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={cn(
-                      "flex items-center gap-1 text-[10px] font-bold w-fit px-2 py-0.5 rounded-full border",
-                      s.status === "completed"
-                        ? "text-green bg-green/10 border-green/20"
-                        : "text-lightning bg-lightning/10 border-lightning/20"
-                    )}>
+                    <Badge
+                      variant={s.status === "completed" ? "success" : "warning"}
+                      dot={s.status === "pending"}
+                      className="normal-case"
+                    >
                       {s.status === "completed"
-                        ? <CheckCircle2 className="w-3 h-3" />
-                        : <AlertCircle  className="w-3 h-3" />}
-                      {s.status}
-                    </span>
+                        ? <><CheckCircle2 className="w-3 h-3" /> {s.status}</>
+                        : <><AlertCircle className="w-3 h-3" /> {s.status}</>
+                      }
+                    </Badge>
                   </td>
                 </tr>
               ))

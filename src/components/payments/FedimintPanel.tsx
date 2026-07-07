@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Shield, Loader2, CheckCircle2, ExternalLink } from 'lucide-react';
 import { Button, Input, Label, FormGroup } from '@/components/ui';
+import { Badge, Progress, Alert } from '@/components/ui/index';
 import { getFedimintStatus, joinFederation, payWithFedimint, formatEcashBalance, getDefaultFedimintInvite } from '@/services/fedimintService';
 import { GIVEABIT_ECOSYSTEM } from '@/data/ecosystemConfig';
 import { useToast } from '@/components/Toast';
@@ -56,6 +57,9 @@ export function FedimintPanel({
     }
   };
 
+  const balanceSats = status?.balanceMsats ? Math.floor(status.balanceMsats / 1000) : 0;
+  const balancePct = balanceSats > 0 ? Math.min(100, Math.round((balanceSats / (balanceSats + amountSats)) * 100)) : 0;
+
   return (
     <div className="space-y-4 p-4 rounded-xl border border-green/30 bg-green/5">
       <div className="flex items-center gap-2">
@@ -64,7 +68,10 @@ export function FedimintPanel({
           <div className="text-sm font-bold text-text">Fedimint Ecash</div>
           <div className="text-[10px] text-muted">Privacy-preserving federation payments</div>
         </div>
-        <a href="https://fedimint.org" target="_blank" rel="noreferrer" className="ml-auto text-muted hover:text-green">
+        <Badge variant={status?.connected ? 'success' : 'warning'} dot className="ml-auto">
+          {status?.connected ? 'Connected' : 'Not Joined'}
+        </Badge>
+        <a href="https://fedimint.org" target="_blank" rel="noreferrer" className="text-muted hover:text-green">
           <ExternalLink className="w-4 h-4" />
         </a>
       </div>
@@ -83,17 +90,26 @@ export function FedimintPanel({
             <span className="text-muted">Campaign cost</span>
             <span className="font-mono font-bold text-accent">{amountSats.toLocaleString()} sats</span>
           </div>
-          <Button onClick={handlePay} disabled={paying} className="w-full gap-2">
+
+          <Progress value={balancePct} showLabel variant="green" />
+
+          {balanceSats < amountSats && (
+            <Alert variant="warning" title="Insufficient Balance">
+              Your ecash balance is below the campaign cost. Redeem more notes or fund via Lightning.
+            </Alert>
+          )}
+
+          <Button onClick={handlePay} disabled={paying || balanceSats < amountSats} className="w-full gap-2">
             {paying ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
             Pay with Ecash
           </Button>
         </div>
       ) : (
         <div className="space-y-3">
-          <p className="text-xs text-muted leading-relaxed">
-            Join the <strong>{GIVEABIT_ECOSYSTEM.federation.name}</strong> ({GIVEABIT_ECOSYSTEM.federation.status}) —
+          <Alert variant="info" title="Join the Federation">
+            Connect to the <strong>{GIVEABIT_ECOSYSTEM.federation.name}</strong> ({GIVEABIT_ECOSYSTEM.federation.status}) —
             shared across all Give A Bit apps. Mint runs on M4 HERMES.
-          </p>
+          </Alert>
           <FormGroup>
             <Label>Federation Invite</Label>
             <Input
