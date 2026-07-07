@@ -108,6 +108,7 @@ export const PROJECT_STATE = {
     batch21: { completed: 25, total: 25, label: 'Trust & Legal UX' },
     batch22: { completed: 25, total: 25, label: 'Performance & Agent' },
     batch23: { completed: 25, total: 25, label: 'Delight & Mobile Polish' },
+    batch24: { completed: 100, total: 100, label: 'Geo Reach Page (/geo)' },
   },
 } as const;
 

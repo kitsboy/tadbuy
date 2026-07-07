@@ -18,6 +18,7 @@ import PaymentModal from "@/components/buyads/PaymentModal";
 import { getCheckoutPaymentMethods } from "@/lib/payments/registry";
 import { resolvePaymentOutcome, type PaymentOutcome } from "@/lib/campaignPaymentStatus";
 import { getMarketplaceSlot, slotToPlatforms, type MarketplaceSlot } from "@/data/marketplaceSlots";
+import { GEO_MARKETS } from "@/data/geoMarkets";
 import { useAuth } from "@/components/AuthProvider";
 import { AuthGateModal } from "@/components/AuthGateModal";
 import { PersonaOnboarding } from "@/components/PersonaOnboarding";
@@ -269,6 +270,20 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
     }
     const next = new URLSearchParams(searchParams);
     next.delete('slot');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
+
+  // Geo page handoff (?geo=US)
+  useEffect(() => {
+    const geoCode = searchParams.get('geo');
+    if (!geoCode) return;
+    const market = GEO_MARKETS.find(m => m.code.toUpperCase() === geoCode.toUpperCase());
+    if (market) {
+      setSelectedCountries(prev => (prev.includes(market.country) ? prev : [...prev, market.country]));
+      setCampaignName(`${market.country} Campaign`);
+    }
+    const next = new URLSearchParams(searchParams);
+    next.delete('geo');
     setSearchParams(next, { replace: true });
   }, [searchParams, setSearchParams]);
 
