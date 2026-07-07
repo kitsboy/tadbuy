@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tadbuy-v4.1.0';
+const CACHE_NAME = 'tadbuy-v5.0.5';
 const PRECACHE = ['/', '/favicon.png', '/favicon.svg', '/manifest.json', '/og-image.svg'];
 
 self.addEventListener('install', (event) => {
@@ -33,6 +33,14 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
       )
+    );
+    return;
+  }
+
+  // Navigation requests: network-first so SPA routing always gets fresh shell
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match('/'))
     );
     return;
   }

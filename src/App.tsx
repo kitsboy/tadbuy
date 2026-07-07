@@ -346,6 +346,58 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
 }
 
 // ── Main content + routes ─────────────────────────────────────────────────────
+function RoutedPages({ currency, rates }: { currency: string; rates: Record<string, number> }) {
+  const location = useLocation();
+
+  return (
+    <RouteErrorBoundary key={location.pathname} label="This page">
+      <Routes location={location}>
+        {/* Public */}
+        <Route path="/"            element={<BuyAds currency={currency} rate={rates[currency]} symbol={CURRENCY_SYMBOLS[currency]} />} />
+        <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/metrics"     element={<Metrics />} />
+        <Route path="/publisher"   element={<PublisherPortal />} />
+        <Route path="/profile"     element={<Profile />} />
+        <Route path="/hubhash"     element={<Hubhash />} />
+        <Route path="/docs"        element={<Documentation />} />
+        <Route path="/api-docs"    element={<ApiReference />} />
+        <Route path="/ppq"         element={<PpqGuide />} />
+        <Route path="/bolt12"      element={<Bolt12Info />} />
+        <Route path="/pitch"         element={<Pitch />} />
+        <Route path="/intelligence"  element={<Intelligence />} />
+        <Route path="/integrations"  element={<Integrations />} />
+        <Route path="/enterprise"    element={<Enterprise />} />
+        <Route path="/beta"          element={<Beta />} />
+        <Route path="/health"        element={<Health />} />
+        <Route path="/changelog"     element={<Changelog />} />
+        <Route path="/compare"       element={<Compare />} />
+        <Route path="/case-studies"  element={<CaseStudies />} />
+        <Route path="/start"         element={<Navigate to="/" replace />} />
+        <Route path="/buy"           element={<Navigate to="/" replace />} />
+        <Route path="/geo"         element={<GeoTargeting />} />
+        <Route path="/terms"       element={<Terms />} />
+        <Route path="/privacy"     element={<Privacy />} />
+        <Route path="/cookies"     element={<Cookies />} />
+        <Route path="/debug-lightning" element={<DebugLightning />} />
+
+        {/* Protected */}
+        <Route path="/campaigns"  element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
+        <Route path="/wallet"     element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
+        <Route path="/settings"   element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
+        <Route path="/analytics"  element={<ProtectedRoute><CampaignAnalytics /></ProtectedRoute>} />
+        <Route path="/settlements" element={<ProtectedRoute><Settlements /></ProtectedRoute>} />
+        <Route path="/dashboard"  element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+
+        {/* Embeds */}
+        <Route path="/embed/metrics/:id" element={<MetricsEmbed />} />
+        <Route path="/embed/ad/:id"      element={<AdEmbed />} />
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </RouteErrorBoundary>
+  );
+}
+
 function MainContent({ currency, setCurrency, rates }: { currency: string; setCurrency: (c: string) => void; rates: Record<string, number> }) {
   const location = useLocation();
   const isEmbed = location.pathname.startsWith('/embed');
@@ -364,51 +416,7 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
         )}
       >
         <Suspense fallback={<PageLoader />}>
-          <RouteErrorBoundary label="This page">
-          <Routes>
-            {/* Public */}
-            <Route path="/"            element={<BuyAds currency={currency} rate={rates[currency]} symbol={CURRENCY_SYMBOLS[currency]} />} />
-            <Route path="/marketplace" element={<Marketplace />} />
-            <Route path="/metrics"     element={<Metrics />} />
-            <Route path="/publisher"   element={<PublisherPortal />} />
-            <Route path="/profile"     element={<Profile />} />
-            <Route path="/hubhash"     element={<Hubhash />} />
-            <Route path="/docs"        element={<Documentation />} />
-            <Route path="/api-docs"    element={<ApiReference />} />
-            <Route path="/ppq"         element={<PpqGuide />} />
-            <Route path="/bolt12"      element={<Bolt12Info />} />
-            <Route path="/pitch"         element={<Pitch />} />
-            <Route path="/intelligence"  element={<Intelligence />} />
-            <Route path="/integrations"  element={<Integrations />} />
-            <Route path="/enterprise"    element={<Enterprise />} />
-            <Route path="/beta"          element={<Beta />} />
-            <Route path="/health"        element={<Health />} />
-            <Route path="/changelog"     element={<Changelog />} />
-            <Route path="/compare"       element={<Compare />} />
-            <Route path="/case-studies"  element={<CaseStudies />} />
-            <Route path="/start"         element={<Navigate to="/" replace />} />
-            <Route path="/buy"           element={<Navigate to="/" replace />} />
-            <Route path="/geo"         element={<GeoTargeting />} />
-            <Route path="/terms"       element={<Terms />} />
-            <Route path="/privacy"     element={<Privacy />} />
-            <Route path="/cookies"     element={<Cookies />} />
-            <Route path="/debug-lightning" element={<DebugLightning />} />
-
-            {/* Protected */}
-            <Route path="/campaigns"  element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
-            <Route path="/wallet"     element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
-            <Route path="/settings"   element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
-            <Route path="/analytics"  element={<ProtectedRoute><CampaignAnalytics /></ProtectedRoute>} />
-            <Route path="/settlements" element={<ProtectedRoute><Settlements /></ProtectedRoute>} />
-            <Route path="/dashboard"  element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-
-            {/* Embeds */}
-            <Route path="/embed/metrics/:id" element={<MetricsEmbed />} />
-            <Route path="/embed/ad/:id"      element={<AdEmbed />} />
-
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          </RouteErrorBoundary>
+          <RoutedPages currency={currency} rates={rates} />
         </Suspense>
       </main>
       {!isEmbed && <Footer />}
@@ -450,7 +458,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <Router>
+      <Router unstable_useTransitions={false}>
         <ThemeProvider>
         <SkipToContent />
         <ScrollToTop />
