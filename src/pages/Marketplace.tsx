@@ -1,12 +1,13 @@
-import { useState, useMemo, type FormEvent } from "react";
+import { useState, useMemo, useEffect, type FormEvent } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button, Input, Label, Modal, Select } from "@/components/ui";
+import { Chip, SkeletonCard, EmptyState } from "@/components/ui/index";
 import { useToast } from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
 import {
   Search, Filter, Zap, Users, Globe, TrendingUp,
   CheckCircle, ChevronDown, X, BarChart2, Star,
-  SlidersHorizontal, ArrowUpDown, ArrowUp, ArrowDown,
+  SlidersHorizontal, ArrowUpDown, ArrowUp, ArrowDown, PackageSearch,
 } from "lucide-react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
@@ -596,6 +597,12 @@ export default function Marketplace() {
   const [bidSlot, setBidSlot]               = useState<InventorySlot | null>(null);
   const [maxBid, setMaxBid]                 = useState(50000);
   const [sidebarOpen, setSidebarOpen]       = useState(false);
+  const [loading, setLoading]               = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, []);
 
   const featuredSlots = useMemo(() =>
     INVENTORY.filter(s => FEATURED_IDS.includes(s.id)),
@@ -720,25 +727,19 @@ export default function Marketplace() {
           </div>
         </div>
 
-        {/* ── Platform tabs ─────────────────────────────────────────────── */}
-        <div className="flex flex-wrap gap-1.5 border-b border-border pb-4">
+        {/* ── Platform tabs (Chip filters) ─────────────────────────────── */}
+        <div className="flex flex-wrap gap-2 border-b border-border pb-4">
           {PLATFORM_TABS.map(tab => (
-            <button
+            <Chip
               key={tab}
+              active={activePlatform === tab}
               onClick={() => setActivePlatform(tab)}
-              className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold border transition-all ${
-                activePlatform === tab
-                  ? "bg-accent text-black border-accent shadow-[0_0_12px_rgba(255,159,28,0.35)]"
-                  : "bg-surface text-muted border-border hover:border-muted hover:text-text"
-              }`}
             >
               {tab}
               {platformCounts[tab] !== undefined && (
-                <span className={`ml-1.5 text-[10px] ${activePlatform === tab ? "text-black/60" : "text-muted/60"}`}>
-                  {platformCounts[tab]}
-                </span>
+                <span className="text-[10px] opacity-70 ml-0.5">{platformCounts[tab]}</span>
               )}
-            </button>
+            </Chip>
           ))}
         </div>
 
@@ -874,22 +875,21 @@ export default function Marketplace() {
             </div>
 
             <AnimatePresence mode="popLayout">
-              {filtered.length === 0 ? (
-                <motion.div
-                  key="empty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="text-center py-20 text-muted space-y-2"
-                >
-                  <div className="text-4xl">🔍</div>
-                  <p className="font-bold">No inventory matches your filters.</p>
-                  <button
-                    onClick={clearFilters}
-                    className="text-xs text-accent underline underline-offset-2 hover:no-underline"
-                  >
-                    Reset all filters
-                  </button>
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i}><SkeletonCard /></div>
+                  ))}
+                </div>
+              ) : filtered.length === 0 ? (
+                <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <EmptyState
+                    icon={PackageSearch}
+                    title="No inventory matches your filters"
+                    description="Try adjusting your platform, category, or price filters to find available ad slots."
+                    action={clearFilters}
+                    actionLabel="Reset all filters"
+                  />
                 </motion.div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">

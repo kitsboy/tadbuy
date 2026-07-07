@@ -1,6 +1,8 @@
 import { WorldMap } from '../components/WorldMap';
 import { Globe, TrendingUp, Target, Users } from 'lucide-react';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { StatCard, Badge } from '@/components/ui/index';
+import { Card } from '@/components/ui';
 
 const COUNTRY_STATS = [
   { country: 'United States', code: 'US', flag: '🇺🇸', impressions: 480000, clicks: 5760, ctr: 1.2 },
@@ -37,53 +39,16 @@ export default function GeoTargeting() {
         </p>
       </div>
 
-      {/* Stats row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          {
-            label: 'Countries Reached',
-            value: totalCountries,
-            icon: Globe,
-            color: 'text-blue-400',
-            bg: 'bg-blue-400/5 border-blue-400/20',
-          },
-          {
-            label: 'Total Impressions',
-            value: totalImpressions.toLocaleString(),
-            icon: TrendingUp,
-            color: 'text-accent',
-            bg: 'bg-accent/5 border-accent/20',
-          },
-          {
-            label: 'Top Market',
-            value: topMarket.country,
-            icon: Target,
-            color: 'text-green-400',
-            bg: 'bg-green-400/5 border-green-400/20',
-          },
-          {
-            label: 'Global CTR',
-            value: `${globalCTR}%`,
-            icon: Users,
-            color: 'text-purple-400',
-            bg: 'bg-purple-400/5 border-purple-400/20',
-          },
-        ].map(stat => (
-          <div key={stat.label} className={`bg-card border ${stat.bg} rounded-xl p-4`}>
-            <div className="flex items-center gap-2 text-muted text-xs mb-2">
-              <stat.icon className={`w-3.5 h-3.5 ${stat.color}`} />
-              {stat.label}
-            </div>
-            <div className={`text-xl font-bold ${stat.color}`}>{stat.value}</div>
-          </div>
-        ))}
+        <StatCard icon={Globe} label="Countries Reached" value={totalCountries} color="text-blue" />
+        <StatCard icon={TrendingUp} label="Total Impressions" value={totalImpressions.toLocaleString()} color="text-accent" />
+        <StatCard icon={Target} label="Top Market" value={topMarket.country} color="text-green" sub={`${topMarket.code} · ${topMarket.flag}`} />
+        <StatCard icon={Users} label="Global CTR" value={`${globalCTR}%`} color="text-purple-400" />
       </div>
 
-      {/* Map + table layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Map card */}
-        <div
-          className="lg:col-span-2 bg-card border border-border rounded-xl overflow-hidden flex flex-col"
+        <Card
+          className="lg:col-span-2 overflow-hidden flex flex-col p-0"
           style={{ minHeight: '420px' }}
         >
           <div className="px-4 py-3 border-b border-border flex items-center justify-between">
@@ -91,18 +56,14 @@ export default function GeoTargeting() {
               <Globe className="w-4 h-4 text-accent" />
               <span className="text-sm font-semibold text-text">Campaign Activity Map</span>
             </div>
-            <span className="text-[10px] text-muted font-mono bg-surface px-2 py-0.5 rounded-full border border-border">
-              LIVE
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400 ml-1.5 animate-pulse" />
-            </span>
+            <Badge variant="success" dot>LIVE</Badge>
           </div>
           <div className="flex-1 p-2">
             <WorldMap className="w-full h-full" />
           </div>
-        </div>
+        </Card>
 
-        {/* Top markets sidebar */}
-        <div className="bg-card border border-border rounded-xl overflow-hidden flex flex-col">
+        <Card className="overflow-hidden flex flex-col p-0">
           <div className="px-4 py-3 border-b border-border flex items-center justify-between">
             <span className="text-sm font-semibold text-text">Top Markets</span>
             <button className="text-[10px] text-accent hover:text-accent/80 transition-colors font-mono border border-accent/20 px-2 py-0.5 rounded-full hover:border-accent/50">
@@ -118,7 +79,6 @@ export default function GeoTargeting() {
                   key={country.code}
                   className="px-4 py-2.5 hover:bg-surface/30 transition-colors relative group"
                 >
-                  {/* impression bar background */}
                   <div
                     className="absolute inset-y-0 left-0 bg-accent/5 group-hover:bg-accent/8 transition-all pointer-events-none"
                     style={{ width: `${barWidth}%` }}
@@ -127,7 +87,9 @@ export default function GeoTargeting() {
                     <span className="text-muted text-[10px] font-mono w-4 text-right shrink-0">
                       {i + 1}
                     </span>
-                    <span className="text-lg leading-none shrink-0">{country.flag}</span>
+                    <Badge variant="outline" className="normal-case tracking-normal shrink-0">
+                      {country.flag} {country.code}
+                    </Badge>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-medium text-text truncate">{country.country}</div>
                       <div className="text-[10px] text-muted font-mono">
@@ -144,17 +106,15 @@ export default function GeoTargeting() {
             })}
           </div>
 
-          {/* CTA footer */}
           <div className="px-4 py-3 border-t border-border bg-surface/20">
             <button className="w-full py-2 rounded-lg text-xs font-bold bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20 hover:border-accent/40 transition-all">
               Configure Geo-Targeting
             </button>
           </div>
-        </div>
+        </Card>
       </div>
 
-      {/* Bottom info banner */}
-      <div className="bg-card border border-border rounded-xl p-4 flex items-start gap-3">
+      <Card className="p-4 flex items-start gap-3">
         <Globe className="w-4 h-4 text-accent mt-0.5 shrink-0" />
         <div className="text-xs text-muted leading-relaxed">
           <span className="text-text font-semibold">Geo-targeting</span> lets you direct your ad
@@ -162,7 +122,7 @@ export default function GeoTargeting() {
           sats go furthest in high-CTR markets.{' '}
           <span className="text-accent cursor-pointer hover:underline">Learn more →</span>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
