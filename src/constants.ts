@@ -1,7 +1,7 @@
 // ─── App-wide constants ──────────────────────────────────────────────────────
-// Edit values here — they propagate to every page, footer, and QR code.
+// APP_VERSION is auto-synced from package.json on every push (see .githooks/pre-push).
 
-export const APP_VERSION = "v5.0.0-PLATINUM";
+export { APP_VERSION, APP_VERSION_RAW } from './version';
 
 export const BITCOIN_ADDRESS =
   "bc1qhm5ndfjhqxdk3cx0pngyps4f5nnwdckulmge6c8keyf2pk0neqtshjn8ad";

@@ -1,0 +1,28 @@
+#!/bin/sh
+# Auto-bump patch version before every push — footer reads package.json via src/version.ts
+# Set SKIP_VERSION_BUMP=1 to bypass.
+
+if [ "$SKIP_VERSION_BUMP" = "1" ]; then
+  exit 0
+fi
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+echo "🔢 Auto-bumping version for push…"
+npm run bump-version
+
+git add package.json package-lock.json src/data/projectState.ts
+
+if git diff --cached --quiet; then
+  exit 0
+fi
+
+VERSION=$(node -e "console.log(require('./package.json').version)")
+git commit -m "chore: auto-bump version to v${VERSION} [pre-push]"
+
+REMOTE="${1:-origin}"
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+echo "📤 Pushing v${VERSION} to ${REMOTE}/${BRANCH}…"
+SKIP_VERSION_BUMP=1 git push "$REMOTE" "$BRANCH"
+exit $?

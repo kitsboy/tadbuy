@@ -3,7 +3,7 @@
  * Updated by sync-docs.ts on every build from live metrics when available.
  */
 export const PROJECT_STATE = {
-  version: 'v5.0.0-PLATINUM',
+  version: 'v5.0.1',
   phase: 'BETA' as const,
   lastSynced: new Date().toISOString().split('T')[0],
   liveUrl: 'https://tadbuy.giveabit.io',
