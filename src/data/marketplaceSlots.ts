@@ -17,6 +17,19 @@ export interface MarketplaceSlot {
   status: 'available' | 'hot';
   tags: string[];
   platformType?: string;
+  /** ISO timestamp — hot slots with active auctions */
+  auctionEndsAt?: string;
+}
+
+export const FEATURED_SLOT_IDS = [
+  'slot_yt_preroll',
+  'slot_btc_podcast',
+  'slot_stacker_banner',
+] as const;
+
+/** Default auction window for hot slots (2 hours from seed time) */
+function hotAuctionEnd(): string {
+  return new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
 }
 
 export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
@@ -73,6 +86,7 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     status: 'hot',
     tags: ['bitcoin', 'community', 'news'],
     platformType: 'Blogs',
+    auctionEndsAt: hotAuctionEnd(),
   },
   {
     id: 'slot_ln_markets',
@@ -90,6 +104,98 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     ctr: 2.7,
     status: 'available',
     tags: ['lightning', 'trading', 'finance'],
+    platformType: 'Newsletters',
+  },
+  {
+    id: 'slot_btcpay_footer',
+    name: 'BTCPay Server Footer',
+    publisher: 'BTCPay Server',
+    publisherVerified: true,
+    placement: 'Documentation footer',
+    format: '728×90 Leaderboard',
+    category: 'Bitcoin Tools',
+    audience: '280K monthly visitors',
+    geo: ['Global'],
+    minBidSats: 1500,
+    currentBidSats: 4100,
+    impressionsPerDay: 6200,
+    ctr: 1.4,
+    status: 'available',
+    tags: ['payments', 'open-source', 'tools'],
+    platformType: 'Blogs',
+  },
+  {
+    id: 'slot_primal_feed',
+    name: 'Primal In-Feed Ad',
+    publisher: 'Primal',
+    publisherVerified: false,
+    placement: 'Social feed',
+    format: 'Native Feed Post',
+    category: 'Social / Nostr',
+    audience: '210K monthly visitors',
+    geo: ['Global'],
+    minBidSats: 4000,
+    currentBidSats: 11200,
+    impressionsPerDay: 15000,
+    ctr: 2.9,
+    status: 'available',
+    tags: ['nostr', 'native', 'social'],
+    platformType: 'Nostr',
+  },
+  {
+    id: 'slot_btc_podcast',
+    name: 'Bitcoin Audible Mid-Roll',
+    publisher: 'Bitcoin Audible',
+    publisherVerified: true,
+    placement: 'Mid-roll (ep. 600+)',
+    format: '60s Audio Ad',
+    category: 'Bitcoin Community',
+    audience: '95K listeners/episode',
+    geo: ['US', 'EU'],
+    minBidSats: 6000,
+    currentBidSats: 14500,
+    impressionsPerDay: 9500,
+    ctr: 3.8,
+    status: 'hot',
+    tags: ['podcast', 'bitcoin', 'audio'],
+    platformType: 'Podcasts',
+    auctionEndsAt: hotAuctionEnd(),
+  },
+  {
+    id: 'slot_yt_preroll',
+    name: 'BTC Sessions Pre-Roll',
+    publisher: 'BTC Sessions',
+    publisherVerified: true,
+    placement: 'YouTube pre-roll',
+    format: '15s Video Ad',
+    category: 'Bitcoin & Crypto',
+    audience: '180K subscribers',
+    geo: ['US', 'CA', 'EU'],
+    minBidSats: 7500,
+    currentBidSats: 16800,
+    impressionsPerDay: 22000,
+    ctr: 4.1,
+    status: 'hot',
+    tags: ['youtube', 'bitcoin', 'education'],
+    platformType: 'YouTube',
+    auctionEndsAt: hotAuctionEnd(),
+  },
+  {
+    id: 'slot_newsletter_swan',
+    name: 'Swan Signal Newsletter Sponsor',
+    publisher: 'Swan Bitcoin',
+    publisherVerified: true,
+    placement: 'Newsletter top sponsor',
+    format: 'Sponsored Section',
+    category: 'Bitcoin & Crypto',
+    audience: '42K subscribers',
+    geo: ['US'],
+    minBidSats: 3000,
+    currentBidSats: 8900,
+    impressionsPerDay: 7000,
+    ctr: 5.2,
+    status: 'available',
+    tags: ['newsletter', 'bitcoin', 'finance'],
     platformType: 'Newsletters',
   },
 ];

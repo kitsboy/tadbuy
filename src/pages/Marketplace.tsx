@@ -10,208 +10,11 @@ import {
   SlidersHorizontal, ArrowUpDown, ArrowUp, ArrowDown, PackageSearch,
 } from "lucide-react";
 import { usePageTitle } from "@/hooks/usePageTitle";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface InventorySlot {
-  id: string;
-  name: string;
-  publisher: string;
-  publisherVerified: boolean;
-  placement: string;
-  format: string;
-  category: string;
-  audience: string;
-  geo: string[];
-  minBidSats: number;
-  currentBidSats: number;
-  impressionsPerDay: number;
-  ctr: number;
-  status: "available" | "hot";
-  tags: string[];
-  thumbnail: null;
-  platformType?: string; // for tab filtering
-}
-
-// ─── Inventory ────────────────────────────────────────────────────────────────
-
-const INVENTORY: InventorySlot[] = [
-  {
-    id: "slot_btc_hero",
-    name: "Bitcoin.org Homepage Hero",
-    publisher: "Bitcoin.org",
-    publisherVerified: true,
-    placement: "Above the fold",
-    format: "728×90 Leaderboard",
-    category: "Bitcoin & Crypto",
-    audience: "2.4M monthly visitors",
-    geo: ["US", "EU", "APAC"],
-    minBidSats: 5000,
-    currentBidSats: 18500,
-    impressionsPerDay: 45000,
-    ctr: 2.1,
-    status: "available",
-    tags: ["bitcoin", "finance", "tech"],
-    thumbnail: null,
-    platformType: "Blogs",
-  },
-  {
-    id: "slot_nostr_sidebar",
-    name: "Nostr.com Sidebar",
-    publisher: "Nostr.com",
-    publisherVerified: true,
-    placement: "Article sidebar",
-    format: "300×250 Rectangle",
-    category: "Social / Nostr",
-    audience: "890K monthly visitors",
-    geo: ["Global"],
-    minBidSats: 2000,
-    currentBidSats: 7200,
-    impressionsPerDay: 18000,
-    ctr: 1.8,
-    status: "available",
-    tags: ["nostr", "social", "decentralized"],
-    thumbnail: null,
-    platformType: "Nostr",
-  },
-  {
-    id: "slot_stacker_banner",
-    name: "Stacker News Top Banner",
-    publisher: "Stacker News",
-    publisherVerified: true,
-    placement: "Top of feed",
-    format: "970×250 Billboard",
-    category: "Bitcoin Community",
-    audience: "320K monthly visitors",
-    geo: ["US", "EU"],
-    minBidSats: 8000,
-    currentBidSats: 22000,
-    impressionsPerDay: 12000,
-    ctr: 3.2,
-    status: "hot",
-    tags: ["bitcoin", "community", "news"],
-    thumbnail: null,
-    platformType: "Blogs",
-  },
-  {
-    id: "slot_ln_markets",
-    name: "LN Markets Sidebar",
-    publisher: "LN Markets",
-    publisherVerified: false,
-    placement: "Dashboard sidebar",
-    format: "300×600 Half Page",
-    category: "Lightning / Finance",
-    audience: "145K monthly visitors",
-    geo: ["Global"],
-    minBidSats: 3500,
-    currentBidSats: 9800,
-    impressionsPerDay: 8500,
-    ctr: 2.7,
-    status: "available",
-    tags: ["lightning", "trading", "finance"],
-    thumbnail: null,
-    platformType: "Newsletters",
-  },
-  {
-    id: "slot_btcpay_footer",
-    name: "BTCPay Server Footer",
-    publisher: "BTCPay Server",
-    publisherVerified: true,
-    placement: "Documentation footer",
-    format: "728×90 Leaderboard",
-    category: "Bitcoin Tools",
-    audience: "280K monthly visitors",
-    geo: ["Global"],
-    minBidSats: 1500,
-    currentBidSats: 4100,
-    impressionsPerDay: 6200,
-    ctr: 1.4,
-    status: "available",
-    tags: ["payments", "open-source", "tools"],
-    thumbnail: null,
-    platformType: "Blogs",
-  },
-  {
-    id: "slot_primal_feed",
-    name: "Primal In-Feed Ad",
-    publisher: "Primal",
-    publisherVerified: false,
-    placement: "Social feed",
-    format: "Native Feed Post",
-    category: "Social / Nostr",
-    audience: "210K monthly visitors",
-    geo: ["Global"],
-    minBidSats: 4000,
-    currentBidSats: 11200,
-    impressionsPerDay: 15000,
-    ctr: 2.9,
-    status: "available",
-    tags: ["nostr", "native", "social"],
-    thumbnail: null,
-    platformType: "Nostr",
-  },
-  {
-    id: "slot_btc_podcast",
-    name: "Bitcoin Audible Mid-Roll",
-    publisher: "Bitcoin Audible",
-    publisherVerified: true,
-    placement: "Mid-roll (ep. 600+)",
-    format: "60s Audio Ad",
-    category: "Bitcoin Community",
-    audience: "95K listeners/episode",
-    geo: ["US", "EU"],
-    minBidSats: 6000,
-    currentBidSats: 14500,
-    impressionsPerDay: 9500,
-    ctr: 3.8,
-    status: "hot",
-    tags: ["podcast", "bitcoin", "audio"],
-    thumbnail: null,
-    platformType: "Podcasts",
-  },
-  {
-    id: "slot_yt_preroll",
-    name: "BTC Sessions Pre-Roll",
-    publisher: "BTC Sessions",
-    publisherVerified: true,
-    placement: "YouTube pre-roll",
-    format: "15s Video Ad",
-    category: "Bitcoin & Crypto",
-    audience: "180K subscribers",
-    geo: ["US", "CA", "EU"],
-    minBidSats: 7500,
-    currentBidSats: 16800,
-    impressionsPerDay: 22000,
-    ctr: 4.1,
-    status: "hot",
-    tags: ["youtube", "bitcoin", "education"],
-    thumbnail: null,
-    platformType: "YouTube",
-  },
-  {
-    id: "slot_newsletter_swan",
-    name: "Swan Signal Newsletter Sponsor",
-    publisher: "Swan Bitcoin",
-    publisherVerified: true,
-    placement: "Newsletter top sponsor",
-    format: "Sponsored Section",
-    category: "Bitcoin & Crypto",
-    audience: "42K subscribers",
-    geo: ["US"],
-    minBidSats: 3000,
-    currentBidSats: 8900,
-    impressionsPerDay: 7000,
-    ctr: 5.2,
-    status: "available",
-    tags: ["newsletter", "bitcoin", "finance"],
-    thumbnail: null,
-    platformType: "Newsletters",
-  },
-];
-
-// ─── Featured slot IDs ────────────────────────────────────────────────────────
-
-const FEATURED_IDS = ["slot_yt_preroll", "slot_btc_podcast", "slot_stacker_banner"];
+import {
+  MARKETPLACE_SLOTS,
+  FEATURED_SLOT_IDS,
+  type MarketplaceSlot,
+} from "@/data/marketplaceSlots";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -251,9 +54,46 @@ function geoFlag(geo: string): string {
   return map[geo] ?? geo;
 }
 
+function formatAuctionCountdown(ms: number): string {
+  if (ms <= 0) return "Ended";
+  const h = Math.floor(ms / 3_600_000);
+  const m = Math.floor((ms % 3_600_000) / 60_000);
+  const s = Math.floor((ms % 60_000) / 1000);
+  if (h > 0) return `${h}h ${m}m ${s}s`;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+/** Live countdown for hot-slot auctions */
+function HotAuctionCountdown({ endsAt }: { endsAt: string }) {
+  const [remaining, setRemaining] = useState(() =>
+    Math.max(0, new Date(endsAt).getTime() - Date.now())
+  );
+
+  useEffect(() => {
+    const tick = () => setRemaining(Math.max(0, new Date(endsAt).getTime() - Date.now()));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [endsAt]);
+
+  const urgent = remaining > 0 && remaining < 15 * 60 * 1000;
+
+  return (
+    <span
+      className={`flex items-center gap-1 text-[10px] font-bold font-mono tabular-nums px-2 py-0.5 rounded-full border ${
+        urgent
+          ? "text-red bg-red/10 border-red/30 animate-pulse"
+          : "text-accent bg-accent/10 border-accent/30"
+      }`}
+    >
+      ⏱ {formatAuctionCountdown(remaining)}
+    </span>
+  );
+}
+
 // ─── Bid Modal ────────────────────────────────────────────────────────────────
 
-function BidModal({ slot, onClose }: { slot: InventorySlot; onClose: () => void }) {
+function BidModal({ slot, onClose, onBidPlaced }: { slot: MarketplaceSlot; onClose: () => void; onBidPlaced: (slotId: string, bidSats: number) => void }) {
   const { addToast } = useToast();
   const [bidSats, setBidSats] = useState("");
   const [budgetSats, setBudgetSats] = useState("");
@@ -286,17 +126,25 @@ function BidModal({ slot, onClose }: { slot: InventorySlot; onClose: () => void 
     if (!validate()) return;
     setLoading(true);
     try {
-      await fetch("/api/marketplace/bid", {
+      const bidAmount = Number(bidSats);
+      const res = await fetch("/api/marketplace/bid", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           slotId: slot.id,
           slotName: slot.name,
-          bidSats: Number(bidSats),
+          bidSats: bidAmount,
           budgetSats: budgetSats ? Number(budgetSats) : null,
         }),
       });
-      addToast(`Bid placed on "${slot.name}" for ${Number(bidSats).toLocaleString()} sats! ⚡`, "success");
+      if (!res.ok) throw new Error("Bid failed");
+      const outbidBy = bidAmount - slot.currentBidSats;
+      addToast(
+        `Outbid! You beat the previous bid by ${outbidBy.toLocaleString()} sats on "${slot.name}"`,
+        "info"
+      );
+      addToast(`Bid placed for ${bidAmount.toLocaleString()} sats! ⚡`, "success");
+      onBidPlaced(slot.id, bidAmount);
       onClose();
     } catch {
       addToast("Failed to place bid. Please try again.", "info");
@@ -386,7 +234,7 @@ function BidModal({ slot, onClose }: { slot: InventorySlot; onClose: () => void 
 
 // ─── Featured Card ────────────────────────────────────────────────────────────
 
-function FeaturedCard({ slot, onBid }: { slot: InventorySlot; onBid: (slot: InventorySlot) => void }) {
+function FeaturedCard({ slot, onBid }: { slot: MarketplaceSlot; onBid: (slot: MarketplaceSlot) => void }) {
   const navigate = useNavigate();
   return (
     <motion.div
@@ -404,6 +252,9 @@ function FeaturedCard({ slot, onBid }: { slot: InventorySlot; onBid: (slot: Inve
         <span className="text-xs font-bold text-muted">{slot.publisher}</span>
         {slot.publisherVerified && <CheckCircle className="w-3.5 h-3.5 text-blue flex-shrink-0" />}
         {slot.status === "hot" && <span className="text-xs">🔥</span>}
+        {slot.status === "hot" && slot.auctionEndsAt && (
+          <HotAuctionCountdown endsAt={slot.auctionEndsAt} />
+        )}
       </div>
 
       <h3 className="text-lg font-extrabold leading-snug pr-20">{slot.name}</h3>
@@ -449,7 +300,7 @@ function FeaturedCard({ slot, onBid }: { slot: InventorySlot; onBid: (slot: Inve
 
 // ─── Slot Card ────────────────────────────────────────────────────────────────
 
-function SlotCard({ slot, onBid }: { slot: InventorySlot; onBid: (slot: InventorySlot) => void }) {
+function SlotCard({ slot, onBid }: { slot: MarketplaceSlot; onBid: (slot: MarketplaceSlot) => void }) {
   const navigate = useNavigate();
   const isHot = slot.status === "hot";
 
@@ -480,13 +331,16 @@ function SlotCard({ slot, onBid }: { slot: InventorySlot; onBid: (slot: Inventor
           <div className="flex items-center gap-1.5 min-w-0">
             <span className="text-xs font-bold text-muted truncate">{slot.publisher}</span>
             {slot.publisherVerified && (
-              <CheckCircle className="w-3.5 h-3.5 text-blue flex-shrink-0" title="Verified publisher" />
+              <CheckCircle className="w-3.5 h-3.5 text-blue flex-shrink-0" aria-label="Verified publisher" />
             )}
           </div>
           {isHot ? (
-            <span className="flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-accent bg-accent/10 border border-accent/30 px-2 py-0.5 rounded-full">
-              🔥 Hot
-            </span>
+            <div className="flex flex-col items-end gap-1">
+              <span className="flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-accent bg-accent/10 border border-accent/30 px-2 py-0.5 rounded-full">
+                🔥 Hot
+              </span>
+              {slot.auctionEndsAt && <HotAuctionCountdown endsAt={slot.auctionEndsAt} />}
+            </div>
           ) : (
             <span className="text-[10px] font-bold uppercase tracking-wider text-green bg-green/10 border border-green/20 px-2 py-0.5 rounded-full">
               Available
@@ -589,12 +443,13 @@ function SlotCard({ slot, onBid }: { slot: InventorySlot; onBid: (slot: Inventor
 export default function Marketplace() {
   usePageTitle("Marketplace");
 
+  const [inventory, setInventory]           = useState<MarketplaceSlot[]>(MARKETPLACE_SLOTS);
   const [searchTerm, setSearchTerm]         = useState("");
   const [activePlatform, setActivePlatform] = useState<PlatformTab>("All");
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [statusFilter, setStatusFilter]     = useState<StatusFilter>("all");
   const [sortBy, setSortBy]                 = useState<SortOption>("best_ctr");
-  const [bidSlot, setBidSlot]               = useState<InventorySlot | null>(null);
+  const [bidSlot, setBidSlot]               = useState<MarketplaceSlot | null>(null);
   const [maxBid, setMaxBid]                 = useState(50000);
   const [sidebarOpen, setSidebarOpen]       = useState(false);
   const [loading, setLoading]               = useState(true);
@@ -604,30 +459,45 @@ export default function Marketplace() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    fetch("/api/marketplace/slots/live")
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.slots?.length) setInventory(data.slots);
+      })
+      .catch(() => { /* keep static inventory */ });
+  }, []);
+
+  const handleBidPlaced = (slotId: string, bidSats: number) => {
+    setInventory(prev =>
+      prev.map(s => s.id === slotId ? { ...s, currentBidSats: bidSats } : s)
+    );
+  };
+
   const featuredSlots = useMemo(() =>
-    INVENTORY.filter(s => FEATURED_IDS.includes(s.id)),
-    []
+    inventory.filter(s => FEATURED_SLOT_IDS.includes(s.id as typeof FEATURED_SLOT_IDS[number])),
+    [inventory]
   );
 
   // Category breakdown counts
   const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = { All: INVENTORY.length };
-    INVENTORY.forEach(s => {
+    const counts: Record<string, number> = { All: inventory.length };
+    inventory.forEach(s => {
       counts[s.category] = (counts[s.category] ?? 0) + 1;
     });
     return counts;
-  }, []);
+  }, [inventory]);
 
   const platformCounts = useMemo(() => {
-    const counts: Record<string, number> = { All: INVENTORY.length };
-    INVENTORY.forEach(s => {
+    const counts: Record<string, number> = { All: inventory.length };
+    inventory.forEach(s => {
       if (s.platformType) counts[s.platformType] = (counts[s.platformType] ?? 0) + 1;
     });
     return counts;
-  }, []);
+  }, [inventory]);
 
   const filtered = useMemo(() => {
-    let items = INVENTORY.filter(item => {
+    let items = inventory.filter(item => {
       const q = searchTerm.toLowerCase();
       const matchesSearch =
         !q ||
@@ -650,12 +520,12 @@ export default function Marketplace() {
       if (sortBy === "price_asc")        return a.currentBidSats - b.currentBidSats;
       if (sortBy === "price_desc")       return b.currentBidSats - a.currentBidSats;
       if (sortBy === "most_impressions") return b.impressionsPerDay - a.impressionsPerDay;
-      if (sortBy === "newest")           return INVENTORY.indexOf(b) - INVENTORY.indexOf(a);
+      if (sortBy === "newest")           return inventory.indexOf(b) - inventory.indexOf(a);
       return 0;
     });
 
     return items;
-  }, [searchTerm, activePlatform, activeCategory, statusFilter, sortBy, maxBid]);
+  }, [inventory, searchTerm, activePlatform, activeCategory, statusFilter, sortBy, maxBid]);
 
   const clearFilters = () => {
     setSearchTerm("");
@@ -906,7 +776,13 @@ export default function Marketplace() {
       </motion.div>
 
       {/* ── Bid Modal ──────────────────────────────────────────────────── */}
-      {bidSlot && <BidModal slot={bidSlot} onClose={() => setBidSlot(null)} />}
+      {bidSlot && (
+        <BidModal
+          slot={bidSlot}
+          onClose={() => setBidSlot(null)}
+          onBidPlaced={handleBidPlaced}
+        />
+      )}
     </>
   );
 }

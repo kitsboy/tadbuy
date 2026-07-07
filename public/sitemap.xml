@@ -104,6 +104,38 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- System Health -->
+  <url>
+    <loc>https://tadbuy.giveabit.io/health</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Changelog -->
+  <url>
+    <loc>https://tadbuy.giveabit.io/changelog</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Compare -->
+  <url>
+    <loc>https://tadbuy.giveabit.io/compare</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Case Studies -->
+  <url>
+    <loc>https://tadbuy.giveabit.io/case-studies</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <!-- Investor Pitch -->
   <url>
     <loc>https://tadbuy.giveabit.io/pitch</loc>
