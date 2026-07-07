@@ -1,7 +1,7 @@
 ---
 title: SEO Strategy & Audit
 project: tadbuy
-version: 5.0.4
+version: 5.0.5
 last_updated: 2026-07-07
 owner: Kimi / Qwen (Weekly Audit)
 update_frequency: Weekly (Monday)

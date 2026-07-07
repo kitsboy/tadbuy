@@ -1,6 +1,6 @@
 # Tadbuy Technical Documentation
 
-**Version:** v5.0.4 · **Last updated:** 2026-07-07
+**Version:** v5.0.5 · **Last updated:** 2026-07-07
 
 ## Overview
 Tadbuy is a Bitcoin-native demand-side platform (DSP). Advertisers launch cross-platform campaigns and pay via Lightning, Fedimint ecash, BOLT12, on-chain BTC, or Nostr Zaps. The **Global Reach** page (`/geo`) provides geospatial market intelligence across 25 countries.
@@ -18,7 +18,7 @@ Tadbuy is a Bitcoin-native demand-side platform (DSP). Advertisers launch cross-
 - **Serverless API:** Express-based backend for handling sensitive operations (payments, API key management).
 - **Edge AI:** PPQ.AI runs quantized models on publisher nodes to ensure user privacy.
 
-## Implementation Status (BETA v5.0.4)
+## Implementation Status (BETA v5.0.5)
 | Area | Status |
 |------|--------|
 | Campaign builder UI | ✅ Live |

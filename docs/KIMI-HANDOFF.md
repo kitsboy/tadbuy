@@ -10,9 +10,9 @@
 - [x] SETUP-GUIDE, CONTRIBUTING, MARKETING-ONELINER, sitemap lastmod refresh
 
 ### Git State
-- Last commit SHA: (after push — run `git log -1 --format=%H`)
+- Last commit SHA: 4186f38
 - Branch: main
-- Version: v5.0.4
+- Version: v5.0.5
 
 ### What's Next
 - Fedi rollout when Andrea blocker clears (`t_8ee7c976`)

@@ -2,6 +2,12 @@
 
 All notable changes to Tadbuy are documented here.
 
+## [5.0.5] — 2026-07-07
+
+### Changed
+- Full documentation sync for v5.0.4 features (/geo, routing fix, batches 15–24)
+- Auto-generated docs: EXECUTIVE, BETA, GEO, locale SEO, context maps, sitemap
+
 ## [5.0.4] — 2026-07-06
 
 ### Added

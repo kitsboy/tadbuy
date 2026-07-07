@@ -1,7 +1,7 @@
 ---
 title: Mission
 project: Tadbuy
-version: 5.0.4
+version: 5.0.5
 audience: internal
 tags: [tadbuy, mission, bitcoin, advertising]
 last_updated: 2026-07-07

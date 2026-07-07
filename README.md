@@ -2,7 +2,7 @@
   <img src="/public/favicon.png" alt="Tadbuy" width="80" height="80" />
   <h1>Tadbuy</h1>
   <p><strong>The world's first Bitcoin-native advertising platform.</strong></p>
-  <p><code>v5.0.4</code> · 535+ enhancements · BETA</p>
+  <p><code>v5.0.5</code> · 535+ enhancements · BETA</p>
   <p>Buy ads across 8 platforms. Pay in sats via Lightning, BOLT12, on-chain, or Nostr Zaps.</p>
   <p>
     <a href="https://tadbuy.giveabit.io">Live Site</a> ·
