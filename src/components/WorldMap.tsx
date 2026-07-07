@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
-interface CountryData {
+export interface CountryData {
   country: string;
   code: string;
   impressions: number;
@@ -9,7 +9,7 @@ interface CountryData {
   campaigns: number;
 }
 
-const DEMO_DATA: CountryData[] = [
+export const DEMO_DATA: CountryData[] = [
   { country: 'United States', code: 'US', impressions: 480000, clicks: 5760, campaigns: 12 },
   { country: 'Germany', code: 'DE', impressions: 125000, clicks: 1875, campaigns: 4 },
   { country: 'United Kingdom', code: 'GB', impressions: 98000, clicks: 1470, campaigns: 3 },
@@ -38,36 +38,48 @@ const REGION_BLOCKS = [
   },
   {
     name: 'South America',
-    codes: ['BR', 'AR'],
+    codes: ['BR', 'AR', 'MX'],
     points: '20,57 30,55 34,62 32,80 26,88 20,85 17,72 18,60',
   },
   {
     name: 'Europe',
-    codes: ['DE', 'GB', 'FR', 'NL', 'CH', 'PT'],
+    codes: ['DE', 'GB', 'FR', 'NL', 'CH', 'PT', 'PL'],
     points: '42,10 56,10 58,28 54,36 44,36 40,24 41,14',
   },
   {
     name: 'Africa',
-    codes: ['NG'],
+    codes: ['NG', 'KE', 'ZA', 'GH'],
     points: '44,38 56,38 58,56 56,75 50,82 44,78 42,60 43,42',
   },
   {
     name: 'Middle East / Asia',
-    codes: ['JP', 'SG', 'SV'],
+    codes: ['JP', 'SG', 'SV', 'IN', 'KR', 'VN', 'PH'],
     points: '58,10 86,12 88,42 80,55 68,58 60,50 56,36 57,14',
   },
   {
     name: 'Oceania',
-    codes: ['AU'],
+    codes: ['AU', 'NZ'],
     points: '72,62 86,60 88,76 82,82 72,80 70,70',
   },
 ];
 
 interface WorldMapProps {
   className?: string;
+  data?: Array<{ country: string; code: string; impressions: number; clicks: number; campaigns: number }>;
+  selectedCode?: string | null;
+  highlightedCodes?: string[];
+  onCountrySelect?: (code: string) => void;
+  reducedMotion?: boolean;
 }
 
-export function WorldMap({ className = '' }: WorldMapProps) {
+export function WorldMap({
+  className = '',
+  data,
+  selectedCode = null,
+  highlightedCodes,
+  onCountrySelect,
+  reducedMotion = false,
+}: WorldMapProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [tooltip, setTooltip] = useState<{
@@ -76,6 +88,9 @@ export function WorldMap({ className = '' }: WorldMapProps) {
     data: CountryData;
   } | null>(null);
   const [dims, setDims] = useState({ w: 800, h: 400 });
+
+  const mapData = data ?? DEMO_DATA;
+  const hasHighlights = Boolean(highlightedCodes?.length);
 
   // Track container size with ResizeObserver
   useEffect(() => {
@@ -130,8 +145,8 @@ export function WorldMap({ className = '' }: WorldMapProps) {
     }
 
     // ── Color scale ───────────────────────────────────────────────────────────
-    const dataByCode = new Map(DEMO_DATA.map(d => [d.code, d]));
-    const maxImpressions = d3.max(DEMO_DATA, d => d.impressions) ?? 1;
+    const dataByCode = new Map(mapData.map(d => [d.code, d]));
+    const maxImpressions = d3.max(mapData, d => d.impressions) ?? 1;
 
     const colorScale = d3
       .scaleSequential()
@@ -139,6 +154,10 @@ export function WorldMap({ className = '' }: WorldMapProps) {
       .interpolator(d3.interpolate('#1a2e52', '#f7931a'));
 
     const g = svg.append('g');
+
+    const handleCountrySelect = (code: string) => {
+      onCountrySelect?.(code);
+    };
 
     // ── Region polygons ───────────────────────────────────────────────────────
     REGION_BLOCKS.forEach(region => {
@@ -156,6 +175,7 @@ export function WorldMap({ className = '' }: WorldMapProps) {
         0,
       );
       const avgImpressions = totalImpressions / region.codes.length;
+      const regionDimmed = hasHighlights && !region.codes.some(code => highlightedCodes!.includes(code));
 
       const poly = g
         .append('polygon')
@@ -163,7 +183,7 @@ export function WorldMap({ className = '' }: WorldMapProps) {
         .attr('fill', totalImpressions > 0 ? colorScale(avgImpressions) : '#0f1a2e')
         .attr('stroke', '#253554')
         .attr('stroke-width', 1.5)
-        .attr('opacity', 0.82)
+        .attr('opacity', regionDimmed ? 0.35 : 0.82)
         .style('cursor', 'default');
 
       // Region label — centroid approximation
@@ -180,6 +200,7 @@ export function WorldMap({ className = '' }: WorldMapProps) {
         .attr('fill', '#5a6e8a')
         .attr('font-size', labelSize)
         .attr('font-family', 'monospace')
+        .attr('opacity', regionDimmed ? 0.45 : 1)
         .attr('pointer-events', 'none')
         .text(region.name.split('/')[0].trim());
 
@@ -188,16 +209,16 @@ export function WorldMap({ className = '' }: WorldMapProps) {
         .on('mouseover', function () {
           d3.select(this)
             .transition()
-            .duration(150)
-            .attr('opacity', 1)
+            .duration(reducedMotion ? 0 : 150)
+            .attr('opacity', regionDimmed ? 0.5 : 1)
             .attr('stroke', '#f7931a')
             .attr('stroke-width', 2);
         })
         .on('mouseout', function () {
           d3.select(this)
             .transition()
-            .duration(200)
-            .attr('opacity', 0.82)
+            .duration(reducedMotion ? 0 : 200)
+            .attr('opacity', regionDimmed ? 0.35 : 0.82)
             .attr('stroke', '#253554')
             .attr('stroke-width', 1.5);
         });
@@ -210,9 +231,13 @@ export function WorldMap({ className = '' }: WorldMapProps) {
       return s - Math.floor(s);
     };
 
-    DEMO_DATA.forEach((d, idx) => {
+    mapData.forEach((d, idx) => {
       const region = REGION_BLOCKS.find(r => r.codes.includes(d.code));
       if (!region) return;
+
+      const isSelected = selectedCode === d.code;
+      const isHighlighted = !hasHighlights || highlightedCodes!.includes(d.code);
+      const dotOpacity = isHighlighted ? (isSelected ? 1 : 0.72) : 0.22;
 
       const pts = region.points.split(' ').map(p => p.split(',').map(Number));
       const rcx = (pts.reduce((s, p) => s + p[0], 0) / pts.length / 100) * w;
@@ -225,30 +250,47 @@ export function WorldMap({ className = '' }: WorldMapProps) {
 
       const r = Math.sqrt(d.impressions / maxImpressions) * (w * 0.018) + 3;
 
-      // Outer pulse ring
-      g.append('circle')
-        .attr('cx', cx)
-        .attr('cy', cy)
-        .attr('r', r * 1.8)
-        .attr('fill', 'none')
-        .attr('stroke', '#f7931a')
-        .attr('stroke-width', 0.8)
-        .attr('opacity', 0.2);
+      // Outer pulse ring (skipped when reduced motion preferred)
+      if (!reducedMotion) {
+        g.append('circle')
+          .attr('cx', cx)
+          .attr('cy', cy)
+          .attr('r', r * 1.8)
+          .attr('fill', 'none')
+          .attr('stroke', '#f7931a')
+          .attr('stroke-width', 0.8)
+          .attr('opacity', isHighlighted ? 0.2 : 0.08)
+          .attr('pointer-events', 'none');
+      }
+
+      // Selected accent ring
+      if (isSelected) {
+        g.append('circle')
+          .attr('cx', cx)
+          .attr('cy', cy)
+          .attr('r', r * 1.55)
+          .attr('fill', 'none')
+          .attr('stroke', '#f7931a')
+          .attr('stroke-width', 2.5)
+          .attr('opacity', 0.95)
+          .attr('pointer-events', 'none');
+      }
 
       // Main dot
-      g.append('circle')
+      const dot = g
+        .append('circle')
         .attr('cx', cx)
         .attr('cy', cy)
         .attr('r', r)
         .attr('fill', '#f7931a')
-        .attr('opacity', 0.72)
-        .attr('stroke', '#ffa94d')
-        .attr('stroke-width', 0.8)
-        .style('cursor', 'pointer')
+        .attr('opacity', dotOpacity)
+        .attr('stroke', isSelected ? '#ffa94d' : '#f7931a')
+        .attr('stroke-width', isSelected ? 1.6 : 0.8)
+        .style('cursor', onCountrySelect ? 'pointer' : 'pointer')
         .on('mouseover', function (event: MouseEvent) {
           d3.select(this)
             .transition()
-            .duration(120)
+            .duration(reducedMotion ? 0 : 120)
             .attr('r', r * 1.4)
             .attr('opacity', 1);
           const rect = svgRef.current!.getBoundingClientRect();
@@ -265,9 +307,23 @@ export function WorldMap({ className = '' }: WorldMapProps) {
           );
         })
         .on('mouseout', function () {
-          d3.select(this).transition().duration(180).attr('r', r).attr('opacity', 0.72);
+          d3.select(this)
+            .transition()
+            .duration(reducedMotion ? 0 : 180)
+            .attr('r', r)
+            .attr('opacity', dotOpacity);
           setTooltip(null);
         });
+
+      if (onCountrySelect) {
+        const selectHandler = () => handleCountrySelect(d.code);
+        dot
+          .on('click', selectHandler)
+          .on('touchend', function (event: TouchEvent) {
+            event.preventDefault();
+            selectHandler();
+          });
+      }
     });
 
     // ── Legend ────────────────────────────────────────────────────────────────
@@ -331,10 +387,15 @@ export function WorldMap({ className = '' }: WorldMapProps) {
       .attr('font-family', 'monospace')
       .attr('dominant-baseline', 'middle')
       .text('Active campaign');
-  }, [dims]);
+  }, [dims, mapData, selectedCode, highlightedCodes, hasHighlights, onCountrySelect, reducedMotion]);
 
   return (
-    <div ref={containerRef} className={`relative w-full h-full ${className}`}>
+    <div
+      ref={containerRef}
+      className={`relative w-full h-full ${className}`}
+      aria-label="World map showing campaign activity by country"
+      role="img"
+    >
       <svg ref={svgRef} className="w-full h-full" style={{ display: 'block' }} />
       {tooltip && (
         <div
