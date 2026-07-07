@@ -99,6 +99,15 @@ export const PROJECT_STATE = {
     batch12: { completed: 25, total: 25, label: 'Wallet & Payments' },
     batch13: { completed: 25, total: 25, label: 'API & Agent Tools' },
     batch14: { completed: 25, total: 25, label: 'Docs & Platinum Polish' },
+    batch15: { completed: 25, total: 25, label: 'Foundation & Ops' },
+    batch16: { completed: 25, total: 25, label: 'Campaign Builder Pro' },
+    batch17: { completed: 25, total: 25, label: 'Payments Transparency' },
+    batch18: { completed: 25, total: 25, label: 'Analytics Live Wiring' },
+    batch19: { completed: 25, total: 25, label: 'Marketplace Auctions' },
+    batch20: { completed: 25, total: 25, label: 'SEO & Content Pages' },
+    batch21: { completed: 25, total: 25, label: 'Trust & Legal UX' },
+    batch22: { completed: 25, total: 25, label: 'Performance & Agent' },
+    batch23: { completed: 25, total: 25, label: 'Delight & Mobile Polish' },
   },
 } as const;
 

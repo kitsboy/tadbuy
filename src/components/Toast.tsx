@@ -2,7 +2,7 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 
-type Toast = { id: number; message: string; type: 'success' | 'info' };
+type Toast = { id: number; message: string; type: 'success' | 'info' | 'error' };
 const ToastContext = createContext<{ addToast: (msg: string, type?: Toast['type']) => void } | null>(null);
 
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
@@ -19,7 +19,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
         <AnimatePresence>
           {toasts.map((t) => (
             <motion.div key={t.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="bg-surface border border-border p-4 rounded-lg shadow-lg flex items-center gap-3">
-              <span className={`w-2 h-2 rounded-full ${t.type === 'success' ? 'bg-green' : 'bg-blue'}`} />
+              <span className={`w-2 h-2 rounded-full ${t.type === 'success' ? 'bg-green' : t.type === 'error' ? 'bg-red' : 'bg-blue'}`} />
               <p className="text-sm font-medium">{t.message}</p>
               <button onClick={() => setToasts(prev => prev.filter(x => x.id !== t.id))}><X className="w-4 h-4 text-muted" /></button>
             </motion.div>

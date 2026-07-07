@@ -15,6 +15,7 @@ import { campaigns as initialCampaigns, getPlatformIcon, Campaign } from "@/data
 import { generateAdCreative, OptimizationSuggestion } from "@/services/geminiService";
 import { useToast } from "@/components/Toast";
 import React from 'react';
+import { ShareCampaignCard } from '@/components/ShareCampaignCard';
 
 export default function Campaigns() {
   usePageTitle('Campaigns');
@@ -507,14 +508,19 @@ export default function Campaigns() {
             <p className="text-xs text-muted mb-6">Share real-time metrics for <strong>{campaignsList.find(c => c.id === showShareModal)?.name}</strong>.</p>
             
             <div className="space-y-6">
-              <div>
-                <Label>Social Share</Label>
-                <div className="flex gap-2 mt-2">
-                  <Button variant="secondary" size="sm" className="flex-1 gap-2" onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out my campaign on Tadbuy — Bitcoin-native advertising! https://tadbuy.giveabit.io`)}`, '_blank')}><Twitter className="w-4 h-4" /> X</Button>
-                  <Button variant="secondary" size="sm" className="flex-1 gap-2" onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://tadbuy.giveabit.io')}`, '_blank')}><Linkedin className="w-4 h-4" /> LinkedIn</Button>
-                  <Button variant="secondary" size="sm" className="flex-1 gap-2" onClick={() => window.open(`https://njump.me/`, '_blank')}><Zap className="w-4 h-4" /> Nostr</Button>
-                </div>
-              </div>
+              {(() => {
+                const campaign = campaignsList.find(c => c.id === showShareModal);
+                if (!campaign) return null;
+                return (
+                  <ShareCampaignCard
+                    campaignId={campaign.id}
+                    campaignName={campaign.name}
+                    headline={campaign.headline}
+                    status={campaign.status}
+                    budgetSats={campaign.budgetSats}
+                  />
+                );
+              })()}
 
               <div>
                 <Label>Embed Real-time Metrics (iFrame)</Label>

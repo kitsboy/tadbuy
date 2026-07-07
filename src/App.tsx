@@ -20,10 +20,9 @@ import { ThemeToggle } from './components/ThemeToggle';
 import { BtcPriceChart } from './components/widgets/BtcPriceChart';
 import { BetaBanner } from './components/BetaBanner';
 import { OnlineIndicator } from './components/OnlineIndicator';
+import { OfflineBanner } from './components/OfflineBanner';
 import { Spinner } from './components/ui/Spinner';
-
-// ── Eagerly loaded: above-the-fold critical path ──────────────────────────────
-import BuyAds from './pages/BuyAds';
+import { RouteErrorBoundary } from './components/RouteErrorBoundary';
 
 // ── Lazily loaded: all other routes load on-demand ───────────────────────────
 const Dashboard        = lazy(() => import('./pages/Dashboard'));
@@ -49,8 +48,14 @@ const Intelligence     = lazy(() => import('./pages/Intelligence'));
 const Integrations     = lazy(() => import('./pages/Integrations'));
 const Enterprise       = lazy(() => import('./pages/Enterprise'));
 const Beta             = lazy(() => import('./pages/Beta'));
+const Health           = lazy(() => import('./pages/Health'));
+const Changelog        = lazy(() => import('./pages/Changelog'));
+const Compare          = lazy(() => import('./pages/Compare'));
+const CaseStudies      = lazy(() => import('./pages/CaseStudies'));
+const BuyAds           = lazy(() => import('./pages/BuyAds'));
 const GeoTargeting     = lazy(() => import('./pages/GeoTargeting'));
-const CommandMenu      = lazy(() => import('./components/CommandMenu'));
+const CommandMenu            = lazy(() => import('./components/CommandMenu'));
+const KeyboardShortcutsHelp = lazy(() => import('./components/KeyboardShortcutsHelp'));
 const LiveActivityWidget = lazy(() => import('./components/LiveActivityWidget'));
 const NotFound         = lazy(() => import('./pages/NotFound'));
 const Terms            = lazy(() => import('./pages/legal/Terms'));
@@ -139,11 +144,12 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
   ];
 
   return (
-    <header className="sticky top-0 z-50 glass-header px-3 md:px-6 h-12 md:h-14 flex items-center justify-between gap-3 md:gap-4 pt-safe">
+    <header className="sticky top-0 z-50 glass-header px-3 md:px-6 h-12 md:h-14 flex items-center justify-between gap-3 md:gap-4 pt-safe px-safe touch-manipulation">
       <div className="flex items-center gap-2 text-[18px] font-extrabold tracking-tight">
         <button
           className="md:hidden p-1.5 text-muted hover:text-text rounded-lg hover:bg-surface transition-colors"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={() => setIsMobileMenuOpen((v) => !v)}
+              aria-expanded={isMobileMenuOpen}
           aria-label="Toggle menu"
         >
           {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -162,7 +168,7 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
             to={tab.path}
             end={tab.path === '/'}
             className={({ isActive }) => cn(
-              'flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-transparent text-[11px] font-semibold transition-all',
+              'flex items-center gap-1.5 px-2.5 py-2 min-h-[44px] rounded-lg border border-transparent text-[11px] font-semibold transition-all touch-target',
               isActive
                 ? 'bg-surface border-border text-text shadow-sm'
                 : 'text-muted hover:text-text hover:bg-surface/50'
@@ -269,8 +275,9 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
               key={tab.name}
               to={tab.path}
               end={tab.path === '/'}
+              onClick={() => setIsMobileMenuOpen(false)}
               className={({ isActive }) => cn(
-                'flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent text-xs font-semibold transition-all',
+                'flex items-center gap-3 px-3 py-3 min-h-[44px] rounded-lg border border-transparent text-xs font-semibold transition-all touch-target',
                 isActive
                   ? 'bg-surface border-border text-text shadow-sm'
                   : 'text-muted hover:text-text hover:bg-surface/50'
@@ -285,8 +292,9 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
             <NavLink
               key={tab.name}
               to={tab.path}
+              onClick={() => setIsMobileMenuOpen(false)}
               className={({ isActive }) => cn(
-                'flex items-center gap-3 px-3 py-2 rounded-lg border border-transparent text-xs font-semibold transition-all',
+                'flex items-center gap-3 px-3 py-3 min-h-[44px] rounded-lg border border-transparent text-xs font-semibold transition-all touch-target',
                 isActive
                   ? 'bg-surface border-border text-text shadow-sm'
                   : 'text-muted hover:text-text hover:bg-surface/50'
@@ -317,6 +325,7 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
   return (
     <div className="min-h-screen flex flex-col">
       <Header currency={currency} setCurrency={setCurrency} rate={rates[currency]} />
+      {!isEmbed && <OfflineBanner />}
       {!isEmbed && <BetaBanner />}
       {!isEmbed && <PriceTicker rates={rates} />}
       <main
@@ -327,6 +336,7 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
         )}
       >
         <Suspense fallback={<PageLoader />}>
+          <RouteErrorBoundary label="This page">
           <Routes>
             {/* Public */}
             <Route path="/"            element={<BuyAds currency={currency} rate={rates[currency]} symbol={CURRENCY_SYMBOLS[currency]} />} />
@@ -344,6 +354,10 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
             <Route path="/integrations"  element={<Integrations />} />
             <Route path="/enterprise"    element={<Enterprise />} />
             <Route path="/beta"          element={<Beta />} />
+            <Route path="/health"        element={<Health />} />
+            <Route path="/changelog"     element={<Changelog />} />
+            <Route path="/compare"       element={<Compare />} />
+            <Route path="/case-studies"  element={<CaseStudies />} />
             <Route path="/start"         element={<Navigate to="/" replace />} />
             <Route path="/buy"           element={<Navigate to="/" replace />} />
             <Route path="/geo"         element={<GeoTargeting />} />
@@ -366,6 +380,7 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </RouteErrorBoundary>
         </Suspense>
       </main>
       {!isEmbed && <Footer />}
@@ -416,6 +431,7 @@ export default function App() {
           <ToastProvider>
             <Suspense fallback={null}>
               <CommandMenu />
+              <KeyboardShortcutsHelp />
               <LiveActivityWidget />
             </Suspense>
             <MainContent currency={currency} setCurrency={setCurrency} rates={rates} />
