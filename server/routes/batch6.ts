@@ -5,7 +5,7 @@ export function registerBatch6Routes(app: Express) {
   app.get('/api/agent/manifest', (_req, res) => {
     res.json({
       project: 'tadbuy',
-      version: 'v4.4.0-ELITE',
+      version: 'v5.0.0-PLATINUM',
       phase: 'BETA',
       docs: {
         ai_context: 'docs/.ai_docs/context_map.md',

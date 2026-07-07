@@ -19,6 +19,7 @@ import { ThemeProvider } from './components/ThemeProvider';
 import { ThemeToggle } from './components/ThemeToggle';
 import { BtcPriceChart } from './components/widgets/BtcPriceChart';
 import { BetaBanner } from './components/BetaBanner';
+import { OnlineIndicator } from './components/OnlineIndicator';
 import { Spinner } from './components/ui/Spinner';
 
 // ── Eagerly loaded: above-the-fold critical path ──────────────────────────────
@@ -201,6 +202,8 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
         <div className="hidden lg:block w-24">
           <BtcPriceChart />
         </div>
+
+        <OnlineIndicator className="hidden lg:flex" />
 
         <ThemeToggle className="hidden md:flex" />
 

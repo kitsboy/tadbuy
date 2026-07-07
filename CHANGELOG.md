@@ -2,6 +2,30 @@
 
 All notable changes to Tadbuy are documented here.
 
+## [5.0.0-PLATINUM] — 2026-07-06
+
+### Added — 200 enhancements (batches 7–14)
+- **Batch 7:** Premium UI primitives — Badge, Skeleton, Tabs, Progress, Alert, Chip, Switch, Spinner, EmptyState, StatCard, Divider
+- **Batch 8:** React hooks — useDebounce, useMediaQuery, useIntersectionObserver, useKeyboardShortcut, usePrefersReducedMotion, useOnlineStatus, useCopyToClipboard, useDocumentTitle
+- **Batch 9:** Analytics widgets — ConversionFunnel, RetentionChart, GeoHeatmap, PlatformBreakdown, RevenueForecast
+- **Batch 10:** Campaign wizard polish — Chips, Progress bars, AI badges, StatCard summary, celebration SuccessScreen
+- **Batch 11:** Publisher & Marketplace — Tabs, Chip filters, Skeleton loading, GeoTargeting badges
+- **Batch 12:** Wallet & Payments — Tabs, Alert status, Fedimint/Lightning Progress, settlement badges
+- **Batch 13:** API & Agent tools — ApiReference Tabs, method badges, expanded CommandMenu, agent manifest v2
+- **Batch 14:** Docs sync, v5 release APIs, favicon.svg restored, version bump across codebase
+
+### Changed
+- Button variants: ghost, outline, danger, icon size
+- Modal: escape key, backdrop blur, focus trap, size variants
+- HeroBanner uses StatCard and Badge components
+- Metrics and Intelligence pages use tabbed widget layouts
+- Version: v4.4.0-ELITE → **v5.0.0-PLATINUM** (350 total enhancements)
+
+### Fixed
+- Restored `public/favicon.svg` (was deleted)
+- React 19 typing for UI primitives
+- Server batch route registration (8–14)
+
 ## [4.1.0] — 2026-07-03
 
 ### Added

@@ -3,7 +3,7 @@
  * Updated by sync-docs.ts on every build from live metrics when available.
  */
 export const PROJECT_STATE = {
-  version: 'v4.4.0-ELITE',
+  version: 'v5.0.0-PLATINUM',
   phase: 'BETA' as const,
   lastSynced: new Date().toISOString().split('T')[0],
   liveUrl: 'https://tadbuy.giveabit.io',
@@ -95,6 +95,10 @@ export const PROJECT_STATE = {
     batch8: { completed: 25, total: 25, label: 'Hooks, A11y & Performance' },
     batch9: { completed: 25, total: 25, label: 'Analytics & Intelligence Widgets' },
     batch10: { completed: 25, total: 25, label: 'Campaign Flow Excellence' },
+    batch11: { completed: 25, total: 25, label: 'Publisher & Marketplace' },
+    batch12: { completed: 25, total: 25, label: 'Wallet & Payments' },
+    batch13: { completed: 25, total: 25, label: 'API & Agent Tools' },
+    batch14: { completed: 25, total: 25, label: 'Docs & Platinum Polish' },
   },
 } as const;
 

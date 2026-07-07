@@ -1,3 +1,26 @@
+## Handoff to Kimi — 2026-07-06 (v5.0.0-PLATINUM — 200 enhancements)
+
+**Machine:** M3 (Grok)
+**Project:** tadbuy
+
+### Done
+- [x] 200 enhancements shipped in batches 7–14 (25 per batch, 8 commits)
+- [x] Version bump: v4.4.0-ELITE → **v5.0.0-PLATINUM** (350 total)
+- [x] UI primitive library, 8 hooks, 5 analytics widgets, campaign/wallet/marketplace polish
+- [x] Docs: CHANGELOG, SOURCE-OF-TRUTH, ENHANCEMENTS-V5.md, auto-sync on build
+- [x] Lint + build pass clean; pushed to origin/main (CF Pages auto-deploy)
+
+### Git State
+- Branch: main
+- Version: v5.0.0-PLATINUM
+
+### What's Next
+- Fedi rollout across all Give A Bit apps (blocked on Andrea `t_8ee7c976`)
+- E2E test suite
+- Real Lightning when Umbrel syncs (Rosa `t_46208fbe`)
+
+---
+
 ## Latest Session Summary (from 2026-07-03 goodbye)
 
 **Chat topic:** Phase 1 complete; Supabase swap; Fedi guidance; blockers parked.

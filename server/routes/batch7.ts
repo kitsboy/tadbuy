@@ -8,6 +8,7 @@ export function registerBatch7Routes(app: Express) {
       radius: 16,
       fonts: { sans: 'Inter', mono: 'JetBrains Mono' },
       version: 'v5.0.0-PLATINUM',
+      batch: 7,
     });
   });
 

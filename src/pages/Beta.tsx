@@ -3,6 +3,8 @@ import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { FlaskConical, Server, Smartphone, Bitcoin, Shield, ExternalLink } from 'lucide-react';
 import { Card, CardTitle, Button } from '@/components/ui';
+import { Badge } from '@/components/ui/Badge';
+import { Progress } from '@/components/ui/Progress';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { ConsumerWorkflow } from '@/components/ConsumerWorkflow';
 import { EcosystemLinks } from '@/components/EcosystemLinks';
@@ -24,15 +26,21 @@ export default function Beta() {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 max-w-4xl mx-auto pb-16">
       <div>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-bold uppercase tracking-widest mb-4">
+        <Badge variant="accent" className="mb-4 text-xs px-3 py-1">
           <FlaskConical className="w-3.5 h-3.5" />
           BETA · {PROJECT_STATE.version}
-        </div>
+        </Badge>
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">What Works Right Now</h1>
         <p className="text-sm text-muted mt-2 leading-relaxed">
           Tadbuy UI is live on Cloudflare Pages. API proxy is live at <code className="text-accent">api.giveabit.io</code>. Fedimint mint is parked until the Fedi app updates (FM 0.10 → Guardian 0.11). Umbrel LND parked until the node syncs.
         </p>
       </div>
+
+      <Card>
+        <CardTitle>v5 Enhancement Progress</CardTitle>
+        <Progress value={350} max={350} showLabel variant="accent" />
+        <p className="text-xs text-muted mt-2">14 batches × 25 enhancements = 350 total shipped</p>
+      </Card>
 
       {apiHealth && (
         <Card className={apiHealth.ok ? 'border-green/30' : 'border-accent/30'}>

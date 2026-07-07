@@ -1,6 +1,6 @@
 # Tadbuy — Financial Overview
 
-**Auto-generated:** 2026-07-03 · **FY:** 2026
+**Auto-generated:** 2026-07-07 · **FY:** 2026
 
 ## Revenue Model
 15% platform fee on ad spend + publisher marketplace commission

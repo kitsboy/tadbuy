@@ -1,6 +1,6 @@
 # SOURCE-OF-TRUTH.md — Tadbuy (Give A Bit Project)
 
-**Last Updated**: 2026-07-03
+**Last Updated**: 2026-07-06
 
 ## Project Overview (Marketing Pitch)
 Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Twitter/X, Facebook, Instagram, YouTube, Reddit, LinkedIn, TikTok, and Nostr. Pay in Bitcoin via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps. Features: campaign builder, geospatial targeting, AI creative (Gemini), PPQ.AI, publisher portal, analytics, wallet, settlements, 8 languages, Agent API. Part of Give A Bit (giveabit.io).
@@ -8,7 +8,7 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Tw
 ## GitHub (Code Source of Truth)
 - Repo: https://github.com/kitsboy/tadbuy.git
 - Branch: main (production)
-- Version: **v4.4.0-ELITE** (BETA phase)
+- Version: **v5.0.0-PLATINUM** (BETA phase — 350 enhancements shipped)
 - M3 workspace: `~/projects/tadbuy/`
 
 ## Deployment Details
