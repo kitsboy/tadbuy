@@ -1,11 +1,16 @@
+import { useState } from 'react';
 import type { Dispatch, SetStateAction, ReactNode } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui';
+import { Alert } from '@/components/ui/Alert';
 import { cn } from '@/lib/utils';
 import StepPlatformBudget from './StepPlatformBudget';
 import StepTargeting from './StepTargeting';
 import StepCreative from './StepCreative';
 import StepReviewPay from './StepReviewPay';
+import { CampaignTemplates, type CampaignTemplate } from './CampaignTemplates';
+import { validateWizardStep } from './StepValidation';
+import { useNamedDrafts } from '@/hooks/useNamedDrafts';
 
 const STEPS = ['Budget', 'Targeting', 'Creative', 'Payment'] as const;
 
@@ -58,14 +63,53 @@ interface FullControlWizardProps {
   estimates: Parameters<typeof StepReviewPay>[0]['estimates'];
   projectId: string;
   onLaunch: () => void;
+  onApplyTemplate?: (template: CampaignTemplate) => void;
+  draftSnapshot?: Record<string, unknown>;
+  onLoadDraft?: (data: Record<string, unknown>) => void;
 }
 
 export function FullControlWizard(props: FullControlWizardProps) {
   const { currentStep, setCurrentStep } = props;
   const totalSteps = STEPS.length;
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+  const [draftName, setDraftName] = useState('');
+  const { drafts, saveDraft, loadDraft } = useNamedDrafts();
 
-  const next = () => setCurrentStep(Math.min(currentStep + 1, totalSteps));
-  const prev = () => setCurrentStep(Math.max(currentStep - 1, 1));
+  const next = () => {
+    const result = validateWizardStep(currentStep, {
+      selectedPlatforms: props.selectedPlatforms,
+      btcAmount: props.btcAmount,
+      headline: props.headline,
+    });
+    if (!result.valid) {
+      setValidationErrors(result.errors);
+      return;
+    }
+    setValidationErrors([]);
+    setCurrentStep(Math.min(currentStep + 1, totalSteps));
+  };
+
+  const prev = () => {
+    setValidationErrors([]);
+    setCurrentStep(Math.max(currentStep - 1, 1));
+  };
+
+  const handleApplyTemplate = (template: CampaignTemplate) => {
+    setSelectedTemplateId(template.id);
+    props.onApplyTemplate?.(template);
+  };
+
+  const handleSaveDraft = () => {
+    if (!draftName.trim() || !props.draftSnapshot) return;
+    saveDraft(draftName, props.draftSnapshot);
+    setDraftName('');
+  };
+
+  const handleLoadDraft = (id: string) => {
+    const draft = loadDraft(id);
+    if (draft?.data) props.onLoadDraft?.(draft.data);
+  };
 
   return (
     <div className="space-y-6">
@@ -78,7 +122,7 @@ export function FullControlWizard(props: FullControlWizardProps) {
             <div key={label} className="flex items-center flex-1 min-w-0">
               <button
                 type="button"
-                onClick={() => setCurrentStep(stepNum)}
+                onClick={() => { setValidationErrors([]); setCurrentStep(stepNum); }}
                 className={cn(
                   'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold transition-all w-full',
                   isActive
@@ -104,24 +148,43 @@ export function FullControlWizard(props: FullControlWizardProps) {
         })}
       </div>
 
+      {drafts.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-muted font-bold">Saved drafts:</span>
+          {drafts.slice(0, 5).map(d => (
+            <button
+              key={d.id}
+              type="button"
+              onClick={() => handleLoadDraft(d.id)}
+              className="px-2 py-1 rounded-lg bg-surface border border-border hover:border-accent text-muted hover:text-accent transition-colors"
+            >
+              {d.name}
+            </button>
+          ))}
+        </div>
+      )}
+
       {currentStep === 1 && (
-        <StepPlatformBudget
-          platforms={props.platforms}
-          paymentMethods={props.checkoutPaymentMethods}
-          selectedPlatforms={props.selectedPlatforms}
-          onTogglePlatform={props.onTogglePlatform}
-          btcAmount={props.btcAmount}
-          fiatAmount={props.fiatAmount}
-          currency={props.currency}
-          symbol={props.symbol}
-          rate={props.rate}
-          onBtcChange={props.onBtcChange}
-          onFiatChange={props.onFiatChange}
-          paymentMethod={props.paymentMethod}
-          setPaymentMethod={props.setPaymentMethod}
-          campaignName={props.campaignName}
-          setCampaignName={props.setCampaignName}
-        />
+        <>
+          <CampaignTemplates onApply={handleApplyTemplate} selectedId={selectedTemplateId} />
+          <StepPlatformBudget
+            platforms={props.platforms}
+            paymentMethods={props.checkoutPaymentMethods}
+            selectedPlatforms={props.selectedPlatforms}
+            onTogglePlatform={props.onTogglePlatform}
+            btcAmount={props.btcAmount}
+            fiatAmount={props.fiatAmount}
+            currency={props.currency}
+            symbol={props.symbol}
+            rate={props.rate}
+            onBtcChange={props.onBtcChange}
+            onFiatChange={props.onFiatChange}
+            paymentMethod={props.paymentMethod}
+            setPaymentMethod={props.setPaymentMethod}
+            campaignName={props.campaignName}
+            setCampaignName={props.setCampaignName}
+          />
+        </>
       )}
       {currentStep === 2 && (
         <StepTargeting
@@ -157,6 +220,7 @@ export function FullControlWizard(props: FullControlWizardProps) {
           onGenerateAi={props.onGenerateAi}
           variants={props.variants}
           selectedPlatformsData={props.selectedPlatformsData}
+          campaignName={props.campaignName}
         />
       )}
       {currentStep === 4 && (
@@ -178,10 +242,34 @@ export function FullControlWizard(props: FullControlWizardProps) {
         />
       )}
 
+      {validationErrors.length > 0 && (
+        <Alert variant="error" title="Complete required fields">
+          <ul className="list-disc list-inside text-xs space-y-0.5">
+            {validationErrors.map(e => <li key={e}>{e}</li>)}
+          </ul>
+        </Alert>
+      )}
+
       {currentStep < 4 && (
-        <div className="flex justify-between gap-3">
+        <div className="flex justify-between gap-3 items-center">
           <Button variant="secondary" onClick={prev} disabled={currentStep === 1}>Back</Button>
-          <Button onClick={next}>Continue</Button>
+          <div className="flex items-center gap-2">
+            {props.draftSnapshot && (
+              <>
+                <input
+                  type="text"
+                  value={draftName}
+                  onChange={e => setDraftName(e.target.value)}
+                  placeholder="Draft name"
+                  className="bg-surface border border-border rounded-lg px-2 py-1.5 text-xs w-28"
+                />
+                <Button variant="secondary" size="sm" onClick={handleSaveDraft} disabled={!draftName.trim()}>
+                  Save draft
+                </Button>
+              </>
+            )}
+            <Button onClick={next}>Continue</Button>
+          </div>
         </div>
       )}
       {currentStep > 1 && currentStep < 4 && (

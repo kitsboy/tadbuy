@@ -21,6 +21,15 @@ import { registerBatch11Routes } from "./server/routes/batch11.ts";
 import { registerBatch12Routes } from "./server/routes/batch12.ts";
 import { registerBatch13Routes } from "./server/routes/batch13.ts";
 import { registerBatch14Routes } from "./server/routes/batch14.ts";
+import { registerBatch16Routes } from "./server/routes/batch16.ts";
+import { registerBatch17Routes } from "./server/routes/batch17.ts";
+import { registerBatch18Routes } from "./server/routes/batch18.ts";
+import { registerBatch19Routes } from "./server/routes/batch19.ts";
+import { registerBatch20Routes } from "./server/routes/batch20.ts";
+import { registerBatch21Routes } from "./server/routes/batch21.ts";
+import { registerBatch15Routes } from "./server/routes/batch15.ts";
+import { registerBatch22Routes } from "./server/routes/batch22.ts";
+import { registerBatch23Routes } from "./server/routes/batch23.ts";
 import { getLightningNodeInfo, createLightningInvoice, executeLightningPayment } from "./src/services/lightningService.ts";
 import {
   SupabaseCampaignRepository,
@@ -524,6 +533,15 @@ app.get("/api/campaigns", async (req, res) => {
   registerBatch12Routes(app);
   registerBatch13Routes(app);
   registerBatch14Routes(app);
+  registerBatch16Routes(app);
+  registerBatch17Routes(app);
+  registerBatch18Routes(app);
+  registerBatch15Routes(app);
+  registerBatch19Routes(app);
+  registerBatch20Routes(app);
+  registerBatch21Routes(app);
+  registerBatch22Routes(app);
+  registerBatch23Routes(app);
 
   // NIP-98 protected agent endpoint example
   app.get('/api/nostr/nip98/protected', nip98AuthMiddleware, (req, res) => {

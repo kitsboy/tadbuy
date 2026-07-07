@@ -1,10 +1,14 @@
-import type { ReactNode } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
 import { CheckCircle2, Layers, Zap, ShieldAlert } from "lucide-react";
 import { Modal, Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { BITCOIN_ADDRESS, BITCOIN_URI } from "@/constants";
+import { FeeBreakdown } from "@/components/payments/FeeBreakdown";
+import { DemoModeBadge } from "@/components/payments/DemoModeBadge";
+import { InvoiceRegenerate } from "@/components/payments/InvoiceRegenerate";
+import { TermsAcceptance } from "@/components/TermsAcceptance";
 
 interface MempoolFees {
   fastestFee: number;
@@ -55,6 +59,9 @@ export default function PaymentModal({
   onDeploy,
   onCancelPayment,
 }: PaymentModalProps) {
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const amountSats = Math.round(btcAmount * 100_000_000);
+
   const modalTitle = paymentStatus === 'waiting'
     ? 'Scan to pay'
     : paymentStatus === 'processing'
@@ -76,6 +83,9 @@ export default function PaymentModal({
       showClose={paymentStatus !== 'processing'}
     >
       <div className="p-6 md:p-8 text-center relative overflow-hidden">
+        <div className="flex justify-center mb-4">
+          <DemoModeBadge />
+        </div>
         <AnimatePresence mode="wait">
           {paymentStatus === 'waiting' ? (
             /* ── WAITING: scan QR, countdown, pulse ── */
@@ -148,6 +158,17 @@ export default function PaymentModal({
                 </div>
               </div>
 
+              <div className="w-full mb-3 p-3 bg-surface border border-border rounded-xl text-left">
+                <FeeBreakdown amountSats={amountSats} />
+              </div>
+
+              <div className="w-full mb-2 flex justify-center">
+                <InvoiceRegenerate
+                  amountSats={amountSats}
+                  description={`Tadbuy: ${projectId}`}
+                />
+              </div>
+
               <Button
                 variant="secondary"
                 className="w-full mt-2"
@@ -217,7 +238,7 @@ export default function PaymentModal({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="bg-surface border border-border rounded-xl p-3 text-left">
                   <div className="text-[10px] text-muted uppercase font-bold mb-1">Amount to send</div>
                   <div className="text-lg font-extrabold text-accent">{btcAmount.toFixed(8)} ₿</div>
@@ -232,6 +253,10 @@ export default function PaymentModal({
                 </div>
               </div>
 
+              <div className="w-full mb-4 p-3 bg-surface border border-border rounded-xl text-left">
+                <FeeBreakdown amountSats={amountSats} />
+              </div>
+
               <div className="relative mb-6">
                 <div className="bg-bg p-4 rounded-xl font-mono text-[10px] text-muted break-all border border-border text-left pr-12">
                   {paymentMethod === 'bolt12' ? bolt12Offer : (paymentMethod === 'lightning' ? bolt11Invoice : BITCOIN_ADDRESS)}
@@ -244,11 +269,21 @@ export default function PaymentModal({
                 </button>
               </div>
 
+              <TermsAcceptance
+                accepted={termsAccepted}
+                onChange={setTermsAccepted}
+                className="mb-4 text-left"
+              />
+
               <div className="flex gap-3">
                 <Button variant="secondary" className="flex-1" onClick={onClose}>
                   Cancel
                 </Button>
-                <Button className="flex-[2] bg-accent text-black hover:opacity-90" onClick={onDeploy}>
+                <Button
+                  className="flex-[2] bg-accent text-black hover:opacity-90"
+                  onClick={onDeploy}
+                  disabled={!termsAccepted}
+                >
                   {paymentMethod === 'btc' ? 'I have sent the payment' : 'Confirm Payment'}
                 </Button>
               </div>

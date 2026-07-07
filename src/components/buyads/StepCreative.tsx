@@ -1,8 +1,10 @@
-import { type ChangeEvent, type Dispatch, type SetStateAction, type ReactNode } from "react";
+import { useState, type ChangeEvent, type Dispatch, type SetStateAction, type ReactNode } from "react";
 import { Card, CardTitle, Button, Input, Textarea, FormGroup, Label, FileInput, InfoTooltip } from "@/components/ui";
 import { Badge } from "@/components/ui/Badge";
 import { Bot, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { UtmBuilder, type UtmParams } from "./UtmBuilder";
+import { PlatformPreviewTabs } from "./PlatformPreviewTabs";
 
 interface AdVariant {
   id: string;
@@ -38,6 +40,7 @@ interface StepCreativeProps {
   onGenerateAi: () => void;
   variants: AdVariant[];
   selectedPlatformsData: Array<{ id: string; name: string; icon: ReactNode; cpm: number }>;
+  campaignName?: string;
 }
 
 const trendingTags = ['#bitcoin', '#nostr', '#lightning', '#plebs', '#zap', '@jack', '@elonmusk', '#crypto', '#localmusic', '#livemusic', '#atx', '#sats'];
@@ -65,7 +68,15 @@ export default function StepCreative({
   onGenerateAi,
   variants,
   selectedPlatformsData,
+  campaignName = '',
 }: StepCreativeProps) {
+  const [utmParams, setUtmParams] = useState<UtmParams>({
+    source: 'tadbuy',
+    medium: 'cpc',
+    campaign: campaignName.replace(/\s+/g, '_').toLowerCase() || 'campaign',
+    term: '',
+    content: '',
+  });
   const filteredTags = trendingTags.filter(t => t.toLowerCase().includes(hashtagInput.toLowerCase()) && !hashtags.includes(t));
 
   const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -126,6 +137,12 @@ export default function StepCreative({
           <Label>Destination URL</Label>
           <Input type="url" value={url} onChange={e => setUrl(e.target.value)} />
         </FormGroup>
+        <UtmBuilder
+          baseUrl={url}
+          params={utmParams}
+          onChange={setUtmParams}
+          onUrlChange={setUrl}
+        />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <FormGroup className="mb-0">
             <div className="flex justify-between items-center mb-1">
@@ -260,42 +277,11 @@ export default function StepCreative({
         </FormGroup>
       </Card>
 
-      {/* Ad preview card */}
-      <Card className="glass-panel">
-        <CardTitle>Ad preview — {selectedPlatformsData[0]?.name} {selectedPlatformsData.length > 1 ? `(+${selectedPlatformsData.length - 1} more)` : ''}</CardTitle>
-        <div className="space-y-4">
-          {variants.map((v) => (
-            <div key={v.id} className="space-y-2">
-              {variants.length > 1 && <div className="text-[10px] font-bold text-accent uppercase tracking-widest">Variant {v.id}</div>}
-              <div
-                className="rounded-xl p-4 min-h-[120px] relative overflow-hidden shadow-inner border border-border transition-colors duration-200"
-                style={{ backgroundColor: `hsl(${v.bgHue}, 40%, ${v.bgLightness}%)`, color: v.textColor }}
-              >
-                <div className="absolute top-2 right-2 bg-black/10 rounded text-[9px] px-1.5 py-0.5 font-bold tracking-wider uppercase opacity-70">Sponsored</div>
-                <div className="text-[10px] mb-2 flex items-center gap-1.5 opacity-80">
-                  <span className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4">{selectedPlatformsData[0]?.icon}</span> <strong>giveabit.io</strong> <span className="opacity-70">@giveabit · Promoted</span>
-                </div>
-                <div className="text-[15px] font-bold mb-1 leading-tight">{v.headline || "Your Headline Here"}</div>
-                <div className="text-[13px] leading-relaxed opacity-90">{v.description || "Your description will appear here."}</div>
-
-                {adImage && (
-                  <div className="mt-3 rounded-lg overflow-hidden border border-black/10">
-                    <img src={adImage} alt="Ad Media" className="w-full h-auto object-cover max-h-[200px]" />
-                  </div>
-                )}
-
-                {v.hashtags.length > 0 && (
-                  <div className="text-[12px] mt-2 font-medium opacity-80" style={{ color: v.textColor }}>
-                    {v.hashtags.join(' ')}
-                  </div>
-                )}
-
-                <div className="text-[11px] mt-3 font-medium opacity-80" style={{ color: v.textColor }}>🔗 {v.url.replace(/^https?:\/\//, '') || "example.com"}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
+      <PlatformPreviewTabs
+        platforms={selectedPlatformsData}
+        variants={variants}
+        adImage={adImage}
+      />
     </>
   );
 }

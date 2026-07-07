@@ -23,12 +23,17 @@ import { AuthGateModal } from "@/components/AuthGateModal";
 import { PersonaOnboarding } from "@/components/PersonaOnboarding";
 import { FirstVisitChecklist } from "@/components/FirstVisitChecklist";
 import { FullControlWizard } from "@/components/buyads/FullControlWizard";
+import type { CampaignTemplate } from "@/components/buyads/CampaignTemplates";
 import { ComingSoonPayments } from "@/components/buyads/ComingSoonPayments";
 import { useCampaignDraft, useAutoSaveDraft } from "@/hooks/useCampaignDraft";
 import { Alert } from "@/components/ui/Alert";
+import { SpendLimitBanner } from "@/components/SpendLimitBanner";
+import { AdPolicyNotice } from "@/components/AdPolicyNotice";
+import { TermsAcceptance } from "@/components/TermsAcceptance";
 
 import { FedimintPanel } from "@/components/payments/FedimintPanel";
 import { FeeEstimator } from "@/components/widgets/FeeEstimator";
+import { MempoolFeeTip } from "@/components/MempoolFeeTip";
 import { CurrencyDisplay } from "@/components/widgets/CurrencyDisplay";
 import { HalvingCountdown } from "@/components/widgets/HalvingCountdown";
 
@@ -129,6 +134,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   const [showComingSoonPayments, setShowComingSoonPayments] = useState(false);
   const [paymentOutcome, setPaymentOutcome] = useState<PaymentOutcome>('demo');
   const [marketplaceSlot, setMarketplaceSlot] = useState<MarketplaceSlot | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['twitter']);
   const [btcAmount, setBtcAmount] = useState(0.0005);
@@ -468,6 +474,9 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
       setShowAuthGate(true);
       return;
     }
+    if (!termsAccepted) {
+      return;
+    }
     setShowInvoice(true);
   };
 
@@ -676,6 +685,42 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
     }
   };
 
+  const applyCampaignTemplate = (template: CampaignTemplate) => {
+    setHeadline(template.headline);
+    setDescription(template.copy);
+    setSelectedPlatforms(template.platforms);
+    setBtcAmount(template.budgetSats / 100_000_000);
+    setFiatAmount((template.budgetSats / 100_000_000) * rate);
+    if (template.hashtags?.length) setHashtags(template.hashtags);
+  };
+
+  const wizardDraftSnapshot = useMemo(() => ({
+    campaignName,
+    headline,
+    description,
+    url,
+    selectedPlatforms,
+    btcAmount,
+    paymentMethod,
+    hashtags,
+    currentStep,
+  }), [campaignName, headline, description, url, selectedPlatforms, btcAmount, paymentMethod, hashtags, currentStep]);
+
+  const loadWizardDraft = (data: Record<string, unknown>) => {
+    if (typeof data.campaignName === 'string') setCampaignName(data.campaignName);
+    if (typeof data.headline === 'string') setHeadline(data.headline);
+    if (typeof data.description === 'string') setDescription(data.description);
+    if (typeof data.url === 'string') setUrl(data.url);
+    if (Array.isArray(data.selectedPlatforms)) setSelectedPlatforms(data.selectedPlatforms as string[]);
+    if (typeof data.btcAmount === 'number') {
+      setBtcAmount(data.btcAmount);
+      setFiatAmount(data.btcAmount * rate);
+    }
+    if (typeof data.paymentMethod === 'string') setPaymentMethod(data.paymentMethod);
+    if (Array.isArray(data.hashtags)) setHashtags(data.hashtags as string[]);
+    if (typeof data.currentStep === 'number') setCurrentStep(data.currentStep);
+  };
+
   const resetForm = () => {
     setPaymentStatus('idle');
     setPaymentOutcome('demo');
@@ -717,6 +762,8 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                 Min bid {marketplaceSlot.minBidSats.toLocaleString()} sats.
               </Alert>
             )}
+            <SpendLimitBanner />
+            <AdPolicyNotice />
           </div>
           <FirstVisitChecklist />
         </div>
@@ -826,6 +873,9 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
               estimates={estimates}
               projectId={projectId}
               onLaunch={handleLaunchClick}
+              onApplyTemplate={applyCampaignTemplate}
+              draftSnapshot={wizardDraftSnapshot}
+              onLoadDraft={loadWizardDraft}
             />
           </motion.div>
         ) : (
@@ -916,22 +966,11 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                   <span className="bg-green/10 text-green px-2 py-0.5 rounded-full border border-green/20">Est. ROAS: {expectedRoas}x</span>
                 </div>
 
-                {mode === 'complex' && (
-                  <div className="grid grid-cols-2 gap-4 mt-4 border-t border-border pt-4">
-                    <FormGroup className="mb-0">
-                      <Label>Bidding Strategy</Label>
-                      <Select value={targeting.biddingStrategy} onChange={e => setTargeting({ ...targeting, biddingStrategy: e.target.value as any })}>
-                        <option value="manual">Manual Bidding</option>
-                        <option value="maximize_clicks">PPQ.AI Maximize Clicks</option>
-                        <option value="target_cpa">Target CPA</option>
-                      </Select>
-                    </FormGroup>
-                    <FormGroup className="mb-0">
-                      <Label>Freq Cap (24h)</Label>
-                      <Input type="number" min="1" max="20" value={targeting.frequencyCap} onChange={e => setTargeting({ ...targeting, frequencyCap: parseInt(e.target.value) || 3 })} />
-                    </FormGroup>
-                  </div>
-                )}
+                <MempoolFeeTip
+                  className="mt-3"
+                  budgetBtc={btcAmount}
+                  paymentMethod={paymentMethod}
+                />
 
                 <div className="mt-4">
                   <div className="flex items-center gap-2 mb-3">
@@ -1377,28 +1416,6 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                     </div>
                   </div>
 
-                  {mode === 'complex' && (
-                    <div className="mt-2 pt-2 border-t border-green/10 space-y-1">
-                      <div className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1">Platform Split</div>
-                      {estimates.platformBreakdown.map(p => (
-                        <div key={p.id} className="flex justify-between text-[11px]">
-                          <span className="flex items-center gap-1">{p.icon} {p.name} ({p.weight}%)</span>
-                          <span>~{p.impressions.toLocaleString()} imp</span>
-                        </div>
-                      ))}
-                      {variants.length > 1 && (
-                        <div className="flex justify-between text-[11px] text-accent mt-1">
-                          <span>A/B Testing Enabled</span>
-                          <span>50/50 Split</span>
-                        </div>
-                      )}
-                      {ppq.autoRebalance && (
-                        <div className="text-[10px] text-blue italic mt-1">
-                          PPQ.AI Auto-Rebalance active
-                        </div>
-                      )}
-                    </div>
-                  )}
                   <div className="flex justify-between py-1 text-[13px]">
                     <span className="text-muted">Est. duration</span>
                     <span>3–5 days</span>
@@ -1446,11 +1463,24 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                 </div>
               </Card>
 
-              <Button className="w-full bg-gradient-to-r from-accent to-accent2 text-black border-0 hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(247,147,26,0.3)]" size="lg" onClick={handleLaunchClick}>
+              <TermsAcceptance
+                accepted={termsAccepted}
+                onChange={setTermsAccepted}
+                className="mb-3"
+              />
+              <Button
+                className="w-full bg-gradient-to-r from-accent to-accent2 text-black border-0 hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(247,147,26,0.3)]"
+                size="lg"
+                onClick={handleLaunchClick}
+                disabled={!termsAccepted}
+              >
                 ⚡ Deploy via PPQ.AI — Pay with Bitcoin
               </Button>
               {!user && (
                 <p className="text-[10px] text-muted text-center mt-2">Sign in required before checkout</p>
+              )}
+              {user && !termsAccepted && (
+                <p className="text-[10px] text-muted text-center mt-2">Accept terms to continue to payment</p>
               )}
             </div>
           </motion.div>
