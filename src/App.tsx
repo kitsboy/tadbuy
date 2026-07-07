@@ -19,6 +19,7 @@ import { ThemeProvider } from './components/ThemeProvider';
 import { ThemeToggle } from './components/ThemeToggle';
 import { BtcPriceChart } from './components/widgets/BtcPriceChart';
 import { BetaBanner } from './components/BetaBanner';
+import { Spinner } from './components/ui/Spinner';
 
 // ── Eagerly loaded: above-the-fold critical path ──────────────────────────────
 import BuyAds from './pages/BuyAds';
@@ -58,8 +59,9 @@ const Cookies          = lazy(() => import('./pages/legal/Cookies'));
 // ── Page loader spinner ───────────────────────────────────────────────────────
 function PageLoader() {
   return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3" role="status" aria-live="polite">
+      <Spinner size="md" />
+      <p className="text-xs text-muted font-semibold">Loading page…</p>
     </div>
   );
 }
@@ -73,8 +75,8 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-4 text-muted">
-          <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+        <div className="flex flex-col items-center gap-4 text-muted" role="status" aria-live="polite">
+          <Spinner size="md" />
           <p className="text-sm">Loading…</p>
         </div>
       </div>

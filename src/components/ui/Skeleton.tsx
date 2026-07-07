@@ -1,10 +1,12 @@
+import type { HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 
-export function Skeleton({ className }: { className?: string }) {
+export function Skeleton({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn('rounded-lg bg-surface animate-shimmer', className)}
       aria-hidden="true"
+      {...props}
     />
   );
 }
@@ -21,9 +23,9 @@ export function SkeletonText({ lines = 3, className }: { lines?: number; classNa
   );
 }
 
-export function SkeletonCard({ className }: { className?: string }) {
+export function SkeletonCard({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('rounded-xl border border-border p-5 space-y-4', className)}>
+    <div className={cn('rounded-xl border border-border p-5 space-y-4', className)} {...props}>
       <div className="flex items-center gap-3">
         <Skeleton className="w-10 h-10 rounded-full" />
         <div className="flex-1 space-y-2">

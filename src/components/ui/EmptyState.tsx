@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui';
 
@@ -8,6 +9,7 @@ export function EmptyState({
   description,
   action,
   actionLabel,
+  children,
   className,
 }: {
   icon: LucideIcon;
@@ -15,6 +17,7 @@ export function EmptyState({
   description: string;
   action?: () => void;
   actionLabel?: string;
+  children?: ReactNode;
   className?: string;
 }) {
   return (
@@ -24,6 +27,7 @@ export function EmptyState({
       </div>
       <h3 className="text-lg font-extrabold mb-2">{title}</h3>
       <p className="text-sm text-muted max-w-sm leading-relaxed mb-6">{description}</p>
+      {children}
       {action && actionLabel && (
         <Button onClick={action}>{actionLabel}</Button>
       )}
