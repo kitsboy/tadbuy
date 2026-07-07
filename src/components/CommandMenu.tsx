@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { COMMAND_MENU_OPEN_EVENT } from '@/lib/commandMenu';
 
 const RECENT_KEY = 'tadbuy_recent_pages';
 const MAX_RECENT = 5;
@@ -51,8 +52,13 @@ export default function CommandMenu() {
       }
       if (e.key === 'Escape') setIsOpen(false);
     };
+    const openFromUi = () => setIsOpen(true);
     document.addEventListener('keydown', down);
-    return () => document.removeEventListener('keydown', down);
+    document.addEventListener(COMMAND_MENU_OPEN_EVENT, openFromUi);
+    return () => {
+      document.removeEventListener('keydown', down);
+      document.removeEventListener(COMMAND_MENU_OPEN_EVENT, openFromUi);
+    };
   }, []);
 
   useEffect(() => {

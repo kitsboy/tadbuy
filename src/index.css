@@ -100,11 +100,12 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    overflow-x: hidden;
   }
 
-  body {
-    overflow-x: hidden;
+  /* Clip horizontal overflow without breaking sticky header clicks (Safari). */
+  #root {
+    overflow-x: clip;
+    max-width: 100%;
   }
 
   /* Mobile touch — larger tap targets, no tap flash */
