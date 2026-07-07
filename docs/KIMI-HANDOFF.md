@@ -6,7 +6,7 @@
 ### Done
 - [x] 85 enhancements shipped in batches 15–23 (foundation, campaign builder, payments, analytics, marketplace, SEO, trust, performance, mobile)
 - [x] 13 workflow fixes from audit (Quick Launch, Full Control wizard, auth gate, honest success states, etc.)
-- [x] Auto version bump on push (pre-push hook → v5.0.3)
+- [x] Auto version bump on push (pre-push hook → v5.0.4)
 - [x] Mobile polish: safe-area, 44px touch targets, toast/CTA stacking above live bar, overflow-x fix
 - [x] Lint + build pass clean
 
@@ -23,7 +23,8 @@
 ### Git State
 - Last commit SHA: run `git log -1 --format=%H` after push
 - Branch: main
-- Version: v5.0.3
+- Last commit SHA: df5b1e6
+- Version: v5.0.4
 
 ---
 
