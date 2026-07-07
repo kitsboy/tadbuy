@@ -1,3 +1,32 @@
+## Handoff to Kimi — 2026-07-06 (v5.0.3 — 85 enhancements + mobile polish)
+
+**Machine:** M3 (Grok)
+**Project:** tadbuy
+
+### Done
+- [x] 85 enhancements shipped in batches 15–23 (foundation, campaign builder, payments, analytics, marketplace, SEO, trust, performance, mobile)
+- [x] 13 workflow fixes from audit (Quick Launch, Full Control wizard, auth gate, honest success states, etc.)
+- [x] Auto version bump on push (pre-push hook → v5.0.3)
+- [x] Mobile polish: safe-area, 44px touch targets, toast/CTA stacking above live bar, overflow-x fix
+- [x] Lint + build pass clean
+
+### Decisions
+- BuyAds lazy-loaded (~109KB chunk) to shrink main bundle
+- Checkout limited to Lightning/BTC/Fedimint; other rails in ComingSoonPayments
+- Pre-push hook exits 1 after inner push succeeds (remote updated; outer push aborts by design)
+
+### What's Next
+- Fedi rollout across all 5 Give A Bit apps when Andrea blocker clears (`t_8ee7c976`)
+- Playwright E2E: `npm i -D @playwright/test && npx playwright install`
+- Real Lightning when Umbrel syncs (Rosa `t_46208fbe`)
+
+### Git State
+- Last commit SHA: run `git log -1 --format=%H` after push
+- Branch: main
+- Version: v5.0.3
+
+---
+
 ## Handoff to Kimi — 2026-07-06 (v5.0.0-PLATINUM — 200 enhancements)
 
 **Machine:** M3 (Grok)

@@ -147,9 +147,9 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
     <header className="sticky top-0 z-50 glass-header px-3 md:px-6 h-12 md:h-14 flex items-center justify-between gap-3 md:gap-4 pt-safe px-safe touch-manipulation">
       <div className="flex items-center gap-2 text-[18px] font-extrabold tracking-tight">
         <button
-          className="md:hidden p-1.5 text-muted hover:text-text rounded-lg hover:bg-surface transition-colors"
-              onClick={() => setIsMobileMenuOpen((v) => !v)}
-              aria-expanded={isMobileMenuOpen}
+          className="md:hidden p-2 text-muted hover:text-text rounded-lg hover:bg-surface transition-colors touch-target touch-manipulation"
+          onClick={() => setIsMobileMenuOpen((v) => !v)}
+          aria-expanded={isMobileMenuOpen}
           aria-label="Toggle menu"
         >
           {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}

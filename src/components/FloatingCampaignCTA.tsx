@@ -15,7 +15,7 @@ export function FloatingCampaignCTA() {
     <a
       href="#campaign-builder"
       className={cn(
-        'fixed bottom-16 left-1/2 -translate-x-1/2 z-40 md:hidden',
+        'fixed bottom-[4.5rem] left-1/2 -translate-x-1/2 z-40 md:hidden pb-safe touch-manipulation',
         'flex items-center gap-2 px-5 py-3 rounded-full',
         'bg-accent text-black font-bold text-sm shadow-[0_8px_32px_rgba(255,159,28,0.4)]',
         'hover:scale-105 active:scale-95 transition-all duration-300',
