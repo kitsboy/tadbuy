@@ -1,3 +1,46 @@
+## Handoff to Kimi — 2026-07-07 (Goodbye — session complete)
+
+**Machine:** M3 (Grok)
+**Project:** tadbuy
+
+### Done
+- [x] Batches 15–24 shipped (85 + 100 geo enhancements = 535+ total)
+- [x] SPA routing + desktop nav fixes
+- [x] Full documentation sync (all docs, locale SEO, context maps, sitemap)
+- [x] Pushed to origin/main — live **v5.0.7** after CF deploy
+
+### Git State
+- Last commit SHA: 73b548a
+- Branch: main
+- Unpushed: none
+- Version: v5.0.7
+
+### What's Next
+- Fedi rollout when Andrea blocker clears (`t_8ee7c976`)
+- Playwright E2E
+- Real Lightning when Umbrel syncs (Rosa `t_46208fbe`)
+
+---
+
+## Latest Session Summary (from 2026-07-07 goodbye)
+
+**Chat topic:** Ship v5 enhancements, fix nav/routing, sync all docs.
+
+**Finished in this session:**
+- 85 enhancements (batches 15–23) + 100 `/geo` enhancements (batch 24)
+- Router fix (`unstable_useTransitions={false}`), header click fixes
+- Full docs sync — see `docs/SESSION-SUMMARY-2026-07-07.md`
+
+**Still to do:**
+- Fedimint mint (Andrea `t_8ee7c976`), Umbrel LND (Rosa `t_46208fbe`)
+- Multi-app env propagation (Andrea `t_ec77b1e5`), Playwright E2E
+
+**Next for Kimi:** Integrate summary into Obsidian vault / Kanban. No raw chat logs needed — read `SESSION-SUMMARY-2026-07-07.md`. Do not sync M4 until Cam or Kimi says so.
+
+**Recovery:** `/whatsup` in next Grok session.
+
+---
+
 ## Handoff to Kimi — 2026-07-07 (v5.0.4 — full docs sync)
 
 **Machine:** M3 (Grok)

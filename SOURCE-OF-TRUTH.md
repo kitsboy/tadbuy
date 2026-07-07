@@ -8,9 +8,9 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Tw
 ## GitHub (Code Source of Truth)
 - Repo: https://github.com/kitsboy/tadbuy.git
 - Branch: main (production)
-- Version: **v5.0.6** (BETA phase — 535+ enhancements shipped)
+- Version: **v5.0.7** (BETA phase — 535+ enhancements shipped)
 - M3 workspace: `~/projects/tadbuy/`
-- Last commit: `bb242b1` (docs sync + version alignment)
+- Last commit: `73b548a` (docs sync + goodbye handoff)
 
 ## Deployment Details
 - **Live URL**: https://tadbuy.giveabit.io/

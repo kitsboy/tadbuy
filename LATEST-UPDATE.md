@@ -1,5 +1,4 @@
 # tadbuy — Last Updated 2026-07-07 by Grok
 
-Brief: v5.0.6 — /geo 100 enhancements + docs sync
-Commit: bb242b1
-Docs synced: 2026-07-07
+Brief: v5.0.7 — geo page + full docs sync + nav fixes
+Commit: 73b548a
