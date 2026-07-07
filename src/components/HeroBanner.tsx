@@ -2,6 +2,8 @@ import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { Zap, Globe, Shield, Sparkles } from 'lucide-react';
 import { Button } from './ui';
+import { StatCard } from './ui/StatCard';
+import { Badge } from './ui/Badge';
 
 export function HeroBanner() {
   return (
@@ -18,10 +20,10 @@ export function HeroBanner() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/30 text-accent text-[11px] font-bold uppercase tracking-widest mb-5">
+          <Badge variant="accent" dot className="mb-5 normal-case tracking-normal text-[11px] px-3 py-1">
             <Sparkles className="w-3 h-3" />
             Bitcoin-Native DSP
-          </div>
+          </Badge>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.1] mb-4">
             Buy ads with{' '}
@@ -65,14 +67,8 @@ export function HeroBanner() {
             { icon: Shield, label: 'Privacy', value: '0', sub: 'tracking pixels', color: 'text-green' },
             { icon: Sparkles, label: 'AI', value: 'PPQ', sub: 'optimization', color: 'text-purple' },
           ].map((stat) => (
-            <div
-              key={stat.label}
-              className="glass-panel rounded-xl p-4 hover:border-accent/30 transition-colors group"
-            >
-              <stat.icon className={`w-5 h-5 ${stat.color} mb-2 group-hover:scale-110 transition-transform`} />
-              <div className="text-2xl font-extrabold tracking-tight">{stat.value}</div>
-              <div className="text-[10px] text-muted uppercase tracking-widest font-bold">{stat.label}</div>
-              <div className="text-[10px] text-muted/70">{stat.sub}</div>
+            <div key={stat.label}>
+              <StatCard icon={stat.icon} label={stat.label} value={stat.value} sub={stat.sub} color={stat.color} />
             </div>
           ))}
         </motion.div>

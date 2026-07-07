@@ -3,8 +3,8 @@ import { cn } from "@/lib/utils";
 import { forwardRef } from "react";
 import { UploadCloud, X } from "lucide-react";
 
-export const Card = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("bg-card border border-border rounded-xl p-6 shadow-sm", className)} {...props} />
+export const Card = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { hover?: boolean }>(({ className, hover, ...props }, ref) => (
+  <div ref={ref} className={cn("bg-card border border-border rounded-xl p-6 shadow-sm", hover && "hover:border-accent/25 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200", className)} {...props} />
 ));
 Card.displayName = "Card";
 
@@ -15,20 +15,24 @@ export const CardTitle = ({ children, className }: { children: React.ReactNode; 
   </div>
 );
 
-export const Button = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'lightning', size?: 'default' | 'lg' | 'sm' }>(
+export const Button = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'lightning' | 'ghost' | 'outline' | 'danger', size?: 'default' | 'lg' | 'sm' | 'icon' }>(
   ({ className, variant = 'primary', size = 'default', ...props }, ref) => {
     return (
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center rounded-lg font-bold transition-all focus:outline-none focus:ring-2 focus:ring-accent/50 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none",
+          "inline-flex items-center justify-center rounded-lg font-bold transition-all focus:outline-none focus:ring-2 focus:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none",
           {
             'bg-accent text-black hover:bg-[#ff9f20] hover:-translate-y-px shadow-[0_4px_14px_0_rgba(247,147,26,0.39)] hover:shadow-[0_6px_20px_rgba(247,147,26,0.23)]': variant === 'primary',
             'bg-surface text-text border border-border hover:border-muted hover:bg-zinc-800': variant === 'secondary',
             'bg-lightning text-black hover:bg-[#ffe033] shadow-[0_4px_14px_0_rgba(255,215,0,0.39)] hover:shadow-[0_6px_20px_rgba(255,215,0,0.23)]': variant === 'lightning',
+            'bg-transparent text-muted hover:text-text hover:bg-surface/60': variant === 'ghost',
+            'bg-transparent text-accent border border-accent/40 hover:bg-accent/10 hover:border-accent': variant === 'outline',
+            'bg-red/15 text-red border border-red/30 hover:bg-red/25': variant === 'danger',
             'px-6 py-3 text-sm': size === 'default',
             'px-8 py-4 text-base': size === 'lg',
             'px-4 py-2 text-xs': size === 'sm',
+            'p-2.5': size === 'icon',
           },
           className
         )}
@@ -39,11 +43,15 @@ export const Button = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<H
 );
 Button.displayName = "Button";
 
-export const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(({ className, ...props }, ref) => (
+export const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { error?: boolean }>(({ className, error, ...props }, ref) => (
   <input
     ref={ref}
+    aria-invalid={error || undefined}
     className={cn(
-      "flex w-full rounded-lg border border-border bg-surface px-3.5 py-2.5 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-zinc-500 focus-visible:outline-none focus-visible:border-accent focus-visible:ring-1 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50",
+      "flex w-full rounded-lg border bg-surface px-3.5 py-2.5 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50",
+      error
+        ? "border-red focus-visible:border-red focus-visible:ring-red/50"
+        : "border-border focus-visible:border-accent focus-visible:ring-accent",
       className
     )}
     {...props}
@@ -108,12 +116,32 @@ export const FormGroup = ({ children, className }: { children: React.ReactNode; 
   </div>
 );
 
-export const Modal = ({ isOpen, onClose, children }: { isOpen: boolean; onClose: () => void; children: React.ReactNode }) => {
+export const Modal = ({ isOpen, onClose, children, title }: { isOpen: boolean; onClose: () => void; children: React.ReactNode; title?: string }) => {
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
-      <div className="bg-card border border-border rounded-2xl w-full max-w-md shadow-2xl relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-muted hover:text-text transition-colors">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+    >
+      <div
+        className="bg-card border border-border rounded-2xl w-full max-w-md shadow-2xl relative animate-scale-in"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button onClick={onClose} className="absolute top-4 right-4 text-muted hover:text-text transition-colors touch-target" aria-label="Close">
           <X className="w-5 h-5" />
         </button>
         {children}

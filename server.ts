@@ -13,6 +13,7 @@ import { registerBatch3Routes } from "./server/routes/batch3.ts";
 import { registerBatch4Routes } from "./server/routes/batch4.ts";
 import { registerBatch5Routes } from "./server/routes/batch5.ts";
 import { registerBatch6Routes } from "./server/routes/batch6.ts";
+import { registerBatch7Routes } from "./server/routes/batch7.ts";
 import { getLightningNodeInfo, createLightningInvoice, executeLightningPayment } from "./src/services/lightningService.ts";
 import {
   SupabaseCampaignRepository,
@@ -508,6 +509,7 @@ app.get("/api/campaigns", async (req, res) => {
   registerBatch4Routes(app);
   registerBatch5Routes(app);
   registerBatch6Routes(app);
+  registerBatch7Routes(app);
 
   // NIP-98 protected agent endpoint example
   app.get('/api/nostr/nip98/protected', nip98AuthMiddleware, (req, res) => {
