@@ -64,3 +64,14 @@ export const PAYMENT_METHODS: PaymentMethodDef[] = [
 export function getPaymentMethod(id: string): PaymentMethodDef | undefined {
   return PAYMENT_METHODS.find(p => p.id === id);
 }
+
+/** Payment rails actually wired at checkout (honest UX) */
+export const CHECKOUT_PAYMENT_IDS = ['lightning', 'btc', 'fedimint'] as const;
+
+export function getCheckoutPaymentMethods(): PaymentMethodDef[] {
+  return PAYMENT_METHODS.filter(p => (CHECKOUT_PAYMENT_IDS as readonly string[]).includes(p.id));
+}
+
+export function getComingSoonPaymentMethods(): PaymentMethodDef[] {
+  return PAYMENT_METHODS.filter(p => !(CHECKOUT_PAYMENT_IDS as readonly string[]).includes(p.id));
+}

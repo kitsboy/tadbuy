@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Shield, Loader2, CheckCircle2, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Shield, Loader2, CheckCircle2, ExternalLink, Wallet } from 'lucide-react';
 import { Button, Input, Label, FormGroup } from '@/components/ui';
 import { Badge, Progress, Alert } from '@/components/ui/index';
 import { getFedimintStatus, joinFederation, payWithFedimint, formatEcashBalance, getDefaultFedimintInvite } from '@/services/fedimintService';
@@ -10,10 +11,13 @@ export function FedimintPanel({
   amountSats,
   memo,
   onSuccess,
+  checkoutMode = false,
 }: {
   amountSats: number;
   memo: string;
   onSuccess?: () => void;
+  /** At checkout: join happens in Wallet, not here */
+  checkoutMode?: boolean;
 }) {
   const [status, setStatus] = useState<Awaited<ReturnType<typeof getFedimintStatus>> | null>(null);
   const [invite, setInvite] = useState(getDefaultFedimintInvite());
@@ -104,6 +108,14 @@ export function FedimintPanel({
             Pay with Ecash
           </Button>
         </div>
+      ) : checkoutMode ? (
+        <Alert variant="info" title="Connect Fedimint in Wallet">
+          Join the <strong>{GIVEABIT_ECOSYSTEM.federation.name}</strong> once in your Wallet — then pay here with ecash.
+          <Link to="/wallet" className="mt-3 flex items-center justify-center gap-2 text-xs font-bold text-green hover:underline">
+            <Wallet className="w-4 h-4" />
+            Open Wallet to join federation
+          </Link>
+        </Alert>
       ) : (
         <div className="space-y-3">
           <Alert variant="info" title="Join the Federation">

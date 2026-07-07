@@ -1,6 +1,6 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { motion } from "motion/react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -46,7 +46,10 @@ function friendlyError(code: string): string {
 // ─── Auth Panel (logged out) ──────────────────────────────────────────────────
 function AuthPanel() {
   const { addToast } = useToast();
-  const [tab, setTab] = useState<"signin" | "signup">("signin");
+  const [searchParams] = useSearchParams();
+  const [tab, setTab] = useState<"signin" | "signup">(
+    searchParams.get('tab') === 'signup' ? 'signup' : 'signin'
+  );
 
   const [email, setEmail]         = useState("");
   const [password, setPassword]   = useState("");
@@ -391,6 +394,15 @@ function ProfileCard() {
 export default function Profile() {
   usePageTitle("Profile");
   const { user, loading } = useAuth();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const returnTo = searchParams.get('return');
+
+  useEffect(() => {
+    if (user && returnTo && returnTo.startsWith('/')) {
+      navigate(returnTo, { replace: true });
+    }
+  }, [user, returnTo, navigate]);
 
   if (loading) {
     return (

@@ -6,7 +6,7 @@ import { StatsBar } from "@/components/StatsBar";
 import { PlatformMarquee } from "@/components/PlatformMarquee";
 import { FloatingCampaignCTA } from "@/components/FloatingCampaignCTA";
 import { BITCOIN_ADDRESS, BITCOIN_URI } from "@/constants";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Card, CardTitle, Button, Input, Textarea, Select, Label, FormGroup, Modal, FileInput, InfoTooltip } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -14,11 +14,19 @@ import { QRCodeSVG } from "qrcode.react";
 import { Twitter, Facebook, Instagram, Zap, Youtube, MessageSquare, Linkedin, Music, CheckCircle2, Bot, X, Monitor, Smartphone, Wifi, Globe, Calendar, Layers, Activity, Target, Settings2, Plus, Trash2, ShieldAlert } from "lucide-react";
 import SuccessScreen from "@/components/buyads/SuccessScreen";
 import PaymentModal from "@/components/buyads/PaymentModal";
-import StepPlatformBudget from "@/components/buyads/StepPlatformBudget";
-import StepTargeting from "@/components/buyads/StepTargeting";
-import StepCreative from "@/components/buyads/StepCreative";
-import StepReviewPay from "@/components/buyads/StepReviewPay";
-import { PAYMENT_METHODS } from "@/lib/payments/registry";
+
+import { getCheckoutPaymentMethods } from "@/lib/payments/registry";
+import { resolvePaymentOutcome, type PaymentOutcome } from "@/lib/campaignPaymentStatus";
+import { getMarketplaceSlot, slotToPlatforms, type MarketplaceSlot } from "@/data/marketplaceSlots";
+import { useAuth } from "@/components/AuthProvider";
+import { AuthGateModal } from "@/components/AuthGateModal";
+import { PersonaOnboarding } from "@/components/PersonaOnboarding";
+import { FirstVisitChecklist } from "@/components/FirstVisitChecklist";
+import { FullControlWizard } from "@/components/buyads/FullControlWizard";
+import { ComingSoonPayments } from "@/components/buyads/ComingSoonPayments";
+import { useCampaignDraft, useAutoSaveDraft } from "@/hooks/useCampaignDraft";
+import { Alert } from "@/components/ui/Alert";
+
 import { FedimintPanel } from "@/components/payments/FedimintPanel";
 import { FeeEstimator } from "@/components/widgets/FeeEstimator";
 import { CurrencyDisplay } from "@/components/widgets/CurrencyDisplay";
@@ -97,7 +105,8 @@ const platforms = [
   { id: 'tiktok', name: 'TikTok', icon: <Music className="w-6 h-6" />, cpm: 5.75 * BASE_FEE_MARKUP },
 ];
 
-const paymentMethods = PAYMENT_METHODS.map(pm => ({
+const checkoutPaymentDefs = getCheckoutPaymentMethods();
+const paymentMethods = checkoutPaymentDefs.map(pm => ({
   id: pm.id,
   name: pm.name,
   sub: pm.subtitle,
@@ -110,12 +119,21 @@ const paymentMethods = PAYMENT_METHODS.map(pm => ({
 export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }: { currency?: string, rate?: number, symbol?: string }) {
   usePageMeta('Buy Ads', 'Launch Bitcoin-native ad campaigns across 8 platforms. Pay in sats via Lightning, BOLT12, on-chain, or Nostr Zaps.');
 
+  const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { draft, clearDraft } = useCampaignDraft();
+
   const [currentStep, setCurrentStep] = useState(1);
   const [mode, setMode] = useState<'simple' | 'complex'>('simple');
+  const [showAuthGate, setShowAuthGate] = useState(false);
+  const [showComingSoonPayments, setShowComingSoonPayments] = useState(false);
+  const [paymentOutcome, setPaymentOutcome] = useState<PaymentOutcome>('demo');
+  const [marketplaceSlot, setMarketplaceSlot] = useState<MarketplaceSlot | null>(null);
+
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['twitter']);
   const [btcAmount, setBtcAmount] = useState(0.0005);
   const [fiatAmount, setFiatAmount] = useState(0.0005 * rate);
-  const [paymentMethod, setPaymentMethod] = useState('btc');
+  const [paymentMethod, setPaymentMethod] = useState('lightning');
   const [campaignName, setCampaignName] = useState("My Campaign");
   // Seconds remaining until invoice expires (3600 = 1 hour)
   const [invoiceSecondsLeft, setInvoiceSecondsLeft] = useState(3600);
@@ -227,6 +245,54 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
     };
     fetchBlockHeight();
   }, []);
+
+  // Marketplace slot handoff (?slot=slot_btc_hero)
+  useEffect(() => {
+    const slotId = searchParams.get('slot');
+    if (!slotId) return;
+    const slot = getMarketplaceSlot(slotId);
+    if (!slot) return;
+    setMarketplaceSlot(slot);
+    setCampaignName(slot.name);
+    setSelectedPlatforms(slotToPlatforms(slot));
+    setBtcAmount(Math.max(slot.minBidSats / 100_000_000, 0.0001));
+    setHeadline(`${slot.publisher} — ${slot.name}`);
+    setDescription(`Promoted placement: ${slot.placement}. ${slot.audience}.`);
+    if (slot.geo.length && !slot.geo.includes('Global')) {
+      setSelectedCountries(slot.geo);
+    }
+    const next = new URLSearchParams(searchParams);
+    next.delete('slot');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
+
+  // Restore draft once on mount
+  useEffect(() => {
+    if (!draft || marketplaceSlot) return;
+    setCampaignName(draft.campaignName);
+    setHeadline(draft.headline);
+    setDescription(draft.description);
+    setUrl(draft.url);
+    setSelectedPlatforms(draft.selectedPlatforms);
+    setBtcAmount(draft.btcAmount);
+    setPaymentMethod(draft.paymentMethod);
+    setMode(draft.mode);
+  }, []);
+
+  useAutoSaveDraft(
+    paymentStatus === 'success' ? null : {
+      campaignName,
+      headline,
+      description,
+      url,
+      selectedPlatforms,
+      btcAmount,
+      paymentMethod,
+      mode,
+      marketplaceSlotId: marketplaceSlot?.id,
+    },
+    paymentStatus !== 'success'
+  );
 
   // Sync simple mode state to first variant for consistency
   useEffect(() => {
@@ -389,8 +455,41 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
     return res.json();
   };
 
+  const finalizeCampaign = async (verified: boolean) => {
+    await writeCampaignToFirestore();
+    setPaymentOutcome(resolvePaymentOutcome(paymentMethod, verified));
+    setPaymentStatus('success');
+    setShowInvoice(false);
+    clearDraft();
+  };
+
+  const handleLaunchClick = () => {
+    if (!user) {
+      setShowAuthGate(true);
+      return;
+    }
+    setShowInvoice(true);
+  };
+
+  const handleFedimintSuccess = async () => {
+    if (!user) {
+      setShowAuthGate(true);
+      return;
+    }
+    try {
+      await finalizeCampaign(false);
+    } catch (e) {
+      setPaymentError(e instanceof Error ? e.message : 'Failed to save campaign');
+    }
+  };
+
   const handleDeploy = async () => {
     setPaymentError(null);
+
+    if (paymentMethod === 'fedimint') {
+      setPaymentError('Use the Pay with Ecash button in the Fedimint panel above.');
+      return;
+    }
 
     if (paymentMethod === 'lightning') {
       // Step 1: Fetch a real invoice from the backend
@@ -444,19 +543,15 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
       stopInvoiceCountdown();
 
       if (pollId === 'success') {
-        await writeCampaignToFirestore();
-        setPaymentStatus('success');
-        setShowInvoice(false);
+        await finalizeCampaign(true);
       } else {
         setPaymentError('Payment not detected within timeout. Please check your wallet and try again.');
         setPaymentStatus('idle');
       }
     } else {
-      // On-chain / BOLT12: user confirms manually
+      // On-chain: user confirms manually in modal — save as pending
       setPaymentStatus('processing');
-      await writeCampaignToFirestore();
-      setPaymentStatus('success');
-      setShowInvoice(false);
+      await finalizeCampaign(false);
     }
   };
 
@@ -583,6 +678,9 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
 
   const resetForm = () => {
     setPaymentStatus('idle');
+    setPaymentOutcome('demo');
+    setMarketplaceSlot(null);
+    clearDraft();
     setCampaignName("My Campaign");
     setHeadline("Stack Sats Smarter — giveabit.io");
     setDescription("Bitcoin tools for the people. No banks. No middlemen.");
@@ -609,6 +707,21 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
 
       <FloatingCampaignCTA />
 
+      {paymentStatus !== 'success' && (
+        <div className="grid lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <PersonaOnboarding />
+            {marketplaceSlot && (
+              <Alert variant="info" title={`Buying: ${marketplaceSlot.name}`}>
+                Publisher <strong>{marketplaceSlot.publisher}</strong> · {marketplaceSlot.placement} · {marketplaceSlot.format}.
+                Min bid {marketplaceSlot.minBidSats.toLocaleString()} sats.
+              </Alert>
+            )}
+          </div>
+          <FirstVisitChecklist />
+        </div>
+      )}
+
       {/* ── SUCCESS SCREEN ─────────────────────────────────────────────── */}
       {paymentStatus === 'success' && (
         <SuccessScreen
@@ -617,9 +730,17 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
           btcAmount={btcAmount}
           selectedPlatformsData={selectedPlatformsData}
           estimates={estimates}
+          outcome={paymentOutcome}
+          isAuthenticated={!!user}
           onReset={resetForm}
         />
       )}
+
+      <AuthGateModal
+        isOpen={showAuthGate}
+        onClose={() => setShowAuthGate(false)}
+        returnPath="/"
+      />
 
       <div id="campaign-builder" className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 scroll-mt-24">
         <div>
@@ -642,75 +763,72 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
             onClick={() => setMode('simple')}
             className={cn("px-4 py-2 rounded-lg text-sm font-bold transition-all", mode === 'simple' ? "bg-accent text-black shadow-md" : "text-muted hover:text-text")}
           >
-            Simple
+            Quick Launch
           </button>
           <button 
-            onClick={() => setMode('complex')}
+            onClick={() => { setMode('complex'); setCurrentStep(1); }}
             className={cn("px-4 py-2 rounded-lg text-sm font-bold transition-all", mode === 'complex' ? "bg-accent text-black shadow-md" : "text-muted hover:text-text")}
           >
-            Advanced
+            Full Control
           </button>
         </div>
       </div>
 
-      {/* ── STEPPER ─────────────────────────────────────────────────── */}
-      {(() => {
-        const steps = [
-          { label: 'Budget',    icon: '₿' },
-          { label: 'Targeting', icon: '🎯' },
-          { label: 'Creative',  icon: '✏️' },
-          { label: 'Payment',   icon: '⚡' },
-        ];
-        return (
-          <div className="flex items-center gap-0 mb-2 select-none">
-            {steps.map((step, idx) => {
-              const stepNum = idx + 1;
-              const isCompleted = currentStep > stepNum;
-              const isActive = currentStep === stepNum;
-              return (
-                <div key={step.label} className="flex items-center flex-1 min-w-0">
-                  <button
-                    onClick={() => setCurrentStep(stepNum)}
-                    className={cn(
-                      "flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold transition-all w-full",
-                      isActive
-                        ? "bg-accent/15 text-accent border border-accent/40 shadow-[0_0_12px_rgba(247,147,26,0.15)]"
-                        : isCompleted
-                          ? "text-green hover:bg-green/10"
-                          : "text-muted hover:text-text hover:bg-surface"
-                    )}
-                  >
-                    <span className={cn(
-                      "flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-extrabold shrink-0 transition-all",
-                      isActive
-                        ? "bg-accent text-black"
-                        : isCompleted
-                          ? "bg-green/20 text-green"
-                          : "bg-surface border border-border text-muted"
-                    )}>
-                      {isCompleted ? <CheckCircle2 className="w-3.5 h-3.5" /> : stepNum}
-                    </span>
-                    <span className="hidden sm:block truncate">{step.label}</span>
-                  </button>
-                  {idx < steps.length - 1 && (
-                    <div className={cn(
-                      "h-px flex-1 mx-1 transition-colors",
-                      currentStep > stepNum + 1
-                        ? "bg-green/40"
-                        : currentStep > stepNum
-                          ? "bg-accent/40"
-                          : "bg-border"
-                    )} />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        );
-      })()}
-
       <AnimatePresence mode="wait">
-        {mode === 'simple' ? (
+        {mode === 'complex' ? (
+          <motion.div key="full-control" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <FullControlWizard
+              currentStep={currentStep}
+              setCurrentStep={setCurrentStep}
+              platforms={platforms}
+              checkoutPaymentMethods={paymentMethods}
+              selectedPlatforms={selectedPlatforms}
+              onTogglePlatform={togglePlatform}
+              btcAmount={btcAmount}
+              fiatAmount={fiatAmount}
+              currency={currency}
+              symbol={symbol}
+              rate={rate}
+              onBtcChange={handleBtcChange}
+              onFiatChange={handleFiatChange}
+              paymentMethod={paymentMethod}
+              setPaymentMethod={setPaymentMethod}
+              campaignName={campaignName}
+              setCampaignName={setCampaignName}
+              targeting={targeting}
+              setTargeting={setTargeting}
+              selectedCountries={selectedCountries}
+              setSelectedCountries={setSelectedCountries}
+              selectedLanguages={selectedLanguages}
+              setSelectedLanguages={setSelectedLanguages}
+              headline={headline}
+              setHeadline={setHeadline}
+              description={description}
+              setDescription={setDescription}
+              url={url}
+              setUrl={setUrl}
+              adBgHue={adBgHue}
+              setAdBgHue={setAdBgHue}
+              adBgLightness={adBgLightness}
+              setAdBgLightness={setAdBgLightness}
+              adTextColor={adTextColor}
+              setAdTextColor={setAdTextColor}
+              adImage={adImage}
+              setAdImage={setAdImage}
+              hashtags={hashtags}
+              setHashtags={setHashtags}
+              hashtagInput={hashtagInput}
+              setHashtagInput={setHashtagInput}
+              isAiGenerating={isAiGenerating}
+              onGenerateAi={generateAiCopy}
+              variants={variants}
+              selectedPlatformsData={selectedPlatformsData}
+              estimates={estimates}
+              projectId={projectId}
+              onLaunch={handleLaunchClick}
+            />
+          </motion.div>
+        ) : (
           <motion.div key="simple" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="space-y-4">
               <Card className="glass-panel">
@@ -848,32 +966,25 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                       <div>Lightning Network — Instant settlement, near-zero fees. Best for small spends ($1–$500). Requires Lightning wallet (Phoenix, Breez, Zeus, etc.)</div>
                     </div>
                   )}
-                  {paymentMethod === 'bolt12' && (
-                    <div className="bg-purple/5 border border-purple/20 rounded-lg p-3.5 text-xs text-purple flex items-start gap-2.5">
-                      <span className="text-xl leading-none">🔮</span>
-                      <div>BOLT 12 Offers — Supports recurring payments, invoice reuse, and enhanced privacy. Works with compatible wallets (CLN, Phoenix 2.0+). Ideal for recurring ad campaigns.</div>
-                    </div>
-                  )}
                   {paymentMethod === 'fedimint' && (
                     <FedimintPanel
+                      checkoutMode
                       amountSats={Math.round(btcAmount * 100_000_000)}
                       memo={`Tadbuy Campaign: ${campaignName}`}
-                      onSuccess={() => setPaymentStatus('success')}
+                      onSuccess={handleFedimintSuccess}
                     />
                   )}
                   {paymentMethod === 'btc' && (
                     <FeeEstimator className="mt-3" />
                   )}
-                  {paymentMethod === 'cashu' && (
-                    <div className="bg-lightning/5 border border-lightning/20 rounded-lg p-3 text-xs text-lightning">
-                      Paste your Cashu ecash token at checkout to redeem ad credits instantly.
-                    </div>
-                  )}
-                  {paymentMethod === 'zap' && (
-                    <div className="bg-purple/5 border border-purple/20 rounded-lg p-3 text-xs text-purple">
-                      NIP-57 Zaps — Pay via Nostr with Lightning. Connect your Nostr extension to sign.
-                    </div>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setShowComingSoonPayments(v => !v)}
+                    className="text-[10px] text-muted hover:text-accent font-bold mt-3"
+                  >
+                    {showComingSoonPayments ? 'Hide' : 'Show'} more payment options (coming soon)
+                  </button>
+                  <ComingSoonPayments expanded={showComingSoonPayments} />
                 </div>
               </Card>
 
@@ -1335,377 +1446,12 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                 </div>
               </Card>
 
-              <Button className="w-full bg-gradient-to-r from-accent to-accent2 text-black border-0 hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(247,147,26,0.3)]" size="lg" onClick={() => setShowInvoice(true)}>
+              <Button className="w-full bg-gradient-to-r from-accent to-accent2 text-black border-0 hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(247,147,26,0.3)]" size="lg" onClick={handleLaunchClick}>
                 ⚡ Deploy via PPQ.AI — Pay with Bitcoin
               </Button>
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div key="complex" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <Card className="glass-panel">
-                <div className="flex items-center gap-2 mb-3">
-                  <Layers className="w-5 h-5 text-accent" />
-                  <CardTitle className="mb-0">Advanced Platform Control</CardTitle>
-                  <InfoTooltip content="Manually adjust how much of your budget goes to each platform." />
-                </div>
-                <div className="text-xs text-muted mb-4 leading-relaxed">
-                  Define custom budget weights per platform. PPQ.AI will use these as baselines for optimization.
-                </div>
-                <div className="space-y-5">
-                  {selectedPlatformsData.map(p => (
-                    <div key={p.id} className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-2 text-sm font-bold">
-                          {p.icon} {p.name}
-                        </div>
-                        <div className="text-xs font-mono text-accent">{platformWeights[p.id] || 0}%</div>
-                      </div>
-                      <input 
-                        type="range" 
-                        min="0" 
-                        max="100" 
-                        value={platformWeights[p.id] || 0} 
-                        onChange={e => {
-                          const val = parseInt(e.target.value);
-                          setPlatformWeights({ ...platformWeights, [p.id]: val });
-                        }}
-                        className="w-full h-1.5 bg-surface rounded-lg appearance-none cursor-pointer accent-accent"
-                      />
-                    </div>
-                  ))}
-                  <div className="p-3 bg-accent/5 border border-accent/20 rounded-lg flex justify-between items-center">
-                    <span className="text-xs text-muted">Total Weight:</span>
-                    <span className={cn("text-sm font-bold font-mono", Object.values(platformWeights).reduce((a: number, b: number) => a + b, 0) === 100 ? "text-green" : "text-red")}>
-                      {Object.values(platformWeights).reduce((a: number, b: number) => a + b, 0)}%
-                    </span>
-                  </div>
-                  {Object.values(platformWeights).reduce((a: number, b: number) => a + b, 0) !== 100 && (
-                    <Button 
-                      variant="secondary" 
-                      size="sm" 
-                      className="w-full text-[11px]"
-                      onClick={() => {
-                        const count = selectedPlatformsData.length;
-                        const even = Math.floor(100 / count);
-                        const newWeights: Record<string, number> = {};
-                        selectedPlatformsData.forEach((p, i) => {
-                          newWeights[p.id] = i === count - 1 ? 100 - (even * (count - 1)) : even;
-                        });
-                        setPlatformWeights(newWeights);
-                      }}
-                    >
-                      Auto-Normalize to 100%
-                    </Button>
-                  )}
-                </div>
-              </Card>
-
-              <Card className="glass-panel">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-accent" />
-                    <CardTitle className="mb-0">A/B Testing Suite</CardTitle>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    variant={variants.length < 2 ? "secondary" : "ghost"}
-                    onClick={addVariant}
-                    disabled={variants.length >= 2}
-                  >
-                    <Plus className="w-4 h-4 mr-1" /> Add Variant
-                  </Button>
-                </div>
-                
-                <div className="space-y-6">
-                  {variants.map((v, idx) => (
-                    <div key={v.id} className="p-4 bg-surface/50 border border-border rounded-xl space-y-4 relative">
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs font-bold uppercase tracking-widest text-accent">Variant {v.id}</span>
-                        {idx > 0 && (
-                          <button onClick={() => removeVariant(v.id)} className="text-muted hover:text-red transition-colors">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                      <FormGroup>
-                        <Label>Headline</Label>
-                        <Input value={v.headline} onChange={e => updateVariant(v.id, { headline: e.target.value })} />
-                      </FormGroup>
-                      <FormGroup>
-                        <Label>Description</Label>
-                        <Textarea value={v.description} onChange={e => updateVariant(v.id, { description: e.target.value })} rows={2} />
-                      </FormGroup>
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormGroup className="mb-0">
-                          <div className="flex justify-between items-center mb-1">
-                            <Label className="mb-0">BG Hue</Label>
-                            <div className="w-3 h-3 rounded-full border border-white/10" style={{ backgroundColor: `hsl(${v.bgHue}, 40%, ${v.bgLightness}%)` }} />
-                          </div>
-                          <input 
-                            type="range" min="0" max="360" value={v.bgHue} 
-                            onChange={e => updateVariant(v.id, { bgHue: parseInt(e.target.value) })}
-                            className="w-full h-1.5 bg-surface rounded-lg appearance-none cursor-pointer accent-accent"
-                          />
-                        </FormGroup>
-                        <FormGroup className="mb-0">
-                          <Label>BG Lightness</Label>
-                          <input 
-                            type="range" min="10" max="98" value={v.bgLightness} 
-                            onChange={e => updateVariant(v.id, { bgLightness: parseInt(e.target.value) })}
-                            className="w-full h-1.5 bg-surface rounded-lg appearance-none cursor-pointer accent-accent"
-                          />
-                        </FormGroup>
-                      </div>
-                      <FormGroup className="mb-0">
-                        <Label>Text Color</Label>
-                        <div className="flex gap-2">
-                          <Input type="color" value={v.textColor} onChange={e => updateVariant(v.id, { textColor: e.target.value })} className="w-10 h-8 p-1" />
-                          <Input 
-                            type="text" 
-                            value={v.textColor} 
-                            onChange={e => updateVariant(v.id, { textColor: e.target.value })} 
-                            className="h-8 text-[10px] font-mono"
-                          />
-                        </div>
-                      </FormGroup>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              <Card className="glass-panel">
-                <div className="flex items-center gap-2 mb-4">
-                  <Target className="w-5 h-5 text-accent" />
-                  <CardTitle className="mb-0">Granular Context</CardTitle>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <FormGroup>
-                    <Label>Device Targeting</Label>
-                    <div className="flex gap-2 mt-2">
-                      {[
-                        { id: 'ios', icon: <Smartphone className="w-4 h-4" />, label: 'iOS' },
-                        { id: 'android', icon: <Smartphone className="w-4 h-4" />, label: 'Android' },
-                        { id: 'desktop', icon: <Monitor className="w-4 h-4" />, label: 'Desktop' },
-                      ].map(d => (
-                        <button
-                          key={d.id}
-                          onClick={() => toggleDevice(d.id)}
-                          className={cn(
-                            "flex-1 flex flex-col items-center gap-1 p-2 rounded-lg border transition-all",
-                            targeting.devices.includes(d.id) ? "border-accent bg-accent/10 text-accent" : "border-border text-muted"
-                          )}
-                        >
-                          {d.icon}
-                          <span className="text-[10px] font-bold">{d.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>Network Type</Label>
-                    <div className="flex gap-2 mt-2">
-                      {[
-                        { id: 'wifi', icon: <Wifi className="w-4 h-4" />, label: 'WiFi' },
-                        { id: 'cellular', icon: <Globe className="w-4 h-4" />, label: 'Cellular' },
-                      ].map(n => (
-                        <button
-                          key={n.id}
-                          onClick={() => toggleNetwork(n.id)}
-                          className={cn(
-                            "flex-1 flex flex-col items-center gap-1 p-2 rounded-lg border transition-all",
-                            targeting.networks.includes(n.id) ? "border-accent bg-accent/10 text-accent" : "border-border text-muted"
-                          )}
-                        >
-                          {n.icon}
-                          <span className="text-[10px] font-bold">{n.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </FormGroup>
-                  <FormGroup className="sm:col-span-2">
-                    <Label>Custom Pixel / Webhook URL</Label>
-                    <Input 
-                      placeholder="https://your-analytics.com/pixel?id=..." 
-                      value={targeting.pixelUrl}
-                      onChange={e => setTargeting({ ...targeting, pixelUrl: e.target.value })}
-                    />
-                    <div className="text-[10px] text-muted mt-1">Tadbuy will ping this URL on every click/conversion event.</div>
-                  </FormGroup>
-                </div>
-              </Card>
-            </div>
-
-            <div className="space-y-4">
-              <Card className="glass-panel">
-                <div className="flex items-center gap-2 mb-4">
-                  <Calendar className="w-5 h-5 text-accent" />
-                  <CardTitle className="mb-0">Campaign Scheduling</CardTitle>
-                </div>
-                <div className="flex bg-surface rounded-lg p-1 mb-4 border border-border">
-                  <button 
-                    className={cn("flex-1 py-1.5 text-[11px] font-bold rounded-md transition-all", scheduling.mode === 'calendar' ? "bg-card text-text shadow-sm" : "text-muted")}
-                    onClick={() => setScheduling({ ...scheduling, mode: 'calendar' })}
-                  >
-                    Calendar Date
-                  </button>
-                  <button 
-                    className={cn("flex-1 py-1.5 text-[11px] font-bold rounded-md transition-all", scheduling.mode === 'block' ? "bg-card text-text shadow-sm" : "text-muted")}
-                    onClick={() => setScheduling({ ...scheduling, mode: 'block' })}
-                  >
-                    Block Height
-                  </button>
-                </div>
-                
-                {scheduling.mode === 'calendar' ? (
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormGroup className="mb-0">
-                      <Label>Start Date</Label>
-                      <Input type="date" value={scheduling.startDate} onChange={e => setScheduling({ ...scheduling, startDate: e.target.value })} />
-                    </FormGroup>
-                    <FormGroup className="mb-0">
-                      <Label>End Date</Label>
-                      <Input type="date" value={scheduling.endDate} onChange={e => setScheduling({ ...scheduling, endDate: e.target.value })} />
-                    </FormGroup>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormGroup className="mb-0">
-                      <Label>Start Block</Label>
-                      <Input type="number" value={scheduling.startBlock} onChange={e => setScheduling({ ...scheduling, startBlock: parseInt(e.target.value) })} />
-                    </FormGroup>
-                    <FormGroup className="mb-0">
-                      <Label>End Block</Label>
-                      <Input type="number" value={scheduling.endBlock} onChange={e => setScheduling({ ...scheduling, endBlock: parseInt(e.target.value) })} />
-                    </FormGroup>
-                  </div>
-                )}
-                <div className="mt-3 p-3 bg-accent/5 border border-accent/20 rounded-lg text-[10px] text-muted leading-relaxed">
-                  {scheduling.mode === 'block' ? 
-                    "Campaign will automatically activate and deactivate based on Bitcoin network block height. Ideal for protocol-native timing." :
-                    "Standard calendar-based scheduling. Times are in UTC."
-                  }
-                </div>
-              </Card>
-
-              <Card className="glass-panel">
-                <div className="flex items-center gap-2 mb-4">
-                  <Settings2 className="w-5 h-5 text-accent" />
-                  <CardTitle className="mb-0">PPQ.AI Optimization</CardTitle>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-surface/50 border border-border rounded-xl">
-                    <div>
-                      <div className="text-xs font-bold">Auto-Rebalance Budget</div>
-                      <div className="text-[10px] text-muted">Shift sats to high-performing platforms</div>
-                    </div>
-                    <button 
-                      onClick={() => setPpq({ ...ppq, autoRebalance: !ppq.autoRebalance })}
-                      className={cn("w-10 h-5 rounded-full transition-all relative", ppq.autoRebalance ? "bg-green" : "bg-muted/30")}
-                    >
-                      <div className={cn("absolute top-1 w-3 h-3 bg-white rounded-full transition-all", ppq.autoRebalance ? "right-1" : "left-1")} />
-                    </button>
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-3 bg-surface/50 border border-border rounded-xl">
-                    <div>
-                      <div className="text-xs font-bold">Sentiment Filter</div>
-                      <div className="text-[10px] text-muted">Avoid negative-sentiment content adjacency</div>
-                    </div>
-                    <button 
-                      onClick={() => setPpq({ ...ppq, sentimentFilter: !ppq.sentimentFilter })}
-                      className={cn("w-10 h-5 rounded-full transition-all relative", ppq.sentimentFilter ? "bg-green" : "bg-muted/30")}
-                    >
-                      <div className={cn("absolute top-1 w-3 h-3 bg-white rounded-full transition-all", ppq.sentimentFilter ? "right-1" : "left-1")} />
-                    </button>
-                  </div>
-
-                  <FormGroup className="mb-0">
-                    <Label>Optimization Goal</Label>
-                    <Select value={ppq.optimizationGoal} onChange={e => setPpq({ ...ppq, optimizationGoal: e.target.value as any })}>
-                      <option value="cpc">Maximize Clicks (Lowest CPC)</option>
-                      <option value="roas">Maximize ROAS (Conversion Focused)</option>
-                      <option value="reach">Maximize Reach (Brand Awareness)</option>
-                    </Select>
-                  </FormGroup>
-                </div>
-              </Card>
-
-              {/* Reuse Live Estimate and Preview logic from Simple Mode but adapted */}
-              <Card className="border-accent/30 shadow-[0_0_30px_-10px_rgba(247,147,26,0.15)]">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <CardTitle className="mb-0">Live estimate</CardTitle>
-                    <InfoTooltip content="Real-time projection of your campaign's reach based on current budget and targeting." />
-                  </div>
-                  <div className="text-[10px] font-mono bg-surface px-2 py-1 rounded border border-border text-muted">
-                    ID: {projectId}
-                  </div>
-                </div>
-                <div className="bg-green/5 border border-green/20 rounded-xl p-4">
-                  <div className="flex justify-between py-1 text-[13px] items-center">
-                    <span className="text-muted">Platforms ({selectedPlatformsData.length})</span>
-                    <span className="text-accent font-bold text-right flex gap-1">
-                      {selectedPlatformsData.map((p, i) => (
-                        <span key={i} className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4">{p.icon}</span>
-                      ))}
-                    </span>
-                  </div>
-                  <div className="flex justify-between py-1 text-[13px]">
-                    <span className="text-muted">Budget</span>
-                    <span>{symbol}{fiatAmount.toFixed(2)} ({btcAmount.toFixed(4)} ₿)</span>
-                  </div>
-                  <div className="mt-2 pt-2 border-t border-green/10 space-y-1">
-                    <div className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1">Platform Split</div>
-                    {estimates.platformBreakdown.map(p => (
-                      <div key={p.id} className="flex justify-between text-[11px]">
-                        <span className="flex items-center gap-1">{p.icon} {p.name} ({p.weight}%)</span>
-                        <span>~{p.impressions.toLocaleString()} imp</span>
-                      </div>
-                    ))}
-                    {variants.length > 1 && (
-                      <div className="flex justify-between text-[11px] text-accent mt-1">
-                        <span>A/B Testing Enabled</span>
-                        <span>50/50 Split</span>
-                      </div>
-                    )}
-                    {ppq.autoRebalance && (
-                      <div className="text-[10px] text-blue italic mt-1">
-                        PPQ.AI Auto-Rebalance active
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex justify-between pt-3 mt-2 border-t border-green/20 font-extrabold text-[15px]">
-                    <span>Total (BTC)</span>
-                    <span className="text-accent">{btcAmount.toFixed(8)} ₿</span>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="glass-panel">
-                <CardTitle>Ad preview — {selectedPlatformsData[0]?.name}</CardTitle>
-                <div className="space-y-4">
-                  {variants.map((v) => (
-                    <div key={v.id} className="space-y-2">
-                      <div className="text-[10px] font-bold text-accent uppercase tracking-widest">Variant {v.id}</div>
-                      <div 
-                        className="rounded-xl p-4 min-h-[100px] relative overflow-hidden border border-border"
-                        style={{ backgroundColor: `hsl(${v.bgHue}, 40%, ${v.bgLightness}%)`, color: v.textColor }}
-                      >
-                        <div className="text-[10px] mb-2 flex items-center gap-1.5 opacity-80">
-                          <span className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4">{selectedPlatformsData[0]?.icon}</span> <strong>giveabit.io</strong>
-                        </div>
-                        <div className="text-[14px] font-bold mb-1">{v.headline || "Headline"}</div>
-                        <div className="text-[12px] opacity-90">{v.description || "Description"}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              <Button className="w-full bg-gradient-to-r from-accent to-accent2 text-black border-0" size="lg" onClick={() => setShowInvoice(true)}>
-                ⚡ Deploy Advanced Campaign
-              </Button>
+              {!user && (
+                <p className="text-[10px] text-muted text-center mt-2">Sign in required before checkout</p>
+              )}
             </div>
           </motion.div>
         )}

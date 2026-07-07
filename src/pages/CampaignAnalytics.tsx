@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { Badge } from '@/components/ui/Badge';
 import { motion } from "motion/react";
 import { Card, CardTitle } from "@/components/ui";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from "recharts";
@@ -16,13 +18,23 @@ const data = [
 
 export default function CampaignAnalytics() {
   usePageTitle('Campaign Analytics');
+  const [searchParams] = useSearchParams();
+  const campaignId = searchParams.get('campaign');
   const [platform, setPlatform] = useState('all');
   const [dateRange, setDateRange] = useState('7d');
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-extrabold tracking-tight">Campaign Analytics</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-extrabold tracking-tight">Campaign Analytics</h1>
+          {campaignId && (
+            <div className="flex items-center gap-2 mt-2">
+              <Badge variant="accent">Campaign</Badge>
+              <span className="text-xs font-mono text-muted">{campaignId}</span>
+            </div>
+          )}
+        </div>
         <div className="flex gap-2">
           <select value={platform} onChange={e => setPlatform(e.target.value)} className="bg-surface border border-border rounded-lg p-2 text-sm">
             <option value="all">All Platforms</option>
