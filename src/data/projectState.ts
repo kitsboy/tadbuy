@@ -91,6 +91,10 @@ export const PROJECT_STATE = {
     batch4: { completed: 25, total: 25, label: 'Enterprise & Scale' },
     batch5: { completed: 25, total: 25, label: 'Ecosystem Pipes & BETA' },
     batch6: { completed: 25, total: 25, label: 'Agent Automation & Onboarding' },
+    batch7: { completed: 25, total: 25, label: 'Premium Design System' },
+    batch8: { completed: 25, total: 25, label: 'Hooks, A11y & Performance' },
+    batch9: { completed: 25, total: 25, label: 'Analytics & Intelligence Widgets' },
+    batch10: { completed: 25, total: 25, label: 'Campaign Flow Excellence' },
   },
 } as const;
 

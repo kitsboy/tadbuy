@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Card, CardTitle, Button, InfoTooltip } from "@/components/ui";
-import { cn } from "@/lib/utils";
+import { StatCard } from "@/components/ui/StatCard";
+import { Eye, MousePointerClick, Users, Zap } from "lucide-react";
+import { formatBtc, formatSats } from "@/lib/utils";
 
 interface PlatformData {
   id: string;
@@ -72,8 +74,40 @@ export default function StepReviewPay({
   ppqAutoRebalance,
   deployLabel = '⚡ Deploy via PPQ.AI — Pay with Bitcoin',
 }: StepReviewPayProps) {
+  const budgetSats = Math.round(btcAmount * 100_000_000);
+
   return (
     <>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+        <StatCard
+          icon={Zap}
+          label="Budget"
+          value={formatBtc(btcAmount, 6)}
+          sub={`${formatSats(budgetSats)} sats`}
+          color="text-accent"
+        />
+        <StatCard
+          icon={Eye}
+          label="Est. Impressions"
+          value={`~${estimates.totalImpressions.toLocaleString()}`}
+          color="text-green"
+        />
+        <StatCard
+          icon={MousePointerClick}
+          label="Est. Clicks"
+          value={`~${estimates.totalClicks.toLocaleString()}`}
+          sub="1.2% CTR"
+          color="text-blue"
+        />
+        <StatCard
+          icon={Users}
+          label="Platforms"
+          value={selectedPlatformsData.length}
+          sub={selectedPlatformsData.map(p => p.name).join(', ')}
+          color="text-purple"
+        />
+      </div>
+
       <Card className="border-accent/30 shadow-[0_0_30px_-10px_rgba(247,147,26,0.15)]">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">

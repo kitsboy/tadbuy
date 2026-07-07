@@ -55,9 +55,27 @@ export default function PaymentModal({
   onDeploy,
   onCancelPayment,
 }: PaymentModalProps) {
+  const modalTitle = paymentStatus === 'waiting'
+    ? 'Scan to pay'
+    : paymentStatus === 'processing'
+      ? 'Verifying Payment'
+      : paymentMethod === 'bolt12'
+        ? 'BOLT 12 Offer'
+        : paymentMethod === 'lightning'
+          ? 'Lightning Invoice'
+          : 'Bitcoin Invoice';
+
   return (
-    <Modal isOpen={show} onClose={onClose}>
-      <div className="p-8 text-center relative overflow-hidden">
+    <Modal
+      isOpen={show}
+      onClose={onClose}
+      title={modalTitle}
+      description={paymentStatus === 'waiting' ? 'Lightning invoice — open in your wallet' : `Project: ${projectId}`}
+      size="lg"
+      closeOnBackdrop={paymentStatus !== 'processing'}
+      showClose={paymentStatus !== 'processing'}
+    >
+      <div className="p-6 md:p-8 text-center relative overflow-hidden">
         <AnimatePresence mode="wait">
           {paymentStatus === 'waiting' ? (
             /* ── WAITING: scan QR, countdown, pulse ── */
@@ -68,11 +86,7 @@ export default function PaymentModal({
               exit={{ opacity: 0, y: -8 }}
               className="py-6 flex flex-col items-center"
             >
-              <div className="flex items-center justify-between w-full mb-5">
-                <div>
-                  <h2 className="text-xl font-extrabold leading-tight">Scan to pay</h2>
-                  <p className="text-xs text-muted mt-0.5">Lightning invoice — open in your wallet</p>
-                </div>
+              <div className="flex items-center justify-end w-full mb-5">
                 <div className={cn(
                   "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border",
                   "bg-lightning/10 text-lightning border-lightning/20"
@@ -181,13 +195,7 @@ export default function PaymentModal({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <div className="flex items-center justify-between mb-6">
-                <div className="text-left">
-                  <h2 className="text-2xl font-extrabold leading-tight">
-                    {paymentMethod === 'bolt12' ? 'BOLT 12 Offer' : (paymentMethod === 'lightning' ? 'Lightning Invoice' : 'Bitcoin Invoice')}
-                  </h2>
-                  <p className="text-xs text-muted">Project: <span className="text-text font-mono">{projectId}</span></p>
-                </div>
+              <div className="flex items-center justify-end mb-6">
                 <div className={cn(
                   "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest",
                   paymentMethod === 'bolt12' ? "bg-purple/10 text-purple border border-purple/20" :

@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
-import { Card, CardTitle, Button, Input, FormGroup, Label, InfoTooltip } from "@/components/ui";
-import { CheckCircle2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Card, CardTitle, Input, FormGroup, Label, InfoTooltip } from "@/components/ui";
+import { Chip } from "@/components/ui/Chip";
+import { Progress } from "@/components/ui/Progress";
+import { cn, formatSats } from "@/lib/utils";
 
 interface Platform {
   id: string;
@@ -55,6 +56,10 @@ export default function StepPlatformBudget({
   campaignName,
   setCampaignName,
 }: StepPlatformBudgetProps) {
+  const BUDGET_MAX_SATS = 10_000_000;
+  const budgetSats = Math.round(btcAmount * 100_000_000);
+  const budgetPct = Math.min(100, (budgetSats / BUDGET_MAX_SATS) * 100);
+
   return (
     <Card className="glass-panel">
       <FormGroup className="mb-5">
@@ -70,26 +75,28 @@ export default function StepPlatformBudget({
         <InfoTooltip content="Choose where your ads will appear. Each platform has different audiences and costs (CPM)." />
       </div>
       <div className="text-xs text-muted mb-3">Select one or more platforms. Your budget will be distributed evenly.</div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4.5">
+      <div className="flex flex-wrap gap-2 mb-4.5">
         {platforms.map(p => {
           const isSelected = selectedPlatforms.includes(p.id);
           return (
-            <button
+            <Chip
               key={p.id}
+              active={isSelected}
               onClick={() => onTogglePlatform(p.id)}
-              className={cn(
-                "bg-surface border-2 rounded-xl p-3.5 text-center cursor-pointer transition-all hover:border-muted relative overflow-hidden group",
-                isSelected ? "border-accent bg-accent/10 shadow-[0_0_15px_rgba(247,147,26,0.1)]" : "border-border"
-              )}
+              className="flex-col items-center gap-1 px-4 py-3 min-w-[7rem]"
             >
-              {isSelected && <CheckCircle2 className="absolute top-1.5 right-1.5 w-4 h-4 text-accent" />}
-              <div className={cn("flex justify-center mb-2 transition-colors", isSelected ? "text-accent" : "text-muted group-hover:text-text")}>{p.icon}</div>
-              <div className="text-[11px] font-bold text-text">{p.name}</div>
-              <div className="text-[10px] text-green font-mono mt-0.5">~${p.cpm.toFixed(2)} CPM</div>
-            </button>
+              <span className={cn("flex justify-center", isSelected ? "text-accent" : "text-muted")}>{p.icon}</span>
+              <span className="text-[11px] font-bold">{p.name}</span>
+              <span className="text-[10px] text-green font-mono">~${p.cpm.toFixed(2)} CPM</span>
+            </Chip>
           );
         })}
       </div>
+      {selectedPlatforms.length > 0 && (
+        <p className="text-[10px] text-muted mb-4">
+          {selectedPlatforms.length} platform{selectedPlatforms.length > 1 ? 's' : ''} selected — budget split evenly
+        </p>
+      )}
 
       <div className="flex items-center gap-2 mb-3">
         <CardTitle className="mb-0">2. Budget</CardTitle>
@@ -124,8 +131,14 @@ export default function StepPlatformBudget({
           <Input type="number" value={fiatAmount.toFixed(2)} onChange={e => onFiatChange(parseFloat(e.target.value) || 0)} />
         </FormGroup>
       </div>
+      <div className="mt-4 mb-2">
+        <Progress value={budgetPct} showLabel variant="accent" />
+        <div className="text-[10px] text-muted mt-1">
+          {formatSats(budgetSats, { compact: false })} sats of {formatSats(BUDGET_MAX_SATS, { compact: false })} max
+        </div>
+      </div>
       <div className="text-[11px] text-muted font-mono mt-1.5">
-        ≈ {btcAmount.toFixed(4)} BTC · {Math.round(btcAmount * 100000000).toLocaleString()} sats · {symbol}{fiatAmount.toFixed(2)} {currency}
+        ≈ {btcAmount.toFixed(4)} BTC · {formatSats(budgetSats, { compact: false })} sats · {symbol}{fiatAmount.toFixed(2)} {currency}
       </div>
 
       <div className="mt-4">

@@ -1,5 +1,6 @@
 import { type ChangeEvent, type Dispatch, type SetStateAction, type ReactNode } from "react";
 import { Card, CardTitle, Button, Input, Textarea, FormGroup, Label, FileInput, InfoTooltip } from "@/components/ui";
+import { Badge } from "@/components/ui/Badge";
 import { Bot, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -86,16 +87,23 @@ export default function StepCreative({
             <CardTitle className="mb-0">4. Ad copy & Media</CardTitle>
             <InfoTooltip content="Craft your message. PPQ.AI will automatically format this for each selected platform." />
           </div>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={onGenerateAi}
-            disabled={isAiGenerating}
-            className="text-[10px] h-7 gap-1.5"
-          >
-            <Bot className={cn("w-3 h-3", isAiGenerating && "animate-spin")} />
-            {isAiGenerating ? "Thinking..." : "AI Suggest"}
-          </Button>
+          <div className="flex items-center gap-2">
+            {isAiGenerating ? (
+              <Badge variant="info" dot>AI Generating</Badge>
+            ) : (
+              <Badge variant="accent">PPQ.AI Ready</Badge>
+            )}
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={onGenerateAi}
+              disabled={isAiGenerating}
+              className="text-[10px] h-7 gap-1.5"
+            >
+              <Bot className={cn("w-3 h-3", isAiGenerating && "animate-spin")} />
+              {isAiGenerating ? "Thinking..." : "AI Suggest"}
+            </Button>
+          </div>
         </div>
         <div className="bg-blue/5 border border-blue/20 rounded-lg p-3.5 mb-5 flex items-start gap-3">
           <Bot className="w-5 h-5 text-blue shrink-0 mt-0.5" />

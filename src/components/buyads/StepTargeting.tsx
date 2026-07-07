@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import { Card, CardTitle, Input, Select, FormGroup, Label, InfoTooltip } from "@/components/ui";
+import { Alert } from "@/components/ui/Alert";
 import { X } from "lucide-react";
 
 interface TargetingSettings {
@@ -52,6 +53,11 @@ export default function StepTargeting({
         <CardTitle className="mb-0">Target demographics</CardTitle>
         <InfoTooltip content="Define who should see your ads. Narrow targeting can improve conversion rates." />
       </div>
+
+      <Alert variant="info" title="Cookieless targeting" className="mb-5">
+        Tadbuy uses contextual and interest-based segments — no third-party tracking pixels. Your audience data stays sovereign.
+      </Alert>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <FormGroup className="mb-0">
           <div className="flex items-center gap-2 mb-1.5">
@@ -84,6 +90,9 @@ export default function StepTargeting({
           </div>
         </FormGroup>
         <FormGroup className="mb-0 sm:col-span-2">
+          <Alert variant="warning" className="mb-4">
+            Selecting &quot;Global&quot; clears other countries. Narrow geo targeting typically improves CTR by 15–25%.
+          </Alert>
           <div className="flex items-center gap-2 mb-1.5">
             <Label className="mb-0">Target Countries</Label>
             <InfoTooltip content="Select the geographic locations where your ads should be displayed." />

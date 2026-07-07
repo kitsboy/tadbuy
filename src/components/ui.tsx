@@ -116,12 +116,39 @@ export const FormGroup = ({ children, className }: { children: React.ReactNode; 
   </div>
 );
 
-export const Modal = ({ isOpen, onClose, children, title }: { isOpen: boolean; onClose: () => void; children: React.ReactNode; title?: string }) => {
+type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
+
+export const Modal = ({
+  isOpen,
+  onClose,
+  children,
+  title,
+  description,
+  size = 'md',
+  showClose = true,
+  closeOnBackdrop = true,
+  footer,
+  className,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+  title?: string;
+  description?: string;
+  size?: ModalSize;
+  showClose?: boolean;
+  closeOnBackdrop?: boolean;
+  footer?: React.ReactNode;
+  className?: string;
+}) => {
+  const panelRef = React.useRef<HTMLDivElement>(null);
+
   React.useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
+    panelRef.current?.focus();
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
@@ -129,22 +156,48 @@ export const Modal = ({ isOpen, onClose, children, title }: { isOpen: boolean; o
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+
+  const sizeClasses: Record<ModalSize, string> = {
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
-      onClick={onClose}
+      onClick={closeOnBackdrop ? onClose : undefined}
       role="dialog"
       aria-modal="true"
-      aria-label={title}
+      aria-labelledby={title ? 'modal-title' : undefined}
+      aria-describedby={description ? 'modal-description' : undefined}
     >
       <div
-        className="bg-card border border-border rounded-2xl w-full max-w-md shadow-2xl relative animate-scale-in"
+        ref={panelRef}
+        tabIndex={-1}
+        className={cn(
+          'bg-card border border-border rounded-2xl w-full shadow-2xl relative animate-scale-in outline-none',
+          sizeClasses[size],
+          className
+        )}
         onClick={(e) => e.stopPropagation()}
       >
-        <button onClick={onClose} className="absolute top-4 right-4 text-muted hover:text-text transition-colors touch-target" aria-label="Close">
-          <X className="w-5 h-5" />
-        </button>
-        {children}
+        {showClose && (
+          <button onClick={onClose} className="absolute top-4 right-4 text-muted hover:text-text transition-colors touch-target z-10" aria-label="Close">
+            <X className="w-5 h-5" />
+          </button>
+        )}
+        {(title || description) && (
+          <div className="px-6 pt-6 pr-12">
+            {title && <h2 id="modal-title" className="text-xl font-extrabold leading-tight">{title}</h2>}
+            {description && <p id="modal-description" className="text-xs text-muted mt-1">{description}</p>}
+          </div>
+        )}
+        <div className={cn(!title && !description && 'relative')}>{children}</div>
+        {footer && (
+          <div className="px-6 pb-6 pt-2 border-t border-border/50 mt-2">{footer}</div>
+        )}
       </div>
     </div>
   );
