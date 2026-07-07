@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Card, CardTitle, Button, Select, InfoTooltip } from "@/components/ui";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
+import { ConversionFunnel } from "@/components/widgets/ConversionFunnel";
+import { RetentionChart } from "@/components/widgets/RetentionChart";
+import { GeoHeatmap } from "@/components/widgets/GeoHeatmap";
+import { PlatformBreakdown } from "@/components/widgets/PlatformBreakdown";
+import { RevenueForecast } from "@/components/widgets/RevenueForecast";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Twitter, Facebook, Youtube, Zap, MessageSquare, Smartphone, Monitor, Tablet, Globe, ArrowUpRight, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -245,6 +251,39 @@ export default function Metrics() {
           </div>
         </Card>
       </div>
+
+      <Tabs defaultValue="overview" className="mb-8">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="funnel">Funnel</TabsTrigger>
+          <TabsTrigger value="platforms">Platforms</TabsTrigger>
+          <TabsTrigger value="geo">Geo</TabsTrigger>
+          <TabsTrigger value="forecast">Forecast</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <RetentionChart />
+            <PlatformBreakdown />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="funnel">
+          <ConversionFunnel />
+        </TabsContent>
+
+        <TabsContent value="platforms">
+          <PlatformBreakdown />
+        </TabsContent>
+
+        <TabsContent value="geo">
+          <GeoHeatmap />
+        </TabsContent>
+
+        <TabsContent value="forecast">
+          <RevenueForecast />
+        </TabsContent>
+      </Tabs>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="glass-panel">
