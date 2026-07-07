@@ -1,7 +1,7 @@
 ---
 title: Kihwalia cha SEO na Ukaguzi
 project: tadbuy
-version: 5.0.5
+version: 5.0.6
 last_updated: 2026-07-07
 owner: Kimi / Qwen (Ukaguzi wa Wiki)
 update_frequency: Wiki (Ijumaa)

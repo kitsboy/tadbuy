@@ -2,6 +2,11 @@
 
 All notable changes to Tadbuy are documented here.
 
+## [5.0.6] — 2026-07-07
+
+### Changed
+- Version alignment after pre-push auto-bump; auto-generated docs synced to v5.0.6
+
 ## [5.0.5] — 2026-07-07
 
 ### Changed

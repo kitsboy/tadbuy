@@ -1,7 +1,7 @@
 ---
 title: Estratégia de SEO & Auditoria
 project: tadbuy
-version: 5.0.5
+version: 5.0.6
 last_updated: 2026-07-07
 owner: Kimi / Qwen (Auditoria Semanal)
 update_frequency: Semanal (Segunda-feira)
