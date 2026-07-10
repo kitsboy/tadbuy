@@ -113,7 +113,7 @@ export function FullControlWizard(props: FullControlWizardProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-0 mb-2 select-none">
+      <div className="flex items-center gap-0 mb-2 select-none overflow-x-auto pb-1 -mx-1 px-1">
         {STEPS.map((label, idx) => {
           const stepNum = idx + 1;
           const isCompleted = currentStep > stepNum;
@@ -124,7 +124,7 @@ export function FullControlWizard(props: FullControlWizardProps) {
                 type="button"
                 onClick={() => { setValidationErrors([]); setCurrentStep(stepNum); }}
                 className={cn(
-                  'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold transition-all w-full',
+                  'flex items-center justify-center sm:justify-start gap-2 px-2 sm:px-3 py-2.5 rounded-xl text-sm font-bold transition-all w-full min-h-[44px] touch-target touch-manipulation',
                   isActive
                     ? 'bg-accent/15 text-accent border border-accent/40'
                     : isCompleted
@@ -133,7 +133,7 @@ export function FullControlWizard(props: FullControlWizardProps) {
                 )}
               >
                 <span className={cn(
-                  'flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-extrabold shrink-0',
+                  'flex items-center justify-center w-7 h-7 rounded-full text-[11px] font-extrabold shrink-0',
                   isActive ? 'bg-accent text-black' : isCompleted ? 'bg-green/20 text-green' : 'bg-surface border border-border text-muted'
                 )}>
                   {isCompleted ? <CheckCircle2 className="w-3.5 h-3.5" /> : stepNum}
@@ -141,7 +141,7 @@ export function FullControlWizard(props: FullControlWizardProps) {
                 <span className="hidden sm:block truncate">{label}</span>
               </button>
               {idx < STEPS.length - 1 && (
-                <div className={cn('h-px flex-1 mx-1', currentStep > stepNum + 1 ? 'bg-green/40' : currentStep > stepNum ? 'bg-accent/40' : 'bg-border')} />
+                <div className={cn('h-px flex-1 mx-0.5 sm:mx-1 min-w-[4px]', currentStep > stepNum + 1 ? 'bg-green/40' : currentStep > stepNum ? 'bg-accent/40' : 'bg-border')} />
               )}
             </div>
           );
@@ -251,24 +251,41 @@ export function FullControlWizard(props: FullControlWizardProps) {
       )}
 
       {currentStep < 4 && (
-        <div className="flex justify-between gap-3 items-center">
-          <Button variant="secondary" onClick={prev} disabled={currentStep === 1}>Back</Button>
-          <div className="flex items-center gap-2">
-            {props.draftSnapshot && (
-              <>
-                <input
-                  type="text"
-                  value={draftName}
-                  onChange={e => setDraftName(e.target.value)}
-                  placeholder="Draft name"
-                  className="bg-surface border border-border rounded-lg px-2 py-1.5 text-xs w-28"
-                />
-                <Button variant="secondary" size="sm" onClick={handleSaveDraft} disabled={!draftName.trim()}>
-                  Save draft
-                </Button>
-              </>
-            )}
-            <Button onClick={next}>Continue</Button>
+        <div className="sticky bottom-0 z-20 -mx-1 px-1 pt-3 pb-safe bg-gradient-to-t from-background via-background to-transparent">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-3 items-stretch sm:items-center">
+            <Button
+              variant="secondary"
+              onClick={prev}
+              disabled={currentStep === 1}
+              className="min-h-[44px] touch-target touch-manipulation w-full sm:w-auto"
+            >
+              Back
+            </Button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+              {props.draftSnapshot && (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={draftName}
+                    onChange={e => setDraftName(e.target.value)}
+                    placeholder="Draft name"
+                    className="bg-surface border border-border rounded-lg px-3 py-2.5 text-xs flex-1 sm:w-28 min-h-[44px]"
+                  />
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleSaveDraft}
+                    disabled={!draftName.trim()}
+                    className="min-h-[44px] touch-target shrink-0"
+                  >
+                    Save
+                  </Button>
+                </div>
+              )}
+              <Button onClick={next} className="min-h-[44px] touch-target touch-manipulation w-full sm:w-auto">
+                Continue
+              </Button>
+            </div>
           </div>
         </div>
       )}

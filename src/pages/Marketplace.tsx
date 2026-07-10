@@ -127,9 +127,9 @@ function BidModal({ slot, onClose, onBidPlaced }: { slot: MarketplaceSlot; onClo
     setLoading(true);
     try {
       const bidAmount = Number(bidSats);
-      const res = await fetch("/api/marketplace/bid", {
+      const { authFetch } = await import("@/lib/authFetch");
+      const res = await authFetch("/api/marketplace/bid", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           slotId: slot.id,
           slotName: slot.name,
@@ -137,6 +137,7 @@ function BidModal({ slot, onClose, onBidPlaced }: { slot: MarketplaceSlot; onClo
           budgetSats: budgetSats ? Number(budgetSats) : null,
         }),
       });
+      if (res.status === 401) throw new Error("Sign in required to place a bid");
       if (!res.ok) throw new Error("Bid failed");
       const outbidBy = bidAmount - slot.currentBidSats;
       addToast(

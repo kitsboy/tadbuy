@@ -110,6 +110,10 @@ CREATE POLICY "users_manage_own_fedimint_sessions" ON fedimint_sessions
   USING (session_id = auth.uid()::text)
   WITH CHECK (session_id = auth.uid()::text);
 
-CREATE POLICY "users_read_own_settlements" ON settlements
-  FOR SELECT TO authenticated
-  USING (true);
+-- Settlements must not be world-readable. Add user_id when migrating to multi-tenant.
+-- Until user_id exists on settlements, deny client reads (server uses service_role).
+DROP POLICY IF EXISTS "users_read_own_settlements" ON settlements;
+CREATE POLICY "deny_client_settlements" ON settlements
+  FOR ALL TO authenticated, anon
+  USING (false)
+  WITH CHECK (false);

@@ -31,6 +31,7 @@ import { Alert } from "@/components/ui/Alert";
 import { SpendLimitBanner } from "@/components/SpendLimitBanner";
 import { AdPolicyNotice } from "@/components/AdPolicyNotice";
 import { TermsAcceptance } from "@/components/TermsAcceptance";
+import { authFetch } from "@/lib/authFetch";
 
 import { FedimintPanel } from "@/components/payments/FedimintPanel";
 import { FeeEstimator } from "@/components/widgets/FeeEstimator";
@@ -214,7 +215,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   const [selectedCountries, setSelectedCountries] = useState<string[]>(['Global']);
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['English']);
   
-  const availableCountries = ['Global', 'United States', 'United Kingdom', 'Canada', 'Australia', 'Germany', 'France', 'Spain', 'Mexico', 'Brazil', 'Japan', 'India', 'El Salvador', 'Argentina', 'Colombia', 'Nigeria', 'South Africa'];
+  const availableCountries = ['Global', ...GEO_MARKETS.map(m => m.country)];
   const availableLanguages = ['English', 'Spanish', 'French', 'German', 'Portuguese', 'Japanese', 'Chinese', 'Arabic', 'Hindi', 'Russian'];
   
   const trendingTags = ['#bitcoin', '#nostr', '#lightning', '#plebs', '#zap', '@jack', '@elonmusk', '#crypto', '#localmusic', '#livemusic', '#atx', '#sats'];
@@ -227,6 +228,9 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [bolt11Invoice, setBolt11Invoice] = useState("lnbc1u1pwz5yzpp5w6l... (demo bolt11 invoice)");
   const [invoiceId, setInvoiceId] = useState<string | null>(null);
+  const [isDeploying, setIsDeploying] = useState(false);
+  const deployLockRef = useRef(false);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const [projectId] = useState(() => `PRJ-TAD-${Math.random().toString(36).substring(2, 8).toUpperCase()}`);
   const [currentBlockHeight, setCurrentBlockHeight] = useState<number | null>(null);
@@ -279,8 +283,13 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
     if (!geoCode) return;
     const market = GEO_MARKETS.find(m => m.code.toUpperCase() === geoCode.toUpperCase());
     if (market) {
-      setSelectedCountries(prev => (prev.includes(market.country) ? prev : [...prev, market.country]));
+      setSelectedCountries(prev => {
+        if (prev.includes(market.country)) return prev;
+        return [...prev.filter(c => c !== 'Global'), market.country];
+      });
       setCampaignName(`${market.country} Campaign`);
+      setMode('complex');
+      setCurrentStep(2);
     }
     const next = new URLSearchParams(searchParams);
     next.delete('geo');
@@ -447,40 +456,58 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
 
   const handleCancelPayment = () => {
     stopInvoiceCountdown();
+    if (pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
+    deployLockRef.current = false;
+    setIsDeploying(false);
     setPaymentStatus('idle');
     setPaymentError(null);
   };
 
-  const writeCampaignToFirestore = async () => {
+  const writeCampaignToFirestore = async (paidInvoiceId: string | null) => {
     const campaignData = {
       name: campaignName || `Campaign_${Date.now()}`,
       budgetSats: Math.round(btcAmount * 100_000_000),
-      status: 'live' as const,
+      // Server forces draft; live only after /api/payments/confirm
+      status: 'draft' as const,
       createdAt: new Date().toISOString(),
       headline,
       description,
       url: url.includes('?') ? `${url}&utm_source=tadbuy&utm_campaign=${encodeURIComponent(campaignName || 'Campaign')}` : `${url}?utm_source=tadbuy&utm_campaign=${encodeURIComponent(campaignName || 'Campaign')}`,
       platforms: selectedPlatforms,
       payment: paymentMethod,
-      invoiceId: invoiceId || null,
+      invoiceId: paidInvoiceId || null,
     };
-    const res = await fetch('/api/campaigns', {
+    const res = await authFetch('/api/campaigns', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(campaignData),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error((err as { error?: string }).error || 'Failed to create campaign');
     }
-    return res.json();
+    return res.json() as Promise<{ id: string }>;
   };
 
-  const finalizeCampaign = async (verified: boolean) => {
-    await writeCampaignToFirestore();
+  const finalizeCampaign = async (verified: boolean, paidInvoiceId: string | null) => {
+    const created = await writeCampaignToFirestore(paidInvoiceId);
+    if (verified && paidInvoiceId && created?.id) {
+      try {
+        await authFetch('/api/payments/confirm', {
+          method: 'POST',
+          body: JSON.stringify({ invoiceId: paidInvoiceId, campaignId: created.id }),
+        });
+      } catch {
+        // Campaign saved as draft; payment confirm can retry later
+      }
+    }
     setPaymentOutcome(resolvePaymentOutcome(paymentMethod, verified));
     setPaymentStatus('success');
     setShowInvoice(false);
+    setIsDeploying(false);
+    deployLockRef.current = false;
     clearDraft();
   };
 
@@ -501,81 +528,126 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
       return;
     }
     try {
-      await finalizeCampaign(false);
+      await finalizeCampaign(false, null);
     } catch (e) {
       setPaymentError(e instanceof Error ? e.message : 'Failed to save campaign');
     }
   };
 
   const handleDeploy = async () => {
+    if (deployLockRef.current || isDeploying) return;
+    deployLockRef.current = true;
+    setIsDeploying(true);
     setPaymentError(null);
 
     if (paymentMethod === 'fedimint') {
       setPaymentError('Use the Pay with Ecash button in the Fedimint panel above.');
+      deployLockRef.current = false;
+      setIsDeploying(false);
       return;
     }
 
     if (paymentMethod === 'lightning') {
-      // Step 1: Fetch a real invoice from the backend
+      // Capture invoice id in a local variable (avoid stale React state in poll)
+      let activeInvoiceId: string | null = null;
+
       try {
         const amountSats = Math.round(btcAmount * 100_000_000);
-        const res = await fetch('/api/lightning/invoice', {
+        const res = await authFetch('/api/lightning/invoice', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ amountSats, description: `Tadbuy Ad: ${headline}` })
         });
         if (res.ok) {
           const data = await res.json();
           if (data.request) setBolt11Invoice(data.request);
-          if (data.id) setInvoiceId(data.id);
+          if (data.id) {
+            activeInvoiceId = data.id as string;
+            setInvoiceId(data.id);
+          }
+        } else if (res.status === 401) {
+          setPaymentError('Sign in required to create a Lightning invoice.');
+          deployLockRef.current = false;
+          setIsDeploying(false);
+          return;
         }
       } catch (e) {
         console.warn('Could not fetch real invoice — using demo fallback');
       }
 
-      // Step 2: Show waiting state while user scans / pays
       startInvoiceCountdown();
       setPaymentStatus('waiting');
 
-      // Step 3: Poll for payment confirmation every 3 seconds
+      if (!activeInvoiceId) {
+        // Demo / LND offline: save as draft without claiming payment
+        stopInvoiceCountdown();
+        try {
+          await finalizeCampaign(false, null);
+        } catch (e) {
+          setPaymentError(e instanceof Error ? e.message : 'Failed to save campaign');
+          setPaymentStatus('idle');
+          deployLockRef.current = false;
+          setIsDeploying(false);
+        }
+        return;
+      }
+
       const pollId = await new Promise<'success' | 'timeout'>((resolve) => {
         let attempts = 0;
-        const MAX_ATTEMPTS = 40; // 2 minutes max
+        const MAX_ATTEMPTS = 40;
         const poll = setInterval(async () => {
           attempts++;
-          setPaymentStatus('processing');
           try {
-            const checkRes = await fetch(`/api/lightning/check/${invoiceId ?? 'pending'}`);
+            const checkRes = await authFetch(`/api/lightning/check/${activeInvoiceId}`);
             if (checkRes.ok) {
               const checkData = await checkRes.json();
               if (checkData.paid === true || checkData.status === 'settled') {
                 clearInterval(poll);
+                pollRef.current = null;
+                setPaymentStatus('processing');
                 resolve('success');
                 return;
               }
             }
-          } catch (e) {
-            // transient error — keep polling
+          } catch {
+            // transient — keep polling
           }
           if (attempts >= MAX_ATTEMPTS) {
             clearInterval(poll);
+            pollRef.current = null;
             resolve('timeout');
           }
         }, 3000);
+        pollRef.current = poll;
       });
 
       stopInvoiceCountdown();
 
       if (pollId === 'success') {
-        await finalizeCampaign(true);
+        try {
+          await finalizeCampaign(true, activeInvoiceId);
+        } catch (e) {
+          setPaymentError(e instanceof Error ? e.message : 'Failed to save campaign');
+          setPaymentStatus('idle');
+          deployLockRef.current = false;
+          setIsDeploying(false);
+        }
       } else {
         setPaymentError('Payment not detected within timeout. Please check your wallet and try again.');
         setPaymentStatus('idle');
+        deployLockRef.current = false;
+        setIsDeploying(false);
       }
     } else {
-      // On-chain: user confirms manually in modal — save as pending
+      // On-chain: save as draft/pending — not live until payment verified
       setPaymentStatus('processing');
-      await finalizeCampaign(false);
+      try {
+        await finalizeCampaign(false, null);
+      } catch (e) {
+        setPaymentError(e instanceof Error ? e.message : 'Failed to save campaign');
+        setPaymentStatus('idle');
+        deployLockRef.current = false;
+        setIsDeploying(false);
+      }
     }
   };
 
@@ -754,7 +826,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto space-y-6">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto space-y-6 pb-safe overflow-x-clip">
 
       {paymentStatus !== 'success' && (
         <>
@@ -804,32 +876,40 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
         returnPath="/"
       />
 
-      <div id="campaign-builder" className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 scroll-mt-24">
-        <div>
+      <div id="campaign-builder" className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 scroll-mt-24 px-safe">
+        <div className="min-w-0">
           <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">Create Campaign</h2>
-          <p className="text-muted mt-1 mb-3">Launch your ad across the decentralized web in minutes.</p>
+          <p className="text-muted mt-1 mb-3 text-sm sm:text-base">Launch your ad across the decentralized web in minutes.</p>
           <div className="flex flex-wrap items-center gap-3 mb-3">
             <HalvingCountdown currentHeight={currentBlockHeight} />
             <CurrencyDisplay sats={Math.round(btcAmount * 100_000_000)} btcRate={rate} fiatSymbol={symbol} />
           </div>
-          <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-2 w-full max-w-sm">
-            <span className="text-xs font-bold text-muted">Ad Score</span>
+          <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-2.5 w-full max-w-sm min-h-[44px]">
+            <span className="text-xs font-bold text-muted shrink-0">Ad Score</span>
             <div className="flex-1 h-2 bg-black/20 rounded-full overflow-hidden">
               <div className="h-full bg-accent transition-all duration-500" style={{ width: `${adScore}%` }} />
             </div>
-            <span className="text-xs font-bold text-accent">{adScore}/100</span>
+            <span className="text-xs font-bold text-accent shrink-0">{adScore}/100</span>
           </div>
         </div>
-        <div className="flex items-center bg-surface p-1 rounded-xl border border-border">
+        <div className="flex items-center bg-surface p-1 rounded-xl border border-border w-full md:w-auto">
           <button 
+            type="button"
             onClick={() => setMode('simple')}
-            className={cn("px-4 py-2 rounded-lg text-sm font-bold transition-all", mode === 'simple' ? "bg-accent text-black shadow-md" : "text-muted hover:text-text")}
+            className={cn(
+              "flex-1 md:flex-none px-4 py-2.5 rounded-lg text-sm font-bold transition-all min-h-[44px] touch-target touch-manipulation",
+              mode === 'simple' ? "bg-accent text-black shadow-md" : "text-muted hover:text-text"
+            )}
           >
             Quick Launch
           </button>
           <button 
+            type="button"
             onClick={() => { setMode('complex'); setCurrentStep(1); }}
-            className={cn("px-4 py-2 rounded-lg text-sm font-bold transition-all", mode === 'complex' ? "bg-accent text-black shadow-md" : "text-muted hover:text-text")}
+            className={cn(
+              "flex-1 md:flex-none px-4 py-2.5 rounded-lg text-sm font-bold transition-all min-h-[44px] touch-target touch-manipulation",
+              mode === 'complex' ? "bg-accent text-black shadow-md" : "text-muted hover:text-text"
+            )}
           >
             Full Control
           </button>
@@ -1518,6 +1598,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
         symbol={symbol}
         onDeploy={handleDeploy}
         onCancelPayment={handleCancelPayment}
+        isDeploying={isDeploying}
       />
       {/* Legacy inline modal removed — PaymentModal component handles all payment UI */}
 

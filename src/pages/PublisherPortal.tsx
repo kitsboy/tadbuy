@@ -104,16 +104,17 @@ export default function PublisherPortal() {
   const handleSavePayment = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/publisher/settings', {
+      const { authFetch } = await import('@/lib/authFetch');
+      const res = await authFetch('/api/publisher/settings', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: 'publisher_default',
           lightningAddress,
         }),
       });
       if (res.ok) {
         showToast('Lightning address saved successfully! ⚡');
+      } else if (res.status === 401) {
+        showToast('Sign in required to save payout settings.');
       } else {
         showToast('Failed to save. Please try again.');
       }

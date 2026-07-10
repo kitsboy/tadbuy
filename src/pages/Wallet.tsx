@@ -8,6 +8,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { LightningLiquidity } from "@/components/payments/LightningLiquidity";
 import { FedimintPanel } from "@/components/payments/FedimintPanel";
 import { usePageMeta } from "@/hooks/usePageMeta";
+import { authFetch } from "@/lib/authFetch";
 
 export default function Wallet() {
   usePageMeta('Wallet', 'Manage Lightning, Fedimint ecash, and on-chain balances for your Tadbuy campaigns.');
@@ -27,18 +28,23 @@ export default function Wallet() {
   const [withdrawLoading, setWithdrawLoading] = useState(false);
 
   useEffect(() => {
-    fetch("/api/lightning/info")
+    authFetch("/api/lightning/info")
       .then(res => res.json())
       .then(info => {
-        setBalance(info.confirmed_balance);
-        setNodeOnline(true);
+        if (info.confirmed_balance != null) {
+          setBalance(info.confirmed_balance);
+          setNodeOnline(true);
+        } else {
+          setBalance(125_000);
+          setNodeOnline(false);
+        }
       })
       .catch(() => {
         setBalance(125_000);
         setNodeOnline(false);
       });
 
-    fetch("/api/wallet/balances")
+    authFetch("/api/wallet/balances")
       .then(res => res.json())
       .then(data => {
         if (data.fedimint?.sats) setFedimintBalance(data.fedimint.sats);
@@ -49,11 +55,11 @@ export default function Wallet() {
   const handleCreateInvoice = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/lightning/invoice", {
+      const response = await authFetch("/api/lightning/invoice", {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amountSats: 1000, description: "Tadbuy Wallet Funding" })
       });
+      if (!response.ok) throw new Error('Invoice failed');
       const inv = await response.json();
       setInvoice(inv.request);
       setShowQR(true);
@@ -79,17 +85,25 @@ export default function Wallet() {
       addToast("Please fill in all fields", "error");
       return;
     }
+    const amountSats = parseInt(withdrawAmount, 10);
+    if (!Number.isFinite(amountSats) || amountSats < 1) {
+      addToast("Enter a valid amount in sats", "error");
+      return;
+    }
     setWithdrawLoading(true);
     try {
-      const res = await fetch('/api/settle', {
+      const res = await authFetch('/api/settle', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: parseInt(withdrawAmount, 10),
+          amountSats,
           address: withdrawAddress,
           paymentType: 'lightning',
         }),
       });
+      if (res.status === 403) {
+        addToast("Withdrawals disabled until payouts are enabled on the server", "error");
+        return;
+      }
       if (!res.ok) throw new Error(`Server error ${res.status}`);
       addToast("Withdrawal submitted successfully", "success");
       setShowWithdrawModal(false);
@@ -217,9 +231,11 @@ export default function Wallet() {
                     {invoice}
                   </div>
                   <button
+                    type="button"
                     onClick={handleCopy}
                     className="absolute top-3 right-3 p-1.5 rounded-lg bg-surface border border-border hover:border-accent/50 hover:text-accent text-muted transition-all"
                     title="Copy invoice"
+                    aria-label="Copy invoice"
                   >
                     {copied
                       ? <CheckCircle2 className="w-4 h-4 text-green" />
@@ -273,24 +289,29 @@ export default function Wallet() {
           </div>
           <form onSubmit={handleWithdrawSubmit} className="space-y-4">
             <FormGroup>
-              <Label>Amount (sats)</Label>
+              <Label htmlFor="withdraw-amount">Amount (sats)</Label>
               <Input
+                id="withdraw-amount"
                 type="number"
                 placeholder="e.g. 10000"
                 min="1"
+                max="10000000"
                 value={withdrawAmount}
                 onChange={e => setWithdrawAmount(e.target.value)}
                 required
+                autoComplete="off"
               />
             </FormGroup>
             <FormGroup>
-              <Label>Lightning Address or BOLT11 Invoice</Label>
+              <Label htmlFor="withdraw-address">Lightning Address or BOLT11 Invoice</Label>
               <Input
+                id="withdraw-address"
                 type="text"
                 placeholder="user@wallet.com or lnbc..."
                 value={withdrawAddress}
                 onChange={e => setWithdrawAddress(e.target.value)}
                 required
+                autoComplete="off"
               />
               <p className="text-[10px] text-muted mt-1">
                 Enter a Lightning address (e.g. you@walletofsatoshi.com) or paste a BOLT11 invoice.

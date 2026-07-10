@@ -1,6 +1,6 @@
 # Fedimint Integration — Tadbuy
 
-**Auto-generated:** 2026-07-07
+**Auto-generated:** 2026-07-10
 
 ## Overview
 Privacy-preserving ecash payments via federated mints. Lower fees, instant settlement, Chaumian blind signatures.
@@ -38,4 +38,4 @@ FEDIMINT_GATEWAY_URL=https://your-mint-gateway
 | /api/fedimint/pay | POST | Pay campaign with ecash |
 
 ---
-*Tadbuy v5.0.6*
+*Tadbuy v5.0.8*

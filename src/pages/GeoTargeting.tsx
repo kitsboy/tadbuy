@@ -176,7 +176,7 @@ export default function GeoTargeting() {
                   'overflow-hidden flex flex-col p-0',
                   showList ? 'lg:col-span-2' : 'w-full'
                 )}
-                style={{ minHeight: isMobile ? 280 : 420 }}
+                style={{ minHeight: isMobile ? 320 : 460 }}
               >
                 <div className="px-4 py-3 border-b border-border flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
@@ -185,9 +185,9 @@ export default function GeoTargeting() {
                   </div>
                   <Badge variant="success" dot>LIVE</Badge>
                 </div>
-                <div className="flex-1 p-2 min-h-[240px] md:min-h-[360px]">
+                <div className="flex-1 p-1.5 sm:p-2 min-h-[280px] md:min-h-[400px]">
                   <WorldMap
-                    className="w-full h-full min-h-[220px]"
+                    className="w-full h-full min-h-[260px] md:min-h-[380px]"
                     data={mapData}
                     selectedCode={geo.selected?.code ?? null}
                     highlightedCodes={geo.filtered.map(m => m.code)}
@@ -195,8 +195,9 @@ export default function GeoTargeting() {
                     reducedMotion={reducedMotion}
                   />
                 </div>
-                <div className="px-4 py-2 border-t border-border text-[10px] text-muted font-mono">
-                  Tap a dot to inspect · {geo.filtered.length} markets shown
+                <div className="px-4 py-2 border-t border-border text-[10px] text-muted font-mono flex flex-wrap items-center justify-between gap-2">
+                  <span>Tap a country to inspect · real borders · {geo.filtered.length} markets</span>
+                  <span className="text-muted/70">Natural Earth · open map data</span>
                 </div>
               </Card>
             )}

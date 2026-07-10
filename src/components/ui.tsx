@@ -142,16 +142,52 @@ export const Modal = ({
   className?: string;
 }) => {
   const panelRef = React.useRef<HTMLDivElement>(null);
+  const previouslyFocused = React.useRef<HTMLElement | null>(null);
 
   React.useEffect(() => {
     if (!isOpen) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKey);
+    previouslyFocused.current = document.activeElement as HTMLElement | null;
     document.body.style.overflow = 'hidden';
-    panelRef.current?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      // Focus trap
+      if (e.key !== 'Tab' || !panelRef.current) return;
+      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) {
+        e.preventDefault();
+        panelRef.current.focus();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', onKey);
+    // Focus first focusable or panel
+    requestAnimationFrame(() => {
+      const first = panelRef.current?.querySelector<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      (first || panelRef.current)?.focus();
+    });
+
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
+      previouslyFocused.current?.focus?.();
     };
   }, [isOpen, onClose]);
 
@@ -168,14 +204,15 @@ export const Modal = ({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
       onClick={closeOnBackdrop ? onClose : undefined}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby={title ? 'modal-title' : undefined}
-      aria-describedby={description ? 'modal-description' : undefined}
+      role="presentation"
     >
       <div
         ref={panelRef}
         tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? 'modal-title' : undefined}
+        aria-describedby={description ? 'modal-description' : undefined}
         className={cn(
           'bg-card border border-border rounded-2xl w-full shadow-2xl relative animate-scale-in outline-none',
           sizeClasses[size],
@@ -184,7 +221,7 @@ export const Modal = ({
         onClick={(e) => e.stopPropagation()}
       >
         {showClose && (
-          <button onClick={onClose} className="absolute top-4 right-4 text-muted hover:text-text transition-colors touch-target z-10" aria-label="Close">
+          <button type="button" onClick={onClose} className="absolute top-4 right-4 text-muted hover:text-text transition-colors touch-target z-10" aria-label="Close">
             <X className="w-5 h-5" />
           </button>
         )}
@@ -203,16 +240,36 @@ export const Modal = ({
   );
 };
 
-export const InfoTooltip = ({ content }: { content: string }) => (
-  <div className="group relative inline-block ml-1.5 align-middle">
-    <div className="p-0.5 rounded-full hover:bg-accent/20 cursor-help transition-colors">
-      <svg className="w-3 h-3 text-muted group-hover:text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
-      </svg>
-    </div>
-    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 p-2 bg-zinc-900 border border-border rounded-lg text-[10px] leading-tight text-text opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-xl z-[100]">
-      {content}
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-8 border-transparent border-b-zinc-900" />
-    </div>
-  </div>
-);
+export const InfoTooltip = ({ content }: { content: string }) => {
+  const [open, setOpen] = React.useState(false);
+  const id = React.useId();
+  return (
+    <span className="relative inline-block ml-1.5 align-middle">
+      <button
+        type="button"
+        className="p-0.5 rounded-full hover:bg-accent/20 focus-visible:bg-accent/20 cursor-help transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+        aria-label="More information"
+        aria-describedby={open ? id : undefined}
+        aria-expanded={open}
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+      >
+        <svg className="w-3 h-3 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+        </svg>
+      </button>
+      {open && (
+        <span
+          id={id}
+          role="tooltip"
+          className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 p-2 bg-zinc-900 border border-border rounded-lg text-[10px] leading-tight text-text shadow-xl z-[100] block"
+        >
+          {content}
+          <span className="absolute bottom-full left-1/2 -translate-x-1/2 border-8 border-transparent border-b-zinc-900" aria-hidden />
+        </span>
+      )}
+    </span>
+  );
+};

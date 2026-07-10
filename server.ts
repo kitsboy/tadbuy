@@ -7,6 +7,12 @@ import rateLimit from "express-rate-limit";
 import Joi from "joi";
 import { agentAuthMiddleware } from "./src/lib/api/agentAuth.ts";
 import { nip98AuthMiddleware } from "./src/lib/api/nip98Auth.ts";
+import {
+  requireAuth,
+  requireLnPayoutsEnabled,
+  verifyFirebaseIdToken,
+  type AuthedRequest,
+} from "./src/lib/api/userAuth.ts";
 import { registerBatch1Routes } from "./server/routes/batch1.ts";
 import { registerBatch2Routes } from "./server/routes/batch2.ts";
 import { registerBatch3Routes } from "./server/routes/batch3.ts";
@@ -90,29 +96,40 @@ const campaignSchema = Joi.object({
   invoiceId:    Joi.string().optional().allow('', null),
 });
 
-// Settlement schema — supports on-chain, Lightning address (user@domain), and BOLT11
+// Settlement schema — amountSats is the only accepted unit for Lightning
 const settleSchema = Joi.object({
-  amount:      Joi.number().positive().required(),
+  amountSats:  Joi.number().integer().min(1).max(10_000_000).required()
+                  .description('Amount in satoshis (max 10M sats per request)'),
+  // Legacy BTC amount rejected to prevent unit mixups
+  amount:      Joi.forbidden(),
   address:     Joi.string().min(3).max(300).required()
-                  .description('Bitcoin address, Lightning address (user@domain.com), or BOLT11 invoice'),
+                  .description('Lightning address (user@domain.com), or BOLT11 invoice'),
   paymentType: Joi.string().valid('on-chain', 'lightning').required()
+});
+
+// Invoice creation bounds
+const invoiceSchema = Joi.object({
+  amountSats:   Joi.number().integer().min(1).max(10_000_000).required(),
+  description:  Joi.string().max(200).optional().allow('', null),
 });
 
 // Bid schema for marketplace
 const bidSchema = Joi.object({
   slotId:     Joi.string().required(),
   slotName:   Joi.string().required(),
-  bidSats:    Joi.number().integer().min(1).required(),
-  budgetSats: Joi.number().integer().min(1).optional().allow(null),
+  bidSats:    Joi.number().integer().min(1).max(100_000_000).required(),
+  budgetSats: Joi.number().integer().min(1).max(100_000_000).optional().allow(null),
   userId:     Joi.string().optional().allow('', null),
 });
 
-// Publisher settings schema
+// Publisher settings — userId is always taken from auth, not client body
 const publisherSettingsSchema = Joi.object({
-  userId:           Joi.string().required(),
   lightningAddress: Joi.string().min(3).max(200).required(),
   bitcoinAddress:   Joi.string().min(26).max(90).optional().allow('', null),
 });
+
+/** Max sats for a single outbound Lightning payment when payouts are enabled */
+const MAX_PAYOUT_SATS = 10_000_000;
 
 async function startServer() {
   const app = express();
@@ -136,14 +153,68 @@ async function startServer() {
   // ─── Rate Limiters ──────────────────────────────────────────────────────────
   const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100,
-    message: "Too many requests, please try again later."
+    max: 200,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many requests, please try again later." },
   });
 
   const strictLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 20,
-    message: "Too many requests, please try again later."
+    max: 15,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many requests, please try again later." },
+  });
+
+  const invoiceLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 30,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many invoice requests, please try again later." },
+  });
+
+  // Apply global API rate limit to all /api routes
+  app.use('/api/', limiter);
+
+  // Basic security headers (API + HTML)
+  app.use((_req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('X-DNS-Prefetch-Control', 'off');
+    next();
+  });
+
+  // ─── Auth session (store verified Firebase uid in express-session) ──────────
+  app.post('/api/auth/session', async (req, res) => {
+    const auth = req.headers.authorization;
+    if (!auth?.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Bearer token required' });
+    }
+    const token = auth.slice(7).trim();
+    const user = await verifyFirebaseIdToken(token);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid or expired token' });
+    }
+    const sess = (req as express.Request & {
+      session: { userId?: string; userEmail?: string; destroy: (cb: () => void) => void };
+    }).session;
+    sess.userId = user.userId;
+    sess.userEmail = user.email;
+    res.json({ ok: true, userId: user.userId });
+  });
+
+  app.post('/api/auth/logout', (req, res) => {
+    const sess = (req as express.Request & {
+      session?: { destroy: (cb: () => void) => void };
+    }).session;
+    if (sess?.destroy) {
+      sess.destroy(() => res.json({ ok: true }));
+    } else {
+      res.json({ ok: true });
+    }
   });
 
   // ─── Admin Routes ───────────────────────────────────────────────────────────
@@ -154,8 +225,9 @@ async function startServer() {
       if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
       const backupPath = path.join(backupDir, `backup-${new Date().toISOString()}.json`);
       fs.writeFileSync(backupPath, JSON.stringify(backup, null, 2));
-      res.json({ status: 'success', path: backupPath });
-    } catch (error) {
+      // Do not leak absolute filesystem paths
+      res.json({ status: 'success', filename: path.basename(backupPath) });
+    } catch {
       res.status(500).json({ error: 'Failed to create backup' });
     }
   });
@@ -237,7 +309,12 @@ async function startServer() {
       return res.status(400).json({ error: 'Validation Error', details: error.details });
     }
     try {
-      const campaign = await campaignRepo.create(value);
+      // Agents may not force live without payment — always draft on create
+      const campaign = await campaignRepo.create({
+        ...value,
+        status: 'draft',
+        createdAt: value.createdAt || new Date().toISOString(),
+      });
       res.json(campaign);
     } catch {
       res.status(500).json({ error: 'Failed to create campaign' });
@@ -260,17 +337,21 @@ async function startServer() {
     }
   });
 
-  agentRouter.post("/topup", async (req, res) => {
+  // Outbound Lightning pay — admin role + explicit ENABLE_LN_PAYOUTS only
+  agentRouter.post("/topup", agentAuthMiddleware('admin'), requireLnPayoutsEnabled, strictLimiter, async (req, res) => {
     const { destination, amount } = req.body;
-    if (!destination || !amount) {
+    if (!destination || typeof destination !== 'string' || !amount) {
       return res.status(400).json({ error: 'destination (BOLT11 invoice) and amount (sats) are required' });
     }
+    const sats = Number(amount);
+    if (!Number.isFinite(sats) || sats < 1 || sats > MAX_PAYOUT_SATS) {
+      return res.status(400).json({ error: `amount must be 1–${MAX_PAYOUT_SATS} sats` });
+    }
     try {
-      const payment = await executeLightningPayment(destination, Number(amount));
+      const payment = await executeLightningPayment(destination, sats);
       res.json({ status: 'success', txid: (payment as { id?: string }).id || 'unknown' });
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Payment failed';
-      res.status(500).json({ error: 'Lightning payment failed', message: msg });
+    } catch {
+      res.status(500).json({ error: 'Lightning payment failed' });
     }
   });
 
@@ -278,28 +359,38 @@ async function startServer() {
 
   // ─── Settlement Endpoints ───────────────────────────────────────────────────
   // In-memory settlements (Supabase settlements table available for future persistence)
-  const settlements: Record<string, unknown>[] = [];
+  type SettlementRecord = {
+    id: number;
+    userId?: string;
+    amountSats?: number;
+    address: string;
+    txid: string;
+    timestamp: string;
+    status: string;
+    paymentType: string;
+  };
+  const settlements: SettlementRecord[] = [];
 
-  app.get("/api/settlements", (req, res) => {
-    res.json(settlements);
+  app.get("/api/settlements", requireAuth, (req, res) => {
+    const userId = (req as AuthedRequest).userId;
+    const mine = settlements.filter((s) => s.userId === userId);
+    res.json(mine);
   });
 
   // ─── Campaign CRUD ──────────────────────────────────────────────────────────
-  // ZapCampaign Nostr Agent Extension (2026-06-05)
-// Added specifically for Android app's Nostr tile and external Nostr agents.
-// Returns campaign data optimized for real Nostr Zaps (NIP-57) on relays like wss://relay.damus.io.
-// Preserves all existing /api/campaigns logic for TadBuy. Agents can query this for Bitcoin/LN campaigns.
-// Android app will call this from Nostr tile to load campaigns without changing any UI tiles.
-app.post("/api/campaigns", async (req, res) => {
-
+  // Create always as draft owned by the authenticated user. Live only after payment verify.
+  app.post("/api/campaigns", requireAuth, async (req, res) => {
     const { error, value } = campaignSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
     try {
+      const userId = (req as AuthedRequest).userId!;
       const campaign = await campaignRepo.create({
         ...value,
-        status: value.status || 'draft',
+        // Never trust client status/userId for privilege
+        userId,
+        status: 'draft',
         createdAt: new Date().toISOString(),
       });
       res.json(campaign);
@@ -308,19 +399,69 @@ app.post("/api/campaigns", async (req, res) => {
     }
   });
 
-  // ZapCampaign Nostr Agent Extension - GET variant for simple polling by Nostr agents or Android app
-// Returns list of Zap-enabled campaigns. Nostr tile in Android connects to the relay listed here.
-// This is the endpoint referenced in the task. No UI changes in frontend.
-app.get("/api/campaigns", async (req, res) => {
-
+  // List only the caller's campaigns (no public dump of all rows)
+  app.get("/api/campaigns", requireAuth, async (req, res) => {
     try {
-      const userId = req.query.userId as string | undefined;
-      const campaigns = userId
-        ? await campaignRepo.getByUserId(userId)
-        : await campaignRepo.getAll();
+      const userId = (req as AuthedRequest).userId!;
+      const campaigns = await campaignRepo.getByUserId(userId);
       res.json(campaigns);
     } catch {
       res.json([]);
+    }
+  });
+
+  // Confirm payment server-side and activate campaign (client cannot force live)
+  app.post("/api/payments/confirm", requireAuth, strictLimiter, async (req, res) => {
+    const invoiceId = typeof req.body?.invoiceId === 'string' ? req.body.invoiceId : '';
+    const campaignId = typeof req.body?.campaignId === 'string' ? req.body.campaignId : '';
+    if (!invoiceId || invoiceId === 'pending') {
+      return res.status(400).json({ error: 'invoiceId required' });
+    }
+
+    const userId = (req as AuthedRequest).userId!;
+
+    try {
+      // Verify invoice is settled on LND when available
+      let paid = false;
+      try {
+        const { getInvoice, authenticatedLndGrpc } = await import('ln-service');
+        const cert = process.env.UMBREL_LND_CERT;
+        const macaroon = process.env.UMBREL_LND_MACAROON;
+        const socket = process.env.UMBREL_LND_SOCKET;
+        if (cert && macaroon && socket) {
+          const { lnd } = authenticatedLndGrpc({ cert, macaroon, socket });
+          const invoice = await getInvoice({ lnd, id: invoiceId });
+          paid = !!invoice.is_confirmed;
+        }
+      } catch {
+        paid = false;
+      }
+
+      if (!paid) {
+        return res.status(402).json({ error: 'Payment not confirmed', paid: false });
+      }
+
+      if (campaignId) {
+        const existing = await campaignRepo.getById(campaignId);
+        if (!existing || existing.userId !== userId) {
+          return res.status(404).json({ error: 'Campaign not found' });
+        }
+        await campaignRepo.update(campaignId, {
+          status: 'live',
+          invoiceId,
+          paymentConfirmedAt: new Date().toISOString(),
+        } as Partial<import('./src/lib/db/types.ts').Campaign> & {
+          invoiceId?: string;
+          paymentConfirmedAt?: string;
+          userId?: string;
+        });
+        return res.json({ paid: true, status: 'live', campaignId });
+      }
+
+      const activated = await activateCampaignByInvoice(invoiceId);
+      res.json({ paid: true, activated });
+    } catch {
+      res.status(500).json({ error: 'Failed to confirm payment' });
     }
   });
 
@@ -352,30 +493,53 @@ app.get("/api/campaigns", async (req, res) => {
   });
 
   // ─── Lightning Endpoints ────────────────────────────────────────────────────
-  app.get("/api/lightning/info", async (req, res) => {
+  app.get("/api/lightning/info", requireAuth, async (_req, res) => {
     try {
       const info = await getLightningNodeInfo();
-      res.json(info);
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'LND unavailable';
-      res.status(503).json({ error: 'Failed to connect to Lightning node', message: msg });
+      // Redact sensitive node details for clients
+      res.json({
+        alias: info.alias,
+        is_synced_to_chain: info.is_synced_to_chain,
+        // confirmed_balance only when payouts enabled (wallet UI)
+        ...(process.env.ENABLE_LN_PAYOUTS === 'true'
+          ? { confirmed_balance: info.confirmed_balance }
+          : { confirmed_balance: null, balance_hidden: true }),
+        public_key: undefined,
+      });
+    } catch {
+      res.status(503).json({ error: 'Failed to connect to Lightning node' });
     }
   });
 
-  app.post("/api/lightning/invoice", async (req, res) => {
+  app.post("/api/lightning/invoice", requireAuth, invoiceLimiter, async (req, res) => {
+    const { error, value } = invoiceSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     try {
-      const { amountSats, description } = req.body;
-      const invoice = await createLightningInvoice(amountSats, description || 'Tadbuy Campaign');
-      res.json(invoice);
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Invoice creation failed';
-      res.status(503).json({ error: 'Failed to create Lightning invoice', message: msg });
+      const invoice = await createLightningInvoice(
+        value.amountSats,
+        (value.description || 'Tadbuy Campaign').slice(0, 200)
+      );
+      res.json({
+        id: invoice.id,
+        request: invoice.request,
+        tokens: invoice.tokens,
+        expires_at: invoice.expires_at,
+      });
+    } catch {
+      res.status(503).json({ error: 'Failed to create Lightning invoice' });
     }
   });
 
-  // ✅ NEW: Check if a Lightning invoice has been paid
-  app.get("/api/lightning/check/:id", async (req, res) => {
+  // Check if a Lightning invoice has been paid (authenticated)
+  app.get("/api/lightning/check/:id", requireAuth, async (req, res) => {
     try {
+      const id = String(req.params.id || '');
+      if (!id || id === 'pending' || id.length > 128) {
+        return res.json({ paid: false, status: 'pending', message: 'Invalid invoice id' });
+      }
+
       const { getInvoice } = await import('ln-service');
       const { authenticatedLndGrpc } = await import('ln-service');
       const cert     = process.env.UMBREL_LND_CERT;
@@ -383,12 +547,11 @@ app.get("/api/campaigns", async (req, res) => {
       const socket   = process.env.UMBREL_LND_SOCKET;
 
       if (!cert || !macaroon || !socket) {
-        // LND not configured — return pending (don't crash the payment flow)
         return res.json({ paid: false, status: 'pending', message: 'LND not configured' });
       }
 
       const { lnd } = authenticatedLndGrpc({ cert, macaroon, socket });
-      const invoice = await getInvoice({ lnd, id: req.params.id });
+      const invoice = await getInvoice({ lnd, id });
 
       res.json({
         paid:        invoice.is_confirmed,
@@ -398,10 +561,8 @@ app.get("/api/campaigns", async (req, res) => {
         createdAt:   invoice.created_at,
         expiresAt:   invoice.expires_at,
       });
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Check failed';
-      // Return pending on error — don't break the polling loop
-      res.json({ paid: false, status: 'pending', error: msg });
+    } catch {
+      res.json({ paid: false, status: 'pending' });
     }
   });
 
@@ -414,15 +575,29 @@ app.get("/api/campaigns", async (req, res) => {
     });
   });
 
-  // ✅ Lightning webhook — update campaign status in Supabase
-  app.post("/api/webhooks/lightning", async (req, res) => {
+  // Lightning webhook — requires shared secret (never open to the public internet)
+  app.post("/api/webhooks/lightning", strictLimiter, async (req, res) => {
+    const secret = process.env.LIGHTNING_WEBHOOK_SECRET;
+    if (!secret) {
+      console.error('LIGHTNING_WEBHOOK_SECRET not set — rejecting webhook');
+      return res.status(503).json({ error: 'Webhook not configured' });
+    }
+    const provided =
+      (req.headers['x-webhook-secret'] as string) ||
+      (req.headers['authorization']?.startsWith('Bearer ')
+        ? req.headers.authorization.slice(7)
+        : '');
+    if (!provided || provided !== secret) {
+      return res.status(401).json({ error: 'Unauthorized webhook' });
+    }
+
     try {
-      const { payment_hash, id, status } = req.body;
+      const { payment_hash, id, status } = req.body ?? {};
       const invoiceId = payment_hash || id;
 
-      if (invoiceId && (status === 'paid' || status === 'settled' || req.body.settled)) {
+      if (invoiceId && (status === 'paid' || status === 'settled' || req.body?.settled)) {
         try {
-          const activated = await activateCampaignByInvoice(invoiceId);
+          const activated = await activateCampaignByInvoice(String(invoiceId));
           if (activated) {
             console.log(`Campaign activated via webhook for invoice: ${invoiceId}`);
           }
@@ -434,7 +609,7 @@ app.get("/api/campaigns", async (req, res) => {
       res.status(200).json({ received: true });
     } catch (err) {
       console.error('Webhook error:', err);
-      res.status(200).json({ received: true }); // Always 200 to prevent retries
+      res.status(500).json({ error: 'Webhook processing failed' });
     }
   });
 
@@ -450,22 +625,24 @@ app.get("/api/campaigns", async (req, res) => {
   });
 
   // ─── Settle / Withdraw ──────────────────────────────────────────────────────
-  app.post("/api/settle", strictLimiter, async (req, res) => {
+  // Requires auth + explicit ENABLE_LN_PAYOUTS. Amount is sats only (never BTC float).
+  app.post("/api/settle", requireAuth, requireLnPayoutsEnabled, strictLimiter, async (req, res) => {
     const { error, value } = settleSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
 
-    const { amount, address, paymentType } = value;
+    const { amountSats, address, paymentType } = value;
+    const userId = (req as AuthedRequest).userId!;
 
     if (paymentType === 'lightning') {
       try {
-        // Convert BTC amount to sats and attempt real payment
-        const sats = Math.round(amount * 100_000_000);
-        const payment = await executeLightningPayment(address, sats);
+        const payment = await executeLightningPayment(address, amountSats);
         const settlement = {
           id: settlements.length + 1,
-          amount, address,
+          userId,
+          amountSats,
+          address,
           txid: (payment as { id?: string }).id || 'ln_' + Math.random().toString(36).slice(2),
           timestamp: new Date().toISOString(),
           status: 'completed',
@@ -473,49 +650,63 @@ app.get("/api/campaigns", async (req, res) => {
         };
         settlements.push(settlement);
         return res.json({ status: 'success', txid: settlement.txid });
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : 'Payment failed';
-        // Fall back to pending if LND not configured
-        const txid = 'pending_ln_' + Math.random().toString(36).slice(2);
-        settlements.push({ id: settlements.length + 1, amount, address, txid, timestamp: new Date().toISOString(), status: 'pending', paymentType });
-        return res.status(503).json({ error: 'Lightning payment failed — LND may not be configured', message: msg, txid });
+      } catch {
+        return res.status(503).json({
+          error: 'Lightning payment failed — LND may not be configured',
+        });
       }
     } else {
-      // On-chain: log it (would need a BTC node / service to broadcast)
       const txid = 'onchain_pending_' + Math.random().toString(36).slice(2);
-      console.log(`On-chain payment queued: ${amount} BTC → ${address}`);
-      settlements.push({ id: settlements.length + 1, amount, address, txid, timestamp: new Date().toISOString(), status: 'pending', paymentType });
-      res.json({ status: 'pending', txid, message: 'On-chain transaction queued — requires node integration to broadcast' });
+      console.log(`On-chain payment queued: ${amountSats} sats → ${address} (user ${userId})`);
+      settlements.push({
+        id: settlements.length + 1,
+        userId,
+        amountSats,
+        address,
+        txid,
+        timestamp: new Date().toISOString(),
+        status: 'pending',
+        paymentType,
+      });
+      res.json({
+        status: 'pending',
+        txid,
+        message: 'On-chain transaction queued — requires node integration to broadcast',
+      });
     }
   });
 
   // ─── Marketplace Bids ───────────────────────────────────────────────────────
-  app.post("/api/marketplace/bid", async (req, res) => {
+  app.post("/api/marketplace/bid", requireAuth, async (req, res) => {
     const { error, value } = bidSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
     try {
-      const { id } = await createBid(value);
+      const userId = (req as AuthedRequest).userId!;
+      const { id } = await createBid({ ...value, userId });
       res.json({ success: true, id, message: 'Bid placed successfully' });
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Unknown error';
-      res.status(500).json({ error: 'Failed to store bid', details: msg });
+    } catch {
+      res.status(500).json({ error: 'Failed to store bid' });
     }
   });
 
   // ─── Publisher Settings ─────────────────────────────────────────────────────
-  app.post("/api/publisher/settings", async (req, res) => {
+  app.post("/api/publisher/settings", requireAuth, async (req, res) => {
     const { error, value } = publisherSettingsSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
     try {
-      await upsertPublisherSettings(value);
+      const userId = (req as AuthedRequest).userId!;
+      await upsertPublisherSettings({
+        userId,
+        lightningAddress: value.lightningAddress,
+        bitcoinAddress: value.bitcoinAddress,
+      });
       res.json({ success: true });
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Unknown error';
-      res.status(500).json({ error: 'Failed to save settings', details: msg });
+    } catch {
+      res.status(500).json({ error: 'Failed to save settings' });
     }
   });
 
@@ -610,7 +801,8 @@ app.get("/api/campaigns", async (req, res) => {
   app.use((err: Error, req: express.Request, res: express.Response, _next: express.NextFunction) => {
     console.error(err.stack);
     if (process.env.SENTRY_DSN) Sentry.captureException(err);
-    res.status(500).json({ error: 'Internal Server Error', message: err.message });
+    // Never leak internal error messages to clients
+    res.status(500).json({ error: 'Internal Server Error' });
   });
 
   // ─── Vite / Static Serving ──────────────────────────────────────────────────

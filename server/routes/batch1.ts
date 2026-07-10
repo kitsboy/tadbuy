@@ -87,9 +87,21 @@ export function registerBatch1Routes(app: Express) {
 
   app.post('/api/nostr/nip98/verify', (req, res) => {
     const { event } = req.body;
-    if (!event) return res.status(400).json({ valid: false });
-    // Production: verify NIP-98 HTTP auth event signature + timestamp
-    res.json({ valid: true, method: 'NIP-98' });
+    if (!event) return res.status(400).json({ valid: false, reason: 'event required' });
+    // Structural checks only — full schnorr verify not yet wired
+    if (event.kind !== 27235 || !event.pubkey || !event.sig) {
+      return res.json({ valid: false, reason: 'invalid NIP-98 event shape' });
+    }
+    const now = Math.floor(Date.now() / 1000);
+    if (typeof event.created_at !== 'number' || Math.abs(now - event.created_at) > 60) {
+      return res.json({ valid: false, reason: 'timestamp expired' });
+    }
+    res.json({
+      valid: false,
+      method: 'NIP-98',
+      reason: 'signature not cryptographically verified — use full Nostr verifier in production',
+      structureOk: true,
+    });
   });
 
   app.post('/api/nostr/nip46/sign', (req, res) => {
@@ -113,6 +125,7 @@ export function registerBatch1Routes(app: Express) {
   });
 
   // ─── Lightning Channels / Liquidity ───────────────────────────────────────
+  // Public demo numbers only when LND unset; live channel data requires auth via server.ts patterns
   app.get('/api/lightning/channels', async (_req, res) => {
     try {
       const { getChannels, authenticatedLndGrpc } = await import('ln-service');

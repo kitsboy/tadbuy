@@ -249,6 +249,7 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
           <select
             value={currency}
             onChange={e => setCurrency(e.target.value)}
+            aria-label="Display currency"
             className="bg-transparent border-none outline-none text-accent cursor-pointer appearance-none pr-1 font-bold"
           >
             <option value="USD">USD</option>

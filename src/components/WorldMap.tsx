@@ -1,5 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as d3 from 'd3';
+import { feature } from 'topojson-client';
+import type { Topology, GeometryCollection } from 'topojson-specification';
+import type { Feature, FeatureCollection, Geometry } from 'geojson';
+import worldAtlas from 'world-atlas/countries-110m.json';
+import { numericIdToAlpha2 } from '@/data/isoNumericToAlpha2';
 
 export interface CountryData {
   country: string;
@@ -27,41 +32,22 @@ export const DEMO_DATA: CountryData[] = [
   { country: 'Portugal', code: 'PT', impressions: 15000, clicks: 180, campaigns: 1 },
 ];
 
-// Approximate SVG path coordinates for world regions (simplified polygons)
-// Coordinates are in [x, y] pairs as percentages of the container (0–1)
-const REGION_BLOCKS = [
-  {
-    name: 'North America',
-    codes: ['US', 'CA'],
-    // Rough outline of North America
-    points: '9,12 22,10 28,18 30,38 26,52 22,55 12,50 7,38 8,22',
-  },
-  {
-    name: 'South America',
-    codes: ['BR', 'AR', 'MX'],
-    points: '20,57 30,55 34,62 32,80 26,88 20,85 17,72 18,60',
-  },
-  {
-    name: 'Europe',
-    codes: ['DE', 'GB', 'FR', 'NL', 'CH', 'PT', 'PL'],
-    points: '42,10 56,10 58,28 54,36 44,36 40,24 41,14',
-  },
-  {
-    name: 'Africa',
-    codes: ['NG', 'KE', 'ZA', 'GH'],
-    points: '44,38 56,38 58,56 56,75 50,82 44,78 42,60 43,42',
-  },
-  {
-    name: 'Middle East / Asia',
-    codes: ['JP', 'SG', 'SV', 'IN', 'KR', 'VN', 'PH'],
-    points: '58,10 86,12 88,42 80,55 68,58 60,50 56,36 57,14',
-  },
-  {
-    name: 'Oceania',
-    codes: ['AU', 'NZ'],
-    points: '72,62 86,60 88,76 82,82 72,80 70,70',
-  },
-];
+type CountryProps = { name?: string };
+type CountryFeature = Feature<Geometry, CountryProps> & { id?: string | number };
+
+const COLORS = {
+  ocean: '#070b14',
+  oceanEdge: '#0c1424',
+  landEmpty: '#121a2b',
+  landEmptyStroke: '#1e2a40',
+  landMuted: '#0f1624',
+  heatLow: '#1a2e52',
+  heatHigh: '#f7931a',
+  selected: '#ffa94d',
+  hoverStroke: '#f7931a',
+  label: '#6b7c99',
+  grid: '#152033',
+};
 
 interface WorldMapProps {
   className?: string;
@@ -70,6 +56,12 @@ interface WorldMapProps {
   highlightedCodes?: string[];
   onCountrySelect?: (code: string) => void;
   reducedMotion?: boolean;
+}
+
+function buildCountryFeatures(): CountryFeature[] {
+  const topology = worldAtlas as unknown as Topology<{ countries: GeometryCollection }>;
+  const fc = feature(topology, topology.objects.countries) as FeatureCollection<Geometry, CountryProps>;
+  return fc.features as CountryFeature[];
 }
 
 export function WorldMap({
@@ -85,14 +77,38 @@ export function WorldMap({
   const [tooltip, setTooltip] = useState<{
     x: number;
     y: number;
-    data: CountryData;
+    name: string;
+    code: string | null;
+    data: CountryData | null;
   } | null>(null);
   const [dims, setDims] = useState({ w: 800, h: 400 });
+  const [hoverCode, setHoverCode] = useState<string | null>(null);
 
   const mapData = data ?? DEMO_DATA;
   const hasHighlights = Boolean(highlightedCodes?.length);
 
-  // Track container size with ResizeObserver
+  const features = useMemo(() => buildCountryFeatures(), []);
+
+  const dataByCode = useMemo(() => {
+    const m = new Map<string, CountryData>();
+    for (const d of mapData) m.set(d.code, d);
+    return m;
+  }, [mapData]);
+
+  const maxImpressions = useMemo(
+    () => d3.max(mapData, d => d.impressions) ?? 1,
+    [mapData],
+  );
+
+  const colorScale = useMemo(
+    () =>
+      d3
+        .scaleSequential(d3.interpolateRgb(COLORS.heatLow, COLORS.heatHigh))
+        .domain([0, maxImpressions]),
+    [maxImpressions],
+  );
+
+  // Track container size
   useEffect(() => {
     if (!containerRef.current) return;
     const ro = new ResizeObserver(entries => {
@@ -103,243 +119,256 @@ export function WorldMap({
     return () => ro.disconnect();
   }, []);
 
+  const fillForCode = useCallback(
+    (code: string | null): string => {
+      if (!code) return COLORS.landEmpty;
+      const d = dataByCode.get(code);
+      if (!d || d.impressions <= 0) return COLORS.landEmpty;
+      const dimmed = hasHighlights && !highlightedCodes!.includes(code);
+      if (dimmed) return COLORS.landMuted;
+      return colorScale(d.impressions);
+    },
+    [colorScale, dataByCode, hasHighlights, highlightedCodes],
+  );
+
   useEffect(() => {
     if (!svgRef.current) return;
     const { w, h } = dims;
+    if (w < 40 || h < 40) return;
 
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
     svg.attr('viewBox', `0 0 ${w} ${h}`).attr('preserveAspectRatio', 'xMidYMid meet');
 
-    // ── Background ────────────────────────────────────────────────────────────
-    svg
-      .append('rect')
-      .attr('width', w)
-      .attr('height', h)
-      .attr('fill', '#080d1a')
-      .attr('rx', 10);
-
-    // Subtle grid lines
-    const gridG = svg.append('g').attr('class', 'grid');
-    const cols = 12;
-    const rows = 6;
-    for (let i = 1; i < cols; i++) {
-      gridG
-        .append('line')
-        .attr('x1', (w / cols) * i)
-        .attr('y1', 0)
-        .attr('x2', (w / cols) * i)
-        .attr('y2', h)
-        .attr('stroke', '#1a2236')
-        .attr('stroke-width', 0.5);
-    }
-    for (let i = 1; i < rows; i++) {
-      gridG
-        .append('line')
-        .attr('x1', 0)
-        .attr('y1', (h / rows) * i)
-        .attr('x2', w)
-        .attr('y2', (h / rows) * i)
-        .attr('stroke', '#1a2236')
-        .attr('stroke-width', 0.5);
-    }
-
-    // ── Color scale ───────────────────────────────────────────────────────────
-    const dataByCode = new Map(mapData.map(d => [d.code, d]));
-    const maxImpressions = d3.max(mapData, d => d.impressions) ?? 1;
-
-    const colorScale = d3
-      .scaleSequential()
-      .domain([0, maxImpressions])
-      .interpolator(d3.interpolate('#1a2e52', '#f7931a'));
-
-    const g = svg.append('g');
-
-    const handleCountrySelect = (code: string) => {
-      onCountrySelect?.(code);
-    };
-
-    // ── Region polygons ───────────────────────────────────────────────────────
-    REGION_BLOCKS.forEach(region => {
-      // Convert percentage coords to pixel coords
-      const pixelPoints = region.points
-        .split(' ')
-        .map(pair => {
-          const [px, py] = pair.split(',').map(Number);
-          return `${(px / 100) * w},${(py / 100) * h}`;
-        })
-        .join(' ');
-
-      const totalImpressions = region.codes.reduce(
-        (sum, code) => sum + (dataByCode.get(code)?.impressions ?? 0),
-        0,
-      );
-      const avgImpressions = totalImpressions / region.codes.length;
-      const regionDimmed = hasHighlights && !region.codes.some(code => highlightedCodes!.includes(code));
-
-      const poly = g
-        .append('polygon')
-        .attr('points', pixelPoints)
-        .attr('fill', totalImpressions > 0 ? colorScale(avgImpressions) : '#0f1a2e')
-        .attr('stroke', '#253554')
-        .attr('stroke-width', 1.5)
-        .attr('opacity', regionDimmed ? 0.35 : 0.82)
-        .style('cursor', 'default');
-
-      // Region label — centroid approximation
-      const pts = region.points.split(' ').map(p => p.split(',').map(Number));
-      const cx = (pts.reduce((s, p) => s + p[0], 0) / pts.length / 100) * w;
-      const cy = (pts.reduce((s, p) => s + p[1], 0) / pts.length / 100) * h;
-      const labelSize = Math.max(8, Math.min(12, w * 0.012));
-
-      g.append('text')
-        .attr('x', cx)
-        .attr('y', cy)
-        .attr('text-anchor', 'middle')
-        .attr('dominant-baseline', 'middle')
-        .attr('fill', '#5a6e8a')
-        .attr('font-size', labelSize)
-        .attr('font-family', 'monospace')
-        .attr('opacity', regionDimmed ? 0.45 : 1)
-        .attr('pointer-events', 'none')
-        .text(region.name.split('/')[0].trim());
-
-      // Hover glow on region
-      poly
-        .on('mouseover', function () {
-          d3.select(this)
-            .transition()
-            .duration(reducedMotion ? 0 : 150)
-            .attr('opacity', regionDimmed ? 0.5 : 1)
-            .attr('stroke', '#f7931a')
-            .attr('stroke-width', 2);
-        })
-        .on('mouseout', function () {
-          d3.select(this)
-            .transition()
-            .duration(reducedMotion ? 0 : 200)
-            .attr('opacity', regionDimmed ? 0.35 : 0.82)
-            .attr('stroke', '#253554')
-            .attr('stroke-width', 1.5);
-        });
-    });
-
-    // ── Campaign dots ─────────────────────────────────────────────────────────
-    // Seed-based deterministic positions so dots don't jump on re-render
-    const seededRng = (seed: number) => {
-      const s = Math.sin(seed) * 10000;
-      return s - Math.floor(s);
-    };
-
-    mapData.forEach((d, idx) => {
-      const region = REGION_BLOCKS.find(r => r.codes.includes(d.code));
-      if (!region) return;
-
-      const isSelected = selectedCode === d.code;
-      const isHighlighted = !hasHighlights || highlightedCodes!.includes(d.code);
-      const dotOpacity = isHighlighted ? (isSelected ? 1 : 0.72) : 0.22;
-
-      const pts = region.points.split(' ').map(p => p.split(',').map(Number));
-      const rcx = (pts.reduce((s, p) => s + p[0], 0) / pts.length / 100) * w;
-      const rcy = (pts.reduce((s, p) => s + p[1], 0) / pts.length / 100) * h;
-
-      // Deterministic spread within region
-      const spread = Math.min(w, h) * 0.07;
-      const cx = rcx + (seededRng(idx * 3.7) - 0.5) * spread * 2;
-      const cy = rcy + (seededRng(idx * 7.3) - 0.5) * spread;
-
-      const r = Math.sqrt(d.impressions / maxImpressions) * (w * 0.018) + 3;
-
-      // Outer pulse ring (skipped when reduced motion preferred)
-      if (!reducedMotion) {
-        g.append('circle')
-          .attr('cx', cx)
-          .attr('cy', cy)
-          .attr('r', r * 1.8)
-          .attr('fill', 'none')
-          .attr('stroke', '#f7931a')
-          .attr('stroke-width', 0.8)
-          .attr('opacity', isHighlighted ? 0.2 : 0.08)
-          .attr('pointer-events', 'none');
-      }
-
-      // Selected accent ring
-      if (isSelected) {
-        g.append('circle')
-          .attr('cx', cx)
-          .attr('cy', cy)
-          .attr('r', r * 1.55)
-          .attr('fill', 'none')
-          .attr('stroke', '#f7931a')
-          .attr('stroke-width', 2.5)
-          .attr('opacity', 0.95)
-          .attr('pointer-events', 'none');
-      }
-
-      // Main dot
-      const dot = g
-        .append('circle')
-        .attr('cx', cx)
-        .attr('cy', cy)
-        .attr('r', r)
-        .attr('fill', '#f7931a')
-        .attr('opacity', dotOpacity)
-        .attr('stroke', isSelected ? '#ffa94d' : '#f7931a')
-        .attr('stroke-width', isSelected ? 1.6 : 0.8)
-        .style('cursor', onCountrySelect ? 'pointer' : 'pointer')
-        .on('mouseover', function (event: MouseEvent) {
-          d3.select(this)
-            .transition()
-            .duration(reducedMotion ? 0 : 120)
-            .attr('r', r * 1.4)
-            .attr('opacity', 1);
-          const rect = svgRef.current!.getBoundingClientRect();
-          setTooltip({
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top,
-            data: d,
-          });
-        })
-        .on('mousemove', function (event: MouseEvent) {
-          const rect = svgRef.current!.getBoundingClientRect();
-          setTooltip(prev =>
-            prev ? { ...prev, x: event.clientX - rect.left, y: event.clientY - rect.top } : null,
-          );
-        })
-        .on('mouseout', function () {
-          d3.select(this)
-            .transition()
-            .duration(reducedMotion ? 0 : 180)
-            .attr('r', r)
-            .attr('opacity', dotOpacity);
-          setTooltip(null);
-        });
-
-      if (onCountrySelect) {
-        const selectHandler = () => handleCountrySelect(d.code);
-        dot
-          .on('click', selectHandler)
-          .on('touchend', function (event: TouchEvent) {
-            event.preventDefault();
-            selectHandler();
-          });
-      }
-    });
-
-    // ── Legend ────────────────────────────────────────────────────────────────
-    const legendW = Math.min(140, w * 0.17);
-    const legendH = 8;
-    const legendX = 16;
-    const legendY = h - 36;
-
+    // Ocean background with soft radial glow
     const defs = svg.append('defs');
-    const grad = defs
+
+    const oceanGrad = defs
+      .append('radialGradient')
+      .attr('id', 'ocean-glow')
+      .attr('cx', '50%')
+      .attr('cy', '45%')
+      .attr('r', '65%');
+    oceanGrad.append('stop').attr('offset', '0%').attr('stop-color', '#0e1a30');
+    oceanGrad.append('stop').attr('offset', '100%').attr('stop-color', COLORS.ocean);
+
+    const heatGrad = defs
       .append('linearGradient')
       .attr('id', 'choropleth-grad')
       .attr('x1', '0%')
       .attr('x2', '100%');
-    grad.append('stop').attr('offset', '0%').attr('stop-color', '#1a2e52');
-    grad.append('stop').attr('offset', '100%').attr('stop-color', '#f7931a');
+    heatGrad.append('stop').attr('offset', '0%').attr('stop-color', COLORS.heatLow);
+    heatGrad.append('stop').attr('offset', '100%').attr('stop-color', COLORS.heatHigh);
+
+    // Selected country soft glow
+    const glow = defs
+      .append('filter')
+      .attr('id', 'country-glow')
+      .attr('x', '-50%')
+      .attr('y', '-50%')
+      .attr('width', '200%')
+      .attr('height', '200%');
+    glow
+      .append('feDropShadow')
+      .attr('dx', 0)
+      .attr('dy', 0)
+      .attr('stdDeviation', 3)
+      .attr('flood-color', COLORS.heatHigh)
+      .attr('flood-opacity', 0.55);
+
+    svg
+      .append('rect')
+      .attr('width', w)
+      .attr('height', h)
+      .attr('fill', 'url(#ocean-glow)')
+      .attr('rx', 12);
+
+    // Subtle lat/lon grid
+    const projection = d3
+      .geoNaturalEarth1()
+      .fitExtent(
+        [
+          [12, 16],
+          [w - 12, h - 40],
+        ],
+        { type: 'Sphere' },
+      );
+
+    const path = d3.geoPath(projection);
+    const g = svg.append('g').attr('class', 'map-root');
+
+    // Sphere outline (map edge)
+    g.append('path')
+      .datum({ type: 'Sphere' } as d3.GeoPermissibleObjects)
+      .attr('d', path)
+      .attr('fill', 'none')
+      .attr('stroke', COLORS.oceanEdge)
+      .attr('stroke-width', 1.25)
+      .attr('opacity', 0.9);
+
+    // Graticule
+    const graticule = d3.geoGraticule().step([30, 30]);
+    g.append('path')
+      .datum(graticule())
+      .attr('d', path)
+      .attr('fill', 'none')
+      .attr('stroke', COLORS.grid)
+      .attr('stroke-width', 0.5)
+      .attr('opacity', 0.55)
+      .attr('pointer-events', 'none');
+
+    // Country paths
+    const countriesG = g.append('g').attr('class', 'countries');
+
+    countriesG
+      .selectAll('path.country')
+      .data(features)
+      .join('path')
+      .attr('class', 'country')
+      .attr('d', d => path(d) ?? '')
+      .attr('data-code', d => numericIdToAlpha2(d.id) ?? '')
+      .attr('fill', d => {
+        const code = numericIdToAlpha2(d.id);
+        return fillForCode(code);
+      })
+      .attr('stroke', d => {
+        const code = numericIdToAlpha2(d.id);
+        if (code && code === selectedCode) return COLORS.selected;
+        return COLORS.landEmptyStroke;
+      })
+      .attr('stroke-width', d => {
+        const code = numericIdToAlpha2(d.id);
+        if (code && code === selectedCode) return 1.75;
+        return 0.45;
+      })
+      .attr('opacity', d => {
+        const code = numericIdToAlpha2(d.id);
+        if (!code) return 0.85;
+        if (hasHighlights && dataByCode.has(code) && !highlightedCodes!.includes(code)) return 0.35;
+        return 1;
+      })
+      .style('cursor', d => {
+        const code = numericIdToAlpha2(d.id);
+        return code && dataByCode.has(code) && onCountrySelect ? 'pointer' : 'default';
+      })
+      .attr('filter', d => {
+        const code = numericIdToAlpha2(d.id);
+        return code && code === selectedCode ? 'url(#country-glow)' : null;
+      })
+      .on('pointerenter', function (event: PointerEvent, d) {
+        const code = numericIdToAlpha2(d.id);
+        const name = d.properties?.name ?? code ?? 'Unknown';
+        const row = code ? dataByCode.get(code) ?? null : null;
+        setHoverCode(code);
+
+        d3.select(this)
+          .raise()
+          .transition()
+          .duration(reducedMotion ? 0 : 120)
+          .attr('stroke', COLORS.hoverStroke)
+          .attr('stroke-width', code === selectedCode ? 2 : 1.25);
+
+        const rect = svgRef.current!.getBoundingClientRect();
+        setTooltip({
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top,
+          name: row?.country ?? name,
+          code,
+          data: row,
+        });
+      })
+      .on('pointermove', function (event: PointerEvent) {
+        const rect = svgRef.current!.getBoundingClientRect();
+        setTooltip(prev =>
+          prev
+            ? { ...prev, x: event.clientX - rect.left, y: event.clientY - rect.top }
+            : null,
+        );
+      })
+      .on('pointerleave', function (_event, d) {
+        const code = numericIdToAlpha2(d.id);
+        setHoverCode(null);
+        setTooltip(null);
+        d3.select(this)
+          .transition()
+          .duration(reducedMotion ? 0 : 150)
+          .attr('stroke', code && code === selectedCode ? COLORS.selected : COLORS.landEmptyStroke)
+          .attr('stroke-width', code && code === selectedCode ? 1.75 : 0.45);
+      })
+      .on('click', function (_event, d) {
+        const code = numericIdToAlpha2(d.id);
+        if (code && dataByCode.has(code) && onCountrySelect) {
+          onCountrySelect(code);
+        }
+      });
+
+    // Activity markers (centroids) for markets with data
+    const markersG = g.append('g').attr('class', 'markers').attr('pointer-events', 'none');
+
+    for (const d of mapData) {
+      const feat = features.find(f => numericIdToAlpha2(f.id) === d.code);
+      if (!feat) continue;
+
+      const centroid = path.centroid(feat);
+      if (!centroid || Number.isNaN(centroid[0]) || Number.isNaN(centroid[1])) continue;
+
+      const [cx, cy] = centroid;
+      const isSelected = selectedCode === d.code;
+      const isHighlighted = !hasHighlights || highlightedCodes!.includes(d.code);
+      const r = Math.sqrt(d.impressions / maxImpressions) * Math.min(w, h) * 0.014 + 2.5;
+      const opacity = isHighlighted ? (isSelected ? 1 : 0.85) : 0.2;
+
+      if (!reducedMotion && isHighlighted) {
+        markersG
+          .append('circle')
+          .attr('cx', cx)
+          .attr('cy', cy)
+          .attr('r', r * 2.2)
+          .attr('fill', 'none')
+          .attr('stroke', COLORS.heatHigh)
+          .attr('stroke-width', 0.8)
+          .attr('opacity', isSelected ? 0.35 : 0.18);
+      }
+
+      if (isSelected) {
+        markersG
+          .append('circle')
+          .attr('cx', cx)
+          .attr('cy', cy)
+          .attr('r', r * 1.55)
+          .attr('fill', 'none')
+          .attr('stroke', COLORS.selected)
+          .attr('stroke-width', 2)
+          .attr('opacity', 0.95);
+      }
+
+      markersG
+        .append('circle')
+        .attr('cx', cx)
+        .attr('cy', cy)
+        .attr('r', r)
+        .attr('fill', COLORS.heatHigh)
+        .attr('opacity', opacity)
+        .attr('stroke', isSelected ? COLORS.selected : '#ffb347')
+        .attr('stroke-width', isSelected ? 1.4 : 0.6);
+    }
+
+    // Legend
+    const legendW = Math.min(148, w * 0.22);
+    const legendH = 8;
+    const legendX = 16;
+    const legendY = h - 28;
+
+    svg
+      .append('rect')
+      .attr('x', legendX - 8)
+      .attr('y', legendY - 18)
+      .attr('width', legendW + 110)
+      .attr('height', 36)
+      .attr('rx', 8)
+      .attr('fill', 'rgba(8, 12, 22, 0.72)')
+      .attr('stroke', COLORS.landEmptyStroke)
+      .attr('stroke-width', 0.5);
 
     svg
       .append('rect')
@@ -348,46 +377,60 @@ export function WorldMap({
       .attr('width', legendW)
       .attr('height', legendH)
       .attr('rx', 3)
-      .attr('fill', 'url(#choropleth-grad)')
-      .attr('opacity', 0.9);
+      .attr('fill', 'url(#choropleth-grad)');
 
     svg
       .append('text')
       .attr('x', legendX)
-      .attr('y', legendY - 5)
-      .attr('fill', '#4a5568')
+      .attr('y', legendY - 6)
+      .attr('fill', COLORS.label)
       .attr('font-size', 9)
-      .attr('font-family', 'monospace')
+      .attr('font-family', 'ui-monospace, monospace')
       .text('Low');
 
     svg
       .append('text')
       .attr('x', legendX + legendW)
-      .attr('y', legendY - 5)
-      .attr('fill', '#f7931a')
+      .attr('y', legendY - 6)
+      .attr('fill', COLORS.heatHigh)
       .attr('font-size', 9)
-      .attr('font-family', 'monospace')
+      .attr('font-family', 'ui-monospace, monospace')
       .attr('text-anchor', 'end')
-      .text('High impressions');
+      .text('High activity');
 
     svg
       .append('circle')
-      .attr('cx', legendX + legendW + 16)
+      .attr('cx', legendX + legendW + 18)
       .attr('cy', legendY + legendH / 2)
-      .attr('r', 5)
-      .attr('fill', '#f7931a')
-      .attr('opacity', 0.8);
+      .attr('r', 4)
+      .attr('fill', COLORS.heatHigh)
+      .attr('opacity', 0.9);
 
     svg
       .append('text')
-      .attr('x', legendX + legendW + 25)
+      .attr('x', legendX + legendW + 28)
       .attr('y', legendY + legendH / 2 + 1)
-      .attr('fill', '#4a5568')
+      .attr('fill', COLORS.label)
       .attr('font-size', 9)
-      .attr('font-family', 'monospace')
+      .attr('font-family', 'ui-monospace, monospace')
       .attr('dominant-baseline', 'middle')
-      .text('Active campaign');
-  }, [dims, mapData, selectedCode, highlightedCodes, hasHighlights, onCountrySelect, reducedMotion]);
+      .text('Market');
+  }, [
+    dims,
+    features,
+    mapData,
+    selectedCode,
+    highlightedCodes,
+    hasHighlights,
+    onCountrySelect,
+    reducedMotion,
+    dataByCode,
+    maxImpressions,
+    fillForCode,
+  ]);
+
+  // Keep hoverCode referenced so TS doesn't complain if unused in render
+  void hoverCode;
 
   return (
     <div
@@ -396,30 +439,49 @@ export function WorldMap({
       aria-label="World map showing campaign activity by country"
       role="img"
     >
-      <svg ref={svgRef} className="w-full h-full" style={{ display: 'block' }} />
+      <svg ref={svgRef} className="w-full h-full rounded-xl" style={{ display: 'block' }} />
       {tooltip && (
         <div
-          className="absolute pointer-events-none bg-card border border-border rounded-lg px-3 py-2 text-xs shadow-xl z-50 min-w-[140px]"
+          className="absolute pointer-events-none z-50 min-w-[160px] max-w-[220px] rounded-xl border border-border/80 bg-card/95 px-3 py-2.5 text-xs shadow-2xl backdrop-blur-md"
           style={{
             left: tooltip.x + 14,
-            top: tooltip.y - 14,
-            // Clamp so tooltip doesn't overflow right edge
-            transform: tooltip.x > dims.w - 180 ? 'translateX(-110%)' : undefined,
+            top: tooltip.y - 12,
+            transform: tooltip.x > dims.w - 200 ? 'translateX(-110%)' : undefined,
           }}
         >
-          <div className="font-bold text-text mb-1">{tooltip.data.country}</div>
-          <div className="flex justify-between gap-3 text-muted">
-            <span>Impressions</span>
-            <span className="text-accent font-mono">{tooltip.data.impressions.toLocaleString()}</span>
+          <div className="mb-1.5 flex items-center justify-between gap-2">
+            <span className="font-bold text-text">{tooltip.name}</span>
+            {tooltip.code && (
+              <span className="font-mono text-[10px] text-muted">{tooltip.code}</span>
+            )}
           </div>
-          <div className="flex justify-between gap-3 text-muted">
-            <span>Clicks</span>
-            <span className="text-green-400 font-mono">{tooltip.data.clicks.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between gap-3 text-muted">
-            <span>Campaigns</span>
-            <span className="text-orange-400 font-mono">{tooltip.data.campaigns}</span>
-          </div>
+          {tooltip.data ? (
+            <>
+              <div className="flex justify-between gap-3 text-muted">
+                <span>Impressions</span>
+                <span className="font-mono text-accent">
+                  {tooltip.data.impressions.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex justify-between gap-3 text-muted">
+                <span>Clicks</span>
+                <span className="font-mono text-green-400">
+                  {tooltip.data.clicks.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex justify-between gap-3 text-muted">
+                <span>Campaigns</span>
+                <span className="font-mono text-orange-400">{tooltip.data.campaigns}</span>
+              </div>
+              {onCountrySelect && (
+                <div className="mt-1.5 border-t border-border/60 pt-1.5 text-[10px] text-muted">
+                  Click to select market
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-[11px] text-muted">No active campaigns in BETA data</div>
+          )}
         </div>
       )}
     </div>

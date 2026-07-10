@@ -32,6 +32,7 @@ interface PaymentModalProps {
   symbol: string;
   onDeploy: () => void;
   onCancelPayment: () => void;
+  isDeploying?: boolean;
 }
 
 const bolt12Offer = "lno1qgsqv... (demo bolt12 offer)";
@@ -58,6 +59,7 @@ export default function PaymentModal({
   symbol,
   onDeploy,
   onCancelPayment,
+  isDeploying = false,
 }: PaymentModalProps) {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const amountSats = Math.round(btcAmount * 100_000_000);
@@ -138,8 +140,10 @@ export default function PaymentModal({
                   {bolt11Invoice}
                 </div>
                 <button
+                  type="button"
                   onClick={onCopyInvoice}
                   className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 hover:bg-surface rounded-lg transition-colors text-accent"
+                  aria-label={invoiceCopied ? 'Invoice copied' : 'Copy invoice'}
                 >
                   {invoiceCopied ? <CheckCircle2 className="w-4 h-4" /> : <Layers className="w-4 h-4" />}
                 </button>
@@ -262,8 +266,10 @@ export default function PaymentModal({
                   {paymentMethod === 'bolt12' ? bolt12Offer : (paymentMethod === 'lightning' ? bolt11Invoice : BITCOIN_ADDRESS)}
                 </div>
                 <button
+                  type="button"
                   onClick={onCopyInvoice}
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-surface rounded-lg transition-colors text-accent"
+                  aria-label={invoiceCopied ? 'Invoice copied' : 'Copy invoice'}
                 >
                   {invoiceCopied ? <CheckCircle2 className="w-4 h-4" /> : <Layers className="w-4 h-4" />}
                 </button>
@@ -276,15 +282,20 @@ export default function PaymentModal({
               />
 
               <div className="flex gap-3">
-                <Button variant="secondary" className="flex-1" onClick={onClose}>
+                <Button variant="secondary" className="flex-1" onClick={onClose} disabled={isDeploying}>
                   Cancel
                 </Button>
                 <Button
                   className="flex-[2] bg-accent text-black hover:opacity-90"
                   onClick={onDeploy}
-                  disabled={!termsAccepted}
+                  disabled={!termsAccepted || isDeploying}
+                  aria-busy={isDeploying}
                 >
-                  {paymentMethod === 'btc' ? 'I have sent the payment' : 'Confirm Payment'}
+                  {isDeploying
+                    ? 'Processing…'
+                    : paymentMethod === 'btc'
+                      ? 'I have sent the payment'
+                      : 'Confirm Payment'}
                 </Button>
               </div>
 

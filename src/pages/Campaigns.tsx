@@ -16,16 +16,17 @@ import { generateAdCreative, OptimizationSuggestion } from "@/services/geminiSer
 import { useToast } from "@/components/Toast";
 import React from 'react';
 import { ShareCampaignCard } from '@/components/ShareCampaignCard';
+import { authFetch } from '@/lib/authFetch';
 
 export default function Campaigns() {
   usePageTitle('Campaigns');
   const [campaignsList, setCampaignsList] = useState<Campaign[]>(initialCampaigns);
 
-  // Load real campaigns from API on mount — fall back to mock data if unavailable
+  // Load the authenticated user's campaigns — fall back to mock data if unavailable
   useEffect(() => {
     const loadCampaigns = async () => {
       try {
-        const res = await fetch('/api/campaigns');
+        const res = await authFetch('/api/campaigns');
         if (res.ok) {
           const data: Campaign[] = await res.json();
           if (Array.isArray(data) && data.length > 0) {
@@ -34,7 +35,7 @@ export default function Campaigns() {
           }
         }
       } catch {
-        // Firestore unavailable — keep showing mock data silently
+        // API unavailable — keep showing mock data silently
       }
     };
     loadCampaigns();

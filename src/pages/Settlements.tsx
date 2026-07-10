@@ -40,12 +40,13 @@ export default function Settlements() {
   const [trackedAddress, setTrackedAddress] = useState(BITCOIN_ADDRESS);
   const [addressInput, setAddressInput]     = useState(BITCOIN_ADDRESS);
 
-  // ── REST fetch ──────────────────────────────────────────────────────────────
+  // ── REST fetch (authenticated — only your settlements) ─────────────────────
   useEffect(() => {
-    fetch("/api/settlements")
+    import("@/lib/authFetch")
+      .then(({ authFetch }) => authFetch("/api/settlements"))
       .then(res => { if (!res.ok) throw new Error("API unavailable"); return res.json(); })
       .then((data: Settlement[]) => setSettlements(data))
-      .catch(() => setSettlements([]))   // fail silently — empty state is handled
+      .catch(() => setSettlements([]))
       .finally(() => setLoading(false));
   }, []);
 

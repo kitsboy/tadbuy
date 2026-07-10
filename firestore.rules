@@ -44,52 +44,55 @@ service cloud.firestore {
              data.budgetSats is number &&
              data.budgetSats >= 0 &&
              data.status in ['draft', 'live', 'paused', 'completed'] &&
-             data.createdAt is string;
+             data.createdAt is string &&
+             // Ownership required — no orphan/shared campaigns
+             data.keys().hasAll(['userId']) &&
+             data.userId is string &&
+             data.userId == request.auth.uid;
+    }
+
+    function isCampaignOwner() {
+      return isAuthenticated() &&
+             resource.data.keys().hasAll(['userId']) &&
+             resource.data.userId is string &&
+             resource.data.userId == request.auth.uid;
     }
 
     // ─── Campaigns Collection ───────────────────────────────────────────────
     match /campaigns/{campaignId} {
-      // Users can read their own campaigns; also allow campaigns with no userId
-      // (legacy / server-created campaigns)
-      allow read: if isAuthenticated() && (
-        !('userId' in resource.data) ||
-        resource.data.userId == null ||
-        resource.data.userId == request.auth.uid
-      );
+      // Only the owner may read their campaigns
+      allow read: if isCampaignOwner();
 
-      // Allow create if authenticated and campaign data is valid
-      allow create: if isAuthenticated() && isValidCampaign(request.resource.data) && (
-        !('userId' in request.resource.data) ||
-        request.resource.data.userId == null ||
-        request.resource.data.userId == request.auth.uid
-      );
+      // Create only as owner with validated payload (prefer draft via app logic)
+      allow create: if isAuthenticated() && isValidCampaign(request.resource.data);
 
-      // Allow update only by the campaign owner
-      allow update: if isAuthenticated() && (
-        !('userId' in resource.data) ||
-        resource.data.userId == null ||
-        resource.data.userId == request.auth.uid
-      );
+      // Update/delete only by owner; cannot reassign userId
+      allow update: if isCampaignOwner() &&
+        request.resource.data.userId == resource.data.userId &&
+        // Clients cannot self-promote to live without server path (still allow paused/draft)
+        (
+          request.resource.data.status == resource.data.status ||
+          request.resource.data.status in ['draft', 'paused', 'completed'] ||
+          // live only if already live (server uses Admin SDK which bypasses rules)
+          (resource.data.status == 'live' && request.resource.data.status == 'live')
+        );
 
-      // Allow delete only by the campaign owner
-      allow delete: if isAuthenticated() && (
-        !('userId' in resource.data) ||
-        resource.data.userId == null ||
-        resource.data.userId == request.auth.uid
-      );
+      allow delete: if isCampaignOwner();
     }
 
     // ─── Bids Collection ────────────────────────────────────────────────────
     match /bids/{bidId} {
-      allow read: if isAuthenticated();
+      allow read: if isAuthenticated() &&
+        resource.data.keys().hasAll(['userId']) &&
+        resource.data.userId == request.auth.uid;
       allow create: if isAuthenticated() &&
-        request.resource.data.keys().hasAll(['slotId', 'bidSats']) &&
+        request.resource.data.keys().hasAll(['slotId', 'bidSats', 'userId']) &&
         request.resource.data.bidSats is number &&
-        request.resource.data.bidSats > 0;
-      allow update, delete: if isAuthenticated() && (
-        !('userId' in resource.data) ||
-        resource.data.userId == request.auth.uid
-      );
+        request.resource.data.bidSats > 0 &&
+        request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAuthenticated() &&
+        resource.data.keys().hasAll(['userId']) &&
+        resource.data.userId == request.auth.uid;
     }
 
     // ─── Publisher Settings ─────────────────────────────────────────────────

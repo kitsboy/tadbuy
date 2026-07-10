@@ -3,20 +3,27 @@ import type { Express } from 'express';
 /** Batch 12 — Wallet & payments polish (features 276-300) */
 
 export function registerBatch12Routes(app: Express) {
+  // Never expose live node balance without ENABLE_LN_PAYOUTS (wallet is demo by default)
   app.get('/api/wallet/balances', async (_req, res) => {
-    let lightningSats = 0;
-    try {
-      const { getLightningNodeInfo } = await import('../../src/services/lightningService.ts');
-      const info = await getLightningNodeInfo();
-      lightningSats = info.confirmed_balance ?? 0;
-    } catch {
-      lightningSats = 125_000;
+    let lightningSats = 125_000;
+    let status: 'available' | 'demo' = 'demo';
+    if (process.env.ENABLE_LN_PAYOUTS === 'true') {
+      try {
+        const { getLightningNodeInfo } = await import('../../src/services/lightningService.ts');
+        const info = await getLightningNodeInfo();
+        lightningSats = info.confirmed_balance ?? 0;
+        status = 'available';
+      } catch {
+        lightningSats = 0;
+        status = 'demo';
+      }
     }
     res.json({
-      lightning: { sats: lightningSats, status: 'available' },
+      lightning: { sats: lightningSats, status },
       fedimint: { sats: 5_000, status: process.env.FEDIMINT_GATEWAY_URL ? 'connected' : 'demo' },
       onchain: { sats: 0, btc: 0, status: 'pending' },
       totalSats: lightningSats + 5_000,
+      demo: status === 'demo',
     });
   });
 
@@ -56,6 +63,17 @@ export function registerBatch12Routes(app: Express) {
   });
 
   app.get('/api/payments/liquidity', async (_req, res) => {
+    // Live channel balances are sensitive — demo numbers unless payouts enabled
+    if (process.env.ENABLE_LN_PAYOUTS !== 'true') {
+      return res.json({
+        alias: 'Tadbuy Node (demo)',
+        outbound: 4_200_000,
+        inbound: 13_300_000,
+        channelCount: 3,
+        inboundPct: 76,
+        demo: true,
+      });
+    }
     try {
       const { getChannels, authenticatedLndGrpc } = await import('ln-service');
       const cert = process.env.UMBREL_LND_CERT;
@@ -68,6 +86,7 @@ export function registerBatch12Routes(app: Express) {
           inbound: 13_300_000,
           channelCount: 3,
           inboundPct: 76,
+          demo: true,
         });
       }
       const { lnd } = authenticatedLndGrpc({ cert, macaroon, socket });
@@ -81,9 +100,10 @@ export function registerBatch12Routes(app: Express) {
         inbound,
         channelCount: channels.length,
         inboundPct: total > 0 ? Math.round((inbound / total) * 100) : 0,
+        demo: false,
       });
     } catch {
-      res.json({ alias: 'Unavailable', outbound: 0, inbound: 0, channelCount: 0, inboundPct: 0 });
+      res.json({ alias: 'Unavailable', outbound: 0, inbound: 0, channelCount: 0, inboundPct: 0, demo: true });
     }
   });
 

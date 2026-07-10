@@ -4,6 +4,11 @@ export interface Campaign {
   budgetSats: number;
   status: 'draft' | 'live' | 'paused' | 'completed';
   createdAt: string;
+  /** Firebase uid of owner — set server-side only */
+  userId?: string;
+  invoiceId?: string;
+  updatedAt?: string;
+  paymentConfirmedAt?: string;
   // Display/analytics fields
   dates?: string;
   platforms?: string[];

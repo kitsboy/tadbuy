@@ -1,4 +1,3 @@
-# tadbuy — Last Updated 2026-07-07 by Grok
-
-Brief: v5.0.7 — geo page + full docs sync + nav fixes
-Commit: 73b548a
+# tadbuy — Last Updated 2026-07-09 by Grok
+Brief: Security audit hardening — auth on money/campaign APIs, payout gates, a11y; push for CF Pages
+Commit: pending push

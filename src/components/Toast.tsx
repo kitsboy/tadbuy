@@ -15,11 +15,30 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <ToastContext.Provider value={{ addToast }}>
       {children}
-      <div className="fixed bottom-14 md:bottom-4 right-4 left-4 md:left-auto space-y-2 z-50 pb-safe max-w-sm md:max-w-none ml-auto">
+      <div
+        className="fixed bottom-14 md:bottom-4 right-4 left-4 md:left-auto space-y-2 z-50 pb-safe max-w-sm md:max-w-none ml-auto"
+        role="region"
+        aria-label="Notifications"
+        aria-live="polite"
+        aria-relevant="additions"
+      >
         <AnimatePresence>
           {toasts.map((t) => (
-            <motion.div key={t.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="bg-surface border border-border p-4 rounded-lg shadow-lg flex items-center gap-3">
-              <span className={`w-2 h-2 rounded-full ${t.type === 'success' ? 'bg-green' : t.type === 'error' ? 'bg-red' : 'bg-blue'}`} />
+            <motion.div
+              key={t.id}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              role="status"
+              className="bg-surface border border-border p-4 rounded-lg shadow-lg flex items-center gap-3"
+            >
+              <span
+                className={`w-2 h-2 rounded-full shrink-0 ${t.type === 'success' ? 'bg-green' : t.type === 'error' ? 'bg-red' : 'bg-blue'}`}
+                aria-hidden
+              />
+              <span className="sr-only">
+                {t.type === 'success' ? 'Success: ' : t.type === 'error' ? 'Error: ' : 'Info: '}
+              </span>
               <p className="text-sm font-medium">{t.message}</p>
               <button
                 onClick={() => setToasts(prev => prev.filter(x => x.id !== t.id))}
