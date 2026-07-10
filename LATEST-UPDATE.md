@@ -1,3 +1,3 @@
 # tadbuy — Last Updated 2026-07-09 by Grok
-Brief: Security audit hardening + v5.0.10 — CF Pages auto-deploy on push
-Commit: 138292c
+Brief: Handoff/REF fix — M4 never pulls code; Supabase DB; Firebase auth still legacy in SPA
+Commit: pending push

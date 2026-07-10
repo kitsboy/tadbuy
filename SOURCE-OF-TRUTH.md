@@ -18,10 +18,10 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Tw
 - **Platform**: Cloudflare Pages (static SPA)
   - Build: `npm run build` → `dist/` (runs `sync-docs` via prebuild)
   - Node 20, auto-deploy on push to `main`
-- **API proxy**: `api.giveabit.io` → Cloudflare Tunnel → M4 `localhost:3000` (PM2 `tadbuy-api` at `~/.hermes/servers/tadbuy-api/`) ✅
-- **Supabase**: Project `cegzfjbsadwchonpxwmv` (server-side DB via service_role)
-- **Firebase**: Project ID `tadbuy-e3555` (client auth only — VITE_FIREBASE_*)
-- **Local dev**: `npm run dev` or `npm start` on M3
+- **API proxy**: `api.giveabit.io` → Cloudflare Tunnel → M4 process (ops/env on M4; **no working git pull on M4**) ✅
+- **Supabase**: Project `cegzfjbsadwchonpxwmv` — **server DB** via service_role (canonical data store)
+- **Auth**: SPA still has **legacy Firebase Auth** client (`VITE_FIREBASE_*`) — intent is **Supabase Auth**; migration TODO on M3. Do not treat Firebase Admin as the server stack.
+- **Local dev**: `npm run dev` or `npm start` on **M3 only**
 
 ## Recent M3 Work (2026-07-06)
 - [x] Router fix — URL changes now update page content (`unstable_useTransitions={false}`)
@@ -35,8 +35,8 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Tw
 
 | Machine | Role | Do | Don't |
 |---------|------|-----|-------|
-| **M3** | Dev (Grok) | Code, git, docs, CF deploy | Install Fedimint/Umbrel |
-| **M4** | Server (Kimi) | API proxy, Fedimint mint, Umbrel | Clone repo for development |
+| **M3** | Dev (Grok) | Code, git, docs, CF deploy | Install Fedimint/Umbrel; touch M4 vault |
+| **M4** | Server (Kimi) | REF docs, env vault, API/Fedimint/Umbrel ops | **Never git pull/clone working app tree**; no app development |
 
 ## M4 Setup (Kimi — HERMES)
 

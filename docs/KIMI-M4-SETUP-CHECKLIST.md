@@ -2,7 +2,8 @@
 
 **Machine:** M4 (HERMES / Obsidian)  
 **Owner:** Kimi  
-**Code lives on M3:** `~/projects/tadbuy/` — pull only, do not develop here  
+**Code lives on M3 only:** `~/projects/tadbuy/` — Grok edits + push → Cloudflare.  
+**M4:** REF docs + env vault + service ops only. **Never git pull/clone a working tadbuy tree on M4.**  
 **Goal:** One shared Fedimint mint + API proxy for all Give A Bit apps
 
 > **Dual canonical copies**
@@ -17,8 +18,8 @@
 
 - [ ] Confirm you are on **M4**, not M3
 - [ ] Tailscale running (M3 ↔ M4 mesh)
-- [ ] Git access: `git clone https://github.com/kitsboy/tadbuy.git`
-- [ ] Node.js 20+ installed on M4
+- [ ] REF docs synced (handoff / M4-SERVER-REF) — **not** a full app git working tree
+- [ ] Node.js 20+ only if running an API process under HERMES
 - [ ] Secrets vault ready (Obsidian secure note or 1Password — **never commit secrets**)
 
 ### Apps that will share this mint
@@ -41,41 +42,36 @@ Gets `/api/*` working for the live Cloudflare site.
 **Public URL:** `api.giveabit.io` via Cloudflare Tunnel → `localhost:3000`.  
 **DB:** Supabase (`cegzfjbsadwchonpxwmv`) — not Firebase Admin.
 
-### 1.1 Clone repo on M4
+### 1.1 Code location (M3 only — do not clone for work)
 
-```bash
-cd ~/projects   # or your HERMES projects folder
-git clone https://github.com/kitsboy/tadbuy.git
-cd tadbuy
-npm install
-```
+Working code is maintained on **M3** and GitHub. Cloudflare Pages builds the SPA from `main`.  
+If an API process already exists under HERMES, treat it as **ops + env**, not a second git working tree.  
+**Do not** `git clone` / `git pull` tadbuy onto M4 for development.
 
-- [ ] `npm run lint` passes
-- [ ] `npm run build` passes
+### 1.2 Create / update `.env` for the API process (vault — never commit)
 
-### 1.2 Create `.env` on M4 (not `.env.local` — this is the server)
-
-```bash
-cp .env.example .env
-```
-
-Fill in (minimum for API proxy):
+Minimum for API proxy:
 
 ```bash
 NODE_ENV=production
 PORT=3000
 HOST=0.0.0.0
-SESSION_SECRET=<run: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))">
+SESSION_SECRET=<strong random hex>
 
-# Firebase Admin (from Firebase Console → Service Accounts)
-FIREBASE_SERVICE_ACCOUNT_KEY={"type":"service_account",...}
+# Database (Supabase — not Firebase Admin)
+SUPABASE_URL=...
+SUPABASE_SERVICE_ROLE_KEY=...
 
-# Gemini (for /api/ai/optimize)
-GEMINI_API_KEY=...
+# Keep payouts off until wallet ledger exists
+ENABLE_LN_PAYOUTS=false
+LIGHTNING_WEBHOOK_SECRET=...
 
-# Agent API keys (optional)
+# Optional
 AGENT_API_KEYS={"kimi-agent-key":"admin"}
+# GEMINI_API_KEY=...
 ```
+
+**Note:** Client login may still use legacy Firebase in the SPA; server DB is Supabase. Prefer Supabase Auth migration (M3 work) over re-enabling Firebase Admin on M4.
 
 - [ ] `.env` created
 - [ ] `.env` is in `.gitignore` (never commit)
@@ -353,9 +349,12 @@ Run all checks before marking DONE:
 | `fm-invite://...` | All 5 apps CF env | ✅ |
 | `FEDIMINT_GATEWAY_URL` | M4 .env | ✅ |
 | `UMBREL_LND_*` | M4 .env | ✅ |
-| `FIREBASE_SERVICE_ACCOUNT_KEY` | M4 .env | ✅ |
-| `GEMINI_API_KEY` | M4 .env | ✅ |
+| `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | API DB (canonical) | ✅ |
+| `LIGHTNING_WEBHOOK_SECRET` | Webhook auth | ✅ |
+| `ENABLE_LN_PAYOUTS` | Must stay `false` until ledger | ✅ |
+| `GEMINI_API_KEY` | Optional AI routes | ✅ |
 | `SESSION_SECRET` | M4 .env | ✅ |
+| ~~`FIREBASE_SERVICE_ACCOUNT_KEY`~~ | **Not required** — legacy SPA login only; DB is Supabase | — |
 
 ---
 

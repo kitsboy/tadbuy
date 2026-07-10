@@ -351,23 +351,29 @@
 *Safe Harbour · Part of the [Give A Bit](https://giveabit.io) family.*
 ## Session — 2026-07-09
 
-**Done:**
+**Done (M3 only):**
 - Comprehensive security/reliability/a11y audit
-- P0/P1 hardening: Firebase auth on money/campaign routes, settle amountSats only, ENABLE_LN_PAYOUTS gate, webhook secret, draft-only campaign create, no public campaign list-all
-- Client authFetch + BuyAds invoice poll fix + deploy lock
-- Firestore rules + Supabase settlements RLS tightened
+- P0/P1 API hardening: auth on money/campaign routes, settle `amountSats` only, `ENABLE_LN_PAYOUTS` gate, webhook secret, draft-only campaign create, no public campaign list-all
+- Client `authFetch` + BuyAds invoice poll fix + deploy lock
+- Firestore rules file + Supabase settlements RLS tightened (schema ref)
 - A11y: modal focus trap, tabs keyboard, toast live regions, tooltips
-- Commit + push to main for Cloudflare Pages SPA deploy
+- Commit + push to `main` → **Cloudflare Pages** SPA auto-deploy (v5.0.10)
 
-**Decisions:**
-- ENABLE_LN_PAYOUTS defaults false — never enable until wallet ledger exists
-- Cloudflare SPA auto-deploys on push; M4 API must pull/restart separately for server.ts security
+**Decisions / rules for Kimi:**
+- **NEVER `git pull` / clone working code onto M4.** Working tree lives on **M3 only** (`~/projects/tadbuy/`). M4 keeps **REF docs only** (this handoff, `M4-SERVER-REF`, checklists in Obsidian/MASTER-BRAIN).
+- SPA deploy path: Grok commits on M3 → `git push origin main` → Cloudflare Pages builds `dist/`. Kimi does not deploy CF.
+- API security flags for when/if the M4 API process is restarted from its existing HERMES layout (Kimi ops, not a repo pull):
+  - `LIGHTNING_WEBHOOK_SECRET` (required for webhook)
+  - `ENABLE_LN_PAYOUTS=false` (keep off until wallet ledger)
+  - `SESSION_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
+- **Auth reality (important):** Server DB is **Supabase**. Client login UI still uses **Firebase Auth** in code (`src/firebase.ts`, `Profile.tsx`, `AuthProvider`). That is legacy — Cam expects Firebase retired; **full Supabase Auth migration is still TODO** on M3. Do not re-enable Firebase Admin on M4 as “the” stack.
 
-**M4 action needed:**
-- Pull latest main into `~/.hermes/servers/tadbuy-api/` (or equivalent) and `pm2 restart tadbuy-api`
-- Set env: FIREBASE_API_KEY (or VITE_FIREBASE_API_KEY), LIGHTNING_WEBHOOK_SECRET; keep ENABLE_LN_PAYOUTS=false
+**M4 action (REF only — no code pull):**
+- [ ] Sync/read this handoff + `docs/M4-SERVER-REF.md` into Obsidian if needed
+- [ ] Confirm env vault notes match: Supabase + LND + `ENABLE_LN_PAYOUTS=false` + webhook secret
+- [ ] Do **not** clone/pull tadbuy for development on M4
 
 **Git State:**
-- See latest commit after push
-- Unpushed: none after push
+- SHA: `d315261` (includes security fix `30e24d5` + version bump to v5.0.10)
+- Branch: `main` · pushed to origin
 
