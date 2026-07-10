@@ -377,3 +377,45 @@
 - SHA: `d315261` (includes security fix `30e24d5` + version bump to v5.0.10)
 - Branch: `main` · pushed to origin
 
+
+## Latest Session Summary (from 2026-07-09 goodbye)
+
+**Chat Topic:** Full Tadbuy audit + security hardening ship + M3/M4 REF correction.
+
+**Finished in this session:**
+- Security/reliability/a11y audit + P0/P1 code fixes (auth gates, draft campaigns, sats withdraw, webhook secret, invoice poll race, a11y)
+- Push to `main` → Cloudflare Pages (v5.0.10)
+- Corrected ops rule: **M4 never pulls app code** — REF docs only; working tree on M3
+- Clarified stack: Supabase = DB; Firebase Auth in SPA = legacy (migrate to Supabase Auth on M3)
+
+**Still to do:**
+- Supabase Auth migration (retire Firebase client login)
+- Wallet ledger before `ENABLE_LN_PAYOUTS=true`
+- Campaign status API persist; NIP-98 full verify; demo flags on stub APIs
+
+**Next for Kimi:**
+- Integrate this summary into MASTER-BRAIN / Obsidian Tadbuy notes
+- Sync REF only (`KIMI-HANDOFF`, `M4-SERVER-REF`, checklist) — **do not git pull tadbuy working tree**
+- Env vault: `SUPABASE_*`, `SESSION_SECRET`, `LIGHTNING_WEBHOOK_SECRET`, `ENABLE_LN_PAYOUTS=false`
+- Do not re-enable Firebase Admin as the platform stack
+
+**Git State:**
+- SHA: see latest `main` after goodbye push (includes `5aa461e` docs + `30e24d5` security)
+- Unpushed: none
+
+---
+
+## Session — 2026-07-09 (goodbye)
+
+**Done:**
+- Session summary written: `docs/SESSION-SUMMARY-2026-07-09.md`
+- Handoff + LATEST-UPDATE finalized for recovery via /whatsup
+
+**Decisions:**
+- M4 = REF only; M3 = all code
+- Firebase login is legacy debt, not intentional stack
+
+**Git State:**
+- Branch: main
+- See commit after push
+
