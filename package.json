@@ -13,6 +13,7 @@
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "build": "vite build",
     "postbuild": "node scripts/verify-dist.mjs",
+    "check:prod-cache": "node scripts/check-origin-cache.mjs",
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",

@@ -35,7 +35,7 @@ export function FeeBreakdown({
     <Card className={`glass-panel ${className ?? ''}`}>
       <div className="flex items-center gap-2 mb-3">
         <Info className="w-4 h-4 text-accent" />
-        <span className="text-xs font-bold text-text">Transparent fee breakdown</span>
+        <span className="text-xs font-bold text-text">Fee breakdown</span>
       </div>
       <div className="space-y-2 text-xs">
         <div className="flex justify-between">
