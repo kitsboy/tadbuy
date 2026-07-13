@@ -24,6 +24,11 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 600,
       rollupOptions: {
         output: {
+          // Cache-bust suffix: invalidates poisoned Cloudflare CDN entries that cached
+          // index.html as JS for module requests with an Origin header (2026-07-13 incident).
+          entryFileNames: 'assets/[name]-[hash]-cb2.js',
+          chunkFileNames: 'assets/[name]-[hash]-cb2.js',
+          assetFileNames: 'assets/[name]-[hash]-cb2.[ext]',
           manualChunks: {
             // React core — loaded immediately
             'vendor-react': ['react', 'react-dom', 'react-router-dom'],

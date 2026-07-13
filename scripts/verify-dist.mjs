@@ -12,7 +12,7 @@ if (!fs.existsSync(indexPath)) {
 }
 
 const html = fs.readFileSync(indexPath, 'utf8');
-const refs = [...new Set([...html.matchAll(/\/assets\/([a-zA-Z0-9_.-]+\.(?:js|css))/g)].map((m) => m[1]))];
+const refs = [...new Set([...html.matchAll(/\/assets\/([a-zA-Z0-9_.-]+-cb2\.(?:js|css))/g)].map((m) => m[1]))];
 const missing = refs.filter((ref) => !fs.existsSync(path.join(distDir, 'assets', ref)));
 
 if (missing.length > 0) {
