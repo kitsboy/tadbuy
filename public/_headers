@@ -1,6 +1,6 @@
-# Cache static assets for 1 year (must never cache SPA HTML fallback as JS)
+# Short TTL — never immutable (prevents caching SPA HTML fallback as JS during deploys)
 /assets/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=300, must-revalidate
   Access-Control-Allow-Origin: *
 
 # Cache fonts for 1 year
