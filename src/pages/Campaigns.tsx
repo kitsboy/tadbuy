@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, type ElementType } from "react";
-import { usePageTitle } from "@/hooks/usePageTitle";
+import { usePageMeta } from "@/hooks/usePageMeta";
+import { PageShell } from '@/components/PageShell';
 import { motion, AnimatePresence } from "motion/react";
 import { Card, Button, Modal, CardTitle, FormGroup, Label, Select, InfoTooltip } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -20,7 +21,7 @@ import { authFetch } from '@/lib/authFetch';
 import { downloadCsv, campaignsToCsvRows } from '@/lib/exportCsv';
 
 export default function Campaigns() {
-  usePageTitle('Campaigns');
+  usePageMeta('Campaigns', 'Manage, export, and share your Bitcoin-native ad campaigns.');
   const [campaignsList, setCampaignsList] = useState<Campaign[]>(initialCampaigns);
 
   // Load the authenticated user's campaigns — fall back to mock data if unavailable
@@ -167,22 +168,21 @@ export default function Campaigns() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 pb-20">
-      {/* ... (keep existing header and stats cards) ... */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">Active Campaigns</h1>
-          <p className="text-sm text-muted mt-1">Manage, export, and share your Bitcoin-native ad performance.</p>
-        </div>
-        <div className="flex gap-3">
+    <PageShell
+      title="Active Campaigns"
+      description="Manage, export, and share your Bitcoin-native ad performance."
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Campaigns' }]}
+      showDemoBadge
+      maxWidth="max-w-[1440px]"
+      actions={
+        <>
           <Button variant="secondary" onClick={() => setShowExportModal(true)} disabled={selectedIds.length === 0} className="flex items-center gap-2">
-            <Download className="w-4 h-4" /> Export Selected ({selectedIds.length})
+            <Download className="w-4 h-4" /> Export ({selectedIds.length})
           </Button>
-          <Link to="/">
-            <Button className="flex items-center gap-2"><Plus className="w-4 h-4" /> New campaign</Button>
-          </Link>
-        </div>
-      </div>
+          <Link to="/"><Button className="flex items-center gap-2"><Plus className="w-4 h-4" /> New</Button></Link>
+        </>
+      }
+    >
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card className="glass-panel relative group hover:border-accent/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5 before:bg-green before:rounded-t-xl">
@@ -614,6 +614,6 @@ export default function Campaigns() {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </PageShell>
   );
 }

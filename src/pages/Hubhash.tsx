@@ -1,139 +1,134 @@
-import { motion } from "motion/react";
-import { usePageTitle } from "@/hooks/usePageTitle";
-import { Card, CardTitle, Button } from "@/components/ui";
-import { cn } from "@/lib/utils";
-import { Users, Target, Zap, ArrowRight, ShieldCheck } from "lucide-react";
-
-const hubhashCampaigns = [
-  {
-    id: 1,
-    title: "Austin Lightning Concert Promo",
-    creator: "@localmusic_atx",
-    description: "Raising funds to blast Nostr and Twitter with ads for the upcoming Lightning-powered local music festival in Austin. If we hit the goal, the campaign auto-deploys!",
-    targetBtc: 0.05,
-    raisedBtc: 0.032,
-    hashtags: ["#AustinMusic", "#LightningNetwork", "#Plebs"],
-    status: "funding",
-    daysLeft: 4
-  },
-  {
-    id: 2,
-    title: "Open Source Nostr Client Launch",
-    creator: "@dev_nostr",
-    description: "Help us fund the launch campaign for our new open-source Nostr client. We want to reach 1M impressions across Twitter and Reddit.",
-    targetBtc: 0.1,
-    raisedBtc: 0.1,
-    hashtags: ["#Nostr", "#FOSS", "#Decentralized"],
-    status: "unleashed",
-    daysLeft: 0
-  },
-  {
-    id: 3,
-    title: "Bitcoin Circular Economy Documentary",
-    creator: "@btc_films",
-    description: "Funding ad spend to promote our indie documentary about circular economies in El Salvador and Costa Rica.",
-    targetBtc: 0.25,
-    raisedBtc: 0.015,
-    hashtags: ["#Bitcoin", "#ElSalvador", "#Documentary"],
-    status: "funding",
-    daysLeft: 12
-  }
-];
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Users, Target, Zap, ArrowRight, ShieldCheck, Bitcoin, RefreshCw } from 'lucide-react';
+import { Card, CardTitle, Button } from '@/components/ui';
+import { Badge } from '@/components/ui/Badge';
+import { cn, formatSats } from '@/lib/utils';
+import { PageShell, StatusPill } from '@/components/PageShell';
+import { usePageMeta } from '@/hooks/usePageMeta';
+import { HUBHASH_CAMPAIGNS, type HubhashCampaign } from '@/data/hubhashCampaigns';
+import { FeeBreakdown } from '@/components/FeeBreakdown';
+import { useToast } from '@/components/Toast';
 
 export default function Hubhash() {
-  usePageTitle('Hubhash');
+  usePageMeta('Hubhash', 'Crowdfund Bitcoin ad campaigns with provable escrow and automatic refunds.');
+  const [campaigns, setCampaigns] = useState<HubhashCampaign[]>(HUBHASH_CAMPAIGNS);
+  const { addToast } = useToast();
+
+  useEffect(() => {
+    fetch('/api/hubhash/campaigns')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.campaigns) setCampaigns(d.campaigns); })
+      .catch(() => {});
+  }, []);
+
+  const pledge = async (campaign: HubhashCampaign) => {
+    try {
+      const res = await fetch('/api/hubhash/contribute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ campaignId: campaign.id, amountSats: 10_000 }),
+      });
+      const data = await res.json();
+      if (data.demo) {
+        addToast('Demo pledge recorded — refundable if goal not met', 'success');
+      }
+    } catch {
+      addToast('Pledge API unavailable — demo mode', 'error');
+    }
+  };
+
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-gradient-to-r from-accent/20 to-purple/20 p-8 rounded-2xl border border-accent/20">
-        <div className="max-w-2xl">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-3xl">🤝</span>
-            <h1 className="text-3xl font-extrabold tracking-tight">Hubhash</h1>
-            <span className="bg-accent text-black text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">Beta</span>
-          </div>
-          <p className="text-muted text-sm leading-relaxed">
-            Crowdfund ad campaigns using ecash, BTC, or Lightning. Set a threshold, and when the community funds it, the campaign is automatically unleashed onto social platforms via PPQ.AI. If the goal isn't met, funds are cryptographically refunded to the original payers.
-          </p>
-        </div>
-        <Button size="lg" className="shrink-0 shadow-[0_0_20px_rgba(247,147,26,0.3)]">
-          Create Hubhash Campaign
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className="glass-panel bg-surface/50">
-          <Users className="w-6 h-6 text-blue mb-3" />
-          <div className="font-bold mb-1">Community Funded</div>
-          <div className="text-xs text-muted">Pool funds together using Lightning or ecash to run massive campaigns you couldn't afford alone.</div>
+    <PageShell
+      title="Hubhash"
+      description="Crowdfund ad campaigns with Lightning, on-chain BTC, or Fedimint ecash. Threshold triggers deploy; failed goals refund contributors."
+      badge={<Badge variant="accent">Beta</Badge>}
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Hubhash' }]}
+      showDemoBadge
+      maxWidth="max-w-5xl"
+      actions={
+        <Link to="/"><Button size="sm">Create campaign</Button></Link>
+      }
+      faq={[
+        { question: 'What happens if the goal is not met?', answer: 'Contributions are returned to original Lightning pubkeys when the funding window closes without hitting threshold.' },
+        { question: 'How do I pay?', answer: 'Lightning, on-chain Bitcoin, or Fedimint ecash — same rails as Buy Ads checkout.' },
+      ]}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="glass-panel">
+          <Users className="w-6 h-6 text-blue mb-2" />
+          <div className="font-bold text-sm mb-1">Community funded</div>
+          <p className="text-xs text-muted">Pool sats with others for campaigns you could not fund alone.</p>
         </Card>
-        <Card className="glass-panel bg-surface/50">
-          <Target className="w-6 h-6 text-accent mb-3" />
-          <div className="font-bold mb-1">Threshold Triggers</div>
-          <div className="text-xs text-muted">Campaigns only deploy when the target budget is reached, ensuring maximum impact.</div>
+        <Card className="glass-panel">
+          <Target className="w-6 h-6 text-accent mb-2" />
+          <div className="font-bold text-sm mb-1">Threshold triggers</div>
+          <p className="text-xs text-muted">Ads deploy only when the Bitcoin budget goal is reached.</p>
         </Card>
-        <Card className="glass-panel bg-surface/50">
-          <ShieldCheck className="w-6 h-6 text-green mb-3" />
-          <div className="font-bold mb-1">Provable Refunds</div>
-          <div className="text-xs text-muted">If a campaign fails to reach its goal, funds are automatically routed back to the original senders.</div>
+        <Card className="glass-panel">
+          <ShieldCheck className="w-6 h-6 text-green mb-2" />
+          <div className="font-bold text-sm mb-1">Provable refunds</div>
+          <p className="text-xs text-muted">Failed campaigns route sats back to contributors automatically.</p>
         </Card>
       </div>
 
-      <h2 className="text-xl font-bold mb-4">Trending Campaigns</h2>
-      
+      <Card className="glass-panel border-accent/20">
+        <CardTitle className="flex items-center gap-2"><Bitcoin className="w-5 h-5 text-accent" /> Escrow & refund flow</CardTitle>
+        <ol className="text-xs text-muted space-y-2 list-decimal list-inside leading-relaxed">
+          <li>Contributor pays via Lightning / BTC / Fedimint → demo escrow holds sats</li>
+          <li>Goal reached → PPQ.AI deploys to selected <Link to="/platforms" className="text-accent hover:underline">platforms</Link></li>
+          <li>Goal missed → <RefreshCw className="w-3 h-3 inline" /> automatic refund to contributor pubkeys</li>
+        </ol>
+        <StatusPill status="demo" />
+        <FeeBreakdown budgetSats={100_000} budgetUsd={100} compact className="mt-3" />
+      </Card>
+
+      <h2 className="text-lg font-bold">Trending campaigns</h2>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {hubhashCampaigns.map(campaign => {
+        {campaigns.map(campaign => {
           const progress = Math.min(100, (campaign.raisedBtc / campaign.targetBtc) * 100);
           const isUnleashed = campaign.status === 'unleashed';
 
           return (
-            <Card key={campaign.id} className={cn("glass-panel relative overflow-hidden transition-all hover:border-muted", isUnleashed ? "border-green/30 bg-green/5" : "")}>
-              {isUnleashed && (
+            <Card key={campaign.id} className={cn('glass-panel relative', isUnleashed && 'border-green/30 bg-green/5')}>
+              {isUnleashed ? (
                 <div className="absolute top-4 right-4 bg-green/20 text-green text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5">
                   <Zap className="w-3 h-3" /> UNLEASHED
                 </div>
+              ) : (
+                <div className="absolute top-4 right-4 text-[11px] text-muted font-mono">{campaign.daysLeft} days left</div>
               )}
-              {!isUnleashed && (
-                <div className="absolute top-4 right-4 text-[11px] text-muted font-mono">
-                  {campaign.daysLeft} days left
-                </div>
-              )}
-              
               <div className="text-sm font-bold text-muted mb-1">{campaign.creator}</div>
               <h3 className="text-lg font-extrabold mb-2">{campaign.title}</h3>
-              <p className="text-xs text-muted leading-relaxed mb-4 line-clamp-2">{campaign.description}</p>
-              
-              <div className="flex flex-wrap gap-1.5 mb-5">
+              <p className="text-xs text-muted leading-relaxed mb-3">{campaign.description}</p>
+              <p className="text-[10px] text-muted mb-4">{campaign.refundPolicy}</p>
+              <div className="flex flex-wrap gap-1.5 mb-4">
                 {campaign.hashtags.map(tag => (
-                  <span key={tag} className="bg-surface border border-border text-text text-[10px] px-2 py-1 rounded-md">
-                    {tag}
-                  </span>
+                  <span key={tag} className="bg-surface border border-border text-[10px] px-2 py-1 rounded-md">{tag}</span>
                 ))}
               </div>
-
               <div className="mb-2 flex justify-between text-xs font-mono">
-                <span className={isUnleashed ? "text-green font-bold" : "text-accent"}>{campaign.raisedBtc} ₿ raised</span>
-                <span className="text-muted">Goal: {campaign.targetBtc} ₿</span>
+                <span className={isUnleashed ? 'text-green font-bold' : 'text-accent'}>
+                  {formatSats(campaign.raisedSats)} raised
+                </span>
+                <span className="text-muted">Goal: {formatSats(campaign.targetSats)}</span>
               </div>
-              
-              <div className="bg-surface rounded-full h-2 overflow-hidden mb-5 border border-border/50">
-                <div 
-                  className={cn("h-full rounded-full transition-all duration-1000", isUnleashed ? "bg-green" : "bg-accent")} 
-                  style={{ width: `${progress}%` }} 
-                />
+              <div className="bg-surface rounded-full h-2 overflow-hidden mb-4 border border-border/50">
+                <div className={cn('h-full rounded-full', isUnleashed ? 'bg-green' : 'bg-accent')} style={{ width: `${progress}%` }} />
               </div>
-
-              <Button 
-                variant={isUnleashed ? "secondary" : "primary"} 
-                className="w-full"
+              <Button
+                variant={isUnleashed ? 'secondary' : 'primary'}
+                className="w-full gap-2"
                 disabled={isUnleashed}
+                onClick={() => pledge(campaign)}
               >
-                {isUnleashed ? "Campaign Live on Platforms" : "Pledge Funds (Refundable)"}
-                {!isUnleashed && <ArrowRight className="w-4 h-4 ml-2" />}
+                {isUnleashed ? 'Campaign live on platforms' : 'Pledge sats (refundable)'}
+                {!isUnleashed && <ArrowRight className="w-4 h-4" />}
               </Button>
             </Card>
           );
         })}
       </div>
-    </motion.div>
+    </PageShell>
   );
 }

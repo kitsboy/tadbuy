@@ -120,10 +120,26 @@
     <priority>0.6</priority>
   </url>
 
+  <!-- Ad Platforms Hub -->
+  <url>
+    <loc>https://tadbuy.giveabit.io/platforms</loc>
+    <lastmod>2026-07-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url><loc>https://tadbuy.giveabit.io/platforms/twitter</loc><lastmod>2026-07-13</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://tadbuy.giveabit.io/platforms/facebook</loc><lastmod>2026-07-13</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://tadbuy.giveabit.io/platforms/instagram</loc><lastmod>2026-07-13</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://tadbuy.giveabit.io/platforms/nostr</loc><lastmod>2026-07-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tadbuy.giveabit.io/platforms/youtube</loc><lastmod>2026-07-13</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://tadbuy.giveabit.io/platforms/reddit</loc><lastmod>2026-07-13</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://tadbuy.giveabit.io/platforms/linkedin</loc><lastmod>2026-07-13</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://tadbuy.giveabit.io/platforms/tiktok</loc><lastmod>2026-07-13</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+
   <!-- Compare -->
   <url>
     <loc>https://tadbuy.giveabit.io/compare</loc>
-    <lastmod>2026-07-06</lastmod>
+    <lastmod>2026-07-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

@@ -9,7 +9,7 @@ import {
   CheckCircle, ChevronDown, X, BarChart2, Star,
   SlidersHorizontal, ArrowUpDown, ArrowUp, ArrowDown, PackageSearch,
 } from "lucide-react";
-import { usePageTitle } from "@/hooks/usePageTitle";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import {
   MARKETPLACE_SLOTS,
   FEATURED_SLOT_IDS,
@@ -444,7 +444,7 @@ function SlotCard({ slot, onBid }: { slot: MarketplaceSlot; onBid: (slot: Market
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function Marketplace() {
-  usePageTitle("Marketplace");
+  usePageMeta('Marketplace', 'Browse and bid on premium Bitcoin-native ad inventory.');
 
   const [inventory, setInventory]           = useState<MarketplaceSlot[]>(MARKETPLACE_SLOTS);
   const [searchTerm, setSearchTerm]         = useState("");
@@ -548,17 +548,15 @@ export default function Marketplace() {
         }
       `}</style>
 
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-
-        {/* ── Page header ───────────────────────────────────────────────── */}
+      <PageShell
+        title="Ad Marketplace"
+        description="Browse and bid on premium Bitcoin-native ad inventory."
+        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Marketplace' }]}
+        showDemoBadge
+        maxWidth="max-w-[1440px]"
+      >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
-          <div>
-            <h1 className="text-2xl font-extrabold tracking-tight">Ad Marketplace</h1>
-            <p className="text-sm text-muted mt-1">
-              Browse and bid on premium Bitcoin-native ad inventory.
-            </p>
-          </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 md:ml-auto w-full md:w-auto">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
               <Input
@@ -776,7 +774,7 @@ export default function Marketplace() {
             </AnimatePresence>
           </div>
         </div>
-      </motion.div>
+      </PageShell>
 
       {/* ── Bid Modal ──────────────────────────────────────────────────── */}
       {bidSlot && (

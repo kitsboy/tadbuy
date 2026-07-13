@@ -9,6 +9,7 @@ import { GeoHeatmap } from '@/components/widgets/GeoHeatmap';
 import { PlatformBreakdown } from '@/components/widgets/PlatformBreakdown';
 import { RevenueForecast } from '@/components/widgets/RevenueForecast';
 import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageShell } from '@/components/PageShell';
 
 export default function Intelligence() {
   usePageMeta('PPQ Intelligence', 'AI-powered targeting, A/B testing, funnel analytics, and weather-triggered campaign rules.');
@@ -26,13 +27,13 @@ export default function Intelligence() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 max-w-5xl mx-auto">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight flex items-center gap-2">
-          <Brain className="w-7 h-7 text-purple" /> PPQ Intelligence Hub
-        </h1>
-        <p className="text-sm text-muted mt-1">Cookieless targeting, A/B testing, and real-time optimization — Batch 9 widgets.</p>
-      </div>
+    <PageShell
+      title="PPQ Intelligence Hub"
+      description="Cookieless targeting, A/B testing, and real-time optimization."
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Intelligence' }]}
+      showDemoBadge
+      maxWidth="max-w-5xl"
+    >
 
       <Tabs defaultValue="funnel">
         <TabsList className="flex-wrap">
@@ -112,6 +113,6 @@ export default function Intelligence() {
           </div>
         </TabsContent>
       </Tabs>
-    </motion.div>
+    </PageShell>
   );
 }

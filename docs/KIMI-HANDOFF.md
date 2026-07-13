@@ -1,3 +1,16 @@
+## Session — 2026-07-13 (finish pass)
+
+**Done:**
+- NIP-98 full schnorr verify (`@noble/secp256k1` + `@noble/hashes`)
+- Hubhash escrow API + refund UI; PageShell on 15+ pages
+- Playwright E2E: 6 tests passing (`npm run test:e2e`)
+- Sitemap + 6 locale SEO files updated for `/platforms`
+
+**Git State:**
+- Version: v5.0.14+ after push
+
+---
+
 ## Session — 2026-07-13
 
 **Done:**

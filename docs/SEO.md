@@ -15,6 +15,10 @@ https://tadbuy.giveabit.io
 | decentralized advertising | Informational | Optimized |
 | geo targeting bitcoin ads | Commercial | Optimized (/geo) |
 | global bitcoin ad reach | Commercial | Optimized (/geo) |
+| twitter ads bitcoin budget | Commercial | Optimized (/platforms/twitter) |
+| nostr zap advertising | Commercial | Optimized (/platforms/nostr) |
+| linkedin ads pay with bitcoin | Commercial | Optimized (/platforms/linkedin) |
+| platform ad payout lightning | Informational | Optimized (/platforms) |
 
 ## Current Meta Tags
 
@@ -29,8 +33,8 @@ https://tadbuy.giveabit.io
 - [x] Organization Schema
 - [x] WebSite Schema with SearchAction
 - [x] SoftwareApplication Schema
-- [ ] BreadcrumbList (per-page, future)
-- [ ] FAQPage (future)
+- [x] BreadcrumbList (PageShell / PageJsonLd on hub pages)
+- [x] FAQPage (platforms, hubhash, platform detail pages)
 
 ## Sitemap
 `public/sitemap.xml` — auto-served at `/sitemap.xml`
@@ -49,6 +53,8 @@ https://tadbuy.giveabit.io
 | Buy Ads | / | 1.0 |
 | Marketplace | /marketplace | 0.9 |
 | Global Reach | /geo | 0.8 |
+| Ad Platforms | /platforms | 0.85 |
+| Platform guides | /platforms/* | 0.75 |
 | BETA | /beta | 0.8 |
 
 ---

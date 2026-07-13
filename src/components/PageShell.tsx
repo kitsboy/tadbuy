@@ -16,7 +16,7 @@ type PageShellProps = {
   children: ReactNode;
   breadcrumbs?: Breadcrumb[];
   showDemoBadge?: boolean;
-  maxWidth?: 'max-w-2xl' | 'max-w-3xl' | 'max-w-4xl' | 'max-w-5xl' | 'max-w-6xl' | 'max-w-[1440px]';
+  maxWidth?: 'max-w-lg' | 'max-w-2xl' | 'max-w-3xl' | 'max-w-4xl' | 'max-w-5xl' | 'max-w-6xl' | 'max-w-[1440px]';
   actions?: ReactNode;
   faq?: { question: string; answer: string }[];
 };

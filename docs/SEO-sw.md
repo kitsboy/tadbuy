@@ -21,6 +21,7 @@ https://tadbuy.giveabit.io
 | utangazaji wa Nostr ZAP | Habarifu | Imeboreshwa |
 | geo targeting matangazizi bitcoin | Taswira ya Biashara | Imeboreshwa (/geo) |
 | ufikiaji wa kimataifa matangazizi bitcoin | Taswira ya Biashara | Imeboreshwa (/geo) |
+| bajeti matangazizi majukwaa bitcoin | Taswira ya Biashara | Imeboreshwa (/platforms) |
 
 ## Meta Tags Halisi
 

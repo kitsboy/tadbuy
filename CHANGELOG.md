@@ -2,6 +2,18 @@
 
 All notable changes to Tadbuy are documented here.
 
+## [5.0.14] — 2026-07-13
+
+### Added
+- Full NIP-98 BIP-340 schnorr signature verification (`@noble/secp256k1`)
+- Hubhash escrow API + refund flow UI (`/api/hubhash/*`)
+- Playwright E2E suite: buy flow, platforms hub, compare (`npm run test:e2e`)
+- Sitemap + locale SEO for `/platforms` and all 8 platform guides
+
+### Changed
+- PageShell uniformity: Health, Beta, Hubhash, ApiReference, Bolt12, Enterprise, Intelligence, Changelog, Dashboard, Campaigns, Marketplace
+- Hubhash campaigns use central data module with sats-first display
+
 ## [5.0.11] — 2026-07-13
 
 ### Added

@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
+import { usePageMeta } from '@/hooks/usePageMeta';
 import { FileQuestion, Home, Search, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 export default function NotFound() {
+  usePageMeta('Page Not Found', 'This route does not exist on Tadbuy.');
   return (
     <div className="min-h-[70vh] flex items-center justify-center">
       <EmptyState

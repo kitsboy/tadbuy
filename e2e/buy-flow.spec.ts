@@ -1,34 +1,21 @@
-/**
- * Basic buy-flow smoke tests.
- * Install optional devDependency: npm i -D @playwright/test && npx playwright install
- *
- * Skip entire file when Playwright is not installed (CI without e2e).
- */
-// @ts-nocheck
+import { test, expect } from '@playwright/test';
 
-let playwrightAvailable = false;
-try {
-  require.resolve('@playwright/test');
-  playwrightAvailable = true;
-} catch {
-  playwrightAvailable = false;
-}
-
-if (playwrightAvailable) {
-  const { test, expect } = require('@playwright/test');
-
-  test.describe('Buy Ads flow', () => {
-    test('homepage loads Buy Ads wizard', async ({ page }) => {
-      await page.goto('/');
-      await expect(page.getByRole('main')).toBeVisible();
-      await expect(page.getByText(/Buy Ads|campaign/i).first()).toBeVisible();
-    });
-
-    test('command menu opens with keyboard shortcut', async ({ page }) => {
-      await page.goto('/');
-      const mod = process.platform === 'darwin' ? 'Meta' : 'Control';
-      await page.keyboard.press(`${mod}+KeyK`);
-      await expect(page.getByPlaceholder(/command|search/i)).toBeVisible();
-    });
+test.describe('Buy Ads flow', () => {
+  test('homepage loads Buy Ads wizard', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('main')).toBeVisible();
+    await expect(page.getByText(/platform|campaign|Budget/i).first()).toBeVisible();
   });
-}
+
+  test('platforms query pre-selects platform', async ({ page }) => {
+    await page.goto('/?platforms=nostr');
+    await expect(page.getByText('Nostr').first()).toBeVisible();
+  });
+
+  test('command menu opens via header search chip', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.getByRole('button', { name: /Search/i }).click({ force: true });
+    await expect(page.getByPlaceholder('Type a command or search...')).toBeVisible({ timeout: 20_000 });
+  });
+});

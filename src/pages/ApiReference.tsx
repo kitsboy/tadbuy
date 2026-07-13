@@ -3,7 +3,8 @@ import { motion } from "motion/react";
 import { Terminal, ExternalLink, Copy, CheckCircle2 } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui";
 import { Tabs, TabsList, TabsTrigger, TabsContent, Badge } from "@/components/ui/index";
-import { usePageTitle } from "@/hooks/usePageTitle";
+import { usePageMeta } from "@/hooks/usePageMeta";
+import { PageShell } from '@/components/PageShell';
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { ApiExplorer } from "@/components/ApiExplorer";
 
@@ -85,18 +86,16 @@ function CopyButton({ text, id }: { text: string; id: string }) {
 }
 
 export default function ApiReference() {
-  usePageTitle('API Reference');
+  usePageMeta('API Reference', 'REST API for campaigns, metrics, wallet, and agent automation.');
   const { copied, copy } = useCopyToClipboard();
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto space-y-8">
-      <div className="mb-12">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-4">API Reference</h1>
-        <p className="text-lg text-muted max-w-2xl">
-          Integrate Tadbuy programmatically. Manage campaigns, fetch real-time metrics, and automate publisher settlements using our REST API.
-        </p>
-      </div>
-
+    <PageShell
+      title="API Reference"
+      description="Integrate Tadbuy programmatically — campaigns, metrics, settlements, and agent tools."
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'API' }]}
+      maxWidth="max-w-4xl"
+    >
       <Tabs defaultValue="auth">
         <TabsList>
           <TabsTrigger value="auth">Authentication</TabsTrigger>
@@ -185,6 +184,6 @@ export default function ApiReference() {
           <ExternalLink className="w-4 h-4" /> View full OpenAPI Specification
         </a>
       </div>
-    </motion.div>
+    </PageShell>
   );
 }

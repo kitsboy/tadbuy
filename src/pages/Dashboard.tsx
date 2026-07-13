@@ -5,7 +5,8 @@ import { Card, CardTitle, Button } from "@/components/ui";
 import { Monitor, TrendingUp, DollarSign, MousePointerClick, Zap, RefreshCw, Plus, BarChart2, UserPlus } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { BITCOIN_ADDRESS } from "@/constants";
-import { usePageTitle } from "@/hooks/usePageTitle";
+import { usePageMeta } from "@/hooks/usePageMeta";
+import { PageShell } from '@/components/PageShell';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface TrendPoint { name: string; impressions: number; clicks: number; }
@@ -110,7 +111,7 @@ const MetricCard = ({ title, raw, fmt, icon: Icon, trend, loading }: MetricCardP
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function Dashboard() {
-  usePageTitle('Dashboard');
+  usePageMeta('Dashboard', 'Real-time Bitcoin ad performance and campaign overview.');
 
   const [metrics, setMetrics] = useState<Metrics>(MOCK_METRICS);
   const [loading, setLoading] = useState(true);
@@ -140,19 +141,14 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">Real-Time Ad Performance</h1>
-          <div className="flex items-center gap-2 mt-1">
-            <p className="text-sm text-muted">Live metrics from your active campaigns.</p>
-            {!isLive && (
-              <span className="text-[10px] font-mono text-lightning bg-lightning/10 border border-lightning/20 px-2 py-0.5 rounded-full">
-                Demo data
-              </span>
-            )}
-          </div>
-        </div>
+    <PageShell
+      title="Real-Time Ad Performance"
+      description="Campaign overview, live metrics, and quick actions."
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Dashboard' }]}
+      showDemoBadge={!isLive}
+      maxWidth="max-w-[1440px]"
+    >
+      <div className="flex items-center justify-end mb-4">
         <Button size="sm" className="gap-2" onClick={fetchMetrics} disabled={loading}>
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           Refresh
@@ -271,6 +267,6 @@ export default function Dashboard() {
           </table>
         </div>
       </Card>
-    </motion.div>
+    </PageShell>
   );
 }

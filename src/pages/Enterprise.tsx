@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Shield, Activity, Map, Gift, Leaf, Bot } from 'lucide-react';
 import { Card, CardTitle, Button, Input } from '@/components/ui';
 import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageShell } from '@/components/PageShell';
 import { Link } from 'react-router-dom';
 
 export default function Enterprise() {
@@ -31,14 +32,13 @@ export default function Enterprise() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 max-w-5xl mx-auto">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight flex items-center gap-2">
-          <Shield className="w-7 h-7 text-green" /> Enterprise & Scale
-        </h1>
-        <p className="text-sm text-muted mt-1">Security, observability, and growth tools — Batch 4 features.</p>
-      </div>
-
+    <PageShell
+      title="Enterprise & Scale"
+      description="Security, observability, and growth tools."
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Enterprise' }]}
+      maxWidth="max-w-5xl"
+      showDemoBadge
+    >
       {status && (
         <Card className="glass-panel border-green/20">
           <CardTitle className="flex items-center gap-2">
@@ -106,6 +106,6 @@ export default function Enterprise() {
       <div className="text-center">
         <Link to="/pitch"><Button variant="secondary">View Investor Pitch →</Button></Link>
       </div>
-    </motion.div>
+    </PageShell>
   );
 }

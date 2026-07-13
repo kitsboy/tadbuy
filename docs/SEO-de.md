@@ -21,6 +21,8 @@ https://tadbuy.giveabit.io
 | Nostr ZAP-Werbung | Informierend | Optimiert |
 | Bitcoin Geo-Targeting Anzeigen | Kommerziell | Optimiert (/geo) |
 | globale Bitcoin-Werbung | Kommerziell | Optimiert (/geo) |
+| Plattform-Budget Bitcoin | Kommerziell | Optimiert (/platforms) |
+| Nostr Zap-Werbung Budget | Kommerziell | Optimiert (/platforms/nostr) |
 
 ## Aktuelle Meta-Tags
 

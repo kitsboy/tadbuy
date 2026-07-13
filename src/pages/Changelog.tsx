@@ -4,6 +4,7 @@ import { ScrollText, Loader2 } from 'lucide-react';
 import { Card, CardTitle } from '@/components/ui';
 import { Badge } from '@/components/ui/Badge';
 import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageShell } from '@/components/PageShell';
 import { PROJECT_STATE } from '@/data/projectState';
 
 function parseChangelogSections(markdown: string): { version: string; body: string }[] {
@@ -58,21 +59,13 @@ export default function Changelog() {
   const sections = content ? parseChangelogSections(content) : [];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="max-w-3xl mx-auto space-y-6 pb-16 p-4 md:p-8"
+    <PageShell
+      title="Changelog"
+      description={`All notable changes · Source: ${source}`}
+      badge={<Badge variant="accent" className="gap-1.5"><ScrollText className="w-3.5 h-3.5" /> Release Notes</Badge>}
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Changelog' }]}
+      maxWidth="max-w-3xl"
     >
-      <div>
-        <Badge variant="accent" className="mb-3">
-          <ScrollText className="w-3.5 h-3.5" />
-          Release Notes
-        </Badge>
-        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Changelog</h1>
-        <p className="text-sm text-muted mt-2">
-          All notable changes to Tadbuy · Source: <code className="text-accent">{source}</code>
-        </p>
-      </div>
 
       {loading ? (
         <Card>
@@ -96,6 +89,6 @@ export default function Changelog() {
           </pre>
         </Card>
       )}
-    </motion.div>
+    </PageShell>
   );
 }

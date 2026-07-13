@@ -6,6 +6,7 @@ import { Card, CardTitle, Button } from '@/components/ui';
 import { Badge } from '@/components/ui/Badge';
 import { Progress } from '@/components/ui/Progress';
 import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageShell } from '@/components/PageShell';
 import { ConsumerWorkflow } from '@/components/ConsumerWorkflow';
 import { EcosystemLinks } from '@/components/EcosystemLinks';
 import { GIVEABIT_ECOSYSTEM } from '@/data/ecosystemConfig';
@@ -24,17 +25,13 @@ export default function Beta() {
   const { federation, infrastructure } = GIVEABIT_ECOSYSTEM;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 max-w-4xl mx-auto pb-16">
-      <div>
-        <Badge variant="accent" className="mb-4 text-xs px-3 py-1">
-          <FlaskConical className="w-3.5 h-3.5" />
-          BETA · {PROJECT_STATE.version}
-        </Badge>
-        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">What Works Right Now</h1>
-        <p className="text-sm text-muted mt-2 leading-relaxed">
-          Tadbuy UI is live on Cloudflare Pages. API proxy is live at <code className="text-accent">api.giveabit.io</code>. Fedimint mint is parked until the Fedi app updates (FM 0.10 → Guardian 0.11). Umbrel LND parked until the node syncs.
-        </p>
-      </div>
+    <PageShell
+      title="What Works Right Now"
+      description={`Tadbuy UI is live on Cloudflare Pages. API at api.giveabit.io. BETA ${PROJECT_STATE.version}.`}
+      badge={<Badge variant="accent" className="gap-1.5"><FlaskConical className="w-3.5 h-3.5" /> BETA · {PROJECT_STATE.version}</Badge>}
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'BETA' }]}
+      showDemoBadge
+    >
 
       <Card>
         <CardTitle>v5 Enhancement Progress</CardTitle>
@@ -106,6 +103,6 @@ export default function Beta() {
           <Button variant="secondary">Setup Guide (GitHub)</Button>
         </a>
       </div>
-    </motion.div>
+    </PageShell>
   );
 }

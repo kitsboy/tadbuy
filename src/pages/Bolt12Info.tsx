@@ -1,18 +1,17 @@
-import { motion } from "motion/react";
-import { usePageTitle } from "@/hooks/usePageTitle";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { QrCode, RefreshCw, ShieldCheck, ExternalLink, Zap } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui";
+import { PageShell } from '@/components/PageShell';
 
 export default function Bolt12Info() {
-  usePageTitle('BOLT 12 Info');
+  usePageMeta('BOLT 12 Offers', 'Reusable Lightning offers for recurring ad campaign funding.');
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto space-y-8">
-      <div className="mb-12">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-4">BOLT 12 Offers</h1>
-        <p className="text-lg text-muted max-w-2xl">
-          Tadbuy utilizes BOLT 12, the next-generation Lightning Network standard, to enable seamless, private, and reusable payments.
-        </p>
-      </div>
+    <PageShell
+      title="BOLT 12 Offers"
+      description="Next-generation Lightning standard for seamless, private, and reusable Bitcoin payments."
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'BOLT 12' }]}
+      maxWidth="max-w-4xl"
+    >
 
       <div className="bg-purple/10 border border-purple/20 rounded-2xl p-8 mb-12 relative overflow-hidden">
         <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
@@ -69,6 +68,6 @@ export default function Bolt12Info() {
           </a>
         </div>
       </div>
-    </motion.div>
+    </PageShell>
   );
 }

@@ -21,6 +21,7 @@ https://tadbuy.giveabit.io
 | Publicidad en Nostr ZAP | Informativa | Optimizada |
 | geo targeting anuncios bitcoin | Comercial | Optimizada (/geo) |
 | alcance global anuncios bitcoin | Comercial | Optimizada (/geo) |
+| presupuesto anuncios plataformas bitcoin | Comercial | Optimizada (/platforms) |
 
 ## Metadatos Actuales
 

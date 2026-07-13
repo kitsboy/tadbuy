@@ -45,6 +45,7 @@ import {
   createBid,
   upsertPublisherSettings,
 } from "./src/lib/db/supabaseAdmin.ts";
+import { HUBHASH_CAMPAIGNS } from "./src/data/hubhashCampaigns.ts";
 import fs from "fs";
 import { jsPDF } from "jspdf";
 import * as Sentry from "@sentry/node";
@@ -800,6 +801,27 @@ async function startServer() {
 
   app.post("/api/v1/fraud/audit", (req, res) => {
     res.status(200).json(demoStub({ status: "clean_traffic" }));
+  });
+
+  // ─── Hubhash crowdfunding (demo escrow) ────────────────────────────────────
+  app.get('/api/hubhash/campaigns', (_req, res) => {
+    res.json({ demo: true, campaigns: HUBHASH_CAMPAIGNS });
+  });
+
+  app.post('/api/hubhash/contribute', (req, res) => {
+    const campaignId = typeof req.body?.campaignId === 'string' ? req.body.campaignId : '';
+    const amountSats = Number(req.body?.amountSats) || 0;
+    if (!campaignId || amountSats <= 0) {
+      return res.status(400).json({ error: 'campaignId and amountSats required' });
+    }
+    res.json({
+      demo: true,
+      status: 'pledge_recorded',
+      campaignId,
+      amountSats,
+      refundEligible: true,
+      message: 'Demo escrow — real refunds when M4 Lightning escrow is online',
+    });
   });
 
   // ─── Environment Variable Warnings ─────────────────────────────────────────

@@ -1,3 +1,3 @@
 # tadbuy — Last Updated 2026-07-13 by Grok
-Brief: v5.0.11 — platform hub, budget allocator, PageShell uniformity, fee breakdown, campaign status API
+Brief: Finish pass — NIP-98 verify, Hubhash escrow, PageShell sweep, E2E green, SEO/sitemap
 Commit: pending push

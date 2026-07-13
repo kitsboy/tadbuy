@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'motion/react';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { Card, CardTitle } from '@/components/ui';
 import { Badge } from '@/components/ui/Badge';
+import { PageShell } from '@/components/PageShell';
 import { APP_VERSION } from '@/constants';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { checkApiHealth } from '@/lib/apiBase';
@@ -18,9 +18,13 @@ export default function Health() {
   }, []);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-lg mx-auto space-y-4 pb-16">
-      <h1 className="text-2xl font-extrabold">System Health</h1>
-      <Card>
+    <PageShell
+      title="System Health"
+      description="Live status for the Tadbuy SPA and API proxy."
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Health' }]}
+      maxWidth="max-w-lg"
+    >
+      <Card className="glass-panel">
         <CardTitle>App</CardTitle>
         <div className="flex justify-between text-sm">
           <span className="text-muted">Version</span>
@@ -31,7 +35,7 @@ export default function Health() {
           <Badge variant="success" dot>Live</Badge>
         </div>
       </Card>
-      <Card>
+      <Card className="glass-panel">
         <CardTitle>API Proxy</CardTitle>
         {!api ? (
           <div className="flex items-center gap-2 text-muted text-sm"><Loader2 className="w-4 h-4 animate-spin" /> Checking…</div>
@@ -45,6 +49,6 @@ export default function Health() {
           </div>
         )}
       </Card>
-    </motion.div>
+    </PageShell>
   );
 }
