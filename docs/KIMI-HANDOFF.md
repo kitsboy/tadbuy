@@ -1,3 +1,35 @@
+## Session — 2026-07-13 (homepage RouteErrorBoundary fix)
+
+**Done:**
+- Diagnosed "Something went wrong" on `/`: `SyntaxError: Unexpected token '<'` from lazy chunks
+- Root cause: Cloudflare CDN cached `index.html` as JS for `/assets/*.js` requests with `Origin` header (ES module imports), during partial deploy rollouts
+- Fixed: `-cb3` asset filename suffix, 5-min `must-revalidate` cache (no immutable), SW v5.0.21, `check-origin-cache.mjs`
+- **Kimi action:** Purge all CDN cache for `tadbuy.giveabit.io` after deploy
+
+**Git State:**
+- SHA: `c7d3880`+ after push
+- Unpushed: none
+
+---
+
+## Session — 2026-07-13 (blank site / overlay fix)
+
+**Done:**
+- Diagnosed blank site: production served `index.html` for missing `/assets/*.js` (SPA fallback) — React never mounted, only orange body gradient visible
+- Service worker was caching those HTML responses as JavaScript — fixed content-type validation in `public/sw.js` (cache `tadbuy-v5.0.18`)
+- Added `scripts/verify-dist.mjs` postbuild check so future deploys fail if assets missing
+- Added boot-fallback UI in `index.html` when app bundle fails to load
+- Pushed fix → CF Pages redeployed; production verified (header + nav visible)
+
+**Decisions:**
+- Root cause was broken/partial CF deploy + poisoned SW cache, not motion/overlay components
+
+**Git State:**
+- SHA: `3484e805775f7a8d4c7bc3514e88d4f547ec3608`
+- Unpushed: none
+
+---
+
 ## Session — 2026-07-13 (finish pass)
 
 **Done:**
