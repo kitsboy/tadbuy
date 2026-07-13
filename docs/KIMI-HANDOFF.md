@@ -1,3 +1,58 @@
+## Session — 2026-07-13 (CDN / blank site / homepage crash — TUI handoff)
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TADBUY — Grok M3 handoff for Kimi (2026-07-13)                            │
+│ Live: https://tadbuy.giveabit.io/  │  SHA: f177a1cc2d600f5d2e77387f2f912bcb97f79359 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+SYMPTOMS (user-reported, now mitigated)
+  1. Blank page — orange glow only, no header/menus (JS never mounted)
+  2. "Something went wrong" on / — RouteErrorBoundary, SyntaxError: Unexpected token '<'
+
+ROOT CAUSE
+  Cloudflare Pages partial deploy rollouts + SPA fallback (/* → index.html 200)
+  → missing /assets/*.js returned HTML with 200 OK
+  → CDN cached HTML as JS (especially requests with Origin header from ES modules)
+  → Service worker also cached bad responses (fixed)
+  → immutable 1-year cache made poison permanent
+
+CHANGES SHIPPED (5 commits, 3484e80 → f177a1c)
+  index.html              boot-fallback UI when bundle fails to load
+  src/main.tsx            force SW update on load
+  public/sw.js            v5.0.21 — content-type check before caching assets
+  public/_headers         /assets/* → 5min must-revalidate (was 1yr immutable) + CORS *
+  vite.config.ts          all outputs suffixed -cb3.js (cache-bust poisoned CDN)
+  scripts/verify-dist.mjs postbuild — fail if index.html refs missing assets
+  scripts/check-origin-cache.mjs  detect CDN HTML-as-JS (Origin header probe)
+  scripts/check-prod-assets.mjs   prod asset scanner (helper)
+  package.json            postbuild + npm run check:prod-cache
+  src/components/FeeBreakdown.tsx  trivial label change (chunk rehash)
+  docs/KIMI-HANDOFF.md    this handoff
+
+PRODUCTION STATUS (verified Playwright + curl)
+  [OK]  / (Buy Ads) — hero renders, no error boundary
+  [OK]  69/70 lazy chunks on index-Dpabelji-cb3.js
+  [BAD] Marketplace-BfNJB2j5-cb3.js — missing on origin (SPA HTML fallback)
+  [BAD] /marketplace — RouteErrorBoundary until chunk deploys
+
+KIMI ACTION ITEMS (infra — M4 / Cloudflare dashboard)
+  1. PURGE ALL CDN CACHE for tadbuy.giveabit.io (critical)
+  2. Verify CF Pages deploy uploads full dist/assets/ (not partial ~17 files)
+  3. After purge, run: npm run check:prod-cache (from M3 against live)
+  4. Confirm build cmd: npm run build  │  output: dist  │  Node 20
+
+STILL BROKEN / NOT IN SCOPE
+  - /marketplace (1 missing chunk — likely partial deploy, not code bug)
+  - Real Lightning / Umbrel LND, Fedimint mint, Supabase Auth migration
+  - Users with old SW/cache need hard refresh (Cmd+Shift+R)
+
+GIT
+  Branch: main  │  Unpushed: none  │  package.json version: v5.0.17
+```
+
+---
+
 ## Session — 2026-07-13 (homepage RouteErrorBoundary fix)
 
 **Done:**
