@@ -1,3 +1,3 @@
-# tadbuy — Last Updated 2026-07-09 by Grok
-Brief: Goodbye — audit+security ship, M4 REF-only rule, Supabase DB / legacy Firebase auth TODO
-Commit: e60492b
+# tadbuy — Last Updated 2026-07-13 by Grok
+Brief: v5.0.11 — platform hub, budget allocator, PageShell uniformity, fee breakdown, campaign status API
+Commit: pending push

@@ -53,6 +53,8 @@ const Health           = lazy(() => import('./pages/Health'));
 const Changelog        = lazy(() => import('./pages/Changelog'));
 const Compare          = lazy(() => import('./pages/Compare'));
 const CaseStudies      = lazy(() => import('./pages/CaseStudies'));
+const Platforms        = lazy(() => import('./pages/Platforms'));
+const PlatformDetail   = lazy(() => import('./pages/PlatformDetail'));
 const BuyAds           = lazy(() => import('./pages/BuyAds'));
 const GeoTargeting     = lazy(() => import('./pages/GeoTargeting'));
 const CommandMenu            = lazy(() => import('./components/CommandMenu'));
@@ -158,6 +160,7 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
   ];
 
   const moreNav = [
+    { name: 'Platforms', path: '/platforms', icon: Globe },
     { name: 'Publisher', path: '/publisher', icon: Store },
     { name: 'Hubhash',   path: '/hubhash',   icon: Network },
     { name: 'Geo Reach', path: '/geo',       icon: MapPin },
@@ -373,6 +376,8 @@ function RoutedPages({ currency, rates }: { currency: string; rates: Record<stri
         <Route path="/changelog"     element={<Changelog />} />
         <Route path="/compare"       element={<Compare />} />
         <Route path="/case-studies"  element={<CaseStudies />} />
+        <Route path="/platforms"     element={<Platforms />} />
+        <Route path="/platforms/:slug" element={<PlatformDetail />} />
         <Route path="/start"         element={<Navigate to="/" replace />} />
         <Route path="/buy"           element={<Navigate to="/" replace />} />
         <Route path="/geo"         element={<GeoTargeting />} />

@@ -2,6 +2,30 @@
 
 All notable changes to Tadbuy are documented here.
 
+## [5.0.11] — 2026-07-13
+
+### Added
+- `/platforms` hub and per-platform budget/payout guides (`/platforms/:slug`)
+- Central `platforms.ts` data module (CPM, billing model, min spend, payout rules)
+- `PageShell`, `FeeBreakdown`, `PlatformWeightAllocator` shared components
+- Budget allocator in Buy Ads (even split, custom weights, PPQ-optimized)
+- Campaign `PATCH /api/campaigns/:id/status` for pause/live persist
+- CSV export (Google Sheets import) on Campaigns page
+- JSON-LD FAQ/Breadcrumb structured data via `PageJsonLd`
+- Supabase browser client scaffold (`src/lib/supabaseClient.ts`)
+- Playwright `@playwright/test` dev dependency
+
+### Changed
+- Site uniformity pass: Wallet, Settlements, Compare, Integrations, PPQ, Docs, Case Studies
+- Marketplace platform tabs aligned with social + publisher taxonomy
+- Server v1 stub APIs return explicit `{ demo: true }`
+- Integrations cards show honest Live/Beta/Planned status
+- Wallet on-chain tab shows deposit address (staged until Umbrel sync)
+
+### Unchanged (infra blockers)
+- Real Lightning/Fedimint still require Umbrel + Fedi guardian updates on M4
+- Full Supabase Auth migration still TODO (scaffold only)
+
 ## [5.0.6] — 2026-07-07
 
 ### Changed

@@ -9,6 +9,9 @@ import { LightningLiquidity } from "@/components/payments/LightningLiquidity";
 import { FedimintPanel } from "@/components/payments/FedimintPanel";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { authFetch } from "@/lib/authFetch";
+import { PageShell } from '@/components/PageShell';
+import { FeeBreakdown } from '@/components/FeeBreakdown';
+import { BITCOIN_ADDRESS } from '@/constants';
 
 export default function Wallet() {
   usePageMeta('Wallet', 'Manage Lightning, Fedimint ecash, and on-chain balances for your Tadbuy campaigns.');
@@ -119,12 +122,13 @@ export default function Wallet() {
   const totalBalance = (balance ?? 0) + fedimintBalance;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 max-w-2xl mx-auto">
-      <div>
-        <h1 className="text-2xl font-extrabold tracking-tight">Lightning Wallet</h1>
-        <p className="text-sm text-muted mt-1">Manage your on-chain and Lightning balance.</p>
-      </div>
-
+    <PageShell
+      title="Bitcoin Wallet"
+      description="Manage Lightning, Fedimint ecash, and on-chain balances. All amounts in sats first."
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Wallet' }]}
+      showDemoBadge={!nodeOnline}
+      maxWidth="max-w-2xl"
+    >
       {!nodeOnline && (
         <Alert variant="warning" title="Demo Mode">
           Lightning node unavailable — showing placeholder balances. Connect Umbrel LND on M4 for live payments.
@@ -273,9 +277,17 @@ export default function Wallet() {
         </TabsContent>
 
         <TabsContent value="onchain">
-          <Alert variant="info" title="On-chain Coming Soon">
-            On-chain BTC deposits require Umbrel full node sync. Use Lightning or Fedimint ecash for instant funding in the meantime.
-          </Alert>
+          <Card className="glass-panel">
+            <CardTitle className="flex items-center gap-2"><Bitcoin className="w-5 h-5 text-accent" /> On-chain deposit (staged)</CardTitle>
+            <p className="text-xs text-muted mb-4">
+              Send BTC to the address below. Confirmations tracked when Umbrel full node syncs on M4.
+            </p>
+            <div className="font-mono text-xs break-all bg-surface border border-border rounded-lg p-3 mb-3">{BITCOIN_ADDRESS}</div>
+            <Button variant="secondary" className="gap-2" onClick={() => { navigator.clipboard.writeText(BITCOIN_ADDRESS); addToast('Address copied', 'success'); }}>
+              <Copy className="w-4 h-4" /> Copy address
+            </Button>
+          </Card>
+          <FeeBreakdown budgetSats={100_000} budgetUsd={100} compact className="mt-3" />
         </TabsContent>
       </Tabs>
 
@@ -339,6 +351,6 @@ export default function Wallet() {
           </form>
         </div>
       </Modal>
-    </motion.div>
+    </PageShell>
   );
 }

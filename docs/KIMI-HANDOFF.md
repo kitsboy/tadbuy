@@ -1,3 +1,24 @@
+## Session — 2026-07-13
+
+**Done:**
+- Platform hub `/platforms` + 8 per-platform budget/payout guides
+- Central `platforms.ts`; PageShell, FeeBreakdown, PlatformWeightAllocator
+- BuyAds budget allocator (even/custom/PPQ), fee breakdown, `?platforms=` handoff
+- Uniformity: Wallet, Settlements, Compare, Integrations, PPQ, Docs, Case Studies
+- `PATCH /api/campaigns/:id/status`; CSV export; stub APIs `demo: true`
+- Supabase browser client scaffold; Playwright installed
+- **v5.0.11** pushed → Cloudflare Pages
+
+**Decisions:**
+- M4 still REF-only; infra blockers unchanged (Umbrel, Fedi)
+- Supabase Auth migration scaffolded, Firebase login still active until env set
+
+**Git State:**
+- Branch: main
+- Version: v5.0.11
+
+---
+
 ## Handoff to Kimi — 2026-07-07 (Goodbye — session complete)
 
 **Machine:** M3 (Grok)

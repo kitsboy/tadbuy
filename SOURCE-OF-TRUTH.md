@@ -1,6 +1,6 @@
 # SOURCE-OF-TRUTH.md — Tadbuy (Give A Bit Project)
 
-**Last Updated**: 2026-07-07
+**Last Updated**: 2026-07-13
 
 ## Project Overview (Marketing Pitch)
 Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Twitter/X, Facebook, Instagram, YouTube, Reddit, LinkedIn, TikTok, and Nostr. Pay in Bitcoin via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps. Features: campaign builder, **Global Reach geo dashboard** (`/geo`), geospatial targeting, AI creative (Gemini), PPQ.AI, publisher portal, analytics, wallet, settlements, 8 languages, Agent API. Part of Give A Bit (giveabit.io).
@@ -8,7 +8,7 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Tw
 ## GitHub (Code Source of Truth)
 - Repo: https://github.com/kitsboy/tadbuy.git
 - Branch: main (production)
-- Version: **v5.0.7** (BETA phase — 535+ enhancements shipped)
+- Version: **v5.0.11** (BETA phase — platform hub + uniformity batch)
 - M3 workspace: `~/projects/tadbuy/`
 - Last commit: `73b548a` (docs sync + goodbye handoff)
 
@@ -93,6 +93,15 @@ For automated agents (Grok, Kimi, Qwen):
 - `server.ts` + `server/routes/` — Express API (batch1–batch24)
 - `scripts/sync-docs.ts` — Auto-syncs docs on build
 - `docs/KIMI-HANDOFF.md` — Cross-agent handoff log
+
+## Recent M3 Work (2026-07-13)
+- [x] Central `src/data/platforms.ts` — billing, payout, CPM for all 8 platforms
+- [x] `/platforms` hub + `/platforms/:slug` landing pages
+- [x] `PageShell`, `FeeBreakdown`, `PlatformWeightAllocator` — site uniformity
+- [x] BuyAds: budget allocator (even / custom / PPQ), fee breakdown, platform handoff
+- [x] Campaign status PATCH API + CSV/Sheets export
+- [x] Server stub `demo: true` flags; Supabase client scaffold for auth migration
+- [x] Playwright installed; Compare/Integrations/Wallet/Settlements/PPQ/docs updated
 
 ## Gaps / Next
 - [x] M4 Phase 1: API proxy live (`api.giveabit.io`)

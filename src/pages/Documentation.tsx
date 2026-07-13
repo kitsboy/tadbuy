@@ -1,19 +1,18 @@
-import { motion } from "motion/react";
-import { usePageTitle } from "@/hooks/usePageTitle";
-import { BookOpen, Zap, Shield, Network, ExternalLink, ArrowRight } from "lucide-react";
+import { usePageMeta } from "@/hooks/usePageMeta";
+import { BookOpen, Zap, Shield, Network, ExternalLink, ArrowRight, Store } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui";
 import { Link } from "react-router-dom";
+import { PageShell } from '@/components/PageShell';
 
 export default function Documentation() {
-  usePageTitle('Documentation');
+  usePageMeta('Documentation', 'Bitcoin-native advertising guides, publisher onboarding, and platform billing.');
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto space-y-8">
-      <div className="mb-12">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-4">Documentation</h1>
-        <p className="text-lg text-muted max-w-2xl">
-          Learn how to use Tadbuy to launch privacy-preserving, Bitcoin-native advertising campaigns across the decentralized web.
-        </p>
-      </div>
+    <PageShell
+      title="Documentation"
+      description="Learn how to launch privacy-preserving, Bitcoin-native campaigns across 8 platforms."
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Docs' }]}
+      maxWidth="max-w-4xl"
+    >
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="glass-panel p-6 hover:border-accent/50 transition-colors">
@@ -61,7 +60,11 @@ export default function Documentation() {
         </Card>
       </div>
 
-      <div className="mt-12">
+      <div className="mt-4">
+        <Link to="/platforms" className="text-sm text-accent font-bold hover:underline">Platform budgeting & payout guides →</Link>
+      </div>
+
+      <div className="mt-8">
         <h2 className="text-2xl font-bold mb-6">Core Concepts</h2>
         <div className="space-y-4">
           <div className="bg-surface/50 border border-border rounded-xl p-6">
@@ -88,6 +91,6 @@ export default function Documentation() {
           </div>
         </div>
       </div>
-    </motion.div>
+    </PageShell>
   );
 }

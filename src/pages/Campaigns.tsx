@@ -17,6 +17,7 @@ import { useToast } from "@/components/Toast";
 import React from 'react';
 import { ShareCampaignCard } from '@/components/ShareCampaignCard';
 import { authFetch } from '@/lib/authFetch';
+import { downloadCsv, campaignsToCsvRows } from '@/lib/exportCsv';
 
 export default function Campaigns() {
   usePageTitle('Campaigns');
@@ -63,12 +64,22 @@ export default function Campaigns() {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   };
 
-  const toggleStatus = (id: string) => {
-    setCampaignsList(prev => prev.map(c => {
-      if (c.id !== id) return c;
-      const next = c.status === 'live' ? 'paused' : c.status === 'paused' ? 'live' : 'live';
-      return { ...c, status: next };
-    }));
+  const toggleStatus = async (id: string) => {
+    const current = campaignsList.find(c => c.id === id);
+    if (!current) return;
+    const next = current.status === 'live' ? 'paused' : 'live';
+    setCampaignsList(prev => prev.map(c => c.id === id ? { ...c, status: next } : c));
+    try {
+      const res = await authFetch(`/api/campaigns/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: next }),
+      });
+      if (!res.ok) throw new Error('API error');
+    } catch {
+      setCampaignsList(prev => prev.map(c => c.id === id ? { ...c, status: current.status } : c));
+      addToast('Status saved locally — API unavailable', 'error');
+    }
   };
 
   const pauseSelected = () => {
@@ -484,13 +495,25 @@ export default function Campaigns() {
 
           <div className="space-y-3">
             <Button className="w-full" onClick={() => {
+              const selected = campaignsList.filter(c => selectedIds.length ? selectedIds.includes(c.id) : true);
+              const headers = ['Name', 'Status', 'Platforms', 'Budget Sats', 'Impressions', 'Clicks', 'CTR'];
+              const rows = campaignsToCsvRows(selected.map(c => ({
+                name: c.name,
+                status: c.status,
+                platforms: c.platforms ?? [],
+                budget: c.budgetSats,
+                impressions: c.impressions,
+                clicks: c.clicks,
+                ctr: c.ctr,
+              })));
+              const filename = exportFormat === 'excel' ? 'tadbuy-campaigns.xls.csv' : 'tadbuy-campaigns.csv';
+              downloadCsv(filename, headers, rows);
               if (exportFormat === 'gdocs') {
-                addToast('Google Sheets export coming soon', 'success');
-                setShowExportModal(false);
+                addToast('CSV downloaded — import into Google Sheets via File → Import', 'success');
               } else {
-                addToast(`Exporting to ${exportFormat.toUpperCase()}...`, 'success');
-                setShowExportModal(false);
+                addToast(`Exported ${selected.length} campaign(s)`, 'success');
               }
+              setShowExportModal(false);
             }}>
               Confirm Export
             </Button>

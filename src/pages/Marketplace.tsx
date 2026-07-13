@@ -15,10 +15,12 @@ import {
   FEATURED_SLOT_IDS,
   type MarketplaceSlot,
 } from "@/data/marketplaceSlots";
+import { MARKETPLACE_PLATFORM_TYPES } from '@/data/platforms';
+import { PageShell } from '@/components/PageShell';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const PLATFORM_TABS = ["All", "Nostr", "YouTube", "Podcasts", "Newsletters", "Blogs"] as const;
+const PLATFORM_TABS = ["All", ...MARKETPLACE_PLATFORM_TYPES] as const;
 type PlatformTab = typeof PLATFORM_TABS[number];
 
 const CATEGORIES = [

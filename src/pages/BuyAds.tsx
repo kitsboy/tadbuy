@@ -11,7 +11,10 @@ import { motion, AnimatePresence } from "motion/react";
 import { Card, CardTitle, Button, Input, Textarea, Select, Label, FormGroup, Modal, FileInput, InfoTooltip } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { QRCodeSVG } from "qrcode.react";
-import { Twitter, Facebook, Instagram, Zap, Youtube, MessageSquare, Linkedin, Music, CheckCircle2, Bot, X, Monitor, Smartphone, Wifi, Globe, Calendar, Layers, Activity, Target, Settings2, Plus, Trash2, ShieldAlert } from "lucide-react";
+import { CheckCircle2, Bot, X, Monitor, Smartphone, Wifi, Globe, Calendar, Layers, Activity, Target, Settings2, Plus, Trash2, ShieldAlert } from "lucide-react";
+import { AD_PLATFORMS, allocateBudget, platformToCheckoutShape } from "@/data/platforms";
+import { PlatformWeightAllocator } from "@/components/PlatformWeightAllocator";
+import { FeeBreakdown } from "@/components/FeeBreakdown";
 import SuccessScreen from "@/components/buyads/SuccessScreen";
 import PaymentModal from "@/components/buyads/PaymentModal";
 
@@ -99,19 +102,6 @@ interface CampaignState {
   paymentMethod: string;
 }
 
-const BASE_FEE_MARKUP = 1.15; // 15% Tadbuy platform fee & volatility buffer baked into the quote
-
-const platforms = [
-  { id: 'twitter', name: 'Twitter/X', icon: <Twitter className="w-6 h-6" />, cpm: 6.45 * BASE_FEE_MARKUP },
-  { id: 'facebook', name: 'Facebook', icon: <Facebook className="w-6 h-6" />, cpm: 8.20 * BASE_FEE_MARKUP },
-  { id: 'instagram', name: 'Instagram', icon: <Instagram className="w-6 h-6" />, cpm: 9.85 * BASE_FEE_MARKUP },
-  { id: 'nostr', name: 'Nostr', icon: <Zap className="w-6 h-6" />, cpm: 1.20 * BASE_FEE_MARKUP },
-  { id: 'youtube', name: 'YouTube', icon: <Youtube className="w-6 h-6" />, cpm: 12.50 * BASE_FEE_MARKUP },
-  { id: 'reddit', name: 'Reddit', icon: <MessageSquare className="w-6 h-6" />, cpm: 4.90 * BASE_FEE_MARKUP },
-  { id: 'linkedin', name: 'LinkedIn', icon: <Linkedin className="w-6 h-6" />, cpm: 24.50 * BASE_FEE_MARKUP },
-  { id: 'tiktok', name: 'TikTok', icon: <Music className="w-6 h-6" />, cpm: 5.75 * BASE_FEE_MARKUP },
-];
-
 const checkoutPaymentDefs = getCheckoutPaymentMethods();
 const paymentMethods = checkoutPaymentDefs.map(pm => ({
   id: pm.id,
@@ -169,6 +159,9 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
 
   // --- Advanced Mode State ---
   const [platformWeights, setPlatformWeights] = useState<Record<string, number>>({ twitter: 100 });
+  const [budgetAllocMode, setBudgetAllocMode] = useState<'even' | 'weighted' | 'ppq'>('even');
+
+  const platforms = useMemo(() => platformToCheckoutShape(rate), [rate]);
   const [variants, setVariants] = useState<AdVariant[]>([
     {
       id: 'A',
@@ -293,6 +286,18 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
     }
     const next = new URLSearchParams(searchParams);
     next.delete('geo');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
+
+  // Platform hub handoff (?platforms=twitter,nostr)
+  useEffect(() => {
+    const raw = searchParams.get('platforms');
+    if (!raw) return;
+    const ids = raw.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+    const valid = ids.filter(id => AD_PLATFORMS.some(p => p.id === id));
+    if (valid.length) setSelectedPlatforms(valid);
+    const next = new URLSearchParams(searchParams);
+    next.delete('platforms');
     setSearchParams(next, { replace: true });
   }, [searchParams, setSearchParams]);
 
@@ -657,14 +662,20 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
   const budgetInUsd = btcAmount * rate;
   
   const estimates = useMemo(() => {
-    let totalImpressions = 0;
-    const platformBreakdown = selectedPlatformsData.map(p => {
-      const weight = mode === 'simple' ? (100 / selectedPlatformsData.length) : (platformWeights[p.id] || 0);
-      const platformBudget = (budgetInUsd * weight) / 100;
-      const impressions = Math.floor((platformBudget / p.cpm) * 1000);
-      totalImpressions += impressions;
-      return { ...p, weight, impressions, budget: platformBudget };
+    const weightArg: Record<string, number> | 'even' | 'ppq' =
+      budgetAllocMode === 'even' ? 'even'
+      : budgetAllocMode === 'ppq' ? 'ppq'
+      : platformWeights;
+    const allocations = allocateBudget(
+      selectedPlatformsData.map(p => p.id),
+      budgetInUsd,
+      weightArg,
+    );
+    const platformBreakdown = allocations.map(a => {
+      const p = selectedPlatformsData.find(x => x.id === a.platformId)!;
+      return { ...p, weight: a.weightPct, impressions: a.impressions, budget: a.budgetUsd };
     });
+    const totalImpressions = platformBreakdown.reduce((s, x) => s + x.impressions, 0);
 
     const totalClicks = Math.floor(totalImpressions * 0.012);
     const cpbtc = (btcAmount / totalImpressions) * 1000; // Cost per 1000 impressions in BTC
@@ -685,7 +696,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
         topInterestPct
       }
     };
-  }, [btcAmount, selectedPlatformsData, platformWeights, mode, budgetInUsd]);
+  }, [btcAmount, selectedPlatformsData, platformWeights, mode, budgetInUsd, budgetAllocMode]);
 
   const adBgColor = `hsl(${adBgHue}, 40%, ${adBgLightness}%)`;
 
@@ -1001,7 +1012,9 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                   <CardTitle className="mb-0">1. Pick your platforms</CardTitle>
                   <InfoTooltip content="Choose where your ads will appear. Each platform has different audiences and costs (CPM)." />
                 </div>
-                <div className="text-xs text-muted mb-3">Select one or more platforms. Your budget will be distributed evenly.</div>
+                <div className="text-xs text-muted mb-3">
+                  Select platforms · <Link to="/platforms" className="text-accent hover:underline">budget & payout guides</Link>
+                </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4.5">
                   {platforms.map(p => {
                     const isSelected = selectedPlatforms.includes(p.id);
@@ -1022,6 +1035,21 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                     );
                   })}
                 </div>
+
+                {selectedPlatforms.length > 1 && (
+                  <div className="mb-4">
+                    <PlatformWeightAllocator
+                      platforms={AD_PLATFORMS}
+                      selectedIds={selectedPlatforms}
+                      weights={platformWeights}
+                      mode={budgetAllocMode}
+                      onModeChange={setBudgetAllocMode}
+                      onWeightChange={(id, pct) => setPlatformWeights(prev => ({ ...prev, [id]: pct }))}
+                      budgetUsd={budgetInUsd}
+                      budgetSats={Math.round(btcAmount * 100_000_000)}
+                    />
+                  </div>
+                )}
 
                 <div className="flex items-center gap-2 mb-3">
                   <CardTitle className="mb-0">2. Budget</CardTitle>
@@ -1065,6 +1093,13 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                   className="mt-3"
                   budgetBtc={btcAmount}
                   paymentMethod={paymentMethod}
+                />
+
+                <FeeBreakdown
+                  className="mt-4"
+                  budgetSats={Math.round(btcAmount * 100_000_000)}
+                  budgetUsd={fiatAmount}
+                  currencySymbol={symbol}
                 />
 
                 <div className="mt-4">

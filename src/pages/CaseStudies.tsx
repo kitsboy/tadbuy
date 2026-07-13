@@ -1,9 +1,18 @@
-import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { TrendingUp, Zap, Users, ArrowRight } from 'lucide-react';
 import { Card, CardTitle, Button } from '@/components/ui';
 import { Badge } from '@/components/ui/Badge';
+import { PageShell } from '@/components/PageShell';
 import { usePageMeta } from '@/hooks/usePageMeta';
+import { AD_PLATFORMS } from '@/data/platforms';
+
+function platformGuideHref(label: string): string | null {
+  const key = label.toLowerCase();
+  const p = AD_PLATFORMS.find(
+    ap => ap.name.toLowerCase().includes(key) || key.includes(ap.id) || key.includes(ap.name.toLowerCase().split('/')[0]),
+  );
+  return p ? `/platforms/${p.slug}` : null;
+}
 
 const CASE_STUDIES = [
   {
@@ -63,21 +72,12 @@ export default function CaseStudies() {
   usePageMeta('Case Studies', 'Bitcoin brand advertising success stories on Tadbuy.');
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="max-w-4xl mx-auto space-y-8 pb-16 p-4 md:p-8"
+    <PageShell
+      title="Bitcoin Brand Case Studies"
+      description="How leading Bitcoin brands run campaigns with sats, not surveillance."
+      badge={<Badge variant="accent" className="gap-1.5"><TrendingUp className="w-3.5 h-3.5" /> Success Stories</Badge>}
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Case Studies' }]}
     >
-      <div>
-        <Badge variant="accent" className="mb-3">
-          <TrendingUp className="w-3.5 h-3.5" />
-          Success Stories
-        </Badge>
-        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Bitcoin Brand Case Studies</h1>
-        <p className="text-sm text-muted mt-2">
-          How leading Bitcoin brands run campaigns with sats, not surveillance.
-        </p>
-      </div>
 
       {CASE_STUDIES.map(study => (
         <Card key={study.id} className="space-y-4">
@@ -112,11 +112,16 @@ export default function CaseStudies() {
 
           <div className="flex items-center gap-2 flex-wrap">
             <Users className="w-3.5 h-3.5 text-muted" />
-            {study.platforms.map(p => (
-              <span key={p} className="text-[10px] font-bold bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 rounded">
-                {p}
-              </span>
-            ))}
+            {study.platforms.map(p => {
+              const href = platformGuideHref(p);
+              return href ? (
+                <Link key={p} to={href} className="text-[10px] font-bold bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 rounded hover:underline">
+                  {p}
+                </Link>
+              ) : (
+                <span key={p} className="text-[10px] font-bold bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 rounded">{p}</span>
+              );
+            })}
           </div>
         </Card>
       ))}
@@ -128,6 +133,6 @@ export default function CaseStudies() {
           </Button>
         </Link>
       </div>
-    </motion.div>
+    </PageShell>
   );
 }

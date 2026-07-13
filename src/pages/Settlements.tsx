@@ -4,7 +4,9 @@ import { Card, CardTitle } from "@/components/ui";
 import { Badge } from "@/components/ui/index";
 import { cn } from "@/lib/utils";
 import { BITCOIN_ADDRESS } from "@/constants";
-import { usePageTitle } from "@/hooks/usePageTitle";
+import { usePageMeta } from "@/hooks/usePageMeta";
+import { PageShell } from '@/components/PageShell';
+import { FeeBreakdown } from '@/components/FeeBreakdown';
 import { Activity, Clock, CheckCircle2, AlertCircle } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -29,7 +31,7 @@ const SkeletonRow = () => (
 );
 
 export default function Settlements() {
-  usePageTitle("Settlements");
+  usePageMeta('Settlements', 'On-chain and Lightning settlement history for your Bitcoin address.');
 
   const [settlements, setSettlements] = useState<Settlement[]>([]);
   const [loading, setLoading]         = useState(true);
@@ -112,8 +114,23 @@ export default function Settlements() {
   }, [trackedAddress]); // Re-connect whenever the tracked address changes
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-
+    <PageShell
+      title="Settlement History"
+      description="On-chain payments and Lightning payouts for your address."
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Settlements' }]}
+      showDemoBadge
+      actions={
+        <div className={cn(
+          "flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border font-mono",
+          wsStatus === "live"       && "text-green  bg-green/10  border-green/20",
+          wsStatus === "connecting" && "text-lightning bg-lightning/10 border-lightning/20",
+          wsStatus === "error"      && "text-red    bg-red/10    border-red/20",
+        )}>
+          <Activity className="w-3 h-3" />
+          {wsStatus === "live" ? "Mempool Live" : wsStatus === "connecting" ? "Connecting…" : "WS Error"}
+        </div>
+      }
+    >
       {/* Address Tracker */}
       <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
         <input
@@ -138,22 +155,7 @@ export default function Settlements() {
         </button>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">Settlement History</h1>
-          <p className="text-sm text-muted mt-1">On-chain payments and Lightning payouts for your address.</p>
-        </div>
-        {/* WS status badge */}
-        <div className={cn(
-          "flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border font-mono",
-          wsStatus === "live"       && "text-green  bg-green/10  border-green/20",
-          wsStatus === "connecting" && "text-lightning bg-lightning/10 border-lightning/20",
-          wsStatus === "error"      && "text-red    bg-red/10    border-red/20",
-        )}>
-          <Activity className="w-3 h-3" />
-          {wsStatus === "live" ? "Mempool Live" : wsStatus === "connecting" ? "Connecting…" : "WS Error"}
-        </div>
-      </div>
+      <FeeBreakdown budgetSats={50_000} budgetUsd={50} compact />
 
       <Card className="glass-panel overflow-hidden">
         <table className="w-full text-sm">
@@ -226,6 +228,6 @@ export default function Settlements() {
           {BITCOIN_ADDRESS}
         </span>
       </CardTitle>
-    </motion.div>
+    </PageShell>
   );
 }

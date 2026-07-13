@@ -20,6 +20,7 @@ const COMMAND_ACTIONS = [
   { id: 'campaigns', name: 'Campaigns', icon: Layers, path: '/campaigns', group: 'Campaigns' },
   { id: 'metrics', name: 'Metrics', icon: BarChart2, path: '/metrics', group: 'Analytics' },
   { id: 'geo', name: 'Global Reach', icon: MapPin, path: '/geo', group: 'Analytics' },
+  { id: 'platforms', name: 'Ad Platforms', icon: Globe, path: '/platforms', group: 'Campaigns' },
   { id: 'analytics', name: 'Campaign Analytics', icon: Target, path: '/analytics', group: 'Analytics' },
   { id: 'wallet', name: 'Wallet', icon: Wallet, path: '/wallet', group: 'Payments' },
   { id: 'settlements', name: 'Settlements', icon: Receipt, path: '/settlements', group: 'Payments' },
