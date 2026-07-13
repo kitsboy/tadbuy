@@ -82,7 +82,31 @@
   </head>
   <body>
     <div id="root"></div>
+    <div id="boot-fallback" hidden style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:#18181b;color:#fff;font-family:Inter,system-ui,sans-serif;">
+      <div style="max-width:24rem;text-align:center;">
+        <p style="font-size:1.25rem;font-weight:800;margin:0 0 .5rem;">Tadbuy failed to load</p>
+        <p style="font-size:.875rem;color:#a1a1aa;line-height:1.5;margin:0 0 1.25rem;">The app bundle did not load. This is usually a stale cache after a deploy — try a hard refresh or clear site data.</p>
+        <button type="button" onclick="location.reload()" style="background:#ff9f1c;color:#000;font-weight:700;border:none;border-radius:.75rem;padding:.625rem 1.25rem;cursor:pointer;">Reload</button>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var shown = false;
+        function showFallback() {
+          if (shown) return;
+          shown = true;
+          var el = document.getElementById('boot-fallback');
+          if (el) el.hidden = false;
+        }
+        window.addEventListener('error', function (e) {
+          if (e.target && e.target.tagName === 'SCRIPT') showFallback();
+        }, true);
+        setTimeout(function () {
+          var root = document.getElementById('root');
+          if (root && root.childElementCount === 0) showFallback();
+        }, 10000);
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- Build: v5.0.0-PLATINUM-2026.07.06 -->
   </body>
 </html>
