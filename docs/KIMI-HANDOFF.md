@@ -540,3 +540,27 @@ GIT
 - Branch: main
 - See commit after push
 
+---
+
+## Latest Session Summary (from 2026-07-13 goodbye)
+
+**Chat topic:** Production outage fix — blank site and homepage "Something went wrong" after v5.0.17 ship.
+
+**Finished in this session:**
+- Diagnosed and fixed CDN/deploy incident (HTML cached as JS, not UI overlay)
+- Shipped SW v5.0.21, boot-fallback, postbuild verify, `-cb3` asset suffix, shorter cache TTL
+- Homepage verified live; TUI handoff written; `docs/SESSION-SUMMARY-2026-07-13.md`
+
+**Still to do:**
+- Purge CDN cache for tadbuy.giveabit.io
+- Verify CF Pages uploads all 70+ JS chunks (Marketplace chunk still missing)
+- Infra blockers unchanged: Umbrel LND, Fedimint mint, Supabase Auth
+
+**Next for Kimi:** Integrate into MASTER-BRAIN / Obsidian. Purge CDN. Run `npm run check:prod-cache` from M3 after purge. Sync REF only — no git pull on M4.
+
+**Git State:**
+- SHA: `f429f8a933c46c3fac04e112ea6c17f7cf1b7c54`
+- Branch: main
+- Unpushed: none (goodbye commit pending)
+- Version: v5.0.17
+
