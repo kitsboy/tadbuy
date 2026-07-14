@@ -31,3 +31,6 @@ Tadbuy is a Bitcoin-native DSP: cross-platform campaigns, geospatial targeting v
 - Publishers monetizing attention in sats
 
 *Safe Harbour · Part of the [Give A Bit](https://giveabit.io) family.*
+
+---
+**Diligence pack:** [docs/diligence/](../diligence/) (investor + architecture + ask)

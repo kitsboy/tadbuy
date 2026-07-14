@@ -30,3 +30,6 @@ https://tadbuy.giveabit.io
 
 ---
 *Part of the [Give A Bit](https://giveabit.io) family.*
+
+---
+**Diligence pack:** [docs/diligence/](../diligence/) (investor + architecture + ask)

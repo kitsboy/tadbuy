@@ -29,3 +29,6 @@ Tadbuy integrates **Fedimint ecash** as a first-class payment rail — enabling 
 
 ---
 *Safe Harbour · Part of the [Give A Bit](https://giveabit.io) family.*
+
+---
+**Diligence pack:** [docs/diligence/](../diligence/) (investor + architecture + ask)

@@ -23,3 +23,6 @@
 
 ---
 *See SETUP-GUIDE.md for connection instructions.*
+
+---
+**Diligence pack:** [docs/diligence/](../diligence/) (investor + architecture + ask)
