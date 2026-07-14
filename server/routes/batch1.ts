@@ -1,4 +1,5 @@
 import type { Express, Request, Response } from 'express';
+import { anonymizeIp, extractClientIp } from '../../src/lib/privacy/ipAnonymize.ts';
 
 // In-memory Fedimint session store (production: use encrypted session/DB)
 const fedimintSessions = new Map<string, {
@@ -11,7 +12,9 @@ const fedimintSessions = new Map<string, {
 function getSessionId(req: Request): string {
   const cookie = req.headers.cookie ?? '';
   const match = cookie.match(/connect\.sid=([^;]+)/);
-  return match?.[1] ?? req.ip ?? 'anonymous';
+  if (match?.[1]) return match[1];
+  // Never key sessions on raw IP — coarse anonymized prefix only
+  return anonymizeIp(extractClientIp(req)) ?? 'anonymous';
 }
 
 export function registerBatch1Routes(app: Express) {

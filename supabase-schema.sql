@@ -117,3 +117,8 @@ CREATE POLICY "deny_client_settlements" ON settlements
   FOR ALL TO authenticated, anon
   USING (false)
   WITH CHECK (false);
+
+-- ─── Impression logs (privacy) ───────────────────────────────────────────────
+-- See supabase-impression-logs.sql for impression_logs table +
+-- purge_impression_logs(30) RPC. Run that file in the Supabase SQL editor.
+-- Raw IP is never stored; 30-day retention on raw events.

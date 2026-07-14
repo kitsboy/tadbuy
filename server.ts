@@ -45,6 +45,10 @@ import {
   createBid,
   upsertPublisherSettings,
 } from "./src/lib/db/supabaseAdmin.ts";
+import {
+  insertImpressionLog,
+  purgeImpressionLogsOlderThan,
+} from "./src/lib/db/impressionLogs.ts";
 import { HUBHASH_CAMPAIGNS } from "./src/data/hubhashCampaigns.ts";
 import fs from "fs";
 import { jsPDF } from "jspdf";
@@ -219,6 +223,19 @@ async function startServer() {
   });
 
   // ─── Admin Routes ───────────────────────────────────────────────────────────
+  
+  // 30-day impression log purge (also runs on startup)
+  app.post("/api/admin/purge-impression-logs", agentAuthMiddleware("admin"), async (req, res) => {
+    try {
+      const days = Number(req.body?.days) > 0 ? Number(req.body.days) : 30;
+      const result = await purgeImpressionLogsOlderThan(days);
+      res.json({ status: "success", ...result, retentionDays: days });
+    } catch (e) {
+      console.error(e);
+      res.status(500).json({ error: "purge failed" });
+    }
+  });
+
   app.post("/api/admin/backup", agentAuthMiddleware('admin'), async (req, res) => {
     try {
       const backup = await backupAllTables();
@@ -767,23 +784,76 @@ async function startServer() {
 
   // ─── Phase 1-5: 20-Point Upgrades Public API ─────────────────────────────
   
-  // Phase 1 & 2: Tracking, Retargeting, View-Through, and S2S Conversions
+  // Phase 1 & 2: Tracking — IP stripped, fp hashed, 30-day retention (see impressionLogs.ts)
   const demoStub = <T extends Record<string, unknown>>(payload: T) => ({ demo: true as const, ...payload });
 
-  app.post("/api/v1/retargeting/track", (req, res) => {
-    res.status(200).json(demoStub({ status: "tracked", type: "retargeting" }));
+  app.post("/api/v1/retargeting/track", async (req, res) => {
+    const body = req.body ?? {};
+    const result = await insertImpressionLog({
+      type: "retargeting",
+      advertiserId: typeof body.advertiserId === "string" ? body.advertiserId : null,
+      url: typeof body.url === "string" ? body.url : null,
+      fp: typeof body.fp === "string" ? body.fp : null,
+      req,
+    });
+    res.status(200).json({
+      status: "tracked",
+      type: "retargeting",
+      privacy: { ip: "anonymized", fp: "hashed", retentionDays: 30 },
+      ...(result.demo ? { demo: true as const } : {}),
+      ...(result.id ? { id: result.id } : {}),
+    });
   });
 
-  app.post("/api/v1/conversions", (req, res) => {
-    res.status(200).json(demoStub({ status: "postback_received", attribution: "view-through" }));
+  app.post("/api/v1/conversions", async (req, res) => {
+    const body = req.body ?? {};
+    const result = await insertImpressionLog({
+      type: "conversion",
+      advertiserId: typeof body.advertiserId === "string" ? body.advertiserId : null,
+      value: typeof body.value === "number" ? body.value : Number(body.value) || null,
+      fp: typeof body.fp === "string" ? body.fp : null,
+      req,
+    });
+    res.status(200).json({
+      status: "postback_received",
+      attribution: "view-through",
+      privacy: { ip: "anonymized", fp: "hashed", retentionDays: 30 },
+      ...(result.demo ? { demo: true as const } : {}),
+      ...(result.id ? { id: result.id } : {}),
+    });
   });
 
-  app.post("/api/v1/ads/view", (req, res) => {
-    res.status(200).json(demoStub({ status: "view_logged" }));
+  app.post("/api/v1/ads/view", async (req, res) => {
+    const body = req.body ?? {};
+    const result = await insertImpressionLog({
+      type: "view",
+      adId: typeof body.adId === "string" ? body.adId : null,
+      campaignId: typeof body.campaignId === "string" ? body.campaignId : null,
+      fp: typeof body.fp === "string" ? body.fp : null,
+      req,
+    });
+    res.status(200).json({
+      status: "view_logged",
+      privacy: { ip: "anonymized", fp: "hashed", retentionDays: 30 },
+      ...(result.demo ? { demo: true as const } : {}),
+      ...(result.id ? { id: result.id } : {}),
+    });
   });
 
-  app.post("/api/v1/analytics/heatmap", (req, res) => {
-    res.status(200).json(demoStub({ status: "scroll_depth_logged" }));
+  app.post("/api/v1/analytics/heatmap", async (req, res) => {
+    const body = req.body ?? {};
+    const result = await insertImpressionLog({
+      type: "heatmap",
+      publisherId: typeof body.pubId === "string" ? body.pubId : null,
+      scrollDepth: typeof body.scroll === "number" ? body.scroll : Number(body.scroll) || null,
+      req,
+    });
+    res.status(200).json({
+      status: "scroll_depth_logged",
+      privacy: { ip: "anonymized", fp: "hashed", retentionDays: 30 },
+      ...(result.demo ? { demo: true as const } : {}),
+      ...(result.id ? { id: result.id } : {}),
+    });
   });
 
   app.post("/api/v1/lightning/split", agentAuthMiddleware('admin'), (req, res) => {
@@ -799,8 +869,16 @@ async function startServer() {
     res.status(200).json(demoStub({ status: "swap_pending", lightning_invoice: "lnbc..." }));
   });
 
-  app.post("/api/v1/fraud/audit", (req, res) => {
-    res.status(200).json(demoStub({ status: "clean_traffic" }));
+  app.post("/api/v1/fraud/audit", async (req, res) => {
+    const body = req.body ?? {};
+    await insertImpressionLog({
+      type: "fraud_audit",
+      campaignId: typeof body.campaignId === "string" ? body.campaignId : null,
+      fp: typeof body.fp === "string" ? body.fp : null,
+      meta: { result: "clean_traffic" },
+      req,
+    });
+    res.status(200).json(demoStub({ status: "clean_traffic", privacy: { ip: "anonymized", fp: "hashed" } }));
   });
 
   // ─── Hubhash crowdfunding (demo escrow) ────────────────────────────────────
@@ -827,6 +905,12 @@ async function startServer() {
   // ─── Environment Variable Warnings ─────────────────────────────────────────
   const requiredEnvVars = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'SESSION_SECRET',
                            'UMBREL_LND_CERT', 'UMBREL_LND_MACAROON', 'UMBREL_LND_SOCKET'];
+    // Privacy: purge raw impression logs older than 30 days (no-op if table missing)
+  void purgeImpressionLogsOlderThan(30).then((r) => {
+    if (r.deleted > 0) console.log(`[privacy] purged ${r.deleted} impression logs older than 30d`);
+    if (r.error) console.warn('[privacy] purge skipped:', r.error);
+  }).catch(() => {});
+
   requiredEnvVars.forEach(v => {
     if (!process.env[v]) console.warn(`Warning: Missing environment variable: ${v}`);
   });
