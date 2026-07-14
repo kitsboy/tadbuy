@@ -559,8 +559,8 @@ GIT
 **Next for Kimi:** Integrate into MASTER-BRAIN / Obsidian. Purge CDN. Run `npm run check:prod-cache` from M3 after purge. Sync REF only — no git pull on M4.
 
 **Git State:**
-- SHA: `f429f8a933c46c3fac04e112ea6c17f7cf1b7c54`
+- SHA: `5e643b433c46c3fac04e112ea6c17f7cf1b7c54`
 - Branch: main
-- Unpushed: none (goodbye commit pending)
+- Unpushed: none
 - Version: v5.0.17
 
