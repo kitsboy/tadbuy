@@ -13,7 +13,7 @@
 - API is LIVE at api.satohash.io; client degrades when unreachable
 
 **Git State:**
-- SHA: `baea37bb41d394374716c62c368f5e8f0eb74ca6`
+- SHA: `76230c982c85f13eb9be374cfe80796c14411f6f`
 - Branch: main
 
 ---
