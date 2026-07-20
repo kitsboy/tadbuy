@@ -1,9 +1,10 @@
-import { Plug, Code, Webhook, ShoppingBag, Globe, Users } from 'lucide-react';
+import { Plug, Code, Webhook, ShoppingBag, Globe, Users, ShieldCheck } from 'lucide-react';
 import { Card, Button } from '@/components/ui';
 import { PageShell, StatusPill } from '@/components/PageShell';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { ApiExplorer } from '@/components/ApiExplorer';
 import { Link } from 'react-router-dom';
+import { getSatohashUrl, stampGuideUrl } from '@/lib/satohash';
 
 const INTEGRATIONS = [
   { name: 'WordPress', icon: Globe, desc: 'Publisher inventory plugin', endpoint: '/api/v3/integrations/wordpress', status: 'planned' as const },
@@ -46,6 +47,31 @@ export default function Integrations() {
           </Card>
         ))}
       </div>
+
+      <Card className="glass-panel">
+        <div className="flex items-start gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-blue/10 flex items-center justify-center">
+            <ShieldCheck className="w-5 h-5 text-blue" />
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-sm">Satohash</span>
+              <StatusPill status="beta" />
+            </div>
+            <p className="text-xs text-muted mt-0.5">
+              Bitcoin-anchored timestamps via family API (<code className="text-[10px]">src/lib/satohash.ts</code>).
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <a href={getSatohashUrl()} target="_blank" rel="noopener noreferrer">
+            <Button variant="secondary" className="gap-2 text-xs">Open Satohash</Button>
+          </a>
+          <a href={stampGuideUrl()} target="_blank" rel="noopener noreferrer">
+            <Button variant="secondary" className="gap-2 text-xs">Stamp guide</Button>
+          </a>
+        </div>
+      </Card>
 
       <Card className="glass-panel">
         <h2 className="text-sm font-bold mb-2">OpenAPI 3.1 Spec</h2>

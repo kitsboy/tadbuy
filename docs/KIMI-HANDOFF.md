@@ -1,3 +1,22 @@
+## Session — 2026-07-19
+
+**Done:**
+- Added thin Satohash API client `src/lib/satohash.ts` (sha256Hex, stampHash, getApiHealth, getStamp, verifyUrl, stampGuideUrl)
+- Client id `tadbuy`; env `VITE_SATOHASH_API_URL` / `VITE_SATOHASH_URL` / optional `VITE_SATOHASH_KEY`
+- Graceful offline (ok:false, no throw); API live at https://api.satohash.io
+- Minimal Integrations page card linking to Satohash site + stamp guide
+- No secrets committed
+
+**Decisions:**
+- Match family client pattern (motopass-style graceful offline)
+- No unit test runner in repo — skipped tests
+
+**Git State:**
+- SHA: `2e910cb5bc86f77c7aa7995173406d157736296b`
+- Unpushed: this commit
+
+---
+
 ## Session — 2026-07-13 (CDN / blank site / homepage crash — TUI handoff)
 
 ```
