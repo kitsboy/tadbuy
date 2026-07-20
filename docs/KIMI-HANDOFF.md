@@ -1,3 +1,23 @@
+## Session — 2026-07-19 (Satohash thin client)
+
+**Done:**
+- Added thin family API client `src/lib/satohash.ts` → `https://api.satohash.io`
+- `X-Satohash-Client: tadbuy`
+- Exports: `stampHash`, `getApiHealth`, `getStamp`, `verifyUrl`, `stampGuideUrl`, `sha256Hex`
+- Graceful offline: network/API failures return `{ ok: false }` — never throw
+- Optional key via `VITE_SATOHASH_KEY` only (never committed)
+- Integrations page links to Satohash site + stamp guide
+
+**Decisions:**
+- Thin client only — no OTS/calendar reimplementation in tadbuy
+- API is LIVE at api.satohash.io; client degrades when unreachable
+
+**Git State:**
+- SHA: (see commit after push)
+- Branch: main
+
+---
+
 ## Session — 2026-07-19
 
 **Done:**
