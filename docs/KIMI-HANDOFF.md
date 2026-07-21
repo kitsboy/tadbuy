@@ -87,6 +87,33 @@ All public outputs stay Bitcoin-sovereign + Safe Harbour.
 
 ---
 
+## Session — 2026-07-21 (metrics Option A — app-state counts)
+
+**Done:**
+- Priority 1 Option A: `public/metrics.json` now generated from app campaign state
+- `src/lib/metrics/productMetrics.ts` — counts campaigns / sats / impressions / CTR / funnel / platform breakdown
+- `scripts/generate-metrics.ts` + `npm run generate-metrics` (also on **prebuild**)
+- Values: 4 campaigns, 2 live, 3.63M sats, 1.136M impressions, 14.8k clicks, 9 publishers, 6 platforms
+- `raw.demo: false`, `raw.source: "app-state"` (honest SPA seed data, not hand-seeded 48/12 envelope)
+
+**Decisions:**
+- Option A (file write at build) fits CF Pages origin; Supabase aggregate job can swap source later
+- docs/NEXT-STEPS.md not in repo — followed session still-to-do + Cam Option A wording
+
+**Still to do:**
+- CF Pages deploy after push → `https://tadbuy.giveabit.io/metrics.json`
+- HQ: prefer live origin URL in projects.json metrics candidates
+- Later: generator reads Supabase instead of `src/data/campaigns.ts`
+- Umami tunnel; Cam Vault LNbits key
+
+**Next for Kimi:** After deploy, HQ can poll live origin. Coverage map: tadbuy metrics source = app-state generator.
+
+**Git State:**
+- Branch: main
+- See LATEST-UPDATE.md after push
+
+---
+
 ## Session — 2026-07-19 (Satohash thin client)
 
 **Done:**
