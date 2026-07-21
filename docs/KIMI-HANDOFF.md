@@ -738,3 +738,11 @@ GIT
 
 **Next for Kimi:** Integrate this summary into MASTER-BRAIN / Kanban / Obsidian. Update suite metrics coverage map. Sync REF only — no git pull on M4.
 
+
+**Git State (post-push):**
+- SHA: `3cb17e8fb52644bbb44ed3acf708344aa5e090b8`
+- Feature commit: `1f084a6` (metrics + Umami)
+- Unpushed: none
+- Version: v5.0.31
+- Remote also had `ref/GROK-BOOT.md` (rebased in); Steps 1–2 completed this session
+
