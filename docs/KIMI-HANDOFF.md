@@ -692,3 +692,49 @@ GIT
 - Unpushed: none
 - Version: v5.0.17
 
+
+## Session — 2026-07-21 (HQ metrics + Umami)
+
+**Done:**
+- Created `public/metrics.json` (`gab.product-metrics.v1`) for HQ poll
+- 11 KPIs (campaigns/sats/impressions/CTR/publishers/platforms/CPM/completed)
+- 3 series: impressions_daily, sats_daily, campaigns_daily
+- Funnel: created → funded → running → completed
+- Segment: platform_breakdown (sats per network)
+- Umami script in `index.html` — website ID `e75632e3-b6f4-4fa3-9ec5-8b3107adf783`
+- `_headers` CORS + 60s cache for `/metrics.json`
+- Session summary: `docs/SESSION-SUMMARY-2026-07-21.md`
+
+**Decisions:**
+- Seed/demo envelope (`raw.demo: true`) until Supabase/LNbits aggregates
+- Umami host `analytics.giveabit.io` (HTTPS, no port) — needs CF tunnel to THOR :3002
+- `ref/GROK-BOOT.md` missing; used ALL-SITE-METRICS Steps 1–2
+
+**Still to do:**
+- CF deploy live metrics.json; HQ projects.json live candidate URL
+- Wire Umami tunnel; live aggregates; Vault LNbits key (Cam)
+
+**Next for Kimi:** Integrate into MASTER-BRAIN / Obsidian. After deploy, HQ can fetch `https://tadbuy.giveabit.io/metrics.json`. Educate Hermes: suite metrics path = product origin envelope + Umami IDs. REF only on M4 — no git pull working tree.
+
+**Git State:**
+- Branch: main
+- See LATEST-UPDATE.md after push
+
+---
+
+## Latest Session Summary (from 2026-07-21 goodbye)
+
+**Chat topic:** Publish Tadbuy product metrics envelope + Umami for suite HQ glass.
+
+**Finished in this session:**
+- `public/metrics.json` full v1 (11 KPIs, 3 series, funnel, segment)
+- Umami tracking tag + CORS headers for HQ
+- Session summary + this handoff
+
+**Still to do:**
+- Deploy to tadbuy.giveabit.io; HQ prefer live origin
+- Umami tunnel (`analytics.giveabit.io` → :3002)
+- Live DB aggregates (`raw.demo: false`); Cam Vault wallet key
+
+**Next for Kimi:** Integrate this summary into MASTER-BRAIN / Kanban / Obsidian. Update suite metrics coverage map. Sync REF only — no git pull on M4.
+
