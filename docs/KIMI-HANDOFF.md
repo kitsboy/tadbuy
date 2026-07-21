@@ -109,10 +109,10 @@ All public outputs stay Bitcoin-sovereign + Safe Harbour.
 **Next for Kimi:** After deploy, HQ can poll live origin. Coverage map: tadbuy metrics source = app-state generator.
 
 **Git State:**
-- SHA: `2929c6fae9d066ea9c16a063f70e2314a38065dd` (tip; feature `304e0c2`)
+- SHA: `7f9f0258ca69c9bc86bfaa53d8fd288336cc8f0f` (tip; feature `304e0c2`)
 - Branch: main
 - Unpushed: none
-- Version: v5.0.36
+- Version: v5.0.38
 
 ---
 
@@ -751,27 +751,40 @@ GIT
 
 ---
 
-## Latest Session Summary (from 2026-07-21 goodbye)
+## Latest Session Summary (from 2026-07-21 Option A goodbye)
+
+**Chat topic:** Replace hand-seeded metrics.json with live campaign counts from app state (Option A).
+
+**Finished in this session:**
+- `src/lib/metrics/productMetrics.ts` + `scripts/generate-metrics.ts`
+- `npm run generate-metrics` + prebuild hook
+- Honest KPIs: 4 campaigns, 2 live, 3.63M sats, 1.136M impressions, 14.8k clicks
+- `raw.demo: false`, `raw.source: "app-state"`
+- Session summary: `docs/SESSION-SUMMARY-2026-07-21-option-a.md`
+
+**Still to do:**
+- Confirm CF Pages serves new envelope at `/metrics.json`
+- HQ prefer live origin URL in projects.json
+- Supabase-backed generator (later); Umami tunnel; Cam Vault LNbits key
+
+**Next for Kimi:** Integrate into MASTER-BRAIN / Kanban / Obsidian. Coverage: tadbuy metrics source = app-state generator (not hand-seed). Prefer origin `https://tadbuy.giveabit.io/metrics.json`. Do not git pull app trees on M4.
+
+**Git State (post-push):**
+- Tip: `7f9f0258ca69c9bc86bfaa53d8fd288336cc8f0f`
+- Feature: `304e0c2`
+- Unpushed: none
+- Version: v5.0.38
+
+---
+
+## Prior Session Summary (from 2026-07-21 metrics seed goodbye)
 
 **Chat topic:** Publish Tadbuy product metrics envelope + Umami for suite HQ glass.
 
-**Finished in this session:**
-- `public/metrics.json` full v1 (11 KPIs, 3 series, funnel, segment)
-- Umami tracking tag + CORS headers for HQ
-- Session summary + this handoff
+**Finished:**
+- Initial `public/metrics.json` full v1 + Umami + CORS (superseded by Option A for KPI values)
 
-**Still to do:**
-- Deploy to tadbuy.giveabit.io; HQ prefer live origin
-- Umami tunnel (`analytics.giveabit.io` → :3002)
-- Live DB aggregates (`raw.demo: false`); Cam Vault wallet key
+**Still noted:** Umami tunnel; HQ live candidates; Vault wallet key
 
-**Next for Kimi:** Integrate this summary into MASTER-BRAIN / Kanban / Obsidian. Update suite metrics coverage map. Sync REF only — no git pull on M4.
-
-
-**Git State (post-push):**
-- SHA: `3cb17e8fb52644bbb44ed3acf708344aa5e090b8`
-- Feature commit: `1f084a6` (metrics + Umami)
-- Unpushed: none
-- Version: v5.0.31
-- Remote also had `ref/GROK-BOOT.md` (rebased in); Steps 1–2 completed this session
+**Git State (that session):** Feature `1f084a6` · v5.0.31 era
 
