@@ -109,8 +109,10 @@ All public outputs stay Bitcoin-sovereign + Safe Harbour.
 **Next for Kimi:** After deploy, HQ can poll live origin. Coverage map: tadbuy metrics source = app-state generator.
 
 **Git State:**
+- SHA: `2929c6fae9d066ea9c16a063f70e2314a38065dd` (tip; feature `304e0c2`)
 - Branch: main
-- See LATEST-UPDATE.md after push
+- Unpushed: none
+- Version: v5.0.36
 
 ---
 
