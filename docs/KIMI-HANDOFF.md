@@ -1,3 +1,13 @@
+# tadbuy — KIMI / GROK
+
+### 2026-07-27 — pointer
+
+**Full Cam details + Kimi MASTER LIST:** `kitsboy/HQ` → `docs/KIMI-HANDOFF.md` (top).  
+**Tadbuy metrics Option A is DONE** (build-time from app state → `/metrics.json`). Not a Kimi P0.  
+Your P0 remains **sherpacarta public LNURL** on THOR/LNbits.
+
+---
+
 # KIMI → GROK HANDOFF — 2026-07-20 (THOR mega ops + less-chat + HQ v2.5 + memory)
 
 **From:** Kimi on THOR  
