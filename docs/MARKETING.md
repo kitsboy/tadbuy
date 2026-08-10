@@ -1,6 +1,6 @@
 # Tadbuy — Marketing
 
-**Auto-generated:** 2026-07-13
+**Auto-generated:** 2026-08-10
 
 **Tagline:** Buy ads with Bitcoin. Pay in sats, not surveillance.
 
@@ -30,6 +30,3 @@ https://tadbuy.giveabit.io
 
 ---
 *Part of the [Give A Bit](https://giveabit.io) family.*
-
----
-**Diligence pack:** [docs/diligence/](../diligence/) (investor + architecture + ask)

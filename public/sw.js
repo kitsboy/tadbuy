@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tadbuy-v5.0.21';
+const CACHE_NAME = 'tadbuy-v5.0.22';
 const PRECACHE = ['/', '/favicon.png', '/favicon.svg', '/manifest.json', '/og-image.svg'];
 
 function expectedContentType(pathname) {
@@ -11,7 +11,7 @@ function expectedContentType(pathname) {
 }
 
 function isCacheableAsset(response, pathname) {
-  if (!response || !response.ok) return false;
+  if (!response || response.status !== 200) return false;
   const expected = expectedContentType(pathname);
   if (!expected) return false;
   const contentType = (response.headers.get('content-type') || '').toLowerCase();

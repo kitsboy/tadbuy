@@ -58,6 +58,8 @@ export default function Footer() {
               <img
                 src="/giveabit.png"
                 alt="GiveaBit"
+                width={670}
+                height={335}
                 className="h-6 w-auto object-contain"
                 style={{ filter: 'grayscale(20%) brightness(1.1)' }}
               />
@@ -170,7 +172,7 @@ export default function Footer() {
                 <div className="text-[10px] text-muted">Scan to send Bitcoin</div>
               </div>
               <div className="bg-white p-2 rounded-lg inline-block mb-3">
-                <QRCodeSVG value={BITCOIN_URI} size={120} />
+                <QRCodeSVG value={BITCOIN_URI} size={120} title="Bitcoin donation address QR code" aria-label="Bitcoin donation address QR code" />
               </div>
               <div className="text-[9px] font-mono text-muted bg-surface p-2 rounded break-all text-center">
                 {BITCOIN_ADDRESS}

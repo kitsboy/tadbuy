@@ -28,3 +28,4 @@ Sitemap: https://tadbuy.giveabit.io/sitemap.xml
 
 # Crawl delay for bots
 Crawl-delay: 1
+

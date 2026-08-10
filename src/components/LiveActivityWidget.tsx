@@ -76,7 +76,7 @@ export default function LiveActivityWidget() {
         <div className="w-2 h-2 rounded-full bg-accent animate-pulse shadow-[0_0_8px_rgba(247,147,26,0.8)]" />
         Live Network Pulse
       </div>
-      <button onClick={onClose} className="text-muted hover:text-text transition-colors">
+      <button onClick={onClose} aria-label="Close live activity panel" className="text-muted hover:text-text transition-colors">
         <X className="w-4 h-4" />
       </button>
     </div>

@@ -1,6 +1,6 @@
 # Give A Bit Ecosystem
 
-**Auto-generated:** 2026-07-13
+**Auto-generated:** 2026-08-10
 
 ## Shared Fedimint Mint
 - **Name:** Give A Bit Mint
@@ -23,6 +23,3 @@
 
 ---
 *See SETUP-GUIDE.md for connection instructions.*
-
----
-**Diligence pack:** [docs/diligence/](../diligence/) (investor + architecture + ask)

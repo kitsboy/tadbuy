@@ -1,0 +1,8 @@
+# Tadbuy
+
+> Bitcoin-native ad buying — 8 platforms, pay in sats via Lightning/BOLT12/on-chain/Nostr Zaps.
+
+[Tadbuy](https://tadbuy.giveabit.io)
+
+- [https://tadbuy.giveabit.io/](https://tadbuy.giveabit.io/)
+- [https://tadbuy.giveabit.io/buy](https://tadbuy.giveabit.io/buy)

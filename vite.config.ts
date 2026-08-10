@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => {
     },
 
     build: {
+    sourcemap: true,
       // Raise the warning threshold so build output is clean
       chunkSizeWarningLimit: 600,
       rollupOptions: {

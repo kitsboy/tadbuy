@@ -68,7 +68,7 @@ export function NotificationCenter() {
       {/* Bell button */}
       <button
         onClick={() => setOpen(prev => !prev)}
-        aria-label="Notifications"
+        aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
         className="relative flex items-center justify-center p-1.5 rounded-lg hover:bg-surface/50 transition-colors border border-transparent hover:border-border"
       >
         <Bell
@@ -77,7 +77,7 @@ export function NotificationCenter() {
 
         {/* Unread badge */}
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] flex items-center justify-center bg-red-500 text-white text-[9px] font-bold rounded-full px-[3px] leading-none pointer-events-none">
+          <span aria-hidden="true" className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] flex items-center justify-center bg-red-500 text-white text-[9px] font-bold rounded-full px-[3px] leading-none pointer-events-none">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}

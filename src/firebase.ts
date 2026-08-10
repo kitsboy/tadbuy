@@ -11,6 +11,15 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
+// Real Firebase Web API keys always start with "AIza". If the key is missing
+// or a placeholder, the site is not configured for auth — skip init instead of
+// throwing auth/invalid-api-key on every load (console errors + broken pages).
+const hasFirebaseConfig = Boolean(
+  import.meta.env.VITE_FIREBASE_API_KEY &&
+  import.meta.env.VITE_FIREBASE_API_KEY.startsWith('AIza') &&
+  import.meta.env.VITE_FIREBASE_PROJECT_ID
+);
+
 let app;
 let auth;
 let db;
@@ -24,6 +33,12 @@ export const initializeFirebase = () => {
 
   if (initialized) {
     return { app, auth, db };
+  }
+
+  if (!hasFirebaseConfig) {
+    console.warn('[Firebase] Not configured (missing VITE_FIREBASE_API_KEY) — auth disabled');
+    initialized = true;
+    return { app: null, auth: null, db: null };
   }
 
   try {

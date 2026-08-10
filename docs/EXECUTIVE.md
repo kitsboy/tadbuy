@@ -1,6 +1,6 @@
 # Tadbuy — Executive Summary
 
-**Auto-generated:** 2026-07-13 · **Version:** v5.0.17
+**Auto-generated:** 2026-08-10 · **Version:** v5.0.40
 
 ## Mission
 Build the first truly sovereign advertising platform — advertisers buy with Bitcoin, creators earn in sats, no intermediary takes a cut of attention.
@@ -29,6 +29,3 @@ Tadbuy integrates **Fedimint ecash** as a first-class payment rail — enabling 
 
 ---
 *Safe Harbour · Part of the [Give A Bit](https://giveabit.io) family.*
-
----
-**Diligence pack:** [docs/diligence/](../diligence/) (investor + architecture + ask)

@@ -267,13 +267,13 @@ function Header({ currency, setCurrency, rate }: { currency: string; setCurrency
 
         <button
           type="button"
-          aria-label="Open search"
+          aria-label="Open search (⌘K)"
           className="hidden md:flex items-center gap-1.5 text-[10px] text-muted bg-surface px-2 py-1 rounded-full border border-border cursor-pointer hover:bg-white/5 transition-colors"
           onClick={openCommandMenu}
         >
           <Search className="w-3 h-3" />
           <span>Search</span>
-          <kbd className="font-mono bg-white/10 px-1 py-0.5 rounded text-[9px]">⌘K</kbd>
+          <kbd className="font-mono bg-white/10 px-1 py-0.5 rounded text-[9px] text-text/90">⌘K</kbd>
         </button>
 
         <div className="hidden md:block w-px h-4 bg-border" />
