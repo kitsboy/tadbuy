@@ -7,14 +7,14 @@ export function BtcPriceChart({ className }: { className?: string }) {
   const [data, setData] = useState<PricePoint[]>([]);
 
   useEffect(() => {
-    // blockchain.info charts API lacks CORS headers (blocked in-browser) —
-    // CoinGecko market_chart is CORS-open and returns the same 7-day series.
-    fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7')
+    // CoinGecko market_chart lacks CORS headers for some egress IPs; Coinbase
+    // exchange candles API is CORS-open and returns daily OHLCV.
+    fetch('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400')
       .then(r => r.json())
-      .then(d => {
-        const points = (d.prices ?? []).slice(-8).map(([t, p]: [number, number]) => ({
-          t: Math.floor(t / 1000),
-          price: Math.round(p),
+      .then(rows => {
+        const points = (rows ?? []).slice(-8).map((row: number[]) => ({
+          t: row[0],
+          price: Math.round(row[4]),
         }));
         setData(points);
       })
