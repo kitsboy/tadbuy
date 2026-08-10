@@ -43,7 +43,7 @@ export function CurrencyDisplay({
             key={u.id}
             onClick={() => setUnit(u.id)}
             className={cn(
-              'px-1.5 py-0.5 rounded text-[9px] font-bold transition-colors',
+              'px-2 py-1 min-h-[24px] rounded text-[9px] font-bold transition-colors',
               unit === u.id ? 'bg-accent/20 text-accent' : 'text-muted hover:text-text'
             )}
           >

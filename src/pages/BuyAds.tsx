@@ -1192,11 +1192,11 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                 </FormGroup>
                 <FormGroup>
                   <Label>Description</Label>
-                  <Textarea value={description} onChange={e => setDescription(e.target.value)} rows={2} />
+                  <Textarea aria-label="Campaign description" value={description} onChange={e => setDescription(e.target.value)} rows={2} />
                 </FormGroup>
                 <FormGroup>
                   <Label>Destination URL</Label>
-                  <Input type="url" value={url} onChange={e => setUrl(e.target.value)} />
+                  <Input type="url" aria-label="Destination URL" value={url} onChange={e => setUrl(e.target.value)} />
                 </FormGroup>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <FormGroup className="mb-0">
@@ -1215,6 +1215,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                         </div>
                         <input 
                           type="range" 
+                          aria-label="Background hue"
                           min="0" 
                           max="360" 
                           value={adBgHue} 
@@ -1229,6 +1230,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                         </div>
                         <input 
                           type="range" 
+                          aria-label="Background lightness"
                           min="10" 
                           max="98" 
                           value={adBgLightness} 
@@ -1259,6 +1261,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                       {['#000000', '#FFFFFF', '#F7931A', '#18181b'].map(c => (
                         <button 
                           key={c}
+                          aria-label={`Ad text color ${c}`}
                           onClick={() => setAdTextColor(c)}
                           className="w-5 h-5 rounded border border-white/10 hover:scale-110 transition-transform"
                           style={{ backgroundColor: c }}
@@ -1570,9 +1573,9 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                         className="rounded-xl p-4 min-h-[120px] relative overflow-hidden shadow-inner border border-border transition-colors duration-200"
                         style={{ backgroundColor: `hsl(${v.bgHue}, 40%, ${v.bgLightness}%)`, color: v.textColor }}
                       >
-                        <div className="absolute top-2 right-2 bg-black/10 rounded text-[9px] px-1.5 py-0.5 font-bold tracking-wider uppercase opacity-70">Sponsored</div>
+                        <div className="absolute top-2 right-2 bg-black/10 rounded text-[9px] px-1.5 py-0.5 font-bold tracking-wider uppercase opacity-90">Sponsored</div>
                         <div className="text-[10px] mb-2 flex items-center gap-1.5 opacity-80">
-                          <span className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4">{selectedPlatformsData[0]?.icon}</span> <strong>giveabit.io</strong> <span className="opacity-70">@giveabit · Promoted</span>
+                          <span className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4">{selectedPlatformsData[0]?.icon}</span> <strong>giveabit.io</strong> <span className="opacity-90">@giveabit · Promoted</span>
                         </div>
                         <div className="text-[15px] font-bold mb-1 leading-tight">{v.headline || "Your Headline Here"}</div>
                         <div className="text-[13px] leading-relaxed opacity-90">{v.description || "Your description will appear here."}</div>

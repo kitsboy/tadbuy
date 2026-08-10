@@ -161,6 +161,7 @@ export default function StepCreative({
                 <input
                   type="range"
                   min="0"
+                  aria-label="Background hue"
                   max="360"
                   value={adBgHue}
                   onChange={e => setAdBgHue(Number(e.target.value))}
@@ -175,6 +176,7 @@ export default function StepCreative({
                 <input
                   type="range"
                   min="10"
+                  aria-label="Background lightness"
                   max="98"
                   value={adBgLightness}
                   onChange={e => setAdBgLightness(Number(e.target.value))}
