@@ -21,8 +21,6 @@ export function BtcPriceChart({ className }: { className?: string }) {
       .catch(() => {});
   }, []);
 
-  if (data.length === 0) return null;
-
   const latest = data[data.length - 1]?.price ?? 0;
   const first = data[0]?.price ?? latest;
   const change = first > 0 ? ((latest - first) / first) * 100 : 0;
@@ -35,6 +33,7 @@ export function BtcPriceChart({ className }: { className?: string }) {
           {change >= 0 ? '+' : ''}{change.toFixed(1)}%
         </span>
       </div>
+      <div className="h-10">
       <ResponsiveContainer width="100%" height={40}>
         <AreaChart data={data}>
           <defs>
@@ -51,6 +50,7 @@ export function BtcPriceChart({ className }: { className?: string }) {
           <Area type="monotone" dataKey="price" stroke="#ff9f1c" fill="url(#btcGrad)" strokeWidth={1.5} dot={false} />
         </AreaChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 }

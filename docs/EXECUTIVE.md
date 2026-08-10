@@ -1,6 +1,6 @@
 # Tadbuy — Executive Summary
 
-**Auto-generated:** 2026-08-10 · **Version:** v5.0.46
+**Auto-generated:** 2026-08-10 · **Version:** v5.0.48
 
 ## Mission
 Build the first truly sovereign advertising platform — advertisers buy with Bitcoin, creators earn in sats, no intermediary takes a cut of attention.
