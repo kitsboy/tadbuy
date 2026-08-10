@@ -40,7 +40,7 @@ export function HeroBanner() {
           </p>
 
           <div className="flex flex-wrap gap-3">
-            <a href="#campaign-builder">
+            <a href="#campaign-builder" className="inline-flex">
               <Button size="lg" className="gap-2">
                 <Zap className="w-4 h-4" />
                 Start Campaign

@@ -69,7 +69,7 @@ export default function Footer() {
           {/* Links Column 1 */}
           <div className="col-span-1 grid grid-cols-2 gap-8">
             <div className="space-y-4">
-              <h4 className="text-xs font-bold uppercase tracking-widest text-text">Platform</h4>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-text">Platform</h3>
               <ul className="space-y-2">
                 <li><Link to="/" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Buy Ads</Link></li>
                 <li><Link to="/campaigns" onClick={() => window.scrollTo(0, 0)} className="text-xs text-muted hover:text-accent transition-colors">Campaigns</Link></li>

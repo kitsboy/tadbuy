@@ -237,14 +237,17 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   useEffect(() => {
     const fetchBlockHeight = async () => {
       try {
-        const res = await fetch('/api/blockchain/info');
-        const data = await res.json();
-        setCurrentBlockHeight(data.height);
-        if (scheduling.mode === 'block' && scheduling.startBlock === 834500) {
-          setScheduling(s => ({ ...s, startBlock: data.height + 1, endBlock: data.height + 1000 }));
+        // /api/blockchain/info is a static-host 404; mempool.space is CORS-open
+        const res = await fetch('https://mempool.space/api/blocks/tip/height');
+        const height = parseInt(await res.text(), 10);
+        if (Number.isFinite(height)) {
+          setCurrentBlockHeight(height);
+          if (scheduling.mode === 'block' && scheduling.startBlock === 834500) {
+            setScheduling(s => ({ ...s, startBlock: height + 1, endBlock: height + 1000 }));
+          }
         }
-      } catch (e) {
-        console.error('Failed to fetch block height');
+      } catch {
+        // block height is progressive enhancement — stay silent on failure
       }
     };
     fetchBlockHeight();
@@ -1074,14 +1077,14 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                 <div className="flex items-end gap-2.5 mb-1.5">
                   <FormGroup className="flex-1 mb-0">
                     <Label>Amount (BTC)</Label>
-                    <Input type="number" value={btcAmount.toFixed(5)} onChange={e => handleBtcChange(parseFloat(e.target.value) || 0)} step="0.0001" min="0.0001" />
+                    <Input type="number" aria-label="Amount in BTC" value={btcAmount.toFixed(5)} onChange={e => handleBtcChange(parseFloat(e.target.value) || 0)} step="0.0001" min="0.0001" />
                   </FormGroup>
                   <div className="bg-accent/15 border border-accent/40 text-accent rounded-lg px-3.5 py-2.5 font-mono text-xs whitespace-nowrap">
                     ₿ BTC
                   </div>
                   <FormGroup className="flex-1 mb-0">
                     <Label>Or in {currency}</Label>
-                    <Input type="number" value={fiatAmount.toFixed(2)} onChange={e => handleFiatChange(parseFloat(e.target.value) || 0)} />
+                    <Input type="number" aria-label={`Amount in ${currency}`} value={fiatAmount.toFixed(2)} onChange={e => handleFiatChange(parseFloat(e.target.value) || 0)} />
                   </FormGroup>
                 </div>
                 <div className="text-[11px] text-muted font-mono mt-1.5 flex justify-between items-center">
@@ -1185,7 +1188,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                 </div>
                 <FormGroup>
                   <Label>Headline</Label>
-                  <Input value={headline} onChange={e => setHeadline(e.target.value)} maxLength={70} />
+                  <Input aria-label="Campaign headline" value={headline} onChange={e => setHeadline(e.target.value)} maxLength={70} />
                 </FormGroup>
                 <FormGroup>
                   <Label>Description</Label>
@@ -1342,7 +1345,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                     <Label className="mb-0">Audience interest</Label>
                     <InfoTooltip content="Target users based on their hobbies, topics they follow, and content they consume." />
                   </div>
-                    <Select value={targeting.interests} onChange={e => setTargeting({ ...targeting, interests: e.target.value })}>
+                    <Select aria-label="Target interests" value={targeting.interests} onChange={e => setTargeting({ ...targeting, interests: e.target.value })}>
                       <option>Bitcoin & Crypto</option>
                       <option>Finance & Investing</option>
                       <option>Tech & Software</option>
@@ -1370,8 +1373,8 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                     <InfoTooltip content="Specify the age group of the users you want to reach." />
                   </div>
                     <div className="flex gap-3">
-                      <Input type="number" placeholder="Min" value={targeting.ageMin} onChange={e => setTargeting({ ...targeting, ageMin: parseInt(e.target.value) || 0 })} />
-                      <Input type="number" placeholder="Max" value={targeting.ageMax} onChange={e => setTargeting({ ...targeting, ageMax: parseInt(e.target.value) || 0 })} />
+                      <Input type="number" aria-label="Minimum age" placeholder="Min" value={targeting.ageMin} onChange={e => setTargeting({ ...targeting, ageMin: parseInt(e.target.value) || 0 })} />
+                      <Input type="number" aria-label="Maximum age" placeholder="Max" value={targeting.ageMax} onChange={e => setTargeting({ ...targeting, ageMax: parseInt(e.target.value) || 0 })} />
                     </div>
                   </FormGroup>
                   <FormGroup className="mb-0 sm:col-span-2">
