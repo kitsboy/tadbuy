@@ -12,7 +12,7 @@
     "generate-metrics": "tsx scripts/generate-metrics.ts",
     "prebuild": "npm run sync-version && tsx scripts/sync-docs.ts && npm run generate-metrics",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender-seo.mjs",
     "postbuild": "node scripts/verify-dist.mjs",
     "check:prod-cache": "node scripts/check-origin-cache.mjs",
     "preview": "vite preview",
