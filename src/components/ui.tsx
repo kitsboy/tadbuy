@@ -10,7 +10,7 @@ Card.displayName = "Card";
 
 export const CardTitle = ({ children, className }: { children: React.ReactNode; className?: string }) => (
   <div className={cn("text-[11px] font-bold uppercase tracking-widest text-muted mb-4 flex items-center gap-2", className)}>
-    <span className="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_8px_rgba(247,147,26,0.8)]" />
+    <span className="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_8px_rgba(244,114,182,0.8)]" />
     {children}
   </div>
 );
@@ -23,7 +23,7 @@ export const Button = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<H
         className={cn(
           "inline-flex items-center justify-center rounded-lg font-bold transition-all focus:outline-none focus:ring-2 focus:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none",
           {
-            'bg-accent text-black hover:bg-[#ff9f20] hover:-translate-y-px shadow-[0_4px_14px_0_rgba(247,147,26,0.39)] hover:shadow-[0_6px_20px_rgba(247,147,26,0.23)]': variant === 'primary',
+            'bg-accent text-black hover:bg-[#f58ac4] hover:-translate-y-px shadow-[0_4px_14px_0_rgba(244,114,182,0.39)] hover:shadow-[0_6px_20px_rgba(244,114,182,0.28)]': variant === 'primary',
             'bg-surface text-text border border-border hover:border-muted hover:bg-zinc-800': variant === 'secondary',
             'bg-lightning text-black hover:bg-[#ffe033] shadow-[0_4px_14px_0_rgba(255,215,0,0.39)] hover:shadow-[0_6px_20px_rgba(255,215,0,0.23)]': variant === 'lightning',
             'bg-transparent text-muted hover:text-text hover:bg-surface/60': variant === 'ghost',
@@ -264,10 +264,11 @@ export const InfoTooltip = ({ content }: { content: string }) => {
         <span
           id={id}
           role="tooltip"
-          className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 p-2 bg-zinc-900 border border-border rounded-lg text-[10px] leading-tight text-text shadow-xl z-[100] block"
+          className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 p-2.5 rounded-lg text-[10px] leading-relaxed text-text shadow-xl z-[100] block"
+          style={{ background: 'linear-gradient(160deg, #3b0a24, #6b1140)', border: '1px solid rgba(244,114,182,0.4)' }}
         >
           {content}
-          <span className="absolute bottom-full left-1/2 -translate-x-1/2 border-8 border-transparent border-b-zinc-900" aria-hidden />
+          <span className="absolute bottom-full left-1/2 -translate-x-1/2 border-8 border-transparent border-b-[#3b0a24]" aria-hidden />
         </span>
       )}
     </span>

@@ -9,9 +9,10 @@ export function HeroBanner() {
   return (
     <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-card via-surface to-card mb-8">
       <div className="absolute inset-0 pointer-events-none">
+        <div className="hero-jewel-orbit" />
         <div className="absolute top-0 right-0 w-72 h-72 bg-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,159,28,0.08),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(244,114,182,0.08),transparent_50%)]" />
       </div>
 
       <div className="relative px-5 py-10 md:px-12 md:py-14 grid md:grid-cols-2 gap-8 items-center">
@@ -27,7 +28,7 @@ export function HeroBanner() {
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.1] mb-4">
             Buy ads with{' '}
-            <span className="bg-gradient-to-r from-accent via-lightning to-accent bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-accent via-fuchsia-300 to-accent bg-clip-text text-transparent" data-tip="Every campaign settles in real Bitcoin — Lightning, BOLT12, on-chain, or Nostr Zaps. No fiat rails, no surveillance, no intermediaries taking a cut of your media spend.">
               Bitcoin
             </span>
             .<br className="hidden sm:block" />
@@ -62,12 +63,12 @@ export function HeroBanner() {
           className="hidden md:grid grid-cols-2 gap-3"
         >
           {[
-            { icon: Zap, label: 'Lightning', value: '<1s', sub: 'settlement', color: 'text-lightning' },
-            { icon: Globe, label: 'Platforms', value: '8', sub: 'networks', color: 'text-blue' },
-            { icon: Shield, label: 'Privacy', value: '0', sub: 'tracking pixels', color: 'text-green' },
-            { icon: Sparkles, label: 'AI', value: 'PPQ', sub: 'optimization', color: 'text-purple' },
+            { icon: Zap, label: 'Lightning', value: '<1s', sub: 'settlement', color: 'text-lightning', tip: 'Settlement over Bitcoin Lightning is near-instant — your campaign goes live and your budget settles in under a second, not days.' },
+            { icon: Globe, label: 'Platforms', value: '8', sub: 'networks', color: 'text-blue', tip: 'One budget, eight networks: X, Nostr, YouTube, Twitch, and more. Allocate weight per platform and Tadbuy spreads your sats across them.' },
+            { icon: Shield, label: 'Privacy', value: '0', sub: 'tracking pixels', color: 'text-green', tip: 'No tracking pixels, no cross-site fingerprinting, no data resale. Your campaign and your audience stay private — that is the product.' },
+            { icon: Sparkles, label: 'AI', value: 'PPQ', sub: 'optimization', color: 'text-purple', tip: 'Pays-Per-Qualified-view: the AI strategist helps you target the audience that actually converts — not vanity impressions.' },
           ].map((stat) => (
-            <div key={stat.label}>
+            <div key={stat.label} data-tip={stat.tip}>
               <StatCard icon={stat.icon} label={stat.label} value={stat.value} sub={stat.sub} color={stat.color} />
             </div>
           ))}

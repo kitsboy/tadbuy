@@ -43,12 +43,12 @@ interface SuccessScreenProps {
 }
 
 const CONFETTI_PIECES = [
-  { color: '#ff9f1c', tx: '-180px', ty: '-220px', rot: '720deg',  delay: '0s'    },
+  { color: '#f472b6', tx: '-180px', ty: '-220px', rot: '720deg',  delay: '0s'    },
   { color: '#4ade80', tx:  '190px', ty: '-200px', rot: '-540deg', delay: '0.05s' },
-  { color: '#38bdf8', tx: '-150px', ty:  '230px', rot: '480deg',  delay: '0.1s'  },
-  { color: '#c084fc', tx:  '160px', ty:  '210px', rot: '-600deg', delay: '0.05s' },
-  { color: '#ff9f1c', tx:   '80px', ty: '-260px', rot: '360deg',  delay: '0.15s' },
-  { color: '#4ade80', tx:  '-90px', ty: '-240px', rot: '-420deg', delay: '0.2s'  },
+  { color: '#e879f9', tx: '-150px', ty:  '230px', rot: '480deg',  delay: '0.1s'  },
+  { color: '#38bdf8', tx:  '160px', ty:  '210px', rot: '-600deg', delay: '0.05s' },
+  { color: '#f9a8d4', tx:   '80px', ty: '-260px', rot: '360deg',  delay: '0.15s' },
+  { color: '#facc15', tx:  '-90px', ty: '-240px', rot: '-420deg', delay: '0.2s'  },
 ];
 
 export default function SuccessScreen({
@@ -154,20 +154,37 @@ export default function SuccessScreen({
             </div>
           )}
 
-          <div className="bg-surface border border-border rounded-2xl p-5 mb-6 text-left space-y-3">
-            <div className="text-[10px] uppercase tracking-widest text-muted font-bold">Campaign Summary</div>
+          <div className="bg-surface border border-border rounded-2xl p-5 mb-6 text-left space-y-3 tadbuy-receipt-total">
+            <div className="text-[10px] uppercase tracking-widest text-muted font-bold" data-tip="Your official campaign receipt. Every figure below is what actually happened — no estimates dressed up as facts.">Campaign Summary</div>
             <div className="flex justify-between text-sm">
               <span className="text-muted">Name</span>
               <span className="font-bold">{campaignName}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted">Budget</span>
-              <span className="font-bold text-accent">{btcAmount.toFixed(8)} ₿</span>
+              <span className="font-bold text-accent" data-tip="Total budget in bitcoin — this exact amount settled and is now allocated to your campaign. Nothing extra was taken beyond the fee shown at checkout.">
+                {btcAmount.toFixed(8)} ₿
+              </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted">Est. impressions</span>
-              <span className="font-bold text-green">~{estimates.totalImpressions.toLocaleString()}</span>
+              <span className="font-bold text-green" data-tip={`~${estimates.totalImpressions.toLocaleString()} estimated impressions across ${estimates.platformBreakdown.length} platform(s). Estimates are honest ranges — actuals appear in your analytics as the campaign runs.`}>
+                ~{estimates.totalImpressions.toLocaleString()}
+              </span>
             </div>
+
+            {estimates.platformBreakdown.length > 0 && (
+              <div className="pt-2 border-t border-border/50">
+                <div className="text-[10px] uppercase tracking-widest text-muted font-bold mb-2">Platform split</div>
+                <div className="flex items-end gap-2 h-12">
+                  {estimates.platformBreakdown.map((p) => (
+                    <div key={p.id} className="flex-1 flex flex-col items-center gap-1 min-w-0">
+                      <div className="w-full rounded-t bg-gradient-to-t from-accent/30 to-accent/70" style={{ height: `${Math.max(8, p.weight * 100)}%` }} data-tip={`${p.name}: ${Math.round(p.weight * 100)}% of budget — ~${p.impressions.toLocaleString()} impressions`} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">

@@ -19,8 +19,9 @@
   --color-surface: #27272a;
   --color-card: #202024;
   --color-border: #3f3f46;
-  --color-accent: #ff9f1c;
-  --color-accent2: #ff5a5f;
+  /* Design-token accent for Tadbuy = pink (#f472b6) — jewel-tone identity */
+  --color-accent: #f472b6;
+  --color-accent2: #e879f9;
   --color-lightning: #facc15;
   --color-green: #4ade80;
   --color-blue: #38bdf8;
@@ -35,15 +36,16 @@
   body {
     @apply bg-bg text-text font-sans antialiased min-h-screen selection:bg-accent/30 selection:text-accent;
     background-image:
-      radial-gradient(circle at 15% 50%, rgba(255, 159, 28, 0.06), transparent 25%),
-      radial-gradient(circle at 85% 30%, rgba(192, 132, 252, 0.06), transparent 25%);
+      radial-gradient(circle at 15% 50%, rgba(244, 114, 182, 0.07), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(192, 132, 252, 0.07), transparent 25%),
+      radial-gradient(circle at 60% 85%, rgba(250, 204, 21, 0.04), transparent 28%);
   }
 
   [data-theme="light"] body {
     @apply bg-zinc-100 text-zinc-900;
     background-image:
-      radial-gradient(circle at 15% 50%, rgba(255, 159, 28, 0.08), transparent 25%),
-      radial-gradient(circle at 85% 30%, rgba(192, 132, 252, 0.05), transparent 25%);
+      radial-gradient(circle at 15% 50%, rgba(244, 114, 182, 0.1), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(192, 132, 252, 0.07), transparent 25%);
   }
 
   [data-theme="light"] .glass-header { background-color: #f4f4f5; @apply border-zinc-200; }
@@ -67,11 +69,11 @@
   }
 
   .glow-accent {
-    box-shadow: 0 0 20px rgba(255, 159, 28, 0.15), 0 0 60px rgba(255, 159, 28, 0.05);
+    box-shadow: 0 0 20px rgba(244, 114, 182, 0.18), 0 0 60px rgba(244, 114, 182, 0.06);
   }
 
   .text-gradient-accent {
-    @apply bg-gradient-to-r from-accent via-lightning to-accent bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-accent via-fuchsia-300 to-accent bg-clip-text text-transparent;
   }
 
   .pb-safe {
@@ -230,4 +232,165 @@
 [data-theme="light"] .animate-shimmer {
   background: linear-gradient(90deg, #e4e4e7 25%, #f4f4f5 50%, #e4e4e7 75%);
   background-size: 200% 100%;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   TADBUY JEWEL ELEVATION — 2026-08-23 (Mimi · Cam's rich/alive/mobile-first
+   direction · design-tokens.json accent = pink #f472b6)
+   RICH jewel-tone + electric accents · alive-not-flat · interactive hover
+   graphs · rich tooltips · mobile-first · honesty visuals central.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Animated aurora mesh (drifts behind cards/hero) ─────────────────── */
+@keyframes tadbuy-aurora-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(4%, -3%, 0) scale(1.08); }
+  100% { transform: translate3d(-2%, 2%, 0) scale(1.04); }
+}
+.tadbuy-aurora {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle 22% at 20% 25%, rgba(244, 114, 182, 0.14), transparent 62%),
+    radial-gradient(circle 26% at 80% 30%, rgba(192, 132, 252, 0.12), transparent 62%),
+    radial-gradient(circle 18% at 60% 80%, rgba(250, 204, 21, 0.06), transparent 60%);
+  animation: tadbuy-aurora-drift 24s ease-in-out infinite alternate;
+}
+
+/* ── Rich tooltips (family data-tip pattern, jewel styling) ───────────── */
+[data-tip] {
+  position: relative;
+  cursor: help;
+}
+[data-tip]:hover::after,
+[data-tip]:focus-visible::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(280px, calc(100vw - 2rem));
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  background: linear-gradient(160deg, #3b0a24, #6b1140);
+  color: #fce7f3;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(59, 7, 37, 0.5), 0 0 0 1px rgba(244, 114, 182, 0.4) inset;
+  z-index: 90;
+  white-space: normal;
+  text-align: left;
+  pointer-events: none;
+  animation: tadbuy-tip-in 0.16s ease-out;
+}
+@keyframes tadbuy-tip-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ── Interactive hover graphs — fee/media split bars ──────────────────── */
+.tadbuy-split-graph {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  background: linear-gradient(150deg, rgba(244, 114, 182, 0.08), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(244, 114, 182, 0.22);
+}
+.tadbuy-split-graph__bar {
+  position: relative;
+  height: 9rem;
+  width: 100%;
+  max-width: 3rem;
+  border-radius: 8px 8px 4px 4px;
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  cursor: pointer;
+}
+.tadbuy-split-graph__fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-radius: 8px 8px 4px 4px;
+  transition: height 0.9s cubic-bezier(0.22, 1, 0.36, 1), filter 0.2s;
+}
+.tadbuy-split-graph__fill--media {
+  background: linear-gradient(180deg, #f9a8d4, #f472b6 60%, #db2777);
+  box-shadow: 0 0 16px rgba(244, 114, 182, 0.45);
+}
+.tadbuy-split-graph__fill--fee {
+  background: linear-gradient(180deg, #fde68a, #facc15 60%, #d97706);
+  opacity: 0.85;
+}
+.tadbuy-split-graph__bar:hover .tadbuy-split-graph__fill {
+  filter: brightness(1.15);
+}
+.tadbuy-split-graph__legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: #d4d4d8;
+}
+.tadbuy-split-graph__legend strong {
+  font-size: 0.8125rem;
+  color: #fff;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ── Campaign/pricing surface — jewel-tone stats, hover lift ──────────── */
+.tadbuy-jewel-card {
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(244, 114, 182, 0.1), transparent 60%),
+    linear-gradient(165deg, #202024, #1b1b1f);
+  border: 1px solid rgba(244, 114, 182, 0.18);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s, border-color 0.25s;
+}
+.tadbuy-jewel-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(244, 114, 182, 0.4);
+  box-shadow: 0 16px 40px rgba(219, 39, 119, 0.18);
+}
+
+/* ── Receipt — honest breakdown highlight ─────────────────────────────── */
+.tadbuy-receipt-total {
+  background: linear-gradient(120deg, rgba(244, 114, 182, 0.12), rgba(192, 132, 252, 0.08));
+  border: 1px solid rgba(244, 114, 182, 0.28);
+}
+
+/* ── HeroBanner — richer pink jewel aurora ────────────────────────────── */
+.hero-jewel-orbit {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle 30% at 78% 8%, rgba(244, 114, 182, 0.18), transparent 58%),
+    radial-gradient(circle 28% at 12% 88%, rgba(192, 132, 252, 0.16), transparent 58%),
+    radial-gradient(circle 20% at 55% 40%, rgba(250, 204, 21, 0.06), transparent 55%);
+  animation: tadbuy-aurora-drift 26s ease-in-out infinite alternate;
+}
+
+/* ── Mobile-first refinements ─────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .tadbuy-split-graph { gap: 0.75rem; padding: 0.75rem 0.75rem; }
+  .tadbuy-split-graph__bar { height: 7rem; max-width: 2.25rem; }
+  .tadbuy-split-graph__legend { font-size: 0.6875rem; }
+}
+
+/* Reduced motion — respect it for all new jewel motion */
+@media (prefers-reduced-motion: reduce) {
+  .tadbuy-aurora,
+  .hero-jewel-orbit,
+  .tadbuy-split-graph__fill,
+  [data-tip]:hover::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
