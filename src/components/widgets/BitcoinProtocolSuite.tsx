@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { generateTaprootEscrow, generatePaynymCode, generateSilentPaymentAddress, fetchMempoolFeeEstimates, MempoolFeeEstimates } from '@/lib/bitcoin/l1Advanced';
 import { createBolt12Offer, generateLsatToken, initiateSubmarineSwap } from '@/lib/lightning/l2Advanced';
 import { LIQUID_ASSETS, convertSatsToLiquidUsdt, generateConfidentialLiquidAddress } from '@/lib/liquid/liquidAdvanced';
-import { generateZkImpressionProof, evaluatePpqBid } from '@/lib/privacy/zkProofEngine';
+import { generateZkImpressionProof } from '@/lib/privacy/zkProofEngine';
+import { evaluatePpqBidEnhanced } from '@/lib/adEngine/ppqEngine';
 import { issueEcashAdVoucher } from '@/services/fedimintService';
 import { Shield, Zap, Layers, Lock, Cpu, CheckCircle2, Copy, Sparkles, RefreshCw, Key, FileCode } from 'lucide-react';
 
@@ -45,7 +46,7 @@ export const BitcoinProtocolSuite: React.FC<{ defaultTab?: string }> = ({ defaul
   const liquidAddress = generateConfidentialLiquidAddress('03liquidkey999888777');
   const liquidUsdtDemo = convertSatsToLiquidUsdt(escrowSatoshis);
   const zkProofDemo = generateZkImpressionProof('cmp_demo_v5', 'publisher.giveabit.io', 12500, 3500);
-  const ppqDemo = evaluatePpqBid(ppqQuery, 25, ['bitcoin', 'advertising', 'dsp']);
+  const ppqDemo = evaluatePpqBidEnhanced(ppqQuery, 25, { keywords: ['bitcoin', 'advertising', 'dsp'] });
   const ecashDemo = issueEcashAdVoucher(escrowSatoshis);
 
   return (
