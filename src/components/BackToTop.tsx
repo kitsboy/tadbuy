@@ -17,14 +17,17 @@ export function BackToTop() {
       aria-label="Back to top"
       className={cn(
         'fixed bottom-24 right-4 md:bottom-8 md:right-8 z-40 pb-safe touch-target touch-manipulation',
-        'w-10 h-10 rounded-full bg-accent text-black shadow-lg',
+        'group w-11 h-11 rounded-full bg-accent text-black shadow-lg',
         'flex items-center justify-center',
         'hover:scale-110 active:scale-95 transition-all duration-300',
         'focus:outline-none focus:ring-2 focus:ring-accent/50',
+        'ring-1 ring-white/10',
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
       )}
     >
-      <ArrowUp className="w-4 h-4" />
+      {/* Pulsing ring on hover */}
+      <span className="absolute inset-0 rounded-full bg-accent/40 opacity-0 group-hover:animate-ping" />
+      <ArrowUp className="relative w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
     </button>
   );
 }

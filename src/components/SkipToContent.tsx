@@ -1,9 +1,20 @@
-import { useEffect, useRef, type MouseEvent } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import { Keyboard, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const MAIN_ID = 'main-content';
 
 export function SkipToContent() {
   const linkRef = useRef<HTMLAnchorElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  // Show the floating skip button only after scrolling past 200px (helpful
+  // for keyboard / screen-reader users who want a permanent jump option).
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 200);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     const onFocusIn = () => {
@@ -29,9 +40,22 @@ export function SkipToContent() {
       ref={linkRef}
       href={`#${MAIN_ID}`}
       onClick={handleClick}
-      className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-black focus:font-bold focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 focus:ring-offset-bg"
+      aria-label="Skip to main content"
+      className={cn(
+        'group fixed top-2 left-2 z-[100] flex items-center gap-2 px-4 py-2',
+        'rounded-lg font-bold shadow-lg outline-none',
+        'bg-accent text-black ring-2 ring-accent/50 ring-offset-2 ring-offset-bg',
+        'transition-all duration-200',
+        'opacity-0 pointer-events-none -translate-y-2',
+        'focus:opacity-100 focus:pointer-events-auto focus:translate-y-0',
+        visible && 'opacity-90 translate-y-0 pointer-events-auto'
+      )}
     >
-      Skip to main content
+      <Keyboard className="w-4 h-4" />
+      <span>Skip to content</span>
+      <kbd className="ml-1 hidden sm:inline-block rounded bg-black/20 px-1.5 py-0.5 font-mono text-[10px] text-black/80">
+        Tab
+      </kbd>
     </a>
   );
 }
