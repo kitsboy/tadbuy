@@ -7,6 +7,7 @@ import { useToast } from "@/components/Toast";
 import { QRCodeSVG } from "qrcode.react";
 import { LightningLiquidity } from "@/components/payments/LightningLiquidity";
 import { FedimintPanel } from "@/components/payments/FedimintPanel";
+import { BitcoinProtocolSuite } from "@/components/widgets/BitcoinProtocolSuite";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { authFetch } from "@/lib/authFetch";
 import { PageShell } from '@/components/PageShell';
@@ -140,6 +141,8 @@ export default function Wallet() {
         <StatCard icon={Shield} label="Fedimint" value={fedimintBalance.toLocaleString()} sub="sats ecash" color="text-green" />
         <StatCard icon={Bitcoin} label="Total Balance" value={totalBalance.toLocaleString()} sub="sats combined" color="text-accent" />
       </div>
+
+      <BitcoinProtocolSuite defaultTab="l1" />
 
       <Tabs defaultValue="lightning">
         <TabsList className="w-full">

@@ -1,5 +1,5 @@
-# tadbuy — Last Updated 2026-08-23 by Grok
+# tadbuy — Last Updated 2026-08-26 by Grok
 
-Brief: v5.0.53 — /geo 100 enhancements + docs sync
+Brief: v5.0.56 — 100 Bitcoin L1/L2/Liquid/Privacy protocol & jewel-tone design upgrades
 Commit: sync
-Docs synced: 2026-08-23
+Docs synced: 2026-08-26

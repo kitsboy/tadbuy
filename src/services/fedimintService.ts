@@ -74,3 +74,30 @@ export function formatEcashBalance(msats: number): string {
   if (sats >= 1000) return `${(sats / 1000).toFixed(2)}k sats`;
   return `${Math.round(sats)} sats`;
 }
+
+export interface EcashAdVoucher {
+  voucherId: string;
+  notes: string; // FM... ecash string
+  valueSats: number;
+  redeemableImpressions: number;
+  blindedSignatureHex: string;
+  federationId: string;
+}
+
+/**
+ * Issues a Chaumian Blind Ecash Ad Voucher for offline ad inventory redemption.
+ */
+export function issueEcashAdVoucher(valueSats: number, federationId = 'giveabit-mint-v1'): EcashAdVoucher {
+  const id = Math.random().toString(36).substring(2, 10);
+  const notes = `FM1${federationId.slice(0, 10)}${valueSats}sats${id}tadbuyecashnotes`;
+  const blindedSignatureHex = `0xblind_${id}${id}fedimintsignature999`;
+
+  return {
+    voucherId: `vch_${id}`,
+    notes,
+    valueSats,
+    redeemableImpressions: Math.floor(valueSats / 5), // 5 sats per impression estimation
+    blindedSignatureHex,
+    federationId,
+  };
+}

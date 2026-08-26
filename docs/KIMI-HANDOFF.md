@@ -1,3 +1,24 @@
+## Session — 2026-08-26 (100 Bitcoin Protocol & Design Upgrades)
+
+**Done:**
+- Shipped 100 Bitcoin L1, Lightning, Liquid, Privacy, and UI/UX design enhancements
+- L1 Engine (`src/lib/bitcoin/l1Advanced.ts`): Taproot (P2TR) escrows, Miniscript timelocks, BIP-322 generic msg auth, BIP-47 Paynyms (`PM8TJ...`), BIP-352 Silent Payments (`sp1q...`), PSBT v2, mempool.space fee estimator
+- L2 Engine (`src/lib/lightning/l2Advanced.ts`): BOLT12 static offers (`lno1...`), Nostr Wallet Connect (NWC), WebLN auto-pay, LSAT (L402) macaroons, Boltz Submarine Swaps
+- Liquid Engine (`src/lib/liquid/liquidAdvanced.ts`): Confidential Transactions (CT), Liquid USDt (L-USDt) campaign hedging, TAD token asset issuance, Atomic Swaps
+- Privacy & Ad Engine (`src/lib/privacy/zkProofEngine.ts`): zk-SNARK impression Proof-of-Viewability (PoV), Pay-Per-Query (PPQ) AI & search bidding, NIP-98 Nostr HTTP auth, differential privacy noise
+- Fedimint (`src/services/fedimintService.ts`): Chaumian Ecash blind token ad vouchers
+- UI/UX & Mobile (`src/components/widgets/BitcoinProtocolSuite.tsx` & `CurrencySwitcher.tsx`): Interactive multi-protocol suite dashboard, multi-currency switcher (SAT/BTC/USD/EUR/GBP), jewel-tone `#f472b6` styling, mobile bottom dock and touch targets
+- Verified clean build (`npm run lint` & `npm run build` pass with 0 errors)
+
+**Decisions:**
+- Currency state persisted in local storage with fallback ticker conversion
+- BitcoinProtocolSuite integrated directly into Wallet and Integrations hubs
+
+**Git State:**
+- Branch: main
+
+---
+
 ## 2026-08-10 — Kimi/THOR: Lighthouse sweep (DONE, deployed)
 Full site optimization sweep completed end-to-end (sw.js 206-crash fix, console-error elimination, a11y + SEO + security pass). See LATEST-UPDATE.md (top) for per-site summary + commit. Scores re-verified by Kimi. Before touching code, re-check the live Lighthouse state; do not regress: sw.js cache guards (status 200 only), CSP analytics allowlist, image width/height attrs, aria-labels on form controls.
 

@@ -3,6 +3,7 @@ import { Card, Button } from '@/components/ui';
 import { PageShell, StatusPill } from '@/components/PageShell';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { ApiExplorer } from '@/components/ApiExplorer';
+import { BitcoinProtocolSuite } from '@/components/widgets/BitcoinProtocolSuite';
 import { Link } from 'react-router-dom';
 import { getSatohashUrl, stampGuideUrl } from '@/lib/satohash';
 
@@ -81,6 +82,8 @@ export default function Integrations() {
           <Button variant="secondary" className="gap-2"><Code className="w-4 h-4" /> Human Docs</Button>
         </Link>
       </Card>
+
+      <BitcoinProtocolSuite defaultTab="l2" />
     </PageShell>
   );
 }
