@@ -14,4 +14,11 @@ let state = fs.readFileSync(statePath, 'utf-8');
 state = state.replace(/version: 'v[^']+'/, `version: '${display}'`);
 fs.writeFileSync(statePath, state, 'utf-8');
 
+const swPath = path.join(ROOT, 'public/sw.js');
+if (fs.existsSync(swPath)) {
+  let sw = fs.readFileSync(swPath, 'utf-8');
+  sw = sw.replace(/const CACHE_NAME = 'tadbuy-v[^']+';/, `const CACHE_NAME = 'tadbuy-${display}';`);
+  fs.writeFileSync(swPath, sw, 'utf-8');
+}
+
 console.log(`✓ Version synced: ${display}`);
