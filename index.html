@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#ff9f1c" />
+    <meta name="theme-color" content="#f472b6" />
     <meta name="color-scheme" content="dark" />
 
     <title>Tadbuy — Bitcoin-Native Ad Buying Platform</title>
@@ -87,7 +87,7 @@
   </head>
   <body>
     <div id="root"></div>
-    <div id="boot-fallback" hidden style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:#18181b;color:#fff;font-family:Inter,system-ui,sans-serif;">
+    <div id="boot-fallback" hidden style="position:fixed;inset:0;z-index:99999;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:#18181b;color:#fff;font-family:Inter,system-ui,sans-serif;">
       <div style="max-width:24rem;text-align:center;">
         <p style="font-size:1.25rem;font-weight:800;margin:0 0 .5rem;">Tadbuy failed to load</p>
         <p style="font-size:.875rem;color:#a1a1aa;line-height:1.5;margin:0 0 1.25rem;">The app bundle did not load. This is usually a stale cache after a deploy — try a hard refresh or clear site data.</p>
@@ -114,16 +114,22 @@
         var shown = false;
         function showFallback() {
           if (shown) return;
+          var root = document.getElementById('root');
+          if (root && root.childElementCount > 0) return;
           shown = true;
           var el = document.getElementById('boot-fallback');
           if (el) el.hidden = false;
         }
         window.addEventListener('error', function (e) {
-          if (e.target && e.target.tagName === 'SCRIPT') showFallback();
+          if (e.target && e.target.tagName === 'SCRIPT') {
+            var src = e.target.src || '';
+            if (src.indexOf('/src/') !== -1 || src.indexOf('/assets/') !== -1) {
+              showFallback();
+            }
+          }
         }, true);
         setTimeout(function () {
-          var root = document.getElementById('root');
-          if (root && root.childElementCount === 0) showFallback();
+          showFallback();
         }, 12000);
       })();
     </script>
