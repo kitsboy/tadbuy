@@ -1,10 +1,127 @@
 {
-  "nav": { "buyAds": "Werbung kaufen", "marketplace": "Marktplatz", "campaigns": "Kampagnen", "metrics": "Metriken", "publisher": "Publisher", "dashboard": "Dashboard", "hubhash": "Hubhash", "wallet": "Geldbörse", "settings": "Einstellungen", "search": "Suchen" },
-  "common": { "save": "Speichern", "cancel": "Abbrechen", "confirm": "Bestätigen", "loading": "Wird geladen...", "error": "Fehler", "success": "Erfolg", "submit": "Absenden", "close": "Schließen", "learnMore": "Mehr erfahren", "viewAll": "Alle anzeigen", "status": { "live": "Aktiv", "paused": "Pausiert", "draft": "Entwurf", "completed": "Abgeschlossen" } },
-  "buyAds": { "title": "Bitcoin-Werbung schalten", "subtitle": "Zahle in Sats. Erreiche die Bitcoin und Web3-Zielgruppe weltweit.", "budget": "Budget", "targeting": "Targeting", "creative": "Kreativ", "payment": "Zahlung", "deploy": "Kampagne starten", "deploying": "Wird gestartet...", "success": "Kampagne gestartet!" },
-  "wallet": { "title": "Geldbörse", "balance": "Guthaben", "deposit": "Einzahlen", "withdraw": "Abheben", "invoiceExpiry": "Rechnung läuft in 1 Stunde ab", "history": "Transaktionsverlauf" },
-  "campaigns": { "title": "Meine Kampagnen", "newCampaign": "Neue Kampagne", "export": "Exportieren", "totalSpend": "Gesamtausgaben", "totalImpressions": "Gesamtimpressionen", "totalClicks": "Gesamtklicks", "activeCampaigns": "Aktive Kampagnen" },
-  "marketplace": { "title": "Werbemarktplatz", "subtitle": "Durchsuchen und bieten Sie auf Premium-Werbeplätze", "bidNow": "Jetzt bieten", "viewDetails": "Details anzeigen", "filters": "Filter", "sortBy": "Sortieren nach" },
-  "footer": { "terms": "Nutzungsbedingungen", "privacy": "Datenschutzrichtlinie", "cookies": "Cookie-Richtlinie", "contact": "Kontakt", "madeWith": "Gemacht mit ₿ von" },
-  "legal": { "terms": { "title": "Nutzungsbedingungen", "lastUpdated": "Zuletzt aktualisiert" }, "privacy": { "title": "Datenschutzrichtlinie" }, "cookies": { "title": "Cookie-Richtlinie" } }
+  "_meta": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-08-26"
+  },
+  "nav": {
+    "buyAds": "Werbung kaufen",
+    "marketplace": "Marktplatz",
+    "campaigns": "Kampagnen",
+    "metrics": "Kennzahlen",
+    "publisher": "Verlag",
+    "dashboard": "Dashboard",
+    "hubhash": "Hubhash",
+    "wallet": "Wallet",
+    "settings": "Einstellungen",
+    "search": "Suchen",
+    "docs": "Dokumentation",
+    "api": "API",
+    "pitch": "Pitch",
+    "compare": "Vergleichen",
+    "changelog": "Änderungen",
+    "enterprise": "Enterprise",
+    "integrations": "Integrationen"
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "loading": "Lädt...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "submit": "Senden",
+    "close": "Schließen",
+    "learnMore": "Mehr erfahren",
+    "viewAll": "Alle anzeigen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Vorherige",
+    "retry": "Wiederholen",
+    "dismiss": "Schließen",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "share": "Teilen",
+    "openInNewTab": "In neuem Tab öffnen",
+    "language": "Sprache",
+    "darkMode": "Dunkelmodus",
+    "lightMode": "Hellmodus",
+    "highContrast": "Hoher Kontrast",
+    "skipToContent": "Zum Inhalt springen",
+    "menu": "Menü",
+    "status": {
+      "live": "Live",
+      "paused": "Pausiert",
+      "draft": "Entwurf",
+      "completed": "Abgeschlossen",
+      "pending": "Ausstehend",
+      "failed": "Fehlgeschlagen"
+    }
+  },
+  "buyAds": {
+    "title": "Bitcoin-Anzeige starten",
+    "subtitle": "Zahle in Sats. Erreiche Bitcoin- und Web3-Zielgruppen weltweit.",
+    "budget": "Budget",
+    "targeting": "Zielgruppe",
+    "creative": "Kreativ",
+    "payment": "Zahlung",
+    "deploy": "Kampagne starten",
+    "deploying": "Wird gestartet...",
+    "success": "Kampagne gestartet!",
+    "minimumBudget": "Mindestbudget ist 1.000 Sats"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "balance": "Saldo",
+    "deposit": "Einzahlen",
+    "withdraw": "Auszahlen",
+    "invoiceExpiry": "Rechnung läuft in 1 Stunde ab",
+    "history": "Transaktionsverlauf",
+    "send": "Senden",
+    "receive": "Empfangen",
+    "scanQR": "Lightning-QR scannen",
+    "connectWallet": "Wallet verbinden",
+    "weblnDetected": "WebLN-Wallet erkannt"
+  },
+  "campaigns": {
+    "title": "Meine Kampagnen",
+    "newCampaign": "Neue Kampagne",
+    "export": "Exportieren",
+    "totalSpend": "Gesamtausgaben",
+    "totalImpressions": "Impressionen gesamt",
+    "totalClicks": "Klicks gesamt",
+    "activeCampaigns": "Aktive Kampagnen",
+    "noCampaigns": "Du hast noch keine Kampagnen",
+    "createFirst": "Erstelle deine erste Kampagne"
+  },
+  "marketplace": {
+    "title": "Anzeigen-Marktplatz",
+    "subtitle": "Premium-Plätze durchsuchen und bieten",
+    "bidNow": "Jetzt bieten",
+    "viewDetails": "Details anzeigen",
+    "filters": "Filter",
+    "sortBy": "Sortieren nach",
+    "noResults": "Keine Anzeigen passen zu deinen Filtern",
+    "clearFilters": "Filter zurücksetzen"
+  },
+  "footer": {
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutz",
+    "cookies": "Cookie-Richtlinie",
+    "contact": "Kontakt",
+    "madeWith": "Gemacht mit ₿ von"
+  },
+  "legal": {
+    "terms": { "title": "Nutzungsbedingungen", "lastUpdated": "Zuletzt aktualisiert" },
+    "privacy": { "title": "Datenschutz" },
+    "cookies": { "title": "Cookie-Richtlinie" }
+  },
+  "toast": {
+    "linkCopied": "Link in die Zwischenablage kopiert",
+    "campaignCreated": "Kampagne erstellt",
+    "paymentReceived": "Zahlung erhalten",
+    "paymentFailed": "Zahlung fehlgeschlagen",
+    "walletConnected": "Wallet verbunden",
+    "settingsSaved": "Einstellungen gespeichert",
+    "error": "Etwas ist schief gelaufen"
+  }
 }

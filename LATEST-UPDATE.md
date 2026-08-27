@@ -1,5 +1,5 @@
-# tadbuy — Last Updated 2026-08-26 by Grok
+# tadbuy — Last Updated 2026-08-27 by Grok
 
-Brief: v5.0.67 — /geo 100 enhancements + docs sync
+Brief: v5.0.83 — /geo 100 enhancements + docs sync
 Commit: sync
-Docs synced: 2026-08-26
+Docs synced: 2026-08-27

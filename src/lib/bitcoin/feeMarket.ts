@@ -21,6 +21,7 @@ export interface FeeMarketSnapshot {
   hourFee: number;
   economyFee: number;
   minimumFee: number;
+  secondFee?: number;
   supply: {
     totalMempoolSats: number;
     count: number;

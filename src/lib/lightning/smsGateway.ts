@@ -62,7 +62,7 @@ export const MOCK_SMS_PROVIDERS: SmsGatewayProvider[] = [
   },
   {
     id: 'provider_002',
-    name: 'Africa's Talking',
+    name: "Africa's Talking",
     apiUrl: 'https://api.africastalking.com/version1',
     supportedCountries: ['KE', 'UG', 'TZ', 'RW', 'NG'],
     costPerSms: 5,

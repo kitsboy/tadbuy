@@ -1,31 +1,35 @@
+# Tadbuy — robots.txt
+# https://tadbuy.giveabit.io
+
 User-agent: *
 Allow: /
-Allow: /marketplace
-Allow: /metrics
-Allow: /publisher
-Allow: /docs
-Allow: /api-docs
-Allow: /ppq
-Allow: /bolt12
-Allow: /geo
-Allow: /hubhash
-Allow: /terms
-Allow: /privacy
-Allow: /cookies
-
-# Require auth — no value for crawlers
 Disallow: /campaigns
 Disallow: /wallet
 Disallow: /settings
-Disallow: /analytics
-Disallow: /settlements
 Disallow: /dashboard
 Disallow: /debug-lightning
 Disallow: /embed/
+Disallow: /api/
 
-# Sitemap location
-Sitemap: https://tadbuy.giveabit.io/sitemap.xml
-
-# Crawl delay for bots
+# Crawl-delay for major bots to keep things fast
+User-agent: Googlebot
 Crawl-delay: 1
 
+User-agent: Bingbot
+Crawl-delay: 1
+
+# AI training bots — block scraping of campaigns
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+# Sitemap
+Sitemap: https://tadbuy.giveabit.io/sitemap.xml

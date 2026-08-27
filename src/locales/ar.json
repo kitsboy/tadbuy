@@ -1,10 +1,128 @@
 {
-  "nav": { "buyAds": "شراء الإعلانات", "marketplace": "السوق", "campaigns": "الحملات", "metrics": "المقاييس", "publisher": "الناشر", "dashboard": "لوحة التحكم", "hubhash": "هاب هاش", "wallet": "المحفظة", "settings": "الإعدادات", "search": "بحث" },
-  "common": { "save": "حفظ", "cancel": "إلغاء", "confirm": "تأكيد", "loading": "جارٍ التحميل...", "error": "خطأ", "success": "نجاح", "submit": "إرسال", "close": "إغلاق", "learnMore": "اعرف أكثر", "viewAll": "عرض الكل", "status": { "live": "نشط", "paused": "متوقف", "draft": "مسودة", "completed": "مكتمل" } },
-  "buyAds": { "title": "أطلق إعلان بيتكوين", "subtitle": "ادفع بالساتوشي. تواصل مع جمهور بيتكوين و Web3 عالمياً.", "budget": "الميزانية", "targeting": "الاستهداف", "creative": "الإبداع", "payment": "الدفع", "deploy": "إطلاق الحملة", "deploying": "جارٍ الإطلاق...", "success": "تم إطلاق الحملة!" },
-  "wallet": { "title": "المحفظة", "balance": "الرصيد", "deposit": "إيداع", "withdraw": "سحب", "invoiceExpiry": "الفاتورة تنتهي خلال ساعة", "history": "سجل المعاملات" },
-  "campaigns": { "title": "حملاتي", "newCampaign": "حملة جديدة", "export": "تصدير", "totalSpend": "إجمالي الإنفاق", "totalImpressions": "إجمالي مرات الظهور", "totalClicks": "إجمالي النقرات", "activeCampaigns": "الحملات النشطة" },
-  "marketplace": { "title": "سوق الإعلانات", "subtitle": "تصفح وقدم عروضاً على مواضع إعلانية متميزة", "bidNow": "قدم عرضاً الآن", "viewDetails": "عرض التفاصيل", "filters": "الفلاتر", "sortBy": "ترتيب حسب" },
-  "footer": { "terms": "شروط الخدمة", "privacy": "سياسة الخصوصية", "cookies": "سياسة الكوكيز", "contact": "تواصل", "madeWith": "صُنع بـ₿ بواسطة" },
-  "legal": { "terms": { "title": "شروط الخدمة", "lastUpdated": "آخر تحديث" }, "privacy": { "title": "سياسة الخصوصية" }, "cookies": { "title": "سياسة الكوكيز" } }
+  "_meta": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-08-26",
+    "rtl": true
+  },
+  "nav": {
+    "buyAds": "شراء الإعلانات",
+    "marketplace": "السوق",
+    "campaigns": "الحملات",
+    "metrics": "المقاييس",
+    "publisher": "الناشر",
+    "dashboard": "لوحة التحكم",
+    "hubhash": "هب هاش",
+    "wallet": "المحفظة",
+    "settings": "الإعدادات",
+    "search": "بحث",
+    "docs": "التوثيق",
+    "api": "API",
+    "pitch": "العرض",
+    "compare": "مقارنة",
+    "changelog": "سجل التغييرات",
+    "enterprise": "للشركات",
+    "integrations": "التكاملات"
+  },
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجاح",
+    "submit": "إرسال",
+    "close": "إغلاق",
+    "learnMore": "اعرف المزيد",
+    "viewAll": "عرض الكل",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "retry": "إعادة المحاولة",
+    "dismiss": "تجاهل",
+    "copy": "نسخ",
+    "copied": "تم النسخ",
+    "share": "مشاركة",
+    "openInNewTab": "فتح في نافذة جديدة",
+    "language": "اللغة",
+    "darkMode": "الوضع الداكن",
+    "lightMode": "الوضع الفاتح",
+    "highContrast": "تباين عالٍ",
+    "skipToContent": "تخطي إلى المحتوى",
+    "menu": "القائمة",
+    "status": {
+      "live": "مباشر",
+      "paused": "متوقف",
+      "draft": "مسودة",
+      "completed": "مكتمل",
+      "pending": "قيد الانتظار",
+      "failed": "فشل"
+    }
+  },
+  "buyAds": {
+    "title": "أطلق إعلان بيتكوين",
+    "subtitle": "ادفع بالساتوشي. الوصول لجمهور البيتكوين و Web3 حول العالم.",
+    "budget": "الميزانية",
+    "targeting": "الاستهداف",
+    "creative": "الإبداع",
+    "payment": "الدفع",
+    "deploy": "نشر الحملة",
+    "deploying": "جاري النشر...",
+    "success": "تم نشر الحملة!",
+    "minimumBudget": "الحد الأدنى للميزانية 1,000 ساتوشي"
+  },
+  "wallet": {
+    "title": "المحفظة",
+    "balance": "الرصيد",
+    "deposit": "إيداع",
+    "withdraw": "سحب",
+    "invoiceExpiry": "الفاتورة تنتهي خلال ساعة واحدة",
+    "history": "سجل المعاملات",
+    "send": "إرسال",
+    "receive": "استلام",
+    "scanQR": "مسح QR لايتينينج",
+    "connectWallet": "ربط المحفظة",
+    "weblnDetected": "تم اكتشاف محفظة WebLN"
+  },
+  "campaigns": {
+    "title": "حملاتي",
+    "newCampaign": "حملة جديدة",
+    "export": "تصدير",
+    "totalSpend": "إجمالي الإنفاق",
+    "totalImpressions": "إجمالي المشاهدات",
+    "totalClicks": "إجمالي النقرات",
+    "activeCampaigns": "الحملات النشطة",
+    "noCampaigns": "ليس لديك حملات بعد",
+    "createFirst": "أنشئ حملتك الأولى"
+  },
+  "marketplace": {
+    "title": "سوق الإعلانات",
+    "subtitle": "تصفح وزايد على المساحات الإعلانية المميزة",
+    "bidNow": "زايد الآن",
+    "viewDetails": "عرض التفاصيل",
+    "filters": "تصفية",
+    "sortBy": "ترتيب حسب",
+    "noResults": "لا توجد إعلانات تطابق فلاترك",
+    "clearFilters": "مسح الفلاتر"
+  },
+  "footer": {
+    "terms": "شروط الخدمة",
+    "privacy": "سياسة الخصوصية",
+    "cookies": "سياسة ملفات تعريف الارتباط",
+    "contact": "اتصل بنا",
+    "madeWith": "صُنع بـ ₿ بواسطة"
+  },
+  "legal": {
+    "terms": { "title": "شروط الخدمة", "lastUpdated": "آخر تحديث" },
+    "privacy": { "title": "سياسة الخصوصية" },
+    "cookies": { "title": "سياسة ملفات تعريف الارتباط" }
+  },
+  "toast": {
+    "linkCopied": "تم نسخ الرابط",
+    "campaignCreated": "تم إنشاء الحملة",
+    "paymentReceived": "تم استلام الدفع",
+    "paymentFailed": "فشل الدفع",
+    "walletConnected": "تم ربط المحفظة",
+    "settingsSaved": "تم حفظ الإعدادات",
+    "error": "حدث خطأ ما"
+  }
 }

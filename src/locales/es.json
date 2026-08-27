@@ -1,4 +1,8 @@
 {
+  "_meta": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-08-26"
+  },
   "nav": {
     "buyAds": "Comprar Anuncios",
     "marketplace": "Mercado",
@@ -9,7 +13,14 @@
     "hubhash": "Hubhash",
     "wallet": "Billetera",
     "settings": "Configuración",
-    "search": "Buscar"
+    "search": "Buscar",
+    "docs": "Documentación",
+    "api": "API",
+    "pitch": "Presentación",
+    "compare": "Comparar",
+    "changelog": "Cambios",
+    "enterprise": "Empresa",
+    "integrations": "Integraciones"
   },
   "common": {
     "save": "Guardar",
@@ -22,11 +33,28 @@
     "close": "Cerrar",
     "learnMore": "Más información",
     "viewAll": "Ver todo",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "retry": "Reintentar",
+    "dismiss": "Descartar",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "share": "Compartir",
+    "openInNewTab": "Abrir en nueva pestaña",
+    "language": "Idioma",
+    "darkMode": "Modo oscuro",
+    "lightMode": "Modo claro",
+    "highContrast": "Alto contraste",
+    "skipToContent": "Saltar al contenido",
+    "menu": "Menú",
     "status": {
       "live": "Activo",
       "paused": "Pausado",
       "draft": "Borrador",
-      "completed": "Completado"
+      "completed": "Completado",
+      "pending": "Pendiente",
+      "failed": "Fallido"
     }
   },
   "buyAds": {
@@ -38,7 +66,8 @@
     "payment": "Pago",
     "deploy": "Lanzar Campaña",
     "deploying": "Lanzando...",
-    "success": "¡Campaña lanzada!"
+    "success": "¡Campaña lanzada!",
+    "minimumBudget": "El presupuesto mínimo es 1,000 sats"
   },
   "wallet": {
     "title": "Billetera",
@@ -46,7 +75,12 @@
     "deposit": "Depositar",
     "withdraw": "Retirar",
     "invoiceExpiry": "La factura expira en 1 hora",
-    "history": "Historial de Transacciones"
+    "history": "Historial de Transacciones",
+    "send": "Enviar",
+    "receive": "Recibir",
+    "scanQR": "Escanear QR de Lightning",
+    "connectWallet": "Conectar Billetera",
+    "weblnDetected": "Billetera WebLN detectada"
   },
   "campaigns": {
     "title": "Mis Campañas",
@@ -55,7 +89,9 @@
     "totalSpend": "Gasto Total",
     "totalImpressions": "Impresiones Totales",
     "totalClicks": "Clics Totales",
-    "activeCampaigns": "Campañas Activas"
+    "activeCampaigns": "Campañas Activas",
+    "noCampaigns": "Aún no tienes campañas",
+    "createFirst": "Crea tu primera campaña"
   },
   "marketplace": {
     "title": "Mercado de Anuncios",
@@ -63,7 +99,9 @@
     "bidNow": "Pujar Ahora",
     "viewDetails": "Ver Detalles",
     "filters": "Filtros",
-    "sortBy": "Ordenar por"
+    "sortBy": "Ordenar por",
+    "noResults": "Ningún anuncio coincide con tus filtros",
+    "clearFilters": "Limpiar filtros"
   },
   "footer": {
     "terms": "Términos de Servicio",
@@ -76,5 +114,14 @@
     "terms": { "title": "Términos de Servicio", "lastUpdated": "Última actualización" },
     "privacy": { "title": "Política de Privacidad" },
     "cookies": { "title": "Política de Cookies" }
+  },
+  "toast": {
+    "linkCopied": "Enlace copiado al portapapeles",
+    "campaignCreated": "Campaña creada con éxito",
+    "paymentReceived": "Pago recibido",
+    "paymentFailed": "Pago fallido",
+    "walletConnected": "Billetera conectada",
+    "settingsSaved": "Configuración guardada",
+    "error": "Algo salió mal"
   }
 }

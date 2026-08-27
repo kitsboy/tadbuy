@@ -1,4 +1,11 @@
 {
+  "_meta": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-08-26",
+    "languages": ["en", "es", "fr", "de", "pt", "ja", "zh", "ar"],
+    "rtl": ["ar"],
+    "currencyDisplay": ["SAT", "BTC", "USD", "EUR", "GBP", "CAD", "JPY"]
+  },
   "nav": {
     "buyAds": "Buy Ads",
     "marketplace": "Marketplace",
@@ -9,7 +16,14 @@
     "hubhash": "Hubhash",
     "wallet": "Wallet",
     "settings": "Settings",
-    "search": "Search"
+    "search": "Search",
+    "docs": "Documentation",
+    "api": "API",
+    "pitch": "Pitch",
+    "compare": "Compare",
+    "changelog": "Changelog",
+    "enterprise": "Enterprise",
+    "integrations": "Integrations"
   },
   "common": {
     "save": "Save",
@@ -22,11 +36,28 @@
     "close": "Close",
     "learnMore": "Learn more",
     "viewAll": "View all",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "retry": "Retry",
+    "dismiss": "Dismiss",
+    "copy": "Copy",
+    "copied": "Copied",
+    "share": "Share",
+    "openInNewTab": "Open in new tab",
+    "language": "Language",
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode",
+    "highContrast": "High contrast",
+    "skipToContent": "Skip to content",
+    "menu": "Menu",
     "status": {
       "live": "Live",
       "paused": "Paused",
       "draft": "Draft",
-      "completed": "Completed"
+      "completed": "Completed",
+      "pending": "Pending",
+      "failed": "Failed"
     }
   },
   "buyAds": {
@@ -38,7 +69,8 @@
     "payment": "Payment",
     "deploy": "Deploy Campaign",
     "deploying": "Deploying...",
-    "success": "Campaign deployed!"
+    "success": "Campaign deployed!",
+    "minimumBudget": "Minimum budget is 1,000 sats"
   },
   "wallet": {
     "title": "Wallet",
@@ -46,7 +78,12 @@
     "deposit": "Deposit",
     "withdraw": "Withdraw",
     "invoiceExpiry": "Invoice expires in 1 hour",
-    "history": "Transaction History"
+    "history": "Transaction History",
+    "send": "Send",
+    "receive": "Receive",
+    "scanQR": "Scan Lightning QR",
+    "connectWallet": "Connect Wallet",
+    "weblnDetected": "WebLN wallet detected"
   },
   "campaigns": {
     "title": "My Campaigns",
@@ -55,7 +92,9 @@
     "totalSpend": "Total Spend",
     "totalImpressions": "Total Impressions",
     "totalClicks": "Total Clicks",
-    "activeCampaigns": "Active Campaigns"
+    "activeCampaigns": "Active Campaigns",
+    "noCampaigns": "You don't have any campaigns yet",
+    "createFirst": "Create your first campaign"
   },
   "marketplace": {
     "title": "Ad Marketplace",
@@ -63,7 +102,9 @@
     "bidNow": "Bid Now",
     "viewDetails": "View Details",
     "filters": "Filters",
-    "sortBy": "Sort by"
+    "sortBy": "Sort by",
+    "noResults": "No ads match your filters",
+    "clearFilters": "Clear filters"
   },
   "footer": {
     "terms": "Terms of Service",
@@ -73,15 +114,17 @@
     "madeWith": "Made with ₿ by"
   },
   "legal": {
-    "terms": {
-      "title": "Terms of Service",
-      "lastUpdated": "Last updated"
-    },
-    "privacy": {
-      "title": "Privacy Policy"
-    },
-    "cookies": {
-      "title": "Cookie Policy"
-    }
+    "terms": { "title": "Terms of Service", "lastUpdated": "Last updated" },
+    "privacy": { "title": "Privacy Policy" },
+    "cookies": { "title": "Cookie Policy" }
+  },
+  "toast": {
+    "linkCopied": "Link copied to clipboard",
+    "campaignCreated": "Campaign created successfully",
+    "paymentReceived": "Payment received",
+    "paymentFailed": "Payment failed",
+    "walletConnected": "Wallet connected",
+    "settingsSaved": "Settings saved",
+    "error": "Something went wrong"
   }
 }
