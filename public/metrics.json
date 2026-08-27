@@ -2,11 +2,11 @@
   "schema": "gab.product-metrics.v1",
   "productId": "tadbuy",
   "name": "Tadbuy",
-  "updatedAt": "2026-08-27T23:41:02.424Z",
+  "updatedAt": "2026-08-27T23:46:49.363Z",
   "window": {
     "label": "30d",
-    "from": "2026-07-28T23:41:02.424Z",
-    "to": "2026-08-27T23:41:02.424Z"
+    "from": "2026-07-28T23:46:49.363Z",
+    "to": "2026-08-27T23:46:49.363Z"
   },
   "health": {
     "status": "green",
@@ -67,7 +67,7 @@
     {
       "key": "sats_processed_30d",
       "label": "Sats processed 30d",
-      "value": 3530000,
+      "value": 1350000,
       "unit": "sats",
       "format": "sats",
       "priority": 1,

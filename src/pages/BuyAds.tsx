@@ -904,6 +904,11 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
               <div className="h-full bg-accent transition-all duration-500" style={{ width: `${adScore}%` }} />
             </div>
             <span className="text-xs font-bold text-accent shrink-0">{adScore}/100</span>
+            {adScore < 60 && (
+              <span className="hidden md:inline text-[10px] text-muted">
+                {adScore < 50 ? 'Pick platforms & add a headline →' : 'Add description or hashtags ↑'}
+              </span>
+            )}
           </div>
         </div>
         <div className="flex items-center bg-surface p-1 rounded-xl border border-border w-full md:w-auto">

@@ -4,7 +4,27 @@ import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { Card, CardTitle } from './ui';
 import { cn } from '@/lib/utils';
 
-const STEPS = [
+type Persona = 'advertiser' | 'publisher' | 'browse';
+
+const PERSONA_STEPS: Record<Persona, readonly { id: string; label: string; path: string }[]> = {
+  advertiser: [
+    { id: 'create', label: 'Launch your first campaign', path: '/#campaign-builder' },
+    { id: 'wallet', label: 'Add a payment method (Lightning / Fedimint)', path: '/wallet' },
+    { id: 'metrics', label: 'Track your campaign performance', path: '/analytics' },
+  ],
+  publisher: [
+    { id: 'slots', label: 'List your first ad slot', path: '/publisher' },
+    { id: 'payout', label: 'Set up payout wallet (Lightning)', path: '/wallet' },
+    { id: 'embed', label: 'Add embed code to your site', path: '/publisher' },
+  ],
+  browse: [
+    { id: 'watch', label: 'Browse marketplace slots', path: '/marketplace' },
+    { id: 'save', label: 'Save interesting slots to your watchlist', path: '/marketplace' },
+    { id: 'campaigns', label: 'Launch a campaign to support creators', path: '/#campaign-builder' },
+  ],
+};
+
+const GENERIC_STEPS = [
   { id: 'create', label: 'Create a campaign', path: '/#campaign-builder' },
   { id: 'wallet', label: 'Connect wallet (Fedimint / Lightning)', path: '/wallet' },
   { id: 'metrics', label: 'View metrics & results', path: '/metrics' },
@@ -13,19 +33,27 @@ const STEPS = [
 export function FirstVisitChecklist() {
   const [completed, setCompleted] = useLocalStorage<Record<string, boolean>>('tadbuy_checklist', {});
   const [hidden, setHidden] = useLocalStorage<boolean>('tadbuy_checklist_hidden', false);
+  const [persona] = useLocalStorage<Persona | null>('tadbuy_persona', null);
 
   if (hidden) return null;
 
-  const doneCount = STEPS.filter(s => completed[s.id]).length;
-  if (doneCount >= STEPS.length) return null;
+  const steps = (persona && PERSONA_STEPS[persona]) ?? GENERIC_STEPS;
+  const doneCount = steps.filter(s => completed[s.id]).length;
+  if (doneCount >= steps.length) return null;
 
   const mark = (id: string) => setCompleted({ ...completed, [id]: true });
 
+  const personaLabel = persona
+    ? { advertiser: 'Advertiser', publisher: 'Publisher', browse: 'Explorer' }[persona]
+    : null;
+
   return (
     <Card className="border-blue/20">
-      <CardTitle>Getting started — {doneCount}/{STEPS.length}</CardTitle>
+      <CardTitle>
+        {personaLabel ? `${personaLabel} checklist` : 'Getting started'} — {doneCount}/{steps.length}
+      </CardTitle>
       <ul className="space-y-2">
-        {STEPS.map(step => {
+        {steps.map(step => {
           const done = completed[step.id];
           return (
             <li key={step.id}>

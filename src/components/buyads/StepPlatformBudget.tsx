@@ -75,6 +75,15 @@ export default function StepPlatformBudget({
         <InfoTooltip content="Choose where your ads will appear. Each platform has different audiences and costs (CPM)." />
       </div>
       <div className="text-xs text-muted mb-3">Select one or more platforms. Your budget will be distributed evenly.</div>
+      {selectedPlatforms.length === 0 && (
+        <div className="border-2 border-dashed border-accent/30 rounded-xl p-6 mb-4 text-center bg-accent/5">
+          <div className="text-2xl mb-2">👇</div>
+          <p className="text-sm text-text font-bold">Pick at least one platform to continue</p>
+          <p className="text-[11px] text-muted mt-1">
+            Tap any platform below to add it. Mix and match to reach more audiences.
+          </p>
+        </div>
+      )}
       <div className="flex flex-wrap gap-2 mb-4.5">
         {platforms.map(p => {
           const isSelected = selectedPlatforms.includes(p.id);
@@ -83,7 +92,10 @@ export default function StepPlatformBudget({
               key={p.id}
               active={isSelected}
               onClick={() => onTogglePlatform(p.id)}
-              className="flex-col items-center gap-1 px-4 py-3 min-w-[7rem]"
+              className={cn(
+                "flex-col items-center gap-1 px-4 py-3 min-w-[7rem] transition-all",
+                !isSelected && "hover:scale-105 hover:border-accent/40"
+              )}
             >
               <span className={cn("flex justify-center", isSelected ? "text-accent" : "text-muted")}>{p.icon}</span>
               <span className="text-[11px] font-bold">{p.name}</span>

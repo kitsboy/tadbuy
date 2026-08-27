@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Alert } from '@/components/ui/Alert';
 import { useAuth } from '@/components/AuthProvider';
+import { useCallback } from 'react';
+import { AD_PLATFORMS } from '@/data/platforms';
 
 const NEW_ACCOUNT_DAYS = 14;
 const SPEND_CAP_SATS = 50_000;
@@ -16,7 +18,18 @@ export function SpendLimitBanner() {
     return daysSince <= NEW_ACCOUNT_DAYS;
   }, [user]);
 
-  if (!user || !isNewAccount) return null;
+  const platformMinimums = useMemo(() => {
+    return AD_PLATFORMS.filter(p => p.minSpendUsd > 10).map(p => ({
+      name: p.name,
+      minSpendUsd: p.minSpendUsd,
+    }));
+  }, []);
+
+  if (!user || !isNewAccount) {
+    // Show platform minimums alert when user has selected high-minimum platforms
+    // (This requires prop or context — shown as info when user is browsing platforms)
+    return null;
+  }
 
   return (
     <Alert variant="warning" title="New account spend cap">
@@ -26,6 +39,29 @@ export function SpendLimitBanner() {
       <Link to="/settings" className="text-accent font-semibold hover:underline">
         Verify account →
       </Link>
+      {platformMinimums.length > 0 && (
+        <span className="block mt-1 text-[10px] text-muted">
+          Note: LinkedIn and X require a minimum campaign spend of $10+ USD.
+        </span>
+      )}
+    </Alert>
+  );
+}
+
+export function PlatformMinSpendHint({ platformIds }: { platformIds?: string[] }) {
+  const platforms = platformIds ?? AD_PLATFORMS.filter(p => p.minSpendUsd >= 10);
+  if (platforms.length === 0) return null;
+  return (
+    <Alert variant="info" className="mt-2">
+      <span className="text-xs">
+        Minimum spend required:{' '}
+        {platforms.map(p => (
+          <span key={p.id}>
+            <strong>{p.name}</strong> ${p.minSpendUsd} USD{' '}
+            {platforms.length > 1 && platforms.indexOf(p) < platforms.length - 1 ? '· ' : ''}
+          </span>
+        ))}
+      </span>
     </Alert>
   );
 }
