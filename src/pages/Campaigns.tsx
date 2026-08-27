@@ -184,6 +184,66 @@ export default function Campaigns() {
       }
     >
 
+      {selectedIds.length > 0 && (
+        <div className="sticky top-16 z-30 mb-4 -mt-2">
+          <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 rounded-xl border border-accent/40 bg-accent/10 backdrop-blur-md shadow-lg">
+            <div className="flex items-center gap-2 text-sm font-bold">
+              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+              {selectedIds.length} selected
+            </div>
+            <div className="flex flex-wrap items-center gap-2 ml-auto">
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => {
+                  selectedIds.forEach(id => {
+                    const c = campaignsList.find(x => x.id === id);
+                    if (c && c.status !== 'live') toggleStatus(id);
+                  });
+                  setSelectedIds([]);
+                }}
+                className="gap-1 text-[11px] h-8"
+                title="Set all selected to live"
+              >
+                <Play className="w-3 h-3" /> Go Live
+              </Button>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => {
+                  selectedIds.forEach(id => {
+                    const c = campaignsList.find(x => x.id === id);
+                    if (c && c.status === 'live') toggleStatus(id);
+                  });
+                  setSelectedIds([]);
+                }}
+                className="gap-1 text-[11px] h-8"
+                title="Pause all selected"
+              >
+                <Pause className="w-3 h-3" /> Pause
+              </Button>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => setShowExportModal(true)}
+                className="gap-1 text-[11px] h-8"
+              >
+                <Download className="w-3 h-3" /> Export
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setSelectedIds([])}
+                className="text-[11px] h-8 text-muted"
+              >
+                Clear
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card className="glass-panel relative group hover:border-accent/50 transition-all duration-300 before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5 before:bg-green before:rounded-t-xl">
           <div className="flex items-center gap-1.5">
@@ -395,10 +455,22 @@ export default function Campaigns() {
                     {c.ctr > 0 ? `${c.ctr}%` : '—'}
                   </td>
                   <td className="p-4 w-32">
-                    <div className="bg-surface rounded h-1.5 overflow-hidden mb-1">
-                      <div 
+                    <div className="bg-surface rounded h-1.5 overflow-hidden mb-1 relative">
+                      {c.status === 'live' && c.pacing >= 80 && (
+                        <span
+                          className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-green animate-pulse"
+                          title="Spending on track"
+                        />
+                      )}
+                      {c.status === 'live' && c.pacing < 50 && (
+                        <span
+                          className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-yellow-400 animate-pulse"
+                          title="Spending under-pacing — consider boosting budget or pausing"
+                        />
+                      )}
+                      <div
                         className={cn("h-full rounded transition-all", c.status === 'live' ? "bg-green" : c.status === 'paused' ? "bg-blue" : "bg-muted")}
-                        style={{ width: `${c.pacing}%` }} 
+                        style={{ width: `${c.pacing}%` }}
                       />
                     </div>
                     <span className="text-[10px] text-muted">{c.pacing}%</span>
