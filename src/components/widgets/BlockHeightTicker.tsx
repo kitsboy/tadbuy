@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Box, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SafeLink } from '@/components/SafeLink';
 
 export function BlockHeightTicker({ className }: { className?: string }) {
   const [height, setHeight] = useState<number | null>(null);
@@ -44,10 +45,9 @@ export function BlockHeightTicker({ className }: { className?: string }) {
   if (height === null) return null;
 
   return (
-    <a
+    <SafeLink
       href="https://mempool.space"
-      target="_blank"
-      rel="noreferrer"
+      showIcon
       className={cn(
         'group inline-flex items-center gap-1.5 rounded-full border border-white/5 bg-white/[0.02] px-2.5 py-1 font-mono text-[10px] text-muted transition-colors hover:border-accent/30 hover:text-accent',
         className
@@ -59,6 +59,6 @@ export function BlockHeightTicker({ className }: { className?: string }) {
       <strong className="font-bold text-white group-hover:text-accent tabular-nums">
         {height.toLocaleString()}
       </strong>
-    </a>
+    </SafeLink>
   );
 }

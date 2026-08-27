@@ -7,6 +7,7 @@ import { usePageMeta } from "@/hooks/usePageMeta";
 import { PageShell } from '@/components/PageShell';
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { ApiExplorer } from "@/components/ApiExplorer";
+import { SafeLink } from "@/components/SafeLink";
 
 const AUTH_CURL = `curl -X GET https://api.tadbuy.giveabit.io/v1/campaigns \\
   -H "Grpc-Metadata-macaroon: YOUR_MACAROON_HEX"`;
@@ -180,9 +181,9 @@ export default function ApiReference() {
       </Tabs>
 
       <div className="mt-8 pt-8 border-t border-border">
-        <a href="https://swagger.io/specification/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors">
+        <SafeLink href="https://swagger.io/specification/" target="_blank" showIcon className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors">
           <ExternalLink className="w-4 h-4" /> View full OpenAPI Specification
-        </a>
+        </SafeLink>
       </div>
     </PageShell>
   );

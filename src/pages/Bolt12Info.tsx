@@ -2,6 +2,7 @@ import { usePageMeta } from "@/hooks/usePageMeta";
 import { QrCode, RefreshCw, ShieldCheck, ExternalLink, Zap } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui";
 import { PageShell } from '@/components/PageShell';
+import { SafeLink } from '@/components/SafeLink';
 
 export default function Bolt12Info() {
   usePageMeta('BOLT 12 Offers', 'Reusable Lightning offers for recurring ad campaign funding.');
@@ -24,9 +25,9 @@ export default function Bolt12Info() {
             <br /><br />
             <strong>BOLT 12 "Offers"</strong> solve this. An Offer is a static string (like a permanent QR code) that a user can scan multiple times. When scanned, the user's wallet automatically requests a fresh invoice directly over the Lightning Network via Onion Messages.
           </p>
-          <a href="https://bolt12.org/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-purple text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-purple/80 transition-colors">
+          <SafeLink href="https://bolt12.org/" target="_blank" showIcon className="inline-flex items-center gap-2 bg-purple text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-purple/80 transition-colors">
             Visit BOLT12.org <ExternalLink className="w-4 h-4" />
-          </a>
+          </SafeLink>
         </div>
       </div>
 
@@ -60,12 +61,12 @@ export default function Bolt12Info() {
       <div className="mt-12 pt-8 border-t border-border">
         <h3 className="text-sm font-bold uppercase tracking-widest text-text mb-4">Technical Resources</h3>
         <div className="flex flex-col gap-3">
-          <a href="https://github.com/lightning/bolts/pull/798" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors">
+          <SafeLink href="https://github.com/lightning/bolts/pull/798" target="_blank" showIcon className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors">
             <ExternalLink className="w-4 h-4" /> Lightning RFC: BOLT 12 Specification
-          </a>
-          <a href="https://corelightning.org/docs/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors">
+          </SafeLink>
+          <SafeLink href="https://corelightning.org/docs/" target="_blank" showIcon className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors">
             <ExternalLink className="w-4 h-4" /> Core Lightning Implementation Docs
-          </a>
+          </SafeLink>
         </div>
       </div>
     </PageShell>

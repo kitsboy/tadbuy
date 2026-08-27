@@ -17,6 +17,7 @@ export interface CspDirectives {
   baseUri: string[];
   formAction: string[];
   upgradeInsecureRequests: boolean;
+  reportUri?: string;
 }
 
 export const DEFAULT_CSP: CspDirectives = {
@@ -42,6 +43,7 @@ export const DEFAULT_CSP: CspDirectives = {
   baseUri: ["'self'"],
   formAction: ["'self'"],
   upgradeInsecureRequests: true,
+  reportUri: 'https://tadbuy.giveabit.io/api/csp-report',
 };
 
 /** Render directives into a CSP header value. */
@@ -50,6 +52,10 @@ export function buildCspHeader(directives: CspDirectives = DEFAULT_CSP): string 
   if (directives.upgradeInsecureRequests) lines.push('upgrade-insecure-requests');
   for (const [k, v] of Object.entries(directives)) {
     if (k === 'upgradeInsecureRequests') continue;
+    if (k === 'reportUri' && v) {
+      lines.push(`report-uri ${v}`);
+      continue;
+    }
     if (!v || (Array.isArray(v) && v.length === 0)) continue;
     const key = k.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
     lines.push(`${key} ${(v as string[]).join(' ')}`);
@@ -62,6 +68,6 @@ export const SECURITY_HEADERS: Record<string, string> = {
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'SAMEORIGIN',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Permissions-Policy': 'camera=(), microphone=(), geolocation=(self), interest-cohort=()',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=(self), interest-cohort=(), payment=()',
   'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
 };

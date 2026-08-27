@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Cookie } from 'lucide-react';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import { SafeLink } from '@/components/SafeLink';
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -181,41 +182,41 @@ export default function Cookies() {
           </p>
           <p>
             Browser-specific instructions:{' '}
-            <a
+            <SafeLink
               href="https://support.google.com/chrome/answer/95647"
               target="_blank"
-              rel="noreferrer"
+              showIcon
               className="text-accent hover:underline"
             >
               Chrome
-            </a>
+            </SafeLink>
             {' · '}
-            <a
+            <SafeLink
               href="https://support.mozilla.org/en-US/kb/clear-cookies-and-site-data-firefox"
               target="_blank"
-              rel="noreferrer"
+              showIcon
               className="text-accent hover:underline"
             >
               Firefox
-            </a>
+            </SafeLink>
             {' · '}
-            <a
+            <SafeLink
               href="https://support.apple.com/en-ca/guide/safari/sfri11471/mac"
               target="_blank"
-              rel="noreferrer"
+              showIcon
               className="text-accent hover:underline"
             >
               Safari
-            </a>
+            </SafeLink>
             {' · '}
-            <a
+            <SafeLink
               href="https://support.microsoft.com/en-us/windows/microsoft-edge-browsing-data-and-privacy"
               target="_blank"
-              rel="noreferrer"
+              showIcon
               className="text-accent hover:underline"
             >
               Edge
-            </a>
+            </SafeLink>
           </p>
         </Section>
 

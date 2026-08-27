@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Shield } from 'lucide-react';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import { SafeLink } from '@/components/SafeLink';
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -123,14 +124,14 @@ export default function Privacy() {
               We use Firebase (Google LLC) for authentication, Firestore database, and Cloud
               Functions. Your data is stored in Google Cloud data centres. Google's privacy policy
               applies to data processed through Firebase:{' '}
-              <a
+              <SafeLink
                 href="https://policies.google.com/privacy"
                 target="_blank"
-                rel="noreferrer"
+                showIcon
                 className="text-accent hover:underline"
               >
                 policies.google.com/privacy
-              </a>
+              </SafeLink>
               .
             </p>
           </Sub>
@@ -140,14 +141,14 @@ export default function Privacy() {
               performance traces. Sentry may receive your IP address and browser information when
               an error occurs. Error payloads are scrubbed to remove passwords and payment data
               before transmission. Sentry's privacy policy:{' '}
-              <a
+              <SafeLink
                 href="https://sentry.io/privacy/"
                 target="_blank"
-                rel="noreferrer"
+                showIcon
                 className="text-accent hover:underline"
               >
-                sentry.io/privacy
-              </a>
+                 sentry.io/privacy
+              </SafeLink>
               .
             </p>
           </Sub>

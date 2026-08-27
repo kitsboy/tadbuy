@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { SafeLink } from './SafeLink';
 
 interface TermsAcceptanceProps {
   accepted: boolean;
@@ -24,14 +25,14 @@ export function TermsAcceptance({ accepted, onChange, className }: TermsAcceptan
         aria-describedby="terms-desc"
       />
       <span id="terms-desc" className="text-xs text-muted leading-relaxed">
-        I agree to the{' '}
-        <Link to="/terms" className="text-accent font-semibold hover:underline" target="_blank">
-          Terms of Service
-        </Link>
+          I agree to the{' '}
+          <Link to="/terms" className="text-accent font-semibold hover:underline">
+            Terms of Service
+          </Link>
         ,{' '}
-        <Link to="/privacy" className="text-accent font-semibold hover:underline" target="_blank">
-          Privacy Policy
-        </Link>
+          <Link to="/privacy" className="text-accent font-semibold hover:underline">
+            Privacy Policy
+          </Link>
         , and understand that Bitcoin payments are final and non-reversible.
       </span>
     </label>

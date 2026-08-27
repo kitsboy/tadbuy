@@ -9,6 +9,7 @@ import { Button, Card, CardTitle } from '@/components/ui';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { PROJECT_STATE } from '@/data/projectState';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { SafeLink } from '@/components/SafeLink';
 
 export default function Pitch() {
   usePageMeta('Investor Pitch', 'Tadbuy — the world\'s first Bitcoin-native DSP. Auto-updated pitch deck with live metrics, financials, and Fedimint strategy.');
@@ -51,9 +52,9 @@ export default function Pitch() {
           <p className="text-sm text-muted max-w-xl mx-auto mb-8">{marketing.pitch}</p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Link to="/"><Button size="lg" className="gap-2"><Zap className="w-4 h-4" />Launch Campaign</Button></Link>
-            <a href={PROJECT_STATE.repo} target="_blank" rel="noreferrer">
+            <SafeLink href={PROJECT_STATE.repo} target="_blank" showIcon>
               <Button variant="secondary" size="lg" className="gap-2"><ExternalLink className="w-4 h-4" />GitHub</Button>
-            </a>
+            </SafeLink>
           </div>
           <p className="text-[10px] text-muted mt-6 font-mono">
             {PROJECT_STATE.version} · {PROJECT_STATE.liveUrl} · by giveabit.io

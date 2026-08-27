@@ -6,6 +6,7 @@ import { Badge, Progress, Alert } from '@/components/ui/index';
 import { getFedimintStatus, joinFederation, payWithFedimint, formatEcashBalance, getDefaultFedimintInvite } from '@/services/fedimintService';
 import { GIVEABIT_ECOSYSTEM } from '@/data/ecosystemConfig';
 import { useToast } from '@/components/Toast';
+import { SafeLink } from '@/components/SafeLink';
 
 export function FedimintPanel({
   amountSats,
@@ -75,9 +76,9 @@ export function FedimintPanel({
         <Badge variant={status?.connected ? 'success' : 'warning'} dot className="ml-auto">
           {status?.connected ? 'Connected' : 'Not Joined'}
         </Badge>
-        <a href="https://fedimint.org" target="_blank" rel="noreferrer" className="text-muted hover:text-green">
+        <SafeLink href="https://fedimint.org" className="text-muted hover:text-green" showIcon>
           <ExternalLink className="w-4 h-4" />
-        </a>
+        </SafeLink>
       </div>
 
       {status?.connected ? (

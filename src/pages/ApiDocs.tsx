@@ -4,6 +4,7 @@ import { usePageMeta } from '@/hooks/usePageMeta';
 import { Button, Card } from '@/components/ui';
 import { Download, RefreshCw, ExternalLink, Copy, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SafeLink } from '@/components/SafeLink';
 
 export default function ApiDocs() {
   usePageMeta('API Docs', 'Interactive Swagger UI for Tadbuy API. Try endpoints live with your API key.');
@@ -73,9 +74,7 @@ export default function ApiDocs() {
         </div>
       </div>
     </Card>
-  );
-
-  return (
+  );  return (
     <PageShell
       title="API Documentation"
       description="Interactive Swagger UI — try endpoints live with your API key. Schema auto-generated from internal route definitions."
@@ -130,9 +129,9 @@ export default function ApiDocs() {
           <a href={specUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline flex items-center gap-1">
             <ExternalLink className="w-3.5 h-3.5" /> OpenAPI JSON Spec
           </a>
-          <a href="https://editor.swagger.io/?url=https://api.tadbuy.giveabit.io/api/v3/openapi.json" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline flex items-center gap-1">
+          <SafeLink href="https://editor.swagger.io/?url=https://api.tadbuy.giveabit.io/api/v3/openapi.json" target="_blank" showIcon className="text-accent hover:underline flex items-center gap-1">
             <ExternalLink className="w-3.5 h-3.5" /> Open in Swagger Editor
-          </a>
+          </SafeLink>
         </div>
       </Card>
     </PageShell>

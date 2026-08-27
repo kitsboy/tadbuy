@@ -4,6 +4,7 @@ import { Card } from '@/components/ui';
 import { PageShell } from '@/components/PageShell';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { AD_PLATFORMS } from '@/data/platforms';
+import { SafeLink } from '@/components/SafeLink';
 
 export default function PpqGuide() {
   usePageMeta('PPQ.AI Guide', 'Privacy-preserving budget optimization across ad platforms.');
@@ -76,9 +77,9 @@ export default function PpqGuide() {
       </Card>
 
       <div className="flex flex-col gap-2 text-sm">
-        <a href="https://federated.withgoogle.com/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-muted hover:text-accent">
+        <SafeLink href="https://federated.withgoogle.com/" target="_blank" showIcon className="inline-flex items-center gap-2 text-muted hover:text-accent">
           <ExternalLink className="w-4 h-4" /> Federated Learning overview
-        </a>
+        </SafeLink>
       </div>
     </PageShell>
   );

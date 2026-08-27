@@ -3,6 +3,7 @@ import { BookOpen, Zap, Shield, Network, ExternalLink, ArrowRight, Store } from 
 import { Card, CardTitle } from "@/components/ui";
 import { Link } from "react-router-dom";
 import { PageShell } from '@/components/PageShell';
+import { SafeLink } from '@/components/SafeLink';
 
 export default function Documentation() {
   usePageMeta('Documentation', 'Bitcoin-native advertising guides, publisher onboarding, and platform billing.');
@@ -74,9 +75,9 @@ export default function Documentation() {
               cryptographic invoices (BOLT 11 or BOLT 12) that route payments directly to publishers or liquidity pools. 
               This ensures trustless execution and zero counterparty risk.
             </p>
-            <a href="https://docs.lightning.engineering/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text transition-colors bg-white/5 px-3 py-1.5 rounded-full">
-              <ExternalLink className="w-3 h-3" /> External: Lightning Network Architecture
-            </a>
+            <SafeLink href="https://docs.lightning.engineering/" target="_blank" showIcon className="inline-flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text transition-colors bg-white/5 px-3 py-1.5 rounded-full">
+              <ExternalLink className="w-3 h-3" /> Lightning Network Architecture
+            </SafeLink>
           </div>
 
           <div className="bg-surface/50 border border-border rounded-xl p-6">
@@ -85,9 +86,9 @@ export default function Documentation() {
               Tadbuy leverages the Nostr protocol for decentralized identity and ad delivery verification. By signing campaign 
               events with your Nostr keypair, you establish a verifiable, censorship-resistant reputation as an advertiser.
             </p>
-            <a href="https://github.com/nostr-protocol/nostr" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text transition-colors bg-white/5 px-3 py-1.5 rounded-full">
-              <ExternalLink className="w-3 h-3" /> External: Nostr Protocol Specs
-            </a>
+            <SafeLink href="https://github.com/nostr-protocol/nostr" target="_blank" showIcon className="inline-flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text transition-colors bg-white/5 px-3 py-1.5 rounded-full">
+              <ExternalLink className="w-3 h-3" /> Nostr Protocol Specs
+            </SafeLink>
           </div>
         </div>
       </div>

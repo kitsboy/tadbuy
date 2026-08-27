@@ -12,6 +12,7 @@ import { EcosystemLinks } from '@/components/EcosystemLinks';
 import { GIVEABIT_ECOSYSTEM } from '@/data/ecosystemConfig';
 import { checkApiHealth } from '@/lib/apiBase';
 import { PROJECT_STATE } from '@/data/projectState';
+import { SafeLink } from '@/components/SafeLink';
 
 export default function Beta() {
   usePageMeta('BETA Status', 'What works now, what needs M4 server setup, and the consumer payment workflow for Tadbuy.');
@@ -65,9 +66,9 @@ export default function Beta() {
             One mint for all Give A Bit projects: Tadbuy, Satohash, Give A Bit, MotoPass, OpenStrata.
             Federation runs on <strong>M4 HERMES</strong> — not M3.
           </p>
-          <a href={infrastructure.fedi.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-accent font-bold hover:underline">
+          <SafeLink href={infrastructure.fedi.url} target="_blank" showIcon className="inline-flex items-center gap-1 text-xs text-accent font-bold hover:underline">
             Get Fedi wallet <ExternalLink className="w-3 h-3" />
-          </a>
+          </SafeLink>
         </div>
       </Card>
 
@@ -99,9 +100,9 @@ export default function Beta() {
       <div className="flex flex-wrap gap-3">
         <Link to="/"><Button>Try Campaign Builder</Button></Link>
         <Link to="/pitch"><Button variant="secondary">Investor Pitch</Button></Link>
-        <a href="https://github.com/kitsboy/tadbuy/blob/main/docs/SETUP-GUIDE.md" target="_blank" rel="noreferrer">
-          <Button variant="secondary">Setup Guide (GitHub)</Button>
-        </a>
+          <SafeLink href="https://github.com/kitsboy/tadbuy/blob/main/docs/SETUP-GUIDE.md" target="_blank" showIcon>
+            <Button variant="secondary">Setup Guide (GitHub)</Button>
+          </SafeLink>
       </div>
     </PageShell>
   );

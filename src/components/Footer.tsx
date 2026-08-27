@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { Button } from './ui';
 import { BITCOIN_ADDRESS, LIGHTNING_ADDRESS, LIGHTNING_URI, APP_VERSION, TWITTER_HANDLE, SUPPORT_EMAIL } from '@/constants';
 import { BlockHeightTicker } from '@/components/widgets/BlockHeightTicker';
+import { SafeLink } from '@/components/SafeLink';
 
 const JOBS = [
   { title: "Senior DevOps Engineer", desc: "Scale our containerized infrastructure on Cloud Run.", tag: "Remote" },
@@ -152,42 +153,39 @@ export default function Footer() {
               target the Bitcoin economy, settle on Lightning. No middlemen.
             </p>
 
-            {/* Social icons row */}
-            <div className="flex items-center gap-2 mb-8">
-              <a
-                href={`https://twitter.com/${TWITTER_HANDLE.replace('@', '')}`}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Twitter"
-                className="group inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/5 bg-white/[0.02] text-zinc-400 transition-all hover:border-accent/40 hover:bg-accent/10 hover:text-accent hover:-translate-y-0.5"
-              >
-                <Twitter className="w-4 h-4" />
-              </a>
-              <a
-                href="https://github.com/kitsboy/tadbuy"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="GitHub"
-                className="group inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/5 bg-white/[0.02] text-zinc-400 transition-all hover:border-accent/40 hover:bg-accent/10 hover:text-accent hover:-translate-y-0.5"
-              >
-                <Github className="w-4 h-4" />
-              </a>
-              <a
-                href={`mailto:${SUPPORT_EMAIL}`}
-                aria-label="Email"
-                className="group inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/5 bg-white/[0.02] text-zinc-400 transition-all hover:border-accent/40 hover:bg-accent/10 hover:text-accent hover:-translate-y-0.5"
-              >
-                <Mail className="w-4 h-4" />
-              </a>
-              <a
-                href="https://t.me/giveabit"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Telegram"
-                className="group inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/5 bg-white/[0.02] text-zinc-400 transition-all hover:border-accent/40 hover:bg-accent/10 hover:text-accent hover:-translate-y-0.5"
-              >
-                <Send className="w-4 h-4" />
-              </a>
+{/* Social icons row */}
+             <div className="flex items-center gap-2 mb-8">
+               <SafeLink
+                 href={`https://twitter.com/${TWITTER_HANDLE.replace('@', '')}`}
+                 aria-label="Twitter"
+                 className="group inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/5 bg-white/[0.02] text-zinc-400 transition-all hover:border-accent/40 hover:bg-accent/10 hover:text-accent hover:-translate-y-0.5"
+                 showIcon
+               >
+                 <Twitter className="w-4 h-4" />
+               </SafeLink>
+               <SafeLink
+                 href="https://github.com/kitsboy/tadbuy"
+                 aria-label="GitHub"
+                 className="group inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/5 bg-white/[0.02] text-zinc-400 transition-all hover:border-accent/40 hover:bg-accent/10 hover:text-accent hover:-translate-y-0.5"
+                 showIcon
+               >
+                 <Github className="w-4 h-4" />
+               </SafeLink>
+               <a
+                 href={`mailto:${SUPPORT_EMAIL}`}
+                 aria-label="Email"
+                 className="group inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/5 bg-white/[0.02] text-zinc-400 transition-all hover:border-accent/40 hover:bg-accent/10 hover:text-accent hover:-translate-y-0.5"
+               >
+                 <Mail className="w-4 h-4" />
+               </a>
+               <SafeLink
+                 href="https://t.me/giveabit"
+                 aria-label="Telegram"
+                 className="group inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/5 bg-white/[0.02] text-zinc-400 transition-all hover:border-accent/40 hover:bg-accent/10 hover:text-accent hover:-translate-y-0.5"
+                 showIcon
+               >
+                 <Send className="w-4 h-4" />
+               </SafeLink>
             </div>
 
             {/* Newsletter card */}
@@ -403,14 +401,13 @@ export default function Footer() {
                 Contact
               </a>
               <span className="text-white/10">·</span>
-              <a
+              <SafeLink
                 href="https://github.com/kitsboy/tadbuy/blob/main/LICENSE"
-                target="_blank"
-                rel="noreferrer"
                 className="hover:text-accent transition-colors"
+                showIcon
               >
                 MIT License
-              </a>
+              </SafeLink>
             </div>
 
             <div className="flex items-center gap-3 text-[10px] text-muted">
@@ -424,10 +421,9 @@ export default function Footer() {
 
           {/* Brand line + copyright */}
           <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <a
+            <SafeLink
               href="https://giveabit.io"
               target="_blank"
-              rel="noreferrer"
               title="GiveaBit — Bitcoin tools for the people"
               className="group flex items-center gap-2 self-start opacity-40 transition-opacity hover:opacity-100"
             >
@@ -440,7 +436,7 @@ export default function Footer() {
                 className="h-5 w-auto object-contain transition-transform group-hover:scale-105"
                 style={{ filter: 'grayscale(20%) brightness(1.1)' }}
               />
-            </a>
+            </SafeLink>
 
             <div className="text-[10px] text-muted font-mono">
               © 2026 GiveaBit Inc. · Bitcoin-native advertising, paid in sats.

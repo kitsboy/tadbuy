@@ -6,6 +6,7 @@ import { ApiExplorer } from '@/components/ApiExplorer';
 import { BitcoinProtocolSuite } from '@/components/widgets/BitcoinProtocolSuite';
 import { Link } from 'react-router-dom';
 import { getSatohashUrl, stampGuideUrl } from '@/lib/satohash';
+import { SafeLink } from '@/components/SafeLink';
 
 const INTEGRATIONS = [
   { name: 'WordPress', icon: Globe, desc: 'Publisher inventory plugin', endpoint: '/api/v3/integrations/wordpress', status: 'planned' as const },
@@ -65,12 +66,12 @@ export default function Integrations() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <a href={getSatohashUrl()} target="_blank" rel="noopener noreferrer">
+          <SafeLink href={getSatohashUrl()} target="_blank" showIcon>
             <Button variant="secondary" className="gap-2 text-xs">Open Satohash</Button>
-          </a>
-          <a href={stampGuideUrl()} target="_blank" rel="noopener noreferrer">
+          </SafeLink>
+          <SafeLink href={stampGuideUrl()} target="_blank" showIcon>
             <Button variant="secondary" className="gap-2 text-xs">Stamp guide</Button>
-          </a>
+          </SafeLink>
         </div>
       </Card>
 

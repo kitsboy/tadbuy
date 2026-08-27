@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
-import { Keyboard, X } from 'lucide-react';
+import { Keyboard, X, Command } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const MAIN_ID = 'main-content';
@@ -53,9 +53,6 @@ export function SkipToContent() {
     >
       <Keyboard className="w-4 h-4" />
       <span>Skip to content</span>
-      <kbd className="ml-1 hidden sm:inline-block rounded bg-black/20 px-1.5 py-0.5 font-mono text-[10px] text-black/80">
-        Tab
-      </kbd>
     </a>
   );
 }
