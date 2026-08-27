@@ -1,3 +1,12 @@
+## Session — 2026-08-27 · Breez footer donate (Grok M3)
+
+**Done:**
+- `src/constants.ts` + footer QR: `tadbuy@breez.tips` / `lightning:tadbuy@breez.tips` + on-chain `bc1p0ch84…jmdy5y` (`2c80b6c`; pre-push bumped to v5.0.87).
+- Live-verified: Donate to Project popover.
+
+**Git State:** donate commit `2c80b6c`; HEAD `6420ce1` (version bump) on `origin/main`.
+
+---
 ## Session — 2026-08-26 (100 Bitcoin Protocol & Design Upgrades)
 
 **Done:**
