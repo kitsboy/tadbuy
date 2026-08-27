@@ -7,6 +7,43 @@
 **Git State:** donate commit `2c80b6c`; HEAD `6420ce1` (version bump) on `origin/main`.
 
 ---
+## Session — 2026-08-27 (v5.0.85 — Security hardening + i18n complete + 10 quick-wins)
+
+**Done:**
+- Footer polish (v5.0.81): gradient bg, grid overlay, top accent line, newsletter card, 4 social icons, 3-column nav grid (Platform/Developers/Company), jobs panel with Remote tags, QR popover with copy-to-clipboard, block-height + version pills
+- 10 quick-wins (v5.0.83): BackToTop pulsing hover + lift, SkipToContent floating button with kbd hint, Toast rewritten (4 types: success/error/info/warning, spring physics, useToast hook), OnlineIndicator animated ping dot, PageShell copy-link toast, EmptyState glass + glow, BlockHeightTicker fallback to mempool.space, PriceTicker 24h % chips with country flags, OfflineBanner dismiss+retry
+- Security hardening (v5.0.85):
+  - `src/lib/security/safeLink.ts`: `isSafeUrl`, `sanitizeUrl`, `safeRel`, `safeExternalProps`, `isSameOriginUrl` (open-redirect protection)
+  - `src/lib/security/sanitize.ts`: `escapeHtml`, `escapeAttr`, `escapeJs`, `safePathSegment`, `safeTruncate`
+  - `src/lib/security/csp.ts`: `buildCspHeader`, `SECURITY_HEADERS` (HSTS 2y, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy with FLoC opt-out)
+  - `src/components/SafeLink.tsx`: hardened `<a>` with `rel="noopener noreferrer"` enforced + danger fallback
+  - `public/_headers`: hardened CSP with explicit directives (connect-src incl. supabase/nostr relays, frame-ancestors 'self', font-src gstatic, manifest-src)
+  - `public/robots.txt`: blocks AI scrapers (GPTBot/CCBot/anthropic-ai/ClaudeBot), blocks `/campaigns /wallet /settings /dashboard /debug-lightning /embed/ /api/`
+- i18n complete (v5.0.85):
+  - All 8 locale files rewritten with full keys: `src/locales/{en,es,fr,de,pt,ja,zh,ar}.json`
+  - `src/lib/i18nUtils.ts`: `SUPPORTED_LANGUAGES` (8 langs with dir/flag), `detectBrowserLanguage`, `setLanguage`, `formatLocalizedNumber`, `formatLocalizedDate`, `isLikelyMissingTranslation`
+  - `src/components/LanguageSwitcher.tsx` rewritten: listbox ARIA semantics, flags + native names, current lang check mark, glass style, Escape-to-close, outside-click dismiss
+  - `src/lib/i18n.ts` updated: RTL set for ar/he/fa/ur, auto-detect from `localStorage` → `<html lang>` → `navigator.languages`, `applyDir` on `languageChanged`
+- Verified clean build (`npm run lint` & `npm run build` pass with 0 errors)
+
+**Decisions:**
+- SafeLink is a drop-in replacement for `<a target="_blank">` — adopt across codebase as next step
+- robots.txt blocks AI training scrapers while allowing legitimate search engine crawling
+- Arabic auto-flips page to RTL via `document.documentElement.dir` on language change
+
+**Git State:**
+- SHA: `8f49fca` (feature `d93279d` + bump `e5a2863` + bump `8f49fca`)
+- Branch: main
+- Unpushed: none
+- Version: v5.0.85
+
+**Next for Kimi:**
+- Adopt SafeLink component across all external links in codebase (drop-in for `target="_blank"` anchors)
+- Verify live site after CF deploy (version pill should show v5.0.85)
+- Continue Fedi rollout when Andrea blocker clears (`t_8ee7c976`)
+
+---
+
 ## Session — 2026-08-26 (100 Bitcoin Protocol & Design Upgrades)
 
 **Done:**

@@ -1,9 +1,9 @@
 ---
 title: Executive Summary
 project: Tadbuy
-version: v5.0.6
+version: v5.0.85
 audience: investors
-last_updated: 2026-07-07
+last_updated: 2026-08-27
 owner: Give A Bit
 ---
 
@@ -22,10 +22,13 @@ Tadbuy is the world's first Bitcoin-native DSP. Buy ads across 8 platforms. Pay 
 - 8 platforms, 8 languages
 - Sub-second settlement target
 
-## Current Status (BETA v5.0.6)
+## Current Status (BETA v5.0.85)
 - **UI:** Live at https://tadbuy.giveabit.io (Cloudflare Pages)
 - **Global Reach:** https://tadbuy.giveabit.io/geo — 100 enhancements shipped
 - **SPA routing:** Fixed — nav clicks update content immediately
+- **Security:** Hardened — CSP headers, URL sanitization, open-redirect protection, SafeLink component
+- **i18n:** Complete — 8 languages (en/es/fr/de/pt/ja/zh/ar) fully localized with RTL for Arabic
+- **Quick-wins:** All 10 shipped (BackToTop, SkipToContent, Toast, OnlineIndicator, copy-link, EmptyState, BlockHeightTicker fallback, PriceTicker 24h, OfflineBanner, LanguageSwitcher)
 - **Phase 1:** API proxy live — `api.giveabit.io` → Cloudflare Tunnel → M4 PM2 ✅
 - **Phase 2 (parked):** Fedimint mint — blocked until Fedi app updates (FM 0.10 vs Guardian 0.11). Andrea `t_8ee7c976`
 - **Phase 3 (parked):** Umbrel LND — node offline 93 days. Rosa `t_46208fbe`

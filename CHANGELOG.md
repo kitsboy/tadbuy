@@ -2,6 +2,49 @@
 
 All notable changes to Tadbuy are documented here.
 
+## [5.0.85] — 2026-08-27
+
+### Added
+- Security hardening: CSP headers, URL sanitization, SafeLink component with open-redirect protection
+- Complete i18n support: 8 languages fully localized (en/es/fr/de/pt/ja/zh/ar), RTL for Arabic
+- Accessible LanguageSwitcher with listbox semantics, flags, native names, current indicator
+- All 10 quick-win improvements: BackToTop pulsing hover, SkipToContent floating button, Toast with spring physics, OnlineIndicator animated dot, PageShell copy-link toast, EmptyState glass effect, BlockHeightTicker fallback, PriceTicker 24h % chips, OfflineBanner dismiss+retry
+- Hardened robots.txt blocking AI scrapers and sensitive paths
+- Updated public/_headers with extended HSTS (2y) and broader Permissions-Policy
+
+### Changed
+- Auto-bump version to v5.0.85 via pre-push hook
+
+## [5.0.83] — 2026-08-27
+
+### Added
+- BackToTop pulsing hover + lift animation
+- SkipToContent always-visible floating button with kbd hint
+- Toast rewritten (4 types: success/error/info/warning, spring physics, proper icons, dismiss button, useToast hook)
+- OnlineIndicator animated ping dot
+- PageShell `canonicalPath` "Copy link" + toast
+- EmptyState glass + glow
+- BlockHeightTicker fallback to mempool.space + clickable pill
+- PriceTicker 24h % change chips with country flags
+- OfflineBanner dismiss+retry
+
+### Changed
+- None
+
+## [5.0.81] — 2026-08-27
+
+### Added
+- Footer polish with gradient bg, grid overlay, top accent line
+- Newsletter card (focus ring + submit), 4 social icons
+- 3-column nav grid (Platform/Developers/Company with pink dot)
+- Jobs panel with "Remote" tags
+- QR popover (outside-click closes, copy-to-clipboard with check, shimmery donate button)
+- Block-height + version pills
+- MIT license link
+
+### Changed
+- None
+
 ## [5.0.14] — 2026-07-13
 
 ### Added

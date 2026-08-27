@@ -8,7 +8,7 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Tw
 ## GitHub (Code Source of Truth)
 - Repo: https://github.com/kitsboy/tadbuy.git
 - Branch: main (production)
-- Version: **v5.0.17** (BETA — CDN deploy incident fixed 2026-07-13)
+- Version: **v5.0.85** (BETA — security hardening + i18n complete, all 10 quick-wins deployed 2026-08-27)
 - M3 workspace: `~/projects/tadbuy/`
 - Last commit: `f429f8a` (CDN cache fix + goodbye handoff)
 
@@ -94,19 +94,22 @@ For automated agents (Grok, Kimi, Qwen):
 - `scripts/sync-docs.ts` — Auto-syncs docs on build
 - `docs/KIMI-HANDOFF.md` — Cross-agent handoff log
 
-## Recent M3 Work (2026-07-13)
-- [x] Central `src/data/platforms.ts` — billing, payout, CPM for all 8 platforms
-- [x] `/platforms` hub + `/platforms/:slug` landing pages
-- [x] `PageShell`, `FeeBreakdown`, `PlatformWeightAllocator` — site uniformity
-- [x] BuyAds: budget allocator (even / custom / PPQ), fee breakdown, platform handoff
-- [x] Campaign status PATCH API + CSV/Sheets export
-- [x] Server stub `demo: true` flags; Supabase client scaffold for auth migration
-- [x] Playwright installed; Compare/Integrations/Wallet/Settlements/PPQ/docs updated
+## Recent M3 Work (2026-08-27)
+- [x] Shipped security hardening: CSP headers, URL sanitization, SafeLink component with open-redirect protection
+- [x] Completed i18n: 8 languages fully localized (en/es/fr/de/pt/ja/zh/ar), RTL support for Arabic, LanguageSwitcher with proper accessibility
+- [x] All 10 quick-win improvements deployed and verified (BackToTop, SkipToContent, Toast, OnlineIndicator, PageShell copy-link, EmptyState glass, BlockHeightTicker fallback, PriceTicker 24h chips, OfflineBanner)
+- [x] Updated public/_headers with hardened security directives and extended HSTS
+- [x] Rewrote public/robots.txt to block AI scrapers and sensitive paths
+- [x] Verified clean build (`npm run lint` & `npm run build` pass with 0 errors)
+- [x] Auto-bumped version to v5.0.85 via pre-push hook
 
 ## Gaps / Next
 - [x] M4 Phase 1: API proxy live (`api.giveabit.io`)
 - [x] /geo page — 100 enhancements
 - [x] SPA routing fix
+- [x] Security hardening + i18n complete (v5.0.85)
+- [x] All 10 quick-win improvements shipped
+- [ ] Adopt SafeLink component across all external links in codebase (drop-in for `target="_blank"` anchors)
 - [ ] M4 Phase 2: Fedimint mint — **blocked** (Fedi 0.10 vs Guardian 0.11, Andrea `t_8ee7c976`)
 - [ ] M4 Phase 3: Umbrel LND — **blocked** (node offline 93d, Rosa `t_46208fbe`)
 - [ ] Automated E2E tests (Playwright stub ready)

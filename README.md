@@ -2,7 +2,7 @@
   <img src="/public/favicon.png" alt="Tadbuy" width="80" height="80" />
   <h1>Tadbuy</h1>
   <p><strong>The world's first Bitcoin-native advertising platform.</strong></p>
-  <p><code>v5.0.6</code> · 535+ enhancements · BETA</p>
+  <p><code>v5.0.85</code> · 535+ enhancements · BETA</p>
   <p>Buy ads across 8 platforms. Pay in sats via Lightning, BOLT12, on-chain, or Nostr Zaps.</p>
   <p>
     <a href="https://tadbuy.giveabit.io">Live Site</a> ·
@@ -23,7 +23,9 @@ Tadbuy is a sovereign Demand-Side Platform (DSP) built for the Bitcoin era. Adve
 - AI creative optimization (Gemini) and PPQ.AI bidding
 - Lightning Network, BOLT12, on-chain, and Nostr Zap payments
 - Publisher portal, analytics dashboard, wallet, and settlements
-- 8 languages, Agent API for Nostr bots, real-time BTC ticker
+- 8 languages (en/es/fr/de/pt/ja/zh/ar) with RTL for Arabic, accessible language switcher
+- Agent API for Nostr bots, real-time BTC ticker
+- Hardened security: CSP headers, URL sanitization, open-redirect protection
 
 ## Platform Split (M3 vs M4)
 
