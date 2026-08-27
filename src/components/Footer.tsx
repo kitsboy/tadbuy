@@ -19,7 +19,7 @@ import {
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from './ui';
-import { BITCOIN_ADDRESS, BITCOIN_URI, APP_VERSION, TWITTER_HANDLE, SUPPORT_EMAIL } from '@/constants';
+import { BITCOIN_ADDRESS, LIGHTNING_ADDRESS, LIGHTNING_URI, APP_VERSION, TWITTER_HANDLE, SUPPORT_EMAIL } from '@/constants';
 import { BlockHeightTicker } from '@/components/widgets/BlockHeightTicker';
 
 const JOBS = [
@@ -348,26 +348,26 @@ export default function Footer() {
                 <div className="text-[10px] font-bold uppercase tracking-widest text-accent mb-1">
                   ⚡ Support Development
                 </div>
-                <div className="text-sm font-bold text-white mb-1">Send Bitcoin on-chain</div>
-                <div className="text-[10px] text-muted mb-3">Or via Lightning to the same address</div>
+                <div className="text-sm font-bold text-white mb-1">Send Lightning</div>
+                <div className="text-[10px] text-muted mb-3">Breez Spark · {LIGHTNING_ADDRESS}</div>
 
                 <div className="rounded-xl bg-white p-3 inline-block mb-3">
                   <QRCodeSVG
-                    value={BITCOIN_URI}
+                    value={LIGHTNING_URI}
                     size={132}
                     level="M"
-                    title="Bitcoin donation address QR code"
-                    aria-label="Bitcoin donation address QR code"
+                    title="Lightning donation address QR code"
+                    aria-label="Lightning donation address QR code"
                     fgColor="#000000"
                   />
                 </div>
 
                 <button
-                  onClick={() => handleCopy(BITCOIN_ADDRESS)}
+                  onClick={() => handleCopy(LIGHTNING_ADDRESS)}
                   className="group flex w-full items-center justify-between gap-2 rounded-lg border border-white/10 bg-black/40 px-3 py-2 font-mono text-[10px] text-zinc-300 transition-colors hover:border-accent/40 hover:text-white"
-                  aria-label="Copy Bitcoin address"
+                  aria-label="Copy Lightning address"
                 >
-                  <span className="truncate">{BITCOIN_ADDRESS.slice(0, 12)}…{BITCOIN_ADDRESS.slice(-6)}</span>
+                  <span className="truncate">{LIGHTNING_ADDRESS}</span>
                   {copied ? (
                     <Check className="h-3 w-3 text-green-400" />
                   ) : (
@@ -377,6 +377,7 @@ export default function Footer() {
                 {copied && (
                   <div className="mt-2 text-[10px] font-bold text-green-400">Copied to clipboard</div>
                 )}
+                <p className="mt-2 text-[9px] text-muted break-all font-mono">{BITCOIN_ADDRESS}</p>
               </div>
             </div>
           </div>
