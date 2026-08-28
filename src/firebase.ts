@@ -67,6 +67,12 @@ export const getSafeAuth = () => {
   return auth || null;
 };
 
+export const getFirebaseAuth = () => {
+  const a = getSafeAuth();
+  if (!a) throw new Error('Firebase not configured');
+  return a;
+};
+
 export const getSafeFirestore = () => {
   if (typeof window === 'undefined' || !initialized) {
     initializeFirebase();

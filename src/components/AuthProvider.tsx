@@ -1,17 +1,33 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { getSafeAuth } from '../firebase';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { getSafeAuth, getFirebaseAuth } from '../firebase';
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut as fbSignOut,
+  type User,
+} from 'firebase/auth';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   error?: string;
+  signInEmail: (email: string, password: string) => Promise<User>;
+  signUpEmail: (email: string, password: string) => Promise<User>;
+  signInGoogle: () => Promise<User>;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   error: undefined,
+  signInEmail: async () => { throw new Error('AuthProvider not mounted'); },
+  signUpEmail: async () => { throw new Error('AuthProvider not mounted'); },
+  signInGoogle: async () => { throw new Error('AuthProvider not mounted'); },
+  signOut: async () => { throw new Error('AuthProvider not mounted'); },
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -68,8 +84,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
   }, []);
 
+  const signInEmail = async (email: string, password: string) => {
+    const auth = getFirebaseAuth();
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    return cred.user;
+  };
+
+  const signUpEmail = async (email: string, password: string) => {
+    const auth = getFirebaseAuth();
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    return cred.user;
+  };
+
+  const signInGoogle = async () => {
+    const auth = getFirebaseAuth();
+    const cred = await signInWithPopup(auth, new GoogleAuthProvider());
+    return cred.user;
+  };
+
+  const signOut = async () => {
+    const auth = getFirebaseAuth();
+    await fbSignOut(auth);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, error: error || undefined }}>
+    <AuthContext.Provider value={{
+      user, loading, error: error || undefined,
+      signInEmail, signUpEmail, signInGoogle, signOut,
+    }}>
       {children}
     </AuthContext.Provider>
   );

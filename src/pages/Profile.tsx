@@ -1,14 +1,6 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { motion } from "motion/react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signOut,
-} from "firebase/auth";
-import { auth } from "@/firebase";
 import { useAuth } from "@/components/AuthProvider";
 import { LocalAvatar } from "@/components/LocalAvatar";
 import { Card, Button, Input, Label, FormGroup } from "@/components/ui";
@@ -46,6 +38,7 @@ function friendlyError(code: string): string {
 // ─── Auth Panel (logged out) ──────────────────────────────────────────────────
 function AuthPanel() {
   const { addToast } = useToast();
+  const { signInEmail, signUpEmail, signInGoogle } = useAuth();
   const [searchParams] = useSearchParams();
   const [tab, setTab] = useState<"signin" | "signup">(
     searchParams.get('tab') === 'signup' ? 'signup' : 'signin'
@@ -80,10 +73,10 @@ function AuthPanel() {
     setLoading(true);
     try {
       if (tab === "signin") {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInEmail(email, password);
         addToast("Welcome back!", "success");
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        await signUpEmail(email, password);
         addToast("Account created — welcome aboard!", "success");
       }
     } catch (err: unknown) {
@@ -98,7 +91,7 @@ function AuthPanel() {
     setError("");
     setGoogleLoading(true);
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
+      await signInGoogle();
       addToast("Signed in with Google!", "success");
     } catch (err: unknown) {
       const code = (err as { code?: string }).code ?? "";
@@ -292,6 +285,7 @@ function ProfileCard() {
 
   if (!user) return null;
 
+  const { signOut: doSignOut } = useAuth();
   const displayName = user.displayName ?? user.email ?? "User";
   const createdAt = user.metadata.creationTime
     ? new Date(user.metadata.creationTime).toLocaleDateString("en-US", {
@@ -303,7 +297,7 @@ function ProfileCard() {
   const handleSignOut = async () => {
     setSigningOut(true);
     try {
-      await signOut(auth);
+      await doSignOut();
       addToast("Signed out successfully.", "success");
     } catch {
       addToast("Failed to sign out. Please try again.", "info");
