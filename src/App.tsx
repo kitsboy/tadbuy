@@ -18,6 +18,7 @@ import { SkipToContent } from './components/SkipToContent';
 import { ThemeProvider } from './components/ThemeProvider';
 import { ThemeToggle } from './components/ThemeToggle';
 import { CurrencyProvider, CurrencySelectToggle } from './components/widgets/CurrencySwitcher';
+import { DemoProvider } from './components/payments/DemoModeBadge';
 import { BtcPriceChart } from './components/widgets/BtcPriceChart';
 import { BetaBanner } from './components/BetaBanner';
 import { OnlineIndicator } from './components/OnlineIndicator';
@@ -469,6 +470,7 @@ export default function App() {
       <Router unstable_useTransitions={false}>
         <ThemeProvider>
         <CurrencyProvider>
+        <DemoProvider>
         <SkipToContent />
         <ScrollToTop />
         <ScrollProgress />
@@ -483,6 +485,7 @@ export default function App() {
             <BackToTop />
           </ToastProvider>
         </AuthProvider>
+        </DemoProvider>
         </CurrencyProvider>
         </ThemeProvider>
       </Router>
