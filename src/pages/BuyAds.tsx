@@ -206,6 +206,20 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
   });
 
   const [selectedCountries, setSelectedCountries] = useState<string[]>(['Global']);
+
+  // Read marketplace slot + Geo pre-fill from URL
+  useEffect(() => {
+    const slotId = searchParams.get('slot');
+    if (slotId) {
+      const slot = getMarketplaceSlot(slotId);
+      if (slot) setMarketplaceSlot(slot);
+    }
+    const geoCode = searchParams.get('geo');
+    if (geoCode && GEO_MARKETS.some(m => m.code === geoCode)) {
+      setSelectedCountries(prev => prev.includes(geoCode) ? prev : [...prev.filter(c => c !== 'Global'), geoCode]);
+    }
+  }, [searchParams]);
+
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['English']);
   
   const availableCountries = ['Global', ...GEO_MARKETS.map(m => m.country)];

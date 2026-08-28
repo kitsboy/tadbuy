@@ -7,9 +7,10 @@ import { useNavigate } from "react-router-dom";
 import {
   Search, Filter, Zap, Users, Globe, TrendingUp,
   CheckCircle, ChevronDown, X, BarChart2, Star,
-  SlidersHorizontal, ArrowUpDown, ArrowUp, ArrowDown, PackageSearch,
+  SlidersHorizontal, ArrowUpDown, ArrowUp, ArrowDown, PackageSearch, Heart, Bookmark,
 } from "lucide-react";
 import { usePageMeta } from "@/hooks/usePageMeta";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import {
   MARKETPLACE_SLOTS,
   FEATURED_SLOT_IDS,
@@ -239,6 +240,8 @@ function BidModal({ slot, onClose, onBidPlaced }: { slot: MarketplaceSlot; onClo
 
 function FeaturedCard({ slot, onBid }: { slot: MarketplaceSlot; onBid: (slot: MarketplaceSlot) => void }) {
   const navigate = useNavigate();
+  const [watchlist, setWatchlist] = useLocalStorage<string[]>("tadbuy_marketplace_watchlist", []);
+  const saved = watchlist.includes(slot.id);
   return (
     <motion.div
       layout
@@ -250,6 +253,19 @@ function FeaturedCard({ slot, onBid }: { slot: MarketplaceSlot; onBid: (slot: Ma
       <div className="absolute top-4 right-4 flex items-center gap-1 bg-accent/15 border border-accent/40 text-accent text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full">
         <Star className="w-3 h-3 fill-accent" /> Featured
       </div>
+      {/* Save to watchlist button */}
+      <button
+        type="button"
+        onClick={() => {
+          if (saved) setWatchlist(watchlist.filter(x => x !== slot.id));
+          else setWatchlist([...watchlist, slot.id]);
+        }}
+        className="absolute top-4 left-4 w-8 h-8 rounded-full bg-zinc-900/80 border border-white/10 flex items-center justify-center hover:border-accent/50 hover:bg-accent/10 transition-all z-10"
+        aria-label={saved ? 'Remove from watchlist' : 'Save to watchlist'}
+        title={saved ? 'Saved' : 'Save to watchlist'}
+      >
+        <Heart className={`w-4 h-4 ${saved ? 'fill-accent text-accent' : 'text-muted'}`} />
+      </button>
 
       <div className="flex items-center gap-2">
         <span className="text-xs font-bold text-muted">{slot.publisher}</span>
@@ -306,6 +322,8 @@ function FeaturedCard({ slot, onBid }: { slot: MarketplaceSlot; onBid: (slot: Ma
 function SlotCard({ slot, onBid }: { slot: MarketplaceSlot; onBid: (slot: MarketplaceSlot) => void }) {
   const navigate = useNavigate();
   const isHot = slot.status === "hot";
+  const [watchlist, setWatchlist] = useLocalStorage<string[]>("tadbuy_marketplace_watchlist", []);
+  const saved = watchlist.includes(slot.id);
 
   return (
     <motion.div
@@ -328,6 +346,20 @@ function SlotCard({ slot, onBid }: { slot: MarketplaceSlot; onBid: (slot: Market
       )}
 
       <div className="absolute top-0 right-0 w-40 h-40 bg-accent/5 rounded-full blur-3xl -mr-14 -mt-14 pointer-events-none" />
+
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          if (saved) setWatchlist(watchlist.filter(x => x !== slot.id));
+          else setWatchlist([...watchlist, slot.id]);
+        }}
+        className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-zinc-900/80 border border-white/10 flex items-center justify-center hover:border-accent/50 hover:bg-accent/10 transition-all"
+        aria-label={saved ? 'Remove from watchlist' : 'Save to watchlist'}
+        title={saved ? 'Saved' : 'Save to watchlist'}
+      >
+        <Heart className={`w-4 h-4 ${saved ? 'fill-accent text-accent' : 'text-muted'}`} />
+      </button>
 
       <div className="relative z-10 p-5">
         <div className="flex items-center justify-between mb-3">
@@ -456,6 +488,19 @@ export default function Marketplace() {
   const [maxBid, setMaxBid]                 = useState(50000);
   const [sidebarOpen, setSidebarOpen]       = useState(false);
   const [loading, setLoading]               = useState(true);
+  const [watchlist, setWatchlist]           = useLocalStorage<string[]>("tadbuy_marketplace_watchlist", []);
+  const [showWatchlistOnly, setShowWatchlistOnly] = useState(false);
+  const { addToast } = useToast();
+
+  const toggleWatchlist = (slotId: string) => {
+    if (watchlist.includes(slotId)) {
+      setWatchlist(watchlist.filter(x => x !== slotId));
+      addToast('Removed from watchlist', 'success', 1500);
+    } else {
+      setWatchlist([...watchlist, slotId]);
+      addToast('Saved to watchlist', 'success', 1500);
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 600);
@@ -515,7 +560,9 @@ export default function Marketplace() {
         statusFilter === "all" || item.status === statusFilter;
       const matchesBid =
         item.currentBidSats <= maxBid;
-      return matchesSearch && matchesPlatform && matchesCategory && matchesStatus && matchesBid;
+      const matchesWatchlist =
+        !showWatchlistOnly || watchlist.includes(item.id);
+      return matchesSearch && matchesPlatform && matchesCategory && matchesStatus && matchesBid && matchesWatchlist;
     });
 
     items = [...items].sort((a, b) => {
@@ -528,7 +575,7 @@ export default function Marketplace() {
     });
 
     return items;
-  }, [inventory, searchTerm, activePlatform, activeCategory, statusFilter, sortBy, maxBid]);
+  }, [inventory, searchTerm, activePlatform, activeCategory, statusFilter, sortBy, maxBid, showWatchlistOnly, watchlist]);
 
   const clearFilters = () => {
     setSearchTerm("");
@@ -667,6 +714,23 @@ export default function Marketplace() {
                 <span>50k</span>
               </div>
             </div>
+
+            {/* Watchlist filter */}
+            {watchlist.length > 0 && (
+              <div className="glass-panel rounded-xl p-4">
+                <button
+                  onClick={() => setShowWatchlistOnly(v => !v)}
+                  className={`w-full flex items-center gap-2 text-[12px] px-2.5 py-1.5 rounded-lg transition-all ${
+                    showWatchlistOnly
+                      ? "bg-accent/10 text-accent font-bold"
+                      : "text-muted hover:text-text hover:bg-white/5"
+                  }`}
+                >
+                  <Bookmark className={`w-3.5 h-3.5 ${showWatchlistOnly ? "fill-current" : ""}`} />
+                  My Watchlist ({watchlist.length})
+                </button>
+              </div>
+            )}
 
             {/* Status filter */}
             <div className="glass-panel rounded-xl p-4 space-y-2">

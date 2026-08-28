@@ -78,12 +78,12 @@ export function LanguageSwitcher() {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={`Change language — ${meta.name}`}
+        aria-label={`Change language — currently ${meta.name} (${meta.code.toUpperCase()})`}
         className="flex items-center gap-1 rounded-lg border border-transparent px-2 py-1 text-[10px] font-mono text-muted transition-colors hover:border-white/10 hover:bg-white/[0.03] hover:text-white"
       >
         <Globe className="h-3 w-3" />
-        <span className="hidden sm:inline">{FLAGS[meta.code]}</span>
-        <span>{SHORT[meta.code]}</span>
+        <span className="hidden sm:inline" aria-hidden>{FLAGS[meta.code]}</span>
+        <span aria-hidden>{SHORT[meta.code]}</span>
         <ChevronDown
           className={cn('h-2.5 w-2.5 transition-transform', open && 'rotate-180')}
           aria-hidden
@@ -93,6 +93,7 @@ export function LanguageSwitcher() {
       {open && (
         <div
           role="listbox"
+          aria-label="Select language"
           className="absolute right-0 top-9 z-50 min-w-[200px] overflow-hidden rounded-xl border border-white/10 bg-zinc-950/95 p-1 shadow-2xl backdrop-blur-md"
         >
           {SUPPORTED_LANGUAGES.map((lang) => {
@@ -102,6 +103,7 @@ export function LanguageSwitcher() {
                 key={lang.code}
                 role="option"
                 aria-selected={active}
+                aria-label={`${lang.name} (${lang.code.toUpperCase()})${active ? ' — currently selected' : ''}${lang.dir === 'rtl' ? ' — right-to-left script' : ''}`}
                 onClick={() => changeLanguage(lang.code)}
                 className={cn(
                   'flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs transition-colors',
@@ -113,11 +115,11 @@ export function LanguageSwitcher() {
                 <span aria-hidden className="text-base leading-none">
                   {FLAGS[lang.code]}
                 </span>
-                <span className="font-mono text-[10px] uppercase text-zinc-500">
+                <span className="font-mono text-[10px] uppercase text-zinc-500" aria-hidden>
                   {lang.code}
                 </span>
-                <span className="flex-1 truncate">{lang.name}</span>
-                {active && <Check className="h-3.5 w-3.5 text-accent" />}
+                <span className="flex-1 truncate" aria-hidden>{lang.name}</span>
+                {active && <Check className="h-3.5 w-3.5 text-accent" aria-hidden />}
               </button>
             );
           })}
