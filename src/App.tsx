@@ -9,6 +9,7 @@ import { useLocalStorage } from './hooks/useLocalStorage';
 import { LocalAvatar } from './components/LocalAvatar';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { NotificationCenter } from './components/NotificationCenter';
+import { Navbar } from './components/Navbar';
 import Footer from './components/Footer';
 import { PriceTicker } from './components/PriceTicker';
 import { ScrollToTop } from './components/ScrollToTop';
@@ -413,7 +414,7 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header currency={currency} setCurrency={setCurrency} rate={rates[currency]} />
+      <Navbar />
       {!isEmbed && <OfflineBanner />}
       {!isEmbed && <BetaBanner />}
       {!isEmbed && <PriceTicker rates={rates} />}
