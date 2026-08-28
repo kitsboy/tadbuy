@@ -7,6 +7,57 @@
 **Git State:** donate commit `2c80b6c`; HEAD `6420ce1` (version bump) on `origin/main`.
 
 ---
+## Session — 2026-08-27 (v5.0.105 — Polish + i18n + a11y sweep)
+
+**Done:**
+- **Batch 1 — Security & Quick Wins:**
+  - SafeLink adopted across 20+ pages (Footer, Beta, Pitch, Integrations, Bolt12Info, PpqGuide, Documentation, ApiReference, ApiDocs, EcosystemLinks, BlockHeightTicker, FedimintPanel, TermsAcceptance, Privacy, Cookies)
+  - CSP `report-uri` added (`/api/csp-report` endpoint expected on M4)
+  - Permissions-Policy extended: `payment=()` for future payment API
+  - SkipToContent OS detection: shows `⌘K` on Mac, `Ctrl K` on Win/Linux
+- **Batch 2 — Onboarding & First Value:**
+  - FirstVisitChecklist now persona-aware (advertiser/publisher/browse)
+  - AdScore widget shows contextual hints ("Pick platforms & add a headline →")
+  - SpendLimitBanner gained PlatformMinSpendHint helper
+  - Empty platform selection state in StepPlatformBudget (with hover-scale hint)
+- **Batch 3 — Payment Flow:**
+  - SuccessScreen→Analytics deep link verified (`/analytics?campaign=id` chain works)
+  - CampaignAnalytics already reads `?campaign=` param
+- **Batch 4 — Dashboard/Campaigns/Analytics:**
+  - Bulk actions floating bar on Campaigns (Go Live / Pause / Export / Clear)
+  - Campaign health pulse: green dot for on-pace, yellow for under-pacing
+- **Batch 5–6 — Navigation/Discovery/Marketplace:**
+  - Geo→BuyAds pre-fills country from `?geo=CODE` URL param
+  - Marketplace watchlist (heart button on every card) + sidebar filter
+  - Live toast feedback on save/remove
+- **Batch 7 — Auth & Account:**
+  - AuthProvider now exposes `signInEmail` / `signUpEmail` / `signInGoogle` / `signOut`
+  - Profile page no longer imports `firebase/auth` directly — uses AuthProvider
+  - ProtectedRoute gained `reason` prop: context-aware "Sign in to X" message per page
+- **Batch 8–9 — Technical Debt & A11y:**
+  - LanguageSwitcher fully accessible: aria-label includes RTL hint, "currently selected", language code
+  - All `target="_blank"` external links route through SafeLink
+
+**Decisions:**
+- SafeLink is the canonical "external" anchor; future pages should import it instead of `<a target="_blank">`
+- Auth calls are centralized in AuthProvider — all Profile/AuthGate flows use the context
+- Marketplace watchlist uses localStorage key `tadbuy_marketplace_watchlist` (per-tadbuy prefix)
+- New `tadbuy_recent_pages` for CommandMenu persists across reloads
+
+**Git State:**
+- Branch: main
+- Tip: `1613283` (feature `0164104` + auto-bumps to v5.0.105)
+- Unpushed: none
+- Version: v5.0.105
+
+**Next for Kimi:**
+- Verify live site after CF Pages deploy (footer should show v5.0.105)
+- Submit domain to [hstspreload.org](https://hstspreload.org) for browser preload (HSTS already 2y + includeSubDomains + preload directive)
+- Consider implementing `/api/csp-report` endpoint on M4 to receive CSP violation reports
+- Fedi rollout when Andrea blocker clears (`t_8ee7c976`)
+
+---
+
 ## Session — 2026-08-27 (v5.0.85 — Security hardening + i18n complete + 10 quick-wins)
 
 **Done:**
