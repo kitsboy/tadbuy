@@ -2,7 +2,20 @@
 
 All notable changes to Tadbuy are documented here.
 
-## [5.0.85] — 2026-08-27
+## [5.0.125] — 2026-08-28
+
+### Added
+- Complete navbar facelift: new `src/components/Navbar.tsx` component replacing legacy Header
+  - Desktop: Brand | Dropdown (Buy Ads) + 5 direct nav links | Utility (currency, search, BTC chart, theme, lang, notifications, profile)
+  - Mobile: Hamburger menu with sectioned drawer (6 Primary + 6 "More Tools") + sticky action bar
+  - Hover-activated dropdowns with motion animations, 44px touch targets, full keyboard navigation
+  - Auto-bump version to v5.0.125 via pre-push hook
+
+### Changed
+- Removed legacy Header function from `src/App.tsx` (was ~200 lines of inline markup)
+- Fixed `Footer` import in `App.tsx` - now uses named import correctly
+
+---
 
 ### Added
 - Security hardening: CSP headers, URL sanitization, SafeLink component with open-redirect protection

@@ -1,4 +1,27 @@
-## Session — 2026-08-27 · Breez footer donate (Grok M3)
+## Session — 2026-08-28 · Navbar facelift (Grok M3)
+
+**Done:**
+- **NEW `src/components/Navbar.tsx`** — complete replacement for legacy Header component
+  - Desktop: Brand | Dropdown (Buy Ads) + 5 direct nav links | Utility (currency, search, BTC chart, theme, lang, notifications, profile)
+  - Mobile: Hamburger menu with sectioned drawer (6 Primary + 6 "More Tools") + sticky action bar at bottom
+  - Hover-activated dropdowns with motion animations; 44px minimum touch targets; full keyboard navigation
+  - Replaced ~200-line inline Header function with clean, maintainable component
+  - Removed unused imports (ChevronDown, MoreHorizontal, Zap, Network, etc.)
+- **Fixed `Footer` import** in App.tsx — now uses named import correctly
+- All lint passes, build verified (74 JS chunks)
+
+**Git State:**
+- Branch: main
+- Tip: `aef5b44`
+- Unpushed: none
+- Version: v5.0.125
+
+**Next for Kimi:**
+- Live site after CF Pages deploy shows new navbar
+- Plan additional spaciousness improvements (grid layouts, section dividers) if needed
+
+---
+## Session — 2026-08-28 · 10 quick-wins + safety sweep
 
 **Done:**
 - `src/constants.ts` + footer QR: `tadbuy@breez.tips` / `lightning:tadbuy@breez.tips` + on-chain `bc1p0ch84…jmdy5y` (`2c80b6c`; pre-push bumped to v5.0.87).
