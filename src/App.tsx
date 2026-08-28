@@ -79,7 +79,7 @@ function PageLoader() {
 const CURRENCY_SYMBOLS: Record<string, string> = { USD: '$', CAD: 'C$', EUR: '€', GBP: '£' };
 
 // ── Protected route guard ─────────────────────────────────────────────────────
-function ProtectedRoute({ children }: { children: ReactNode }) {
+function ProtectedRoute({ children, reason }: { children: ReactNode; reason?: string }) {
   const { user, loading } = useAuth();
   const location = useLocation();
 
@@ -100,7 +100,9 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
         <div className="text-center max-w-sm space-y-4">
           <div className="text-4xl">🔐</div>
           <h2 className="text-xl font-extrabold">Sign in required</h2>
-          <p className="text-sm text-muted">You need to be signed in to access this page.</p>
+          <p className="text-sm text-muted">
+            {reason ?? 'You need to be signed in to access this page.'}
+          </p>
           <Link
             to={`/profile?return=${encodeURIComponent(location.pathname + location.search)}`}
             className="inline-block mt-2 px-6 py-2 bg-accent text-black font-bold rounded-xl hover:opacity-90 transition-opacity"
@@ -387,12 +389,12 @@ function RoutedPages({ currency, rates }: { currency: string; rates: Record<stri
         <Route path="/debug-lightning" element={<DebugLightning />} />
 
         {/* Protected */}
-        <Route path="/campaigns"  element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
-        <Route path="/wallet"     element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
-        <Route path="/settings"   element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
-        <Route path="/analytics"  element={<ProtectedRoute><CampaignAnalytics /></ProtectedRoute>} />
-        <Route path="/settlements" element={<ProtectedRoute><Settlements /></ProtectedRoute>} />
-        <Route path="/dashboard"  element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/campaigns"  element={<ProtectedRoute reason="Sign in to manage your active Bitcoin-native ad campaigns."><Campaigns /></ProtectedRoute>} />
+        <Route path="/wallet"     element={<ProtectedRoute reason="Sign in to access your wallet balance, Lightning address, and Fedimint ecash."><Wallet /></ProtectedRoute>} />
+        <Route path="/settings"   element={<ProtectedRoute reason="Sign in to update your profile, language, and currency preferences."><ProfileSettings /></ProtectedRoute>} />
+        <Route path="/analytics"  element={<ProtectedRoute reason="Sign in to view your campaign performance metrics."><CampaignAnalytics /></ProtectedRoute>} />
+        <Route path="/settlements" element={<ProtectedRoute reason="Sign in to view your ad spending settlements and publisher payouts."><Settlements /></ProtectedRoute>} />
+        <Route path="/dashboard"  element={<ProtectedRoute reason="Sign in to see your real-time ad performance dashboard."><Dashboard /></ProtectedRoute>} />
 
         {/* Embeds */}
         <Route path="/embed/metrics/:id" element={<MetricsEmbed />} />
