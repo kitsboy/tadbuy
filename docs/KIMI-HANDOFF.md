@@ -1,3 +1,22 @@
+## Session — 2026-08-29 · Navbar breathing room (Grok M3)
+
+**Done:**
+- Live check: production still served the old 11px / 56px Header (footer v5.0.93) — cramped on desktop and mobile
+- Rebuilt nav as components under `src/components/navbar/`: BrandMark, NavLinkItem, MoreMenu, UtilityCluster, MobileDrawer
+- Desktop (`xl+`): 72px bar, 14px labels, 4 primary links + two-column More menu, 32px gap from brand, utilities no longer clip
+- <1280: hamburger chrome + full-screen drawer with descriptions; drawer footer no longer covers Settlements
+- Deleted unused `Header` in `App.tsx`; currency/rate now passed into Navbar
+- Verified locally at 390 / 768 / 1024 / 1280 / 1440 (Playwright). Marketplace + Settlements navigation works; drawer closes on route change
+
+**Git State:**
+- Branch: main
+- Unpushed: this session (pre-push will bump past v5.0.127)
+
+**Next for Kimi:**
+- Confirm CF Pages actually deploys (live was stuck on v5.0.93 during this check)
+- After deploy, hard-refresh tadbuy.giveabit.io — nav labels should be readable on desktop; hamburger below 1280
+
+---
 ## Session — 2026-08-28 · Navbar facelift (Grok M3)
 
 **Done:**

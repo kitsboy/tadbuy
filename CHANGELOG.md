@@ -2,6 +2,18 @@
 
 All notable changes to Tadbuy are documented here.
 
+## [5.0.128] — 2026-08-29
+
+### Changed
+- Navbar breathing room: split into `BrandMark`, `NavLinkItem`, `MoreMenu`, `UtilityCluster`, and `MobileDrawer`
+- Desktop nav starts at `xl` (1280px) so laptop/tablet widths are no longer crushed into 11px labels
+- Four primary links (Buy Ads, Marketplace, Campaigns, Wallet) plus a two-column More menu with descriptions
+- Header height 72px on desktop / 56px on mobile; 14px labels; 40px utility hit targets
+- Full-screen mobile drawer with scrollable sections (footer no longer covers links)
+- Removed unused legacy `Header` from `App.tsx`; currency picker is wired through Navbar
+
+---
+
 ## [5.0.125] — 2026-08-28
 
 ### Added

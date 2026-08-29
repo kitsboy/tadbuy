@@ -69,7 +69,7 @@ export function NotificationCenter() {
       <button
         onClick={() => setOpen(prev => !prev)}
         aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
-        className="relative flex items-center justify-center p-1.5 rounded-lg hover:bg-surface/50 transition-colors border border-transparent hover:border-border"
+        className="relative flex items-center justify-center min-h-10 min-w-10 rounded-xl hover:bg-surface/50 transition-colors border border-transparent hover:border-border"
       >
         <Bell
           className={`w-4 h-4 transition-colors ${unreadCount > 0 ? 'text-accent' : 'text-muted'}`}
@@ -85,7 +85,7 @@ export function NotificationCenter() {
 
       {/* Dropdown panel */}
       {open && (
-        <div className="absolute right-0 top-8 w-72 bg-card border border-border rounded-[16px] shadow-2xl z-50">
+        <div className="absolute right-0 top-12 w-80 bg-card border border-border rounded-[16px] shadow-2xl z-50">
           {/* Header */}
           <div className="flex items-center justify-between px-4 pt-3.5 pb-2.5 border-b border-border">
             <span className="text-[13px] font-bold text-text">Notifications</span>

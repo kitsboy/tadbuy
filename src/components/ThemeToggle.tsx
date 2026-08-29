@@ -10,7 +10,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       <button
         onClick={toggleTheme}
         aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-        className="p-1.5 rounded-lg text-muted hover:text-text hover:bg-surface transition-colors"
+        className="inline-flex items-center justify-center min-h-10 min-w-10 rounded-xl text-muted hover:text-text hover:bg-surface transition-colors"
       >
         {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
       </button>
@@ -18,7 +18,7 @@ export function ThemeToggle({ className }: { className?: string }) {
         onClick={() => setContrast(contrast === 'normal' ? 'high' : 'normal')}
         aria-label="Toggle high contrast"
         className={cn(
-          'p-1.5 rounded-lg transition-colors',
+          'inline-flex items-center justify-center min-h-10 min-w-10 rounded-xl transition-colors',
           contrast === 'high' ? 'text-accent bg-accent/10' : 'text-muted hover:text-text hover:bg-surface'
         )}
       >

@@ -79,9 +79,9 @@ export function LanguageSwitcher() {
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={`Change language — currently ${meta.name} (${meta.code.toUpperCase()})`}
-        className="flex items-center gap-1 rounded-lg border border-transparent px-2 py-1 text-[10px] font-mono text-muted transition-colors hover:border-white/10 hover:bg-white/[0.03] hover:text-white"
+        className="flex items-center gap-1.5 rounded-xl border border-transparent min-h-10 px-2.5 text-xs font-mono text-muted transition-colors hover:border-white/10 hover:bg-white/[0.03] hover:text-white"
       >
-        <Globe className="h-3 w-3" />
+        <Globe className="h-3.5 w-3.5" />
         <span className="hidden sm:inline" aria-hidden>{FLAGS[meta.code]}</span>
         <span aria-hidden>{SHORT[meta.code]}</span>
         <ChevronDown
@@ -94,7 +94,7 @@ export function LanguageSwitcher() {
         <div
           role="listbox"
           aria-label="Select language"
-          className="absolute right-0 top-9 z-50 min-w-[200px] overflow-hidden rounded-xl border border-white/10 bg-zinc-950/95 p-1 shadow-2xl backdrop-blur-md"
+          className="absolute right-0 top-12 z-50 min-w-[200px] overflow-hidden rounded-xl border border-white/10 bg-zinc-950/95 p-1 shadow-2xl backdrop-blur-md"
         >
           {SUPPORTED_LANGUAGES.map((lang) => {
             const active = current === lang.code;

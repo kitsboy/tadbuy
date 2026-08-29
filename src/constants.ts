@@ -16,3 +16,10 @@ export const LIGHTNING_URI = `lightning:${LIGHTNING_ADDRESS}`;
 export const CONTACT_EMAIL = "hello@giveabit.io";
 export const SUPPORT_EMAIL = "Kimi@giveabit.io";
 export const TWITTER_HANDLE = "@give_bit";
+
+export const CURRENCY_SYMBOLS: Record<string, string> = {
+  USD: '$',
+  CAD: 'C$',
+  EUR: '€',
+  GBP: '£',
+};
