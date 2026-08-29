@@ -262,7 +262,7 @@ Full manifest: [GEO-PAGE-100.md](./GEO-PAGE-100.md)
   const latestPath = path.join(ROOT, 'LATEST-UPDATE.md');
   fs.writeFileSync(latestPath, `# tadbuy — Last Updated ${today} by Grok
 
-Brief: ${PROJECT_STATE.version} — /geo 100 enhancements + docs sync
+Brief: ${PROJECT_STATE.version} — docs sync from projectState
 Commit: ${sha}
 Docs synced: ${today}
 `, 'utf-8');

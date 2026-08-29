@@ -2,6 +2,14 @@
 
 All notable changes to Tadbuy are documented here.
 
+## [5.0.129] — 2026-08-29
+
+### Changed
+- Docs and handoffs synced to v5.0.129 (navbar breathing room on `main`)
+- Service worker cache name `tadbuy-v5.0.129`
+
+---
+
 ## [5.0.128] — 2026-08-29
 
 ### Changed

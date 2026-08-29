@@ -5,7 +5,7 @@
 export const PROJECT_STATE = {
   version: 'v5.0.129',
   phase: 'BETA' as const,
-  lastSynced: '2026-07-07',
+  lastSynced: '2026-08-29',
   liveUrl: 'https://tadbuy.giveabit.io',
   repo: 'https://github.com/kitsboy/tadbuy',
 

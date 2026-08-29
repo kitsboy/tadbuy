@@ -1,3 +1,46 @@
+## Session — 2026-08-29 · Docs sync + goodbye (Grok M3)
+
+**Done:**
+- Synced auto-docs (`npm run sync-docs`) and source docs to **v5.0.129**
+- Updated `SOURCE-OF-TRUTH.md`, `README.md`, `EXEC-SUMMARY.md`, `CHANGELOG.md`, `LATEST-UPDATE.md`
+- Wrote `docs/SESSION-SUMMARY-2026-08-29.md` for /whatsup recovery
+- Navbar breathing room already on `main` (`9a0bba6`); SW cache `tadbuy-v5.0.129` (`2cdbc1c`)
+
+**Decisions:**
+- Desktop nav breakpoint stays **xl (1280px)** — 768px was the squash
+- Clean summaries only for Kimi (no raw chat logs)
+
+**Git State:**
+- Branch: main
+- Feature: `9a0bba6`
+- Tip before this docs commit: `2cdbc1c`
+- Version: v5.0.129
+- Unpushed: this docs/goodbye commit (pre-push will bump)
+
+**Next for Kimi:**
+- Confirm CF Pages deployed v5.0.129+ (live was **v5.0.93** during the session)
+- Hard-refresh https://tadbuy.giveabit.io/ — 14px desktop labels; hamburger below 1280
+- Integrate `docs/SESSION-SUMMARY-2026-08-29.md` into MASTER-BRAIN / Kanban
+- Do not sync anything extra to THOR until you say it is time
+
+---
+
+## Latest Session Summary (from 2026-08-29 goodbye)
+
+**Chat Topic:** Recover context, then give the Tadbuy navbar room to breathe.
+
+**Finished in this session:**
+- Live inspect: old 11px Header, production footer v5.0.93
+- Componentized navbar; verified 390–1440
+- Pushed v5.0.129; docs/handoffs synced
+
+**Still to do:**
+- Confirm CF Pages deploy
+- Fedimint mint (Andrea `t_8ee7c976`) and Umbrel LND (Rosa `t_46208fbe`) remain blocked
+
+**Next for Kimi:** Integrate this summary into MASTER-BRAIN.md / Kanban / Obsidian vault. Educate Hermes. Use giveabit-project-handoff for future projects.
+
+---
 ## Session — 2026-08-29 · Navbar breathing room (Grok M3)
 
 **Done:**
@@ -10,7 +53,9 @@
 
 **Git State:**
 - Branch: main
-- Unpushed: this session (pre-push will bump past v5.0.127)
+- Feature: `9a0bba6`
+- Version: v5.0.129 (SW `2cdbc1c`)
+- Unpushed: none at feature land; docs commit follows
 
 **Next for Kimi:**
 - Confirm CF Pages actually deploys (live was stuck on v5.0.93 during this check)

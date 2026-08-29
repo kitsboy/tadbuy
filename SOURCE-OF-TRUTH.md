@@ -1,6 +1,6 @@
 # SOURCE-OF-TRUTH.md — Tadbuy (Give A Bit Project)
 
-**Last Updated**: 2026-07-13
+**Last Updated**: 2026-08-29
 
 ## Project Overview (Marketing Pitch)
 Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Twitter/X, Facebook, Instagram, YouTube, Reddit, LinkedIn, TikTok, and Nostr. Pay in Bitcoin via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps. Features: campaign builder, **Global Reach geo dashboard** (`/geo`), geospatial targeting, AI creative (Gemini), PPQ.AI, publisher portal, analytics, wallet, settlements, 8 languages, Agent API. Part of Give A Bit (giveabit.io).
@@ -8,9 +8,9 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Tw
 ## GitHub (Code Source of Truth)
 - Repo: https://github.com/kitsboy/tadbuy.git
 - Branch: main (production)
-- Version: **v5.0.85** (BETA — security hardening + i18n complete, all 10 quick-wins deployed 2026-08-27)
+- Version: **v5.0.129** (BETA — navbar breathing room, 2026-08-29)
 - M3 workspace: `~/projects/tadbuy/`
-- Last commit: `f429f8a` (CDN cache fix + goodbye handoff)
+- Last commit: `2cdbc1c` (SW cache `tadbuy-v5.0.129`; navbar feature `9a0bba6`)
 
 ## Deployment Details
 - **Live URL**: https://tadbuy.giveabit.io/
@@ -23,20 +23,20 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Tw
 - **Auth**: SPA still has **legacy Firebase Auth** client (`VITE_FIREBASE_*`) — intent is **Supabase Auth**; migration TODO on M3. Do not treat Firebase Admin as the server stack.
 - **Local dev**: `npm run dev` or `npm start` on **M3 only**
 
-## Recent M3 Work (2026-07-06)
-- [x] Router fix — URL changes now update page content (`unstable_useTransitions={false}`)
-- [x] Header/nav click fixes (More menu backdrop, Search command palette)
-- [x] **/geo page — 100 enhancements** (batch 24): map, 25 markets, insights, export
-- [x] Buy Ads `?geo=CODE` handoff from geo page
-- [x] Batches 15–23 (85 enhancements): health, analytics, marketplace, mobile polish
-- [x] Auto version bump on push (pre-push hook)
+## Recent M3 Work (2026-08-29)
+- [x] Navbar breathing room — `src/components/navbar/*` (BrandMark, NavLinkItem, MoreMenu, UtilityCluster, MobileDrawer)
+- [x] Desktop nav from **1280px** (`xl`): 72px bar, 14px labels, 4 primary links + two-column More
+- [x] Below 1280: hamburger + full-screen drawer (descriptions, scroll, footer does not cover links)
+- [x] Removed unused `Header` from `App.tsx`; currency wired through Navbar
+- [x] Service worker cache name synced to `tadbuy-v5.0.129`
 
 ## Platform Split
 
 | Machine | Role | Do | Don't |
 |---------|------|-----|-------|
-| **M3** | Dev (Grok) | Code, git, docs, CF deploy | Install Fedimint/Umbrel; touch M4 vault |
-| **M4** | Server (Kimi) | REF docs, env vault, API/Fedimint/Umbrel ops | **Never git pull/clone working app tree**; no app development |
+| **M3** | Dev (Grok) | Code, git, docs, CF deploy | Install Fedimint/Umbrel; touch THOR vault |
+| **THOR** | Ops (Kimi) | Docker, LNbits/LND, crons, HQ, vault | App coding (that is M3) |
+| **M4** | Deprecated | Historical API/Fedimint notes only | **Never git pull/clone working app tree** |
 
 ## M4 Setup (Kimi — HERMES)
 
@@ -88,6 +88,7 @@ For automated agents (Grok, Kimi, Qwen):
 
 ## Key Files
 - `src/` — React 19 + Vite + TypeScript
+- `src/components/Navbar.tsx` + `src/components/navbar/` — site chrome
 - `src/pages/GeoTargeting.tsx` — Global Reach page
 - `src/data/geoMarkets.ts` — 25-country geo dataset
 - `server.ts` + `server/routes/` — Express API (batch1–batch24)
@@ -98,10 +99,9 @@ For automated agents (Grok, Kimi, Qwen):
 - [x] Shipped security hardening: CSP headers, URL sanitization, SafeLink component with open-redirect protection
 - [x] Completed i18n: 8 languages fully localized (en/es/fr/de/pt/ja/zh/ar), RTL support for Arabic, LanguageSwitcher with proper accessibility
 - [x] All 10 quick-win improvements deployed and verified (BackToTop, SkipToContent, Toast, OnlineIndicator, PageShell copy-link, EmptyState glass, BlockHeightTicker fallback, PriceTicker 24h chips, OfflineBanner)
+- [x] SafeLink adopted across 20+ pages (v5.0.105)
 - [x] Updated public/_headers with hardened security directives and extended HSTS
 - [x] Rewrote public/robots.txt to block AI scrapers and sensitive paths
-- [x] Verified clean build (`npm run lint` & `npm run build` pass with 0 errors)
-- [x] Auto-bumped version to v5.0.85 via pre-push hook
 
 ## Gaps / Next
 - [x] M4 Phase 1: API proxy live (`api.giveabit.io`)
@@ -109,9 +109,10 @@ For automated agents (Grok, Kimi, Qwen):
 - [x] SPA routing fix
 - [x] Security hardening + i18n complete (v5.0.85)
 - [x] All 10 quick-win improvements shipped
-- [ ] Adopt SafeLink component across all external links in codebase (drop-in for `target="_blank"` anchors)
-- [ ] M4 Phase 2: Fedimint mint — **blocked** (Fedi 0.10 vs Guardian 0.11, Andrea `t_8ee7c976`)
-- [ ] M4 Phase 3: Umbrel LND — **blocked** (node offline 93d, Rosa `t_46208fbe`)
+- [x] Navbar breathing room (v5.0.129)
+- [ ] Confirm CF Pages deploy of v5.0.129 (live was v5.0.93 during 2026-08-29 check)
+- [ ] Fedimint mint — **blocked** (Fedi 0.10 vs Guardian 0.11, Andrea `t_8ee7c976`)
+- [ ] Umbrel LND — **blocked** (node offline, Rosa `t_46208fbe`)
 - [ ] Automated E2E tests (Playwright stub ready)
 - [ ] **Cam priority (soon):** Fedi/Fedimint on all 5 apps + **every future Give A Bit app** — one mint, one invite
 - [ ] Propagate `VITE_FEDIMINT_INVITE` + `VITE_API_BASE_URL` to sibling CF Pages (Andrea `t_ec77b1e5`)

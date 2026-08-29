@@ -1,9 +1,9 @@
 ---
 title: Executive Summary
 project: Tadbuy
-version: v5.0.85
+version: v5.0.129
 audience: investors
-last_updated: 2026-08-27
+last_updated: 2026-08-29
 owner: Give A Bit
 ---
 
@@ -22,8 +22,9 @@ Tadbuy is the world's first Bitcoin-native DSP. Buy ads across 8 platforms. Pay 
 - 8 platforms, 8 languages
 - Sub-second settlement target
 
-## Current Status (BETA v5.0.85)
+## Current Status (BETA v5.0.129)
 - **UI:** Live at https://tadbuy.giveabit.io (Cloudflare Pages)
+- **Navbar:** Componentized (`BrandMark`, `MoreMenu`, `MobileDrawer`). Desktop labels at 1280px+; hamburger drawer below. Pushed 2026-08-29 — confirm CF Pages caught up (live was still v5.0.93 during the session)
 - **Global Reach:** https://tadbuy.giveabit.io/geo — 100 enhancements shipped
 - **SPA routing:** Fixed — nav clicks update content immediately
 - **Security:** Hardened — CSP headers, URL sanitization, open-redirect protection, SafeLink component
