@@ -4,7 +4,11 @@
 **Prepared for:** Gemini Deep Research
 **Date:** 2026-09-01
 **Project Owner:** Cam (Give A Bit / Tadbuy)
-**Current Version:** v5.0.143 (live at https://tadbuy.giveabit.io)
+**Current Version:** v5.0.145 (live at https://tadbuy.giveabit.io)
+
+**Geographic Strategy:** See `docs/GEOGRAPHIC-STRATEGY.md` for Phase 1 launch targets
+**Phase 1 Targets:** US, Japan, Germany, Netherlands, Portugal, Singapore, El Salvador, Argentina
+**TikTok Status:** ❌ AVOID — Chinese ownership, crypto content restrictions
 
 ---
 
