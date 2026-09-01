@@ -194,7 +194,7 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
 // ── Root ──────────────────────────────────────────────────────────────────────
 export default function App() {
   const [currency, setCurrency] = useLocalStorage<string>('tadbuy_currency', 'USD');
-  const [rates, setRates] = useState<Record<string, number>>({ USD: 96420, CAD: 130500, EUR: 88200, GBP: 75600 });
+  const [rates, setRates] = useState<Record<string, number>>({ USD: 77263, CAD: 107318, EUR: 66649, GBP: 57173 });
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
@@ -202,10 +202,27 @@ export default function App() {
     const fetchRates = async () => {
       if (document.hidden) return;
       try {
-        const res = await fetch('https://blockchain.info/ticker');
-        const data = await res.json();
-        if (data?.USD && data?.CAD && data?.EUR && data?.GBP) {
-          setRates({ USD: data.USD.last, CAD: data.CAD.last, EUR: data.EUR.last, GBP: data.GBP.last });
+        // Use Coinbase API for proper BTC/fiat rates
+        const currencies = ['USD', 'CAD', 'EUR', 'GBP'];
+        const newRates: Record<string, number> = {};
+        
+        await Promise.all(
+          currencies.map(async (cur) => {
+            try {
+              const res = await fetch(`https://api.coinbase.com/v2/prices/BTC-${cur}/spot`);
+              const data = await res.json();
+              const rate = data?.data?.amount ? parseFloat(data.data.amount) : null;
+              if (rate && !isNaN(rate)) {
+                newRates[cur] = rate;
+              }
+            } catch {
+              // Individual currency failure is okay
+            }
+          })
+        );
+        
+        if (Object.keys(newRates).length > 0) {
+          setRates(prev => ({ ...prev, ...newRates }));
         }
       } catch {
         // Silently fall back to stale rates

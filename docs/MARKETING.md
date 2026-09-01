@@ -1,6 +1,6 @@
 # Tadbuy — Marketing
 
-**Auto-generated:** 2026-08-29
+**Auto-generated:** 2026-09-01
 
 **Tagline:** Buy ads with Bitcoin. Pay in sats, not surveillance.
 
