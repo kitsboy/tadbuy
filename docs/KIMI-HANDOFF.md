@@ -1,3 +1,23 @@
+## Session — 2026-09-01 · Navbar live verified v5.0.130 (Grok M3)
+
+**Done:**
+- Live verified navbar on https://tadbuy.giveabit.io
+- Tested all major routes: Buy Ads (/), Marketplace (/marketplace), Campaigns (/campaigns), Metrics (/metrics), Wallet (/wallet)
+- All navigation working correctly with new Navbar component
+- Desktop breakpoint at xl (1280px) with spacious 72px header
+- Mobile hamburger drawer functional with full navigation
+- Screenshots captured at multiple breakpoints
+
+**Git State:**
+- Branch: main
+- Tip: `3981b6` (docs update)
+- Version: v5.0.130
+
+**Next for Kimi:**
+- Integrate v5.0.130 navbar updates into MASTER-BRAIN / Kanban
+- Fedimint mint (Andrea `t_8ee7c976`) and Umbrel LND (Rosa `t_46208fbe`) remain blocked
+
+---
 ## Session — 2026-08-29 · Docs sync + goodbye (Grok M3)
 
 **Done:**
