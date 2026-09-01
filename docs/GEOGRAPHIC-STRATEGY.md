@@ -1,5 +1,9 @@
 # 🌍 Geographic Strategy for Tadbuy Social Integrations
 
+**📦 Infrastructure:** `infrastructure/nostr-relay/` — 8 regional Nostr relay configs, Docker Compose, Nginx reverse proxy, health check scripts, and backup utilities. All 8 Tier-1 jurisdictions have production-ready TOML configurations.
+
+---
+
 ## Executive Summary
 
 For **Phase 1 launch** (Telegram + Nostr), we should target **8 Tier-1 jurisdictions** covering ~67% of global Bitcoin users and crypto-native activity. Nostr needs a global, censorship-resistant approach, while Telegram requires regional legal compliance. TikTok should be **avoided initially** due to strict Chinese ownership constraints on financial content.

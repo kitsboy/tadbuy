@@ -1,0 +1,110 @@
+# Japan Relay Configuration
+# Located in Japan (Tier-1 crypto regulation)
+# Focus: BTC adoption, NIP-05 verification
+# Supported languages: Japanese, English
+
+[server]
+    host = "0.0.0.0"
+    port = 8080
+    # Domain: jp.tadbuy.io
+
+[database]
+    path = "/data/japan/nostr.db"
+
+[capacity]
+    max_sessions = 1000
+    max_subscriptions = 2000
+    max_messages_per_session = 100
+
+[spam]
+    max_messages = 100
+    time_window = 300
+    nip_04_rate_limit = 10
+    nip_17_rate_limit = 5
+
+[kinds]
+    publish_allowed = [
+        1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 1984, 1985, 1986, 1999, 2000, 9735
+    ]
+    hide_kinds = [4, 17, 1055]
+
+[validation]
+    nip_01 = true
+    nip_02 = true
+    nip_04 = true
+    nip_05 = true
+    nip_07 = true
+    nip_09 = true
+    nip_10 = true
+    nip_12 = true
+    nip_13 = true
+    nip_15 = true
+    nip_17 = true
+    nip_19 = true
+
+[moderation]
+    whitelist = [
+        "tadbuy", "bitcoin", "lightning", "lnurl", "zap", "nostr",
+        "トゥデイ", "ビットコイン", "ライトニング", "日本",
+    ]
+    blacklist = ["porn", "sex", "gun", "weapon", "illegal", "hack", "scam", "fraud"]
+
+[metadata]
+    name = "Tadbuy Japan Relay"
+    description = "Tadbuy Bitcoin-native advertising platform relay for the Japanese market"
+    author = "Tadbuy"
+    contact = "admin@tadbuy.io"
+    supported_nips = [1, 2, 4, 5, 6, 7, 9, 10, 12, 13, 15, 17, 19]
+    picture_url = "https://tadbuy.io/assets/tadbuy-og-image.png"
+    icon_url = "https://tadbuy.io/favicon.png"
+
+[zaps]
+    lnurl_theme = "standard"
+    invoice_description = "Tadbuy Zap: {event_id}"
+    max_amount = 10000
+    min_amount = 1
+    comment_allowed = true
+    max_comment_length = 100
+
+[recommendations]
+    enabled = true
+    interval = 3600
+    max_recommendations = 50
+    quality_threshold = 0.7
+
+[relay_list_metadata]
+    advertise = true
+    max_suggested = 10
+    include_contact = true
+
+[logging]
+    level = "info"
+    file = "/data/nostr.log"
+    max_file_size = 100
+    max_files = 5
+
+[performance]
+    threads = 4
+    channel_capacity = 10000
+    connection_timeout = 30
+    read_timeout = 300
+    write_timeout = 300
+
+[security]
+    tls_enabled = true
+    tls_cert = "/etc/ssl/certs/tadbuy-jp.pem"
+    tls_key = "/etc/ssl/private/tadbuy-jp.key"
+    key_password = ""
+    allowed_ips = []
+    blocked_ips = [
+        "10.0.0.0/8",
+        "192.168.0.0/16",
+        "172.16.0.0/12",
+    ]
+    ban_threshold = 10
+    ban_duration = 3600
+
+[health_check]
+    path = "/health"
+    interval = 60
+    uptime_threshold = 30

@@ -1,0 +1,201 @@
+# US Wyoming Relay Configuration
+# Located in Wyoming (crypto-friendly state)
+# Focus: Bitcoin users, general audience
+# Supported languages: English
+
+# Server metadata
+[server]
+    host = "0.0.0.0"
+    port = 8080
+    # Domain: us.tadbuy.io
+
+# Database configuration
+[database]
+    path = "/data/us-wyoming/nostr.db"
+    # SQLite file for local storage
+
+# Capacity limits
+[capacity]
+    max_sessions = 1000
+    max_subscriptions = 2000
+    max_messages_per_session = 100
+
+# Spam protection
+[spam]
+    max_messages = 100
+    time_window = 300  # 5 minutes in seconds
+    nip_04_rate_limit = 10
+    nip_17_rate_limit = 5
+
+# Message kind restrictions
+[kinds]
+    # Publish allowed kinds
+    publish_allowed = [
+        1,     # Text note
+        2,     # Recommend server
+        4,     # Direct message
+        5,     # Relay list
+        6,     # Generic repost
+        7,     # Community post
+        8,     # Community closed
+        9,     # Community metadata
+        10,    # Report
+        11,    # Badge award
+        13,    # Zap request
+        14,    # Zap
+        15,    # Anonymous zap request
+        16,    # Anonymous zap
+        1984,  # Announcement
+        1985,  # Git patch
+        1986,  # Git commit
+        1999,  # Label
+        2000,  # Reaction
+        9735,  # Community invitation
+    ]
+    # Kinds to hide
+    hide_kinds = [
+        4,     # Direct message (private)
+        17,    # Private direct message
+        1055,  # Community message
+    ]
+
+# Event validation
+[validation]
+    # NIP standards compliance
+    nip_01 = true
+    nip_02 = true
+    nip_04 = true
+    nip_05 = true
+    nip_07 = true
+    nip_09 = true
+    nip_10 = true
+    nip_12 = true
+    nip_13 = true
+    nip_15 = true
+    nip_17 = true
+    nip_19 = true
+
+# Content moderation
+[moderation]
+    # Allowed words (whitelist)
+    whitelist = [
+        "tadbuy",
+        "bitcoin",
+        "lightning",
+        "lnurl",
+        "zap",
+        "nostr",
+        "nostr-relay",
+        "giveabit",
+    ]
+    # Blocked words (blacklist)
+    blacklist = [
+        "porn",
+        "sex",
+        "gun",
+        "weapon",
+        "illegal",
+        "hack",
+        "scam",
+        "fraud",
+    ]
+
+# Metadata
+[metadata]
+    name = "Tadbuy US Relay"
+    description = "Tadbuy Bitcoin-native advertising platform relay for the US market"
+    author = "Tadbuy"
+    contact = "admin@tadbuy.io"
+    supported_nips = [1, 2, 4, 5, 6, 7, 9, 10, 12, 13, 15, 17, 19]
+    picture_url = "https://tadbuy.io/assets/tadbuy-og-image.png"
+    icon_url = "https://tadbuy.io/favicon.png"
+
+# NIP-57 (Zaps) configuration
+[zaps]
+    # LNURL theme
+    lnurl_theme = "standard"
+    # Invoice description template
+    invoice_description = "Tadbuy Zap: {event_id}"
+    # Max amount (sats)
+    max_amount = 10000
+    # Min amount (sats)
+    min_amount = 1
+    # Comment allowed
+    comment_allowed = true
+    # Custom message length
+    max_comment_length = 100
+
+# NIP-42 (Recommendations) configuration
+[recommendations]
+    # Enable recommendations
+    enabled = true
+    # Recommendation interval (seconds)
+    interval = 3600
+    # Max recommendations per client
+    max_recommendations = 50
+    # Quality threshold (higher = better quality)
+    quality_threshold = 0.7
+
+# NIP-65 (Relay list metadata) configuration
+[relay_list_metadata]
+    # Advertise our relay
+    advertise = true
+    # Suggested relay count
+    max_suggested = 10
+    # Include contact info
+    include_contact = true
+
+# Logging configuration
+[logging]
+    level = "info"
+    # Log file path
+    file = "/data/nostr.log"
+    # Maximum log file size (MB)
+    max_file_size = 100
+    # Number of rotated log files
+    max_files = 5
+
+# Performance configuration
+[performance]
+    # Number of threads
+    threads = 4
+    # Channel capacity
+    channel_capacity = 10000
+    # Connection timeout (seconds)
+    connection_timeout = 30
+    # Read timeout (seconds)
+    read_timeout = 300
+    # Write timeout (seconds)
+    write_timeout = 300
+
+# Security configuration
+[security]
+    # TLS/SSL
+    tls_enabled = true
+    # TLS certificate path
+    tls_cert = "/etc/ssl/certs/tadbuy-us.pem"
+    # TLS key path
+    tls_key = "/etc/ssl/private/tadbuy-us.key"
+    # Password for private key
+    key_password = ""
+    # Allowed IP addresses (empty = all)
+    allowed_ips = []
+    # Blocked IP addresses
+    blocked_ips = [
+        "10.0.0.0/8",
+        "192.168.0.0/16",
+        "172.16.0.0/12",
+    ]
+    # Ban threshold for spam
+    ban_threshold = 10
+    # Ban duration (seconds)
+    ban_duration = 3600
+
+# Health check endpoint
+[health_check]
+    # Endpoint path
+    path = "/health"
+    # Health check interval (seconds)
+    interval = 60
+    # Expected uptime (seconds)
+    uptime_threshold = 30

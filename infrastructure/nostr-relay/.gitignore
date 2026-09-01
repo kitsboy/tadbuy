@@ -1,0 +1,35 @@
+# Data directories (local only)
+data/
+certs/
+backups/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+
+# Logs
+*.log
+logs/
+
+# Docker volumes
+volumes/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Backup files
+*.bak
+*.backup
