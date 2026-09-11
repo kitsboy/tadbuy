@@ -1,5 +1,3 @@
-# tadbuy — Last Updated 2026-09-01 by Grok
-
-Brief: v5.0.137 — docs sync from projectState
-Commit: sync
-Docs synced: 2026-09-01
+# tadbuy — Last Updated 2026-09-11 by Grok
+Brief: Satohash stamp widget above the fold on Buy Ads
+Commit: b36a3e8

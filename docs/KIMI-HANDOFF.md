@@ -1,3 +1,23 @@
+## Session — 2026-09-11 · Satohash stamp above the fold (Grok M3)
+
+**Done:**
+- Lifted `SatohashStampWidget` onto Buy Ads home (`/`) immediately after `<HeroBanner />`, before `StatsBar`
+- Added `id="satohash-stamp"` wrapper so footer can deep-link
+- Removed the full widget from Footer (one widget only); left a one-line link “Stamp a file on Bitcoin →”
+- Kept copy, `data-client=tadbuy`, `data-theme=jewel`, existing stamp.js loader
+
+**Decisions:**
+- Do not duplicate the widget in footer
+- Do not commit leftover `public/sw.js`
+
+**Git State:**
+- SHA: `b36a3e8`
+- Unpushed: `feat: show Satohash stamp widget above the fold on Buy Ads`
+
+**Next for Kimi:**
+- Confirm CF Pages deploy of widget above the fold on https://tadbuy.giveabit.io/
+
+---
 ## Session — 2026-09-01 · Navbar live verified v5.0.130 (Grok M3)
 
 **Done:**
