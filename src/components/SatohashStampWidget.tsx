@@ -30,7 +30,7 @@ export function SatohashStampWidget() {
   }, []);
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+    <div id="satohash-stamp" className="rounded-xl border border-white/10 bg-white/[0.03] p-4 scroll-mt-24">
       <p className="text-xs text-zinc-400 mb-3 leading-snug">
         Bitcoin proof of existence — file stays on your device
       </p>

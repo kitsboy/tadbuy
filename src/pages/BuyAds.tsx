@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, ChangeEvent } from "react";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { HeroBanner } from "@/components/HeroBanner";
+import { SatohashStampWidget } from "@/components/SatohashStampWidget";
 import { TrustBadges } from "@/components/TrustBadges";
 import { StatsBar } from "@/components/StatsBar";
 import { PlatformMarquee } from "@/components/PlatformMarquee";
@@ -859,6 +860,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
       {paymentStatus !== 'success' && (
         <>
           <HeroBanner />
+          <SatohashStampWidget />
           <StatsBar />
           <TrustBadges />
           <PlatformMarquee />

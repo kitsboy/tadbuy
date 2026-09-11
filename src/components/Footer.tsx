@@ -22,7 +22,6 @@ import { Button } from './ui';
 import { BITCOIN_ADDRESS, LIGHTNING_ADDRESS, LIGHTNING_URI, APP_VERSION, TWITTER_HANDLE, SUPPORT_EMAIL } from '@/constants';
 import { BlockHeightTicker } from '@/components/widgets/BlockHeightTicker';
 import { SafeLink } from '@/components/SafeLink';
-import { SatohashStampWidget } from '@/components/SatohashStampWidget';
 
 const JOBS = [
   { title: "Senior DevOps Engineer", desc: "Scale our containerized infrastructure on Cloud Run.", tag: "Remote" },
@@ -231,7 +230,12 @@ export default function Footer() {
             </div>
 
             <div className="mt-6">
-              <SatohashStampWidget />
+              <Link
+                to="/#satohash-stamp"
+                className="text-xs text-zinc-400 hover:text-accent transition-colors"
+              >
+                Stamp a file on Bitcoin →
+              </Link>
             </div>
           </div>
 
