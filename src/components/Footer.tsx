@@ -22,6 +22,7 @@ import { Button } from './ui';
 import { BITCOIN_ADDRESS, LIGHTNING_ADDRESS, LIGHTNING_URI, APP_VERSION, TWITTER_HANDLE, SUPPORT_EMAIL } from '@/constants';
 import { BlockHeightTicker } from '@/components/widgets/BlockHeightTicker';
 import { SafeLink } from '@/components/SafeLink';
+import { SatohashStampWidget } from '@/components/SatohashStampWidget';
 
 const JOBS = [
   { title: "Senior DevOps Engineer", desc: "Scale our containerized infrastructure on Cloud Run.", tag: "Remote" },
@@ -227,6 +228,10 @@ export default function Footer() {
                   Thanks — we'll send the next product update from <span className="text-accent">@giveabit</span>.
                 </p>
               )}
+            </div>
+
+            <div className="mt-6">
+              <SatohashStampWidget />
             </div>
           </div>
 

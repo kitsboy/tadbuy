@@ -22,7 +22,7 @@ export interface CspDirectives {
 
 export const DEFAULT_CSP: CspDirectives = {
   defaultSrc: ["'self'"],
-  scriptSrc: ["'self'", "'unsafe-inline'", 'https://mempool.space', 'https://analytics.giveabit.io'],
+  scriptSrc: ["'self'", "'unsafe-inline'", 'https://mempool.space', 'https://analytics.giveabit.io', 'https://satohash.io'],
   styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
   imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
   connectSrc: [

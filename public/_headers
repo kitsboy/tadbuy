@@ -27,7 +27,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(self), interest-cohort=(), payment=()
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://mempool.space https://analytics.giveabit.io; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://mempool.space https://api.giveabit.io https://*.supabase.co https://api.satohash.io https://*.nostr.build wss://relay.damus.io wss://nos.lol https://analytics.giveabit.io; frame-src 'self'; manifest-src 'self'; report-uri https://tadbuy.giveabit.io/api/csp-report
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://mempool.space https://analytics.giveabit.io https://satohash.io; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://mempool.space https://api.giveabit.io https://*.supabase.co https://api.satohash.io https://*.nostr.build wss://relay.damus.io wss://nos.lol https://analytics.giveabit.io; frame-src 'self'; manifest-src 'self'; report-uri https://tadbuy.giveabit.io/api/csp-report
 
 # giveabit.io — Cloudflare Pages _headers
 /assets/*.css
