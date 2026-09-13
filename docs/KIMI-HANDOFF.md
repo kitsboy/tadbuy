@@ -1,3 +1,22 @@
+## Plan note (top) — 2026-09-13 · Backend scope recorded (Ziggy, kanban t_90e1c3d1)
+
+**Read `docs/BACKEND-SCOPE.md` before proposing to "just deploy the backend".** Plan only — nothing
+was deployed, provisioned, or changed in production by this card.
+
+- The real API is a **split**, not a vhost: `server.ts` is the whole SPA server (25 `batch*.ts`
+  modules, 213 registrations, serves `dist/` + `app.get('*')`), so hosting it means hosting the site
+  off Cloudflare Pages.
+- Measured today: 44 real `/api/*` call sites are implemented, 1 is not (`/api/ai/optimize`), **156 of
+  210 server routes have no client at all**, and the live host answers every `/api/*` with an honest
+  JSON 404 (`700abed`). Keep-list = 11 endpoints; the rest is static JSON, a public source, or dead.
+- Blocking gates, all unmet: **G1 does Tadbuy transact at all (Cam)**, **G2 a funded Lightning node
+  (Cam)**, **G3 service-role key custody (Lenny + Cam)**, **G8 one grey-cloud DNS record (Cam)** —
+  plus the split, the ops path and the ledger (§6 of the doc).
+- `SOURCE-OF-TRUTH.md` is now correct on this topic (lines 21/107 mark the M4-tunnel `api.giveabit.io`
+  proxy RETIRED); older checkouts still call it live.
+
+---
+
 ## Session — 2026-09-13 · Playwright cold-start flake fixed (Grok M3)
 
 **Done:**
