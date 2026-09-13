@@ -75,6 +75,7 @@ export default function Footer() {
   const [copied, setCopied] = useState(false);
   const [emailFocused, setEmailFocused] = useState(false);
   const [emailValue, setEmailValue] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [emailSent, setEmailSent] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
 
@@ -97,7 +98,18 @@ export default function Footer() {
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!emailValue.includes('@')) return;
+    const value = emailValue.trim();
+    // This used to `return` on a missing '@' — an invalid submit vanished with no message and
+    // the lead was lost. Report it inline, tied to the field, and announce it.
+    if (!value) {
+      setEmailError('Enter your email address to subscribe.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)) {
+      setEmailError('That email address does not look right — check for a typo.');
+      return;
+    }
+    setEmailError('');
     setEmailSent(true);
     setEmailValue('');
     setTimeout(() => setEmailSent(false), 4000);
@@ -203,13 +215,16 @@ export default function Footer() {
                   <p className="text-xs text-muted mb-3 leading-relaxed">
                     Quarterly product updates. No spam, unsubscribe any time.
                   </p>
-                  <form onSubmit={handleEmailSubmit} className="flex gap-2">
+                  <form onSubmit={handleEmailSubmit} className="flex gap-2" noValidate>
                     <input
                       type="email"
                       required
+                      aria-required="true"
+                      aria-invalid={emailError ? 'true' : undefined}
+                      aria-describedby="tadbuy-newsletter-error"
                       placeholder="you@bitcoin.com"
                       value={emailValue}
-                      onChange={(e) => setEmailValue(e.target.value)}
+                      onChange={(e) => { setEmailValue(e.target.value); if (emailError) setEmailError(''); }}
                       onFocus={() => setEmailFocused(true)}
                       onBlur={() => setEmailFocused(false)}
                       className="flex-1 min-w-0 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-xs text-white placeholder-zinc-500 outline-none transition-colors focus:border-accent/50"
@@ -221,6 +236,14 @@ export default function Footer() {
                       Join
                     </button>
                   </form>
+                  <p
+                    id="tadbuy-newsletter-error"
+                    role="alert"
+                    aria-live="polite"
+                    className={emailError ? 'mt-2 text-[11px] text-red-400' : 'sr-only'}
+                  >
+                    {emailError}
+                  </p>
                 </>
               ) : (
                 <p className="text-xs text-zinc-300 leading-relaxed">
