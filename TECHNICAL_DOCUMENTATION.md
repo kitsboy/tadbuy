@@ -11,7 +11,7 @@ Tadbuy is a Bitcoin-native demand-side platform (DSP). Advertisers launch cross-
 - **Database:** Supabase (server-side via `supabaseAdmin.ts`); Firebase Auth (client SDK only)
 - **Payments:** Lightning (Umbrel LND), Fedimint ecash, BOLT12, on-chain, Nostr Zap
 - **AI/ML:** Gemini API, PPQ.AI (edge-based federated learning)
-- **Infrastructure:** Cloudflare Pages (static SPA) + M4 API proxy at `api.giveabit.io`
+- **Infrastructure:** Cloudflare Pages (static SPA). **No API proxy** — `api.giveabit.io` was retired 2026-09-13 (HTTP 530 / Cloudflare 1033); the Express backend in this repo has no deployed host.
 
 ## Core Architecture
 - **Repository Pattern:** Decouples business logic from database implementation for swappability.
@@ -25,7 +25,7 @@ Tadbuy is a Bitcoin-native demand-side platform (DSP). Advertisers launch cross-
 | Global Reach `/geo` | ✅ Live (batch 24 — 100 enhancements) |
 | Marketplace auctions | ✅ Live UI |
 | Publisher portal | ✅ Live UI |
-| API proxy (M4) | ✅ Live at api.giveabit.io |
+| API proxy (M4) | ❌ Retired 2026-09-13 — `api.giveabit.io` answers HTTP 530 / Cloudflare 1033; no deployed host |
 | Fedimint payments | ⏳ Staged — Fedi 0.10 blocker |
 | Umbrel Lightning | ⏳ Staged — node offline |
 | Real payments | 🔶 Demo mode |

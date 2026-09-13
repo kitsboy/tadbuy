@@ -28,7 +28,6 @@ export const DEFAULT_CSP: CspDirectives = {
   connectSrc: [
     "'self'",
     'https://mempool.space',
-    'https://api.giveabit.io',
     'https://*.supabase.co',
     'https://api.satohash.io',
     'https://*.nostr.build',

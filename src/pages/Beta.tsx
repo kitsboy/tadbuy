@@ -58,7 +58,7 @@ export default function Beta() {
           <div className="flex justify-between"><span className="text-muted">Gateway (M4)</span><span className="font-mono text-xs">{federation.stagedGateway}</span></div>
           <p className="text-xs text-muted leading-relaxed pt-2">
             One mint for all Give A Bit projects: Tadbuy, Satohash, Give A Bit, MotoPass, OpenStrata.
-            Federation runs on <strong>M4 HERMES</strong> — not M3.
+            Federation is staged to run on <strong>M4 HERMES</strong> — not M3.
           </p>
           <SafeLink href={infrastructure.fedi.url} target="_blank" showIcon className="inline-flex items-center gap-1 text-xs text-accent font-bold hover:underline">
             Get Fedi wallet <ExternalLink className="w-3 h-3" />
