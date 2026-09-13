@@ -235,15 +235,15 @@ export default function Footer() {
                     >
                       Join
                     </button>
+                    <p
+                      id="tadbuy-newsletter-error"
+                      role="alert"
+                      aria-live="polite"
+                      className={emailError ? 'mt-2 text-[11px] text-red-400' : 'sr-only'}
+                    >
+                      {emailError}
+                    </p>
                   </form>
-                  <p
-                    id="tadbuy-newsletter-error"
-                    role="alert"
-                    aria-live="polite"
-                    className={emailError ? 'mt-2 text-[11px] text-red-400' : 'sr-only'}
-                  >
-                    {emailError}
-                  </p>
                 </>
               ) : (
                 <p className="text-xs text-zinc-300 leading-relaxed">
