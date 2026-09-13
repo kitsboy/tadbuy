@@ -1,6 +1,6 @@
 # Tadbuy — Global Reach (/geo)
 
-**Auto-generated:** 2026-09-13 · **Version:** v5.0.167
+**Auto-generated:** 2026-09-13 · **Version:** v5.0.174
 
 ## Overview
 Interactive geo-targeting dashboard at [https://tadbuy.giveabit.io/geo](https://tadbuy.giveabit.io/geo).
