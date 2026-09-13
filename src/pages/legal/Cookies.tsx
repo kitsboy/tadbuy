@@ -118,7 +118,7 @@ export default function Cookies() {
                 name: 'Firebase Auth session',
                 type: 'Sign-in / browser storage',
                 purpose:
-                  'Firebase Authentication — keeps you signed in. Stored in your browser's own storage, not in a cookie.',
+                  'Firebase Authentication — keeps you signed in. Stored in your browser’s own storage, not in a cookie.',
                 duration: 'Until you sign out or clear browsing data',
               },
             ]}
