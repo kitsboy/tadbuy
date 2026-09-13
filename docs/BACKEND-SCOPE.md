@@ -159,11 +159,10 @@ docker exec lnd lncli getinfo | grep -E 'num_active_channels|num_peers'   # 0 / 
   third-party trust decision (G3) and the cost, but `supabaseAdmin.ts` (the Supabase client) would need
   rewriting — schedule that, don't discover it.
 - **Nobody watches it yet.** The edge `giveabit-uptime-guard` Worker covers 8 sites + the Satohash API
-  every 15 min (verified live — `tadbuy` is one); it can take the API host, but it is liveness only. No
-  error-rate alerting, no DB-size/disk watch, no backup verification.
-- **If nobody watches:** the failure is silence, not downtime. An invoice settles and the campaign
-  never activates; the DB pauses; a disk fills — while the static site stays green. Worse than an
-  outage, because nobody looks.
+  every 15 min (verified live — `tadbuy` is one); it can take the API host, but it is liveness only — no
+  error-rate alerting, no DB-size/disk watch, no backup verification. **The failure mode is silence, not
+  downtime:** an invoice settles and the campaign never activates, or the DB pauses, while the static
+  site stays green. Worse than an outage, because nobody looks.
 
 **Board summary:** nothing was deployed or changed in production by this card. Blockers needing Cam:
 **G1** (does Tadbuy transact?), **G2** (fund a Lightning node), **G3** (service-role key custody, with
