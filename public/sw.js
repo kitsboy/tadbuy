@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tadbuy-v5.0.155';
+const CACHE_NAME = 'tadbuy-v5.0.171';
 const PRECACHE = ['/', '/favicon.png', '/favicon.svg', '/manifest.json', '/og-image.svg'];
 
 function expectedContentType(pathname) {
