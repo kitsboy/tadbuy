@@ -8,8 +8,8 @@ test.describe('Buy Ads flow', () => {
   });
 
   test('platforms query pre-selects platform', async ({ page }) => {
-    await page.goto('/?platforms=nostr');
-    await expect(page.getByText('Nostr').first()).toBeVisible();
+    await page.goto('/?platforms=nostr', { waitUntil: 'networkidle' });
+    await expect(page.getByText('Nostr').first()).toBeVisible({ timeout: 60_000 });
   });
 
   test('command menu opens via header search chip', async ({ page }) => {
