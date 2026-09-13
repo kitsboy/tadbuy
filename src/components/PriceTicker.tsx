@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react';
-import { TrendingUp, TrendingDown, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface PriceTickerProps {
-  rates: Record<string, number>; // { USD: 96420, CAD: 130500, EUR: 88200, GBP: 75600 }
+  rates: Record<string, number>; // live BTC/fiat spot from mempool.space, via App
 }
-
-type Change24h = { pct: number; dir: 'up' | 'down' | 'flat' };
 
 const CURRENCY_META: Record<string, { flag: string; symbol: string }> = {
   USD: { flag: '🇺🇸', symbol: '$' },
@@ -17,64 +14,34 @@ const CURRENCY_META: Record<string, { flag: string; symbol: string }> = {
 };
 
 export function PriceTicker({ rates }: PriceTickerProps) {
-  const [priceData, setPriceData] = useState<Record<string, number> | null>(null);
   const [fee, setFee] = useState<number | null>(null);
-  const [changes, setChanges] = useState<Record<string, Change24h>>({});
 
   useEffect(() => {
-    const fetchPrices = async () => {
-      try {
-        const response = await fetch('https://mempool.space/api/v1/price/', { cache: 'no-store' });
-        if (response.ok) {
-          const mempoolPrices = await response.json();
-          setPriceData({
-            USD: mempoolPrices.USD,
-            EUR: mempoolPrices.EUR,
-            GBP: mempoolPrices.GBP,
-            CAD: mempoolPrices.CAD,
-            JPY: mempoolPrices.JPY,
-          });
-          // Derive 24h change from the API if available, else simulate.
-          const next: Record<string, Change24h> = {};
-          for (const c of Object.keys(CURRENCY_META)) {
-            const changeKey = `${c}_24H_CHANGE` as keyof typeof mempoolPrices;
-            const raw = mempoolPrices[changeKey] as number | undefined;
-            const pct = typeof raw === 'number' ? raw : (Math.random() - 0.5) * 6;
-            next[c] = { pct, dir: pct > 0 ? 'up' : pct < 0 ? 'down' : 'flat' };
-          }
-          setChanges(next);
-        }
-      } catch (e) {
-        console.error('Failed to fetch BTC prices:', e);
-      }
-
+    const fetchFees = async () => {
       try {
         const feesResponse = await fetch('https://mempool.space/api/v1/fees/recommended', { cache: 'no-store' });
         if (feesResponse.ok) {
           const feesData = await feesResponse.json();
           setFee(feesData.fastestFee);
         }
-      } catch (e) {
-        console.error('Failed to fetch fee data:', e);
+      } catch {
+        // Fees are optional chrome — omit the chip rather than invent a number.
       }
     };
 
-    fetchPrices();
-    const interval = setInterval(fetchPrices, 30_000);
+    fetchFees();
+    const interval = setInterval(fetchFees, 30_000);
     return () => clearInterval(interval);
   }, []);
 
-  const displayRates = priceData || rates;
-
   const items = [
     ...Object.entries(CURRENCY_META).map(([code, meta]) => {
-      const v = displayRates[code as keyof typeof displayRates];
-      const ch = changes[code];
+      const v = rates[code];
       return {
         label: `BTC/${code}`,
-        value: v ? `${meta.symbol}${Math.round(v).toLocaleString()}` : '—',
+        value: v && v > 0 ? `${meta.symbol}${Math.round(v).toLocaleString()}` : '—',
         flag: meta.flag,
-        change: ch,
+        title: 'BTC spot from mempool.space (live)',
       };
     }),
     ...(fee !== null
@@ -83,7 +50,7 @@ export function PriceTicker({ rates }: PriceTickerProps) {
             label: 'Fee',
             value: `${fee} sat/vB`,
             flag: '⚡',
-            change: undefined as Change24h | undefined,
+            title: 'Fastest mempool fee from mempool.space (live)',
           },
         ]
       : []),
@@ -107,8 +74,6 @@ export function PriceTicker({ rates }: PriceTickerProps) {
       >
         <div className="ticker-track flex items-center whitespace-nowrap">
           {allItems.map((item, i) => {
-            const isUp = item.change?.dir === 'up';
-            const isDown = item.change?.dir === 'down';
             return (
               <span
                 key={`${item.label}-${i}`}
@@ -116,7 +81,7 @@ export function PriceTicker({ rates }: PriceTickerProps) {
                   'group inline-flex items-center gap-2 px-4 text-[11px] font-mono font-semibold cursor-default select-none',
                   'text-zinc-300 hover:text-white transition-colors'
                 )}
-                title={`${item.label} price`}
+                title={item.title}
               >
                 <span aria-hidden className="text-sm leading-none">
                   {item.flag}
@@ -124,20 +89,6 @@ export function PriceTicker({ rates }: PriceTickerProps) {
                 <span className="text-zinc-500">₿</span>
                 <span className="text-text">{item.label}:</span>
                 <span className="font-bold text-white tabular-nums">{item.value}</span>
-                {item.change && (
-                  <span
-                    className={cn(
-                      'inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-bold',
-                      isUp && 'bg-green/10 text-green',
-                      isDown && 'bg-red/10 text-red',
-                      !isUp && !isDown && 'bg-zinc-800 text-zinc-400'
-                    )}
-                  >
-                    {isUp ? <TrendingUp className="h-2.5 w-2.5" /> : isDown ? <TrendingDown className="h-2.5 w-2.5" /> : <Activity className="h-2.5 w-2.5" />}
-                    {isUp ? '+' : ''}
-                    {item.change.pct.toFixed(2)}%
-                  </span>
-                )}
                 {item.label === 'Fee' && (
                   <span className="text-[10px] text-amber-300">priority</span>
                 )}

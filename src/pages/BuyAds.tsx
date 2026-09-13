@@ -113,10 +113,14 @@ const paymentMethods = checkoutPaymentDefs.map(pm => ({
   bg: pm.bg,
 }));
 
-export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }: { currency?: string, rate?: number, symbol?: string }) {
+export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { currency?: string, rate?: number, symbol?: string }) {
   usePageMeta('Buy Ads', 'Launch Bitcoin-native ad campaigns across 8 platforms. Pay in sats via Lightning, BOLT12, on-chain, or Nostr Zaps.');
 
   const { user } = useAuth();
+  // rate === 0 means "no live BTC/fiat rate yet" — the caller only passes a real
+  // number once mempool.space has answered. Never substitute a hardcoded price:
+  // the whole budget panel is a conversion from sats, so a stale rate is a lie.
+  const hasLiveRate = rate > 0;
   const [searchParams, setSearchParams] = useSearchParams();
   const { draft, clearDraft } = useCampaignDraft();
 
@@ -385,7 +389,7 @@ export default function BuyAds({ currency = 'USD', rate = 96420, symbol = '$' }:
 
   const handleFiatChange = (val: number) => {
     setFiatAmount(val);
-    setBtcAmount(val / rate);
+    setBtcAmount(hasLiveRate ? val / rate : 0);
   };
 
   const handleBtcChange = (val: number) => {
@@ -1086,10 +1090,11 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                   ].map(preset => (
                     <button
                       key={preset.label}
+                      disabled={!hasLiveRate}
                       onClick={() => handleBtcChange(preset.btc)}
-                      className="bg-surface border border-border text-muted rounded-full px-3.5 py-1.5 text-xs font-bold transition-all hover:border-accent hover:text-accent"
+                      className="bg-surface border border-border text-muted rounded-full px-3.5 py-1.5 text-xs font-bold transition-all hover:border-accent hover:text-accent disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {preset.label} (~{preset.btc.toFixed(4)} BTC)
+                      {preset.label}{hasLiveRate ? ` (~${preset.btc.toFixed(4)} BTC)` : ' (rate loading…)'}
                     </button>
                   ))}
                 </div>

@@ -40,7 +40,7 @@ export async function fetchLbtcUsdtwap(windowSeconds: number = 3600): Promise<Tw
   const sources: Array<{ name: TwapDataPoint['source']; url: string; parser: (json: any) => number }> = [
     {
       name: 'mempool',
-      url: 'https://mempool.space/api/v1/price',
+      url: 'https://mempool.space/api/v1/prices',
       parser: (j) => j.USD || 0,
     },
     {

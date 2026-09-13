@@ -99,7 +99,7 @@ export function MobileDrawer({
                     <option value="GBP">GBP</option>
                   </select>
                   <span>
-                    {CURRENCY_SYMBOLS[currency] ?? '$'}{Math.round(rate).toLocaleString()}
+                    {rate > 0 ? `${CURRENCY_SYMBOLS[currency] ?? '$'}${Math.round(rate).toLocaleString()}` : '—'}
                   </span>
                 </label>
                 <div className="flex items-center gap-1">
