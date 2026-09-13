@@ -55,10 +55,16 @@ export const GIVEABIT_ECOSYSTEM = {
   },
 
   api: {
-    status: 'live' as const,
-    baseUrl: 'https://api.giveabit.io',
+    /**
+     * There is no deployed API origin for this app. `api.giveabit.io` was a
+     * Cloudflare Tunnel to the M4 laptop; the tunnel no longer exists (0
+     * tunnels on the account) so every path returns HTTP 530 / CF error 1033.
+     * Do not hardcode it again — wire a real origin through VITE_API_BASE_URL.
+     */
+    status: 'none' as const,
+    baseUrl: '',
     baseUrlEnvVar: 'VITE_API_BASE_URL',
-    cloudflareNote: 'Cloudflare Pages serves static SPA — /api/* proxied to M4 via api.giveabit.io.',
+    cloudflareNote: 'Cloudflare Pages serves this static SPA. /api/* calls stay same-origin unless VITE_API_BASE_URL is set at build time.',
   },
 } as const;
 

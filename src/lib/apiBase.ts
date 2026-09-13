@@ -1,52 +1,36 @@
 /**
  * API base URL resolver.
- * Cloudflare Pages = static only. APIs run on M3 dev server or future M4 proxy.
+ *
+ * Cloudflare Pages serves this app as a static SPA, so there is no API host
+ * baked into the build. Set `VITE_API_BASE_URL` at build time to point the
+ * `/api/*` calls at a real origin; when it is unset the calls stay same-origin
+ * (Cloudflare Pages Functions, e.g. `/api/csp-report`).
+ *
+ * History: this file used to hardcode `https://api.giveabit.io` as a "staged"
+ * base. That hostname is a Cloudflare Tunnel to the M4 laptop that no longer
+ * exists (0 tunnels on the account → every path = HTTP 530 / CF error 1033),
+ * so every page that probed it produced CORS + net::ERR_FAILED console errors.
+ * Removed 2026-09-13 rather than re-pointed: a production origin must not
+ * depend on a laptop being awake, and a hardcoded host is not how the API is
+ * meant to be wired (see GIVEABIT_ECOSYSTEM.api).
  */
-const STAGED_API = 'https://api.giveabit.io';
 
 export function getApiBase(): string {
   const env = import.meta.env.VITE_API_BASE_URL;
-  if (env) return env.replace(/\/$/, '');
-  if (import.meta.env.DEV) return '';
-  // Production static host — try staged M4 proxy, fall back to same-origin (will 404 on CF Pages)
-  return STAGED_API;
+  if (env && env.trim()) return env.trim().replace(/\/+$/, '');
+  return '';
 }
 
 export async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
   const base = getApiBase();
   const url = path.startsWith('http') ? path : `${base}${path}`;
   try {
-    const res = await fetch(url, init);
-    return res;
+    return await fetch(url, init);
   } catch {
-    // Fallback to same-origin if M4 proxy unreachable
-    if (base !== '') {
+    // Fallback to same-origin when a configured API base is unreachable
+    if (base !== '' && !path.startsWith('http')) {
       return fetch(path, init);
     }
     throw new Error('API unreachable');
   }
-}
-
-export async function checkApiHealth(): Promise<{
-  ok: boolean;
-  source: 'm4-proxy' | 'local' | 'unavailable';
-  message: string;
-}> {
-  for (const base of [getApiBase(), '']) {
-    if (base === STAGED_API && !import.meta.env.VITE_API_BASE_URL) {
-      try {
-        const res = await fetch(`${STAGED_API}/api/v4/status`, { signal: AbortSignal.timeout(3000) });
-        if (res.ok) return { ok: true, source: 'm4-proxy', message: 'M4 API proxy online' };
-      } catch { /* try next */ }
-    }
-    try {
-      const res = await fetch(`${base}/api/v4/status`, { signal: AbortSignal.timeout(2000) });
-      if (res.ok) return { ok: true, source: base ? 'm4-proxy' : 'local', message: 'API online' };
-    } catch { /* continue */ }
-  }
-  return {
-    ok: false,
-    source: 'unavailable',
-    message: 'API offline — static mode (UI works, payments need M4 server or npm run dev)',
-  };
 }

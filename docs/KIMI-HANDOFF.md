@@ -34,6 +34,52 @@
 **Next for Kimi:**
 - Confirm GitHub Actions/Cloudflare Pages deployment after push
 - Keep `ENABLE_LN_PAYOUTS=false` until persisted wallet ledger and external payout controls are live
+## Session — 2026-09-13 · api.giveabit.io removed from the app (Ziggy/THOR, Kanban t_3b53ad15)
+
+**Product call — option 2: it is not coming back, so the calls come off the pages.**
+
+`api.giveabit.io` answers **HTTP 530 / Cloudflare error 1033 on every path** because it was a
+Cloudflare Tunnel to the M4 laptop and the tunnel no longer exists. Verified before deciding, not
+assumed: `cloudflared` is not installed on THOR, there is no `/root/.cloudflared` or
+`/etc/cloudflared`, no cloudflared process and no cloudflared container, and the Cloudflare API
+reports **0 tunnels on the account — active *and* deleted** (both `/cfd_tunnel?is_deleted=false` and
+`?is_deleted=true`, plus `/tunnels`). A 1033 with no tunnel to reconnect is permanent, not an outage.
+The only host that could restore it is a laptop, which is not an origin.
+
+**Root cause beyond the tunnel:** `src/lib/apiBase.ts` hardcoded `https://api.giveabit.io` as a
+"staged" base, so `/beta`'s and `/health`'s health probe always went there. (The intent was the env
+var: the `tadbuy` Pages project carries ` VITE_API_BASE_URL` — note the **leading space in the key
+name**, so Vite never reads it, and its value has a **trailing space** too. Inert today; a landmine
+if anyone "fixes" the key, because the value points at the dead host.)
+
+**What changed:**
+
+1. `src/lib/apiBase.ts` — `STAGED_API` deleted, `checkApiHealth()` deleted. `getApiBase()` now
+   returns `VITE_API_BASE_URL` (trimmed, trailing slashes stripped) or `''` (same-origin). No host is
+   baked into the build anymore.
+2. `src/pages/Health.tsx` — no longer renders a status row fed by a failed request. It states what it
+   actually checks (app version from the served bundle; that the static site served this page), says
+   plainly that the backend API is **not** checked and no request is made, and only probes when a
+   base URL is genuinely configured for the build.
+3. `src/pages/Beta.tsx` — API Status card is now a static, truthful note ("No backend API in this
+   build"), plus the false claims removed from the page description and the "API proxy at
+   api.giveabit.io ✅" bullet.
+4. `src/components/ConsumerWorkflow.tsx` — "Supabase + Lightning webhook via api.giveabit.io" →
+   "Needs the backend API — not deployed yet".
+5. `src/data/ecosystemConfig.ts` — `api.status` was `'live'` with that dead `baseUrl`. Now `'none'`,
+   `baseUrl: ''`.
+
+`connect-src` was **not touched** (the card said so, and the host is already allowlisted — the CSP was
+never the problem). `https://api.giveabit.io` remains in the policy as an inert entry; nothing in the
+app fetches it.
+
+**Evidence (real Chromium, not repo greps):** local `dist/` served with the repo's real `_headers`,
+all 34 routes: **0 console errors / page errors / failed requests / non-2xx**, and the only external
+hosts contacted were `analytics.giveabit.io`, `mempool.space`, `satohash.io`. Same sweep re-run
+against the live site after deploy (see below).
+
+---
+
 ## Session — 2026-09-13 · Dead-code CSP-blocked price fetches removed (Nova/THOR, Kanban t_b5bcda4e)
 
 **Product call — delete, do not consolidate.** Three unreferenced modules fetched hosts our own
