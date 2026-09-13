@@ -21,8 +21,8 @@
 **Git State:**
 - Branch: `main`
 - Test fix: `f1f3a3d`
-- Merge tip: local merge commit, pending push
-- Handoff commit: pending
+- Merge tip: `fbffb9d` (pushed)
+- Handoff commit: `92bb7e0` (pushed)
 - Local excluded change: `public/sw.js`
 
 **Next for Kimi:**
