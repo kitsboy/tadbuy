@@ -96,6 +96,11 @@ export default function Terms() {
         </Section>
 
         <Section title="4. Payment Terms">
+          <p>
+            Status: demo mode. We hold no funds and no money moves — campaign budgets are
+            saved without real settlement while the Bitcoin rails are being connected. This
+            section describes how the paid product will work once those rails are live.
+          </p>
           <Sub title="4.1 Currency">
             <p>
               All payments on Tadbuy are made exclusively in Bitcoin (BTC) via on-chain transactions
@@ -105,9 +110,9 @@ export default function Terms() {
           </Sub>
           <Sub title="4.2 Campaign Funding">
             <p>
-              Advertisers must fund their campaign balance before ads begin serving. Funds are held
-              by the Company and debited as impressions and clicks are delivered. Campaign budgets
-              are expressed in satoshis (sats).
+              Advertisers must fund their campaign balance before ads begin serving. Balances are
+              held against your account and debited as impressions and clicks are delivered.
+              Campaign budgets are expressed in satoshis (sats).
             </p>
           </Sub>
           <Sub title="4.3 Refund Policy">
@@ -115,7 +120,7 @@ export default function Terms() {
               <strong className="text-text">Once a campaign has commenced serving,</strong> ad
               spend is non-refundable. Unfunded portions of a cancelled campaign (balance remaining
               at cancellation) will be returned to the wallet address on file within 5 business
-              days, minus a 1 % network fee.
+              days.
             </p>
           </Sub>
           <Sub title="4.4 Publisher Settlements">
