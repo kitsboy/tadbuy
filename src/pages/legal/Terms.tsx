@@ -29,7 +29,7 @@ export default function Terms() {
         <Scale className="w-8 h-8 text-accent shrink-0" />
         <div>
           <h1 className="text-3xl font-bold text-text">Terms of Service</h1>
-          <p className="text-muted text-sm mt-1">Last updated: May 6, 2026</p>
+          <p className="text-muted text-sm mt-1">Last updated: September 13, 2026</p>
         </div>
       </div>
 
@@ -42,10 +42,11 @@ export default function Terms() {
       <div className="bg-card border border-border rounded-xl p-6 space-y-8">
         <Section title="1. Service Description">
           <p>
-            Tadbuy is a Bitcoin-native advertising marketplace operated by GiveaBit Inc.
-            ("Company", "we", "us") that connects advertisers seeking exposure with publishers who
-            monetize their digital properties. All transactions on the platform are denominated and
-            settled exclusively in Bitcoin (BTC) and/or Bitcoin Lightning Network payments.
+            Tadbuy is a Bitcoin-native advertising marketplace operated by the Give A Bit family
+            ("Give A Bit", "we", "us") — an independent project, not a registered company. Tadbuy
+            connects advertisers seeking exposure with publishers who monetize their digital
+            properties. All transactions on the platform are denominated and settled exclusively in
+            Bitcoin (BTC) and/or Bitcoin Lightning Network payments.
           </p>
           <p>
             Tadbuy provides: (a) a self-serve ad campaign management interface; (b) a publisher
@@ -86,8 +87,8 @@ export default function Terms() {
             You may register using an email address and password or via a supported OAuth provider.
             You are responsible for maintaining the confidentiality of your credentials. You agree
             to notify us immediately at{' '}
-            <a href="mailto:Kimi@giveabit.io" className="text-accent hover:underline">
-              Kimi@giveabit.io
+            <a href="mailto:hello@giveabit.io" className="text-accent hover:underline">
+              hello@giveabit.io
             </a>{' '}
             of any unauthorised access. We reserve the right to suspend accounts that exhibit
             suspicious activity.
@@ -197,8 +198,8 @@ export default function Terms() {
         <Section title="8. Intellectual Property">
           <Sub title="8.1 Tadbuy IP">
             <p>
-              The Tadbuy platform, brand, software, and all related materials are owned by GiveaBit
-              Inc. and protected by copyright, trademark, and other intellectual property laws. You
+              The Tadbuy platform, brand, software, and all related materials are owned by Give A Bit
+              and protected by copyright, trademark, and other intellectual property laws. You
               may not copy, modify, distribute, or create derivative works without prior written
               consent.
             </p>
@@ -241,8 +242,8 @@ export default function Terms() {
 
         <Section title="11. Limitation of Liability">
           <p>
-            TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL GIVEA BIT INC.,
-            ITS DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
+            TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL GIVE A BIT, ITS
+            MAINTAINERS, CONTRIBUTORS, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
             CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING FROM YOUR USE OF TADBUY, EVEN IF ADVISED
             OF THE POSSIBILITY OF SUCH DAMAGES.
           </p>
@@ -255,7 +256,7 @@ export default function Terms() {
 
         <Section title="12. Indemnification">
           <p>
-            You agree to defend, indemnify, and hold harmless GiveaBit Inc. and its affiliates
+            You agree to defend, indemnify, and hold harmless Give A Bit and its contributors
             from any claims, damages, and expenses (including reasonable legal fees) arising from:
             (a) your use of the platform in violation of these Terms; (b) your ad content or
             publisher properties; or (c) your violation of any third-party right.
@@ -264,20 +265,19 @@ export default function Terms() {
 
         <Section title="13. Governing Law & Dispute Resolution">
           <p>
-            These Terms are governed by the laws of the{' '}
-            <strong className="text-text">Province of British Columbia, Canada</strong> and the
-            federal laws of Canada applicable therein, without regard to conflict-of-law principles.
+            These Terms are governed by the laws of{' '}
+            <strong className="text-text">
+              [GOVERNING LAW: TBD — pending naming of a legal entity]
+            </strong>
+            .
           </p>
           <p>
-            Any dispute arising from these Terms shall first be submitted to good-faith
-            negotiation. If unresolved within 30 days, disputes shall be resolved by binding
-            arbitration administered by the British Columbia International Commercial Arbitration
-            Centre (BCICAC), conducted in Vancouver, BC. The arbitration shall be conducted in
-            English.
-          </p>
-          <p>
-            Notwithstanding the above, either party may seek injunctive or other equitable relief
-            from a court of competent jurisdiction in Vancouver, BC to prevent irreparable harm.
+            Until a governing law and forum are named, any dispute under these Terms will first be
+            raised with us in writing at{' '}
+            <a href="mailto:hello@giveabit.io" className="text-accent hover:underline">
+              hello@giveabit.io
+            </a>
+            , and we will try in good faith to resolve it within 30 days.
           </p>
         </Section>
 
@@ -302,18 +302,12 @@ export default function Terms() {
 
         <Section title="16. Contact">
           <p>
-            For questions about these Terms, please contact:
+            Give A Bit (Tadbuy) —{' '}
+            <a href="mailto:hello@giveabit.io" className="text-accent hover:underline">
+              hello@giveabit.io
+            </a>
           </p>
-          <div className="mt-2 bg-surface border border-border rounded-lg p-4 space-y-1 text-xs font-mono">
-            <div>GiveaBit Inc.</div>
-            <div>British Columbia, Canada</div>
-            <div>
-              Email:{' '}
-              <a href="mailto:Kimi@giveabit.io" className="text-accent hover:underline">
-                Kimi@giveabit.io
-              </a>
-            </div>
-          </div>
+          <p>No office and no postal address; email is our only contact route.</p>
         </Section>
       </div>
     </div>

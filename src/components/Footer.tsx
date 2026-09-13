@@ -448,7 +448,7 @@ export default function Footer() {
             </SafeLink>
 
             <div className="text-[10px] text-muted font-mono">
-              © 2026 GiveaBit Inc. · Bitcoin-native advertising, paid in sats.
+              © 2026 Give A Bit — family of Bitcoin-native tools. All rights reserved.
             </div>
           </div>
         </div>

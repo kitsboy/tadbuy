@@ -43,13 +43,18 @@ export default function Privacy() {
       <div className="bg-card border border-border rounded-xl p-6 space-y-8">
         <Section title="1. Who We Are">
           <p>
-            GiveaBit Inc. ("Tadbuy", "we", "us", "our") operates the Tadbuy advertising platform
-            at tadbuy.giveabit.io. We are the data controller for personal information collected through
-            the platform. Our primary point of contact for privacy matters is{' '}
-            <a href="mailto:Kimi@giveabit.io" className="text-accent hover:underline">
-              Kimi@giveabit.io
-            </a>
-            .
+            Tadbuy is a Bitcoin-native advertising platform run by the Give A Bit family — an
+            independent project, not a registered company. There is no legal entity behind Tadbuy,
+            and no company with a name like "GiveaBit Inc." operates this site or any other site in
+            the family.
+          </p>
+          <p>
+            "We", "us" and "our" in this policy mean the people who run Tadbuy. We are responsible
+            for the personal information described below. Our contact route for privacy matters is{' '}
+            <a href="mailto:hello@giveabit.io" className="text-accent hover:underline">
+              hello@giveabit.io
+            </a>{' '}
+            — we have no office and no postal address.
           </p>
         </Section>
 
@@ -105,7 +110,7 @@ export default function Privacy() {
             </li>
             <li>
               <strong className="text-text">Security &amp; fraud prevention:</strong> Detecting
-              click fraud, bot traffic, account takeovers, and sanctions-list screening.
+              click fraud, bot traffic, and account takeovers.
             </li>
             <li>
               <strong className="text-text">Legal compliance:</strong> Complying with applicable
@@ -121,9 +126,10 @@ export default function Privacy() {
         <Section title="4. Third-Party Services">
           <Sub title="4.1 Firebase / Google Cloud">
             <p>
-              We use Firebase (Google LLC) for authentication, Firestore database, and Cloud
-              Functions. Your data is stored in Google Cloud data centres. Google's privacy policy
-              applies to data processed through Firebase:{' '}
+              We use Firebase Authentication (Google LLC) to sign you in. The authentication
+              record Firebase holds for you — your email address and sign-in identifiers — is
+              processed in Google Cloud data centres. Google's privacy policy applies to data
+              processed through Firebase:{' '}
               <SafeLink
                 href="https://policies.google.com/privacy"
                 target="_blank"
@@ -135,24 +141,7 @@ export default function Privacy() {
               .
             </p>
           </Sub>
-          <Sub title="4.2 Sentry (Error Tracking)">
-            <p>
-              We use Sentry (Functional Software Inc.) to capture application errors and
-              performance traces. Sentry may receive your IP address and browser information when
-              an error occurs. Error payloads are scrubbed to remove passwords and payment data
-              before transmission. Sentry's privacy policy:{' '}
-              <SafeLink
-                href="https://sentry.io/privacy/"
-                target="_blank"
-                showIcon
-                className="text-accent hover:underline"
-              >
-                 sentry.io/privacy
-              </SafeLink>
-              .
-            </p>
-          </Sub>
-          <Sub title="4.3 No Third-Party Ad Tracking">
+          <Sub title="4.2 No Third-Party Ad Tracking">
             <p>
               Tadbuy does not load Meta Pixel, Google Ads tags, or any other third-party
               behavioural tracking scripts. We do not share your personal data with advertising
@@ -178,8 +167,9 @@ export default function Privacy() {
           </p>
           <ul className="list-disc list-inside space-y-1.5 pl-2">
             <li>
-              <strong className="text-text">Service providers</strong> (Firebase, Sentry) under
-              data processing agreements, only as necessary to deliver the service.
+              <strong className="text-text">Service providers</strong> (Firebase Authentication,
+              for sign-in) under data processing agreements, only as necessary to deliver the
+              service.
             </li>
             <li>
               <strong className="text-text">Law enforcement or regulators</strong> when legally
@@ -225,8 +215,8 @@ export default function Privacy() {
           </ul>
           <p>
             To exercise any right, email{' '}
-            <a href="mailto:Kimi@giveabit.io" className="text-accent hover:underline">
-              Kimi@giveabit.io
+            <a href="mailto:hello@giveabit.io" className="text-accent hover:underline">
+              hello@giveabit.io
             </a>{' '}
             with the subject line "Privacy Request". We will respond within 30 days.
           </p>
@@ -242,7 +232,6 @@ export default function Privacy() {
             <li>
               Campaign &amp; financial records: 7 years to satisfy accounting and tax obligations.
             </li>
-            <li>Error logs (Sentry): 90 days rolling.</li>
             <li>Email correspondence: 3 years.</li>
           </ul>
         </Section>
@@ -250,8 +239,8 @@ export default function Privacy() {
         <Section title="9. Security">
           <p>
             We implement industry-standard safeguards: TLS encryption in transit, Firebase
-            security rules, server-side environment variables for secrets, and regular dependency
-            audits. However, no system is 100 % secure — we cannot guarantee absolute security.
+            Authentication's security controls, server-side environment variables for secrets, and
+            regular dependency audits. However, no system is 100 % secure — we cannot guarantee absolute security.
             Please use a strong, unique password and enable two-factor authentication.
           </p>
         </Section>
@@ -273,14 +262,19 @@ export default function Privacy() {
         </Section>
 
         <Section title="12. Contact">
-          <p>Privacy questions, requests, or complaints:</p>
+          <p>
+            Privacy questions, requests, or complaints:{' '}
+            <a href="mailto:hello@giveabit.io" className="text-accent hover:underline">
+              hello@giveabit.io
+            </a>
+          </p>
           <div className="mt-2 bg-surface border border-border rounded-lg p-4 space-y-1 text-xs font-mono">
-            <div>GiveaBit Inc. — Privacy Office</div>
-            <div>British Columbia, Canada</div>
+            <div>Give A Bit (Tadbuy) — no office and no postal address; email is our only contact route.</div>
+            <div>Nostr: hello@giveabit.io</div>
             <div>
               Email:{' '}
-              <a href="mailto:Kimi@giveabit.io" className="text-accent hover:underline">
-                Kimi@giveabit.io
+              <a href="mailto:hello@giveabit.io" className="text-accent hover:underline">
+                hello@giveabit.io
               </a>
             </div>
           </div>

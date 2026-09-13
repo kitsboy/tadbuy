@@ -60,9 +60,9 @@ export default function Cookies() {
       </div>
 
       <div className="bg-card border border-accent/20 rounded-xl p-4 text-sm text-muted leading-relaxed">
-        <strong className="text-accent">Short version:</strong> Tadbuy uses only essential session
-        cookies and localStorage for preferences. We do not use third-party tracking cookies or
-        advertising cookies.
+        <strong className="text-accent">Short version:</strong> Tadbuy sets no cookies of its own.
+        Preferences and your sign-in session live in your browser's own storage. We do not use
+        third-party tracking cookies or advertising cookies.
       </div>
 
       <div className="bg-card border border-border rounded-xl p-6 space-y-8">
@@ -82,44 +82,44 @@ export default function Cookies() {
 
         <Section title="2. Cookies We Use">
           <p>
-            We use a minimal set of cookies. We do{' '}
+            We set no cookies of our own. We do{' '}
             <strong className="text-text">not</strong> use advertising cookies, third-party
             tracking pixels, or cross-site tracking of any kind.
+          </p>
+          <p>
+            Cloudflare, our host and edge provider, may set a strictly necessary security cookie
+            (<code className="text-accent font-mono text-xs">cf_clearance</code>) while it screens a
+            request for bot traffic. That cookie is not ours, it is not used for advertising or
+            analytics, and it cannot follow you to another website.
           </p>
 
           <CookieTable
             rows={[
               {
-                name: '__session',
-                type: 'Essential / Session',
-                purpose: 'Firebase Authentication — maintains your login session.',
-                duration: 'Session (expires on browser close)',
-              },
-              {
                 name: 'tadbuy_currency',
-                type: 'Preference / localStorage',
+                type: 'Preference / browser storage',
                 purpose:
                   'Remembers your selected display currency (USD, CAD, EUR, GBP) across visits.',
                 duration: 'Persistent until cleared',
               },
               {
                 name: 'tadbuy_language',
-                type: 'Preference / localStorage',
+                type: 'Preference / browser storage',
                 purpose: 'Stores your preferred interface language.',
                 duration: 'Persistent until cleared',
               },
               {
                 name: 'tadbuy_theme',
-                type: 'Preference / localStorage',
+                type: 'Preference / browser storage',
                 purpose: 'Stores UI theme preference (dark mode).',
                 duration: 'Persistent until cleared',
               },
               {
-                name: 'sentry-sc',
-                type: 'Functional',
+                name: 'Firebase Auth session',
+                type: 'Sign-in / browser storage',
                 purpose:
-                  'Sentry error tracking — helps us diagnose application errors. No personal data.',
-                duration: 'Session',
+                  'Firebase Authentication — keeps you signed in. Stored in your browser's own storage, not in a cookie.',
+                duration: 'Until you sign out or clear browsing data',
               },
             ]}
           />
@@ -177,8 +177,9 @@ export default function Cookies() {
             <li>Clear all cookies when you close the browser</li>
           </ul>
           <p>
-            Note that disabling essential session cookies will prevent you from staying logged in
-            to Tadbuy. Clearing localStorage will reset your currency and language preferences.
+            Blocking cookies in your browser does not break Tadbuy, because we set none of our own.
+            Clearing your browser storage will reset your currency and language preferences and sign
+            you out.
           </p>
           <p>
             Browser-specific instructions:{' '}
@@ -230,8 +231,8 @@ export default function Cookies() {
         <Section title="7. Contact">
           <p>
             Questions about our cookie practices? Email us at{' '}
-            <a href="mailto:Kimi@giveabit.io" className="text-accent hover:underline">
-              Kimi@giveabit.io
+            <a href="mailto:hello@giveabit.io" className="text-accent hover:underline">
+              hello@giveabit.io
             </a>
             .
           </p>
