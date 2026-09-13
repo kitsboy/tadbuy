@@ -1,7 +1,7 @@
 {
   "name": "react-example",
   "private": true,
-  "version": "5.0.161",
+  "version": "5.0.177",
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
@@ -12,7 +12,7 @@
     "generate-metrics": "tsx scripts/generate-metrics.ts",
     "prebuild": "npm run sync-version && tsx scripts/sync-docs.ts && npm run generate-metrics",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
-    "build": "vite build && node scripts/prerender-seo.mjs",
+    "build": "vite build && node scripts/prerender-seo.mjs && node scripts/warm-legal-chunks.mjs",
     "postbuild": "node scripts/verify-dist.mjs",
     "check:prod-cache": "node scripts/check-origin-cache.mjs",
     "check:routes": "node scripts/check-routes.mjs",
@@ -31,7 +31,6 @@
     "@noble/hashes": "^2.2.0",
     "@noble/secp256k1": "^3.1.0",
     "@sentry/node": "^10.48.0",
-    "@sentry/react": "^10.48.0",
     "@supabase/supabase-js": "^2.110.0",
     "@tailwindcss/vite": "^4.1.14",
     "@types/d3": "^7.4.3",

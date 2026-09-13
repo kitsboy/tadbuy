@@ -57,6 +57,8 @@ export default function StepPlatformBudget({
   setCampaignName,
 }: StepPlatformBudgetProps) {
   const BUDGET_MAX_SATS = 10_000_000;
+  // rate === 0 until the live mempool.space rate arrives — don't divide by it.
+  const hasLiveRate = rate > 0;
   const budgetSats = Math.round(btcAmount * 100_000_000);
   const budgetPct = Math.min(100, (budgetSats / BUDGET_MAX_SATS) * 100);
 
@@ -123,10 +125,11 @@ export default function StepPlatformBudget({
         ].map(preset => (
           <button
             key={preset.label}
+            disabled={!hasLiveRate}
             onClick={() => onBtcChange(preset.btc)}
-            className="bg-surface border border-border text-muted rounded-full px-3.5 py-1.5 text-xs font-bold transition-all hover:border-accent hover:text-accent"
+            className="bg-surface border border-border text-muted rounded-full px-3.5 py-1.5 text-xs font-bold transition-all hover:border-accent hover:text-accent disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {preset.label} (~{preset.btc.toFixed(4)} BTC)
+            {preset.label}{hasLiveRate ? ` (~${preset.btc.toFixed(4)} BTC)` : ' (rate loading…)'}
           </button>
         ))}
       </div>

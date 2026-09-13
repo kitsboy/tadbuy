@@ -16,11 +16,9 @@ Digital advertising runs on surveillance capitalism — banks, credit cards, 20�
 Tadbuy is the world's first Bitcoin-native DSP. Buy ads across 8 platforms. Pay in sats via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps. PPQ.AI optimization without surveillance. **Global Reach** (`/geo`) — 25-market geo dashboard with map, insights, and CSV export.
 
 ## Traction
-- 12,847+ campaigns launched
-- 4.2B+ sats processed
-- 340+ publishers
-- 8 platforms, 8 languages
-- Sub-second settlement target
+No measured traction counters are published yet. The platform is in BETA with
+payments in demo mode, and unmeasured figures are rendered as “—” rather than
+estimated. Live counters, when available, come from /api/metrics.
 
 ## Current Status (BETA v5.0.129)
 - **UI:** Live at https://tadbuy.giveabit.io (Cloudflare Pages)

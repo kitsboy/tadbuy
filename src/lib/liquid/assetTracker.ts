@@ -32,7 +32,7 @@ const ASSET_COLORS: Record<string, string> = {
 export async function fetchLiquidPortfolio(address: string): Promise<LiquidPortfolio> {
   await Promise.allSettled([
     fetch("https://blockstream.info/liquid/api/address/" + address + "/utxo"),
-    fetch("https://mempool.space/api/v1/price"),
+    fetch("https://mempool.space/api/v1/prices"),
   ]);
 
   const assets: LiquidAsset[] = [

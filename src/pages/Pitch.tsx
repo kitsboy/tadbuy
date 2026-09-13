@@ -29,7 +29,6 @@ export default function Pitch() {
   }, []);
 
   const { executive, financials, marketing, fedimint } = PROJECT_STATE;
-  const traction = executive.traction;
 
   return (
     <motion.div
@@ -62,7 +61,8 @@ export default function Pitch() {
         </div>
       </section>
 
-      {/* Live Traction */}
+      {/* Live Traction — live-only. No static fallback: when /api/metrics is
+          unreachable we show "—", never an estimate. */}
       <section>
         <h2 className="text-2xl font-extrabold mb-6 flex items-center gap-2">
           <TrendingUp className="w-6 h-6 text-accent" /> Traction
@@ -70,19 +70,22 @@ export default function Pitch() {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border rounded-2xl overflow-hidden border border-border">
           {[
-            { label: 'Campaigns', value: metrics?.totalCampaigns ?? traction.campaignsLaunched, suffix: '+' },
-            { label: 'Impressions', value: metrics?.impressions ?? 1_240_000, suffix: '+' },
-            { label: 'Publishers', value: traction.publishers, suffix: '+' },
-            { label: 'Settlement', value: `<${traction.avgSettlementSeconds}`, suffix: 's' },
+            { label: 'Campaigns', value: metrics ? `${metrics.totalCampaigns.toLocaleString()}+` : '—' },
+            { label: 'Impressions', value: metrics ? `${metrics.impressions.toLocaleString()}+` : '—' },
+            { label: 'Publishers', value: '—' },
+            { label: 'Settlement', value: '—' },
           ].map(s => (
             <div key={s.label} className="bg-card p-6 text-center">
               <div className="text-2xl md:text-3xl font-extrabold text-accent font-mono">
-                {typeof s.value === 'number' ? s.value.toLocaleString() : s.value}{s.suffix}
+                {s.value}
               </div>
               <div className="text-xs text-muted font-bold uppercase tracking-widest mt-1">{s.label}</div>
             </div>
           ))}
         </div>
+        <p className="text-center text-[10px] text-muted font-mono mt-3">
+          Live counters only. Unmeasured metrics show “—” — no estimates are published.
+        </p>
       </section>
 
       {/* Problem / Solution */}
@@ -241,8 +244,7 @@ export default function Pitch() {
       </section>
 
       <p className="text-center text-[10px] text-muted font-mono">
-        Auto-updates from projectState.ts + live /api/metrics on every build.
-        Last synced: {PROJECT_STATE.lastSynced}
+        Static project snapshot from projectState.ts. Last synced: {PROJECT_STATE.lastSynced}
       </p>
     </motion.div>
   );

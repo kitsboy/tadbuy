@@ -52,10 +52,10 @@ const CaseStudies      = lazy(() => import('./pages/CaseStudies'));
 const Platforms        = lazy(() => import('./pages/Platforms'));
 const PlatformDetail   = lazy(() => import('./pages/PlatformDetail'));
 const BuyAds           = lazy(() => import('./pages/BuyAds'));
+const ThankYou         = lazy(() => import('./pages/ThankYou'));
 const GeoTargeting     = lazy(() => import('./pages/GeoTargeting'));
 const CommandMenu            = lazy(() => import('./components/CommandMenu'));
 const KeyboardShortcutsHelp = lazy(() => import('./components/KeyboardShortcutsHelp'));
-const LiveActivityWidget = lazy(() => import('./components/LiveActivityWidget'));
 const NotFound         = lazy(() => import('./pages/NotFound'));
 const Terms            = lazy(() => import('./pages/legal/Terms'));
 const Privacy          = lazy(() => import('./pages/legal/Privacy'));
@@ -118,7 +118,7 @@ function RoutedPages({ currency, rates }: { currency: string; rates: Record<stri
     <RouteErrorBoundary key={location.pathname} label="This page">
       <Routes location={location}>
         {/* Public */}
-        <Route path="/"            element={<BuyAds currency={currency} rate={rates[currency]} symbol={CURRENCY_SYMBOLS[currency]} />} />
+        <Route path="/"            element={<BuyAds currency={currency} rate={rates[currency] ?? 0} symbol={CURRENCY_SYMBOLS[currency]} />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/metrics"     element={<Metrics />} />
         <Route path="/publisher"   element={<PublisherPortal />} />
@@ -129,6 +129,7 @@ function RoutedPages({ currency, rates }: { currency: string; rates: Record<stri
         <Route path="/ppq"         element={<PpqGuide />} />
         <Route path="/bolt12"      element={<Bolt12Info />} />
         <Route path="/pitch"         element={<Pitch />} />
+        <Route path="/thank-you"    element={<ThankYou />} />
         <Route path="/intelligence"  element={<Intelligence />} />
         <Route path="/integrations"  element={<Integrations />} />
         <Route path="/enterprise"    element={<Enterprise />} />
@@ -192,9 +193,34 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
 }
 
 // ── Root ──────────────────────────────────────────────────────────────────────
+/** Fiat currencies we display; all of them come back from mempool.space /prices. */
+const RATE_CURRENCIES = ['USD', 'CAD', 'EUR', 'GBP', 'JPY'] as const;
+const RATE_CACHE_KEY = 'tadbuy_btc_rates_live';
+
+/**
+ * Last rates we actually fetched from the live source, so a repeat visit can
+ * paint immediately. Deliberately empty on a cold visit: a hardcoded number in
+ * a price ticker is indistinguishable from a live one.
+ */
+function readCachedRates(): Record<string, number> {
+  try {
+    const raw = localStorage.getItem(RATE_CACHE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const clean: Record<string, number> = {};
+    for (const cur of RATE_CURRENCIES) {
+      const v = Number(parsed?.[cur]);
+      if (Number.isFinite(v) && v > 0) clean[cur] = v;
+    }
+    return clean;
+  } catch {
+    return {};
+  }
+}
+
 export default function App() {
   const [currency, setCurrency] = useLocalStorage<string>('tadbuy_currency', 'USD');
-  const [rates, setRates] = useState<Record<string, number>>({ USD: 77263, CAD: 107318, EUR: 66649, GBP: 57173 });
+  const [rates, setRates] = useState<Record<string, number>>(readCachedRates);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
@@ -202,30 +228,29 @@ export default function App() {
     const fetchRates = async () => {
       if (document.hidden) return;
       try {
-        // Use Coinbase API for proper BTC/fiat rates
-        const currencies = ['USD', 'CAD', 'EUR', 'GBP'];
+        // Single live source: mempool.space /api/v1/prices returns BTC spot in
+        // USD/EUR/GBP/CAD/JPY. mempool.space is already the only price host in
+        // our connect-src, so this needs no CSP widening.
+        const res = await fetch('https://mempool.space/api/v1/prices', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+
         const newRates: Record<string, number> = {};
-        
-        await Promise.all(
-          currencies.map(async (cur) => {
-            try {
-              const res = await fetch(`https://api.coinbase.com/v2/prices/BTC-${cur}/spot`);
-              const data = await res.json();
-              const rate = data?.data?.amount ? parseFloat(data.data.amount) : null;
-              if (rate && !isNaN(rate)) {
-                newRates[cur] = rate;
-              }
-            } catch {
-              // Individual currency failure is okay
-            }
-          })
-        );
-        
+        for (const cur of RATE_CURRENCIES) {
+          const v = Number(data?.[cur]);
+          if (Number.isFinite(v) && v > 0) newRates[cur] = v;
+        }
+
         if (Object.keys(newRates).length > 0) {
           setRates(prev => ({ ...prev, ...newRates }));
+          try {
+            localStorage.setItem(RATE_CACHE_KEY, JSON.stringify(newRates));
+          } catch {
+            // Private mode / quota — caching is best-effort only.
+          }
         }
       } catch {
-        // Silently fall back to stale rates
+        // Network failure: keep the last live snapshot, or show "—" if we have none.
       }
     };
 
@@ -242,7 +267,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <Router unstable_useTransitions={false}>
+      <Router>
         <ThemeProvider>
         <CurrencyProvider>
         <DemoProvider>
@@ -254,7 +279,6 @@ export default function App() {
             <Suspense fallback={null}>
               <CommandMenu />
               <KeyboardShortcutsHelp />
-              <LiveActivityWidget />
             </Suspense>
             <MainContent currency={currency} setCurrency={setCurrency} rates={rates} />
             <BackToTop />

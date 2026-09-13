@@ -35,7 +35,7 @@ export function UtilityCluster({
           <option value="GBP">GBP</option>
         </select>
         <span className="text-accent/90">
-          {CURRENCY_SYMBOLS[currency] ?? '$'}{Math.round(rate).toLocaleString()}
+          {rate > 0 ? `${CURRENCY_SYMBOLS[currency] ?? '$'}${Math.round(rate).toLocaleString()}` : '—'}
         </span>
       </div>
 

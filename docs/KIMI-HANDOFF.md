@@ -37,6 +37,26 @@
 
 ---
 
+## Session — 2026-09-13 · HOTFIX: CI typecheck gate was red (Kimi/THOR, Kanban t_4270aab6)
+
+**Symptom:** run 34765850245 (commit 695b7c2) failed in the new `Typecheck` step; every later step skipped, so the deploy card stayed red.
+
+**Root cause (two pre-existing latent type errors, surfaced the moment `npm run lint` became a CI gate):**
+- `src/App.tsx:245` — `<BrowserRouter unstable_useTransitions={false}>`: react-router v7 **renamed the prop to `useTransitions`**. The old name never existed on `BrowserRouterProps`.
+- `src/lib/nostr/geoLocation.ts:9` — `import { nip19 } from 'nostr-tools'`: `nostr-tools` is **not in package.json** and the module is not imported anywhere. `nip19` was never used in the file.
+
+**Why the previous session saw green local lint:** the errors only reproduce after `npm ci` from the committed lockfile (react-router-dom resolves to 7.18.3). A stale/dirty local `node_modules` masked both — never trust a local `tsc` pass for a CI gate that installs from the lockfile.
+
+**Fix (2 lines, no behaviour change beyond the rename):**
+- `src/App.tsx`: `unstable_useTransitions={false}` → `useTransitions={false}` (same intent: no `React.startTransition` wrapping)
+- `src/lib/nostr/geoLocation.ts`: drop the unused `nostr-tools` import (no dependency added — the file is a self-contained unused demo module)
+
+**Verified on THOR with a fresh `npm ci`:**
+- `npm run lint` ✅ · `npm run check:routes` ✅ (38 lazy modules / 37 routes) · `npm run build` ✅ · `npm run check:bundle` ✅ (75 assets, 3177 KiB) · `npm run audit:dependencies` ✅ (3 low/moderate, below the high gate) · `CI=true npm run test:e2e` ✅ 10 passed + 1 flaky-passed-on-retry (`buy-flow.spec.ts` homepage test times out on cold dev-server start; retries absorb it)
+
+---
+
+## Session — 2026-09-13 · CI/release checks + documentation hygiene (Grok M3)
 
 **Done:**
 - Added strict CI install (`npm ci`), TypeScript check, full `npm run build`, route integrity check, bundle report, Playwright browser smoke tests, high-severity dependency audit, production deploy verification, production asset-cache verification, and failure diagnostics upload

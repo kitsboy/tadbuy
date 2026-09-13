@@ -150,7 +150,7 @@ export const DEFAULT_AD_FEED: AdFeed = {
   description: 'Latest campaign updates and performance reports from the Bitcoin-native ad platform.',
   link: 'https://tadbuy.giveabit.io',
   language: 'en',
-  copyright: '© 2026 Give A Bit Inc.',
+  copyright: '© 2026 Give A Bit',
   items: [],
   ttl: 60,
 };

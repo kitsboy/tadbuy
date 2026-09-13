@@ -194,6 +194,12 @@ export default function SuccessScreen({
                 View Analytics
               </Button>
             </Link>
+            <Link to="/thank-you" className="flex-1">
+              <Button variant="secondary" size="lg" className="w-full">
+                <CheckCircle2 className="w-4 h-4" />
+                See what happens next
+              </Button>
+            </Link>
             <Link to={campaignsUrl} className="flex-1">
               <Button variant="secondary" size="lg" className="w-full">
                 {isAuthenticated ? 'All Campaigns' : 'Sign in & Campaigns'}
