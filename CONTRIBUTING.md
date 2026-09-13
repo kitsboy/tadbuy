@@ -18,9 +18,13 @@ Open http://127.0.0.1:3000 and edit files in `src/`. Changes hot-reload automati
 
 1. Run `npm run lint` — must pass with zero errors
 2. Run `npm run build` — must complete successfully
-3. Update `CHANGELOG.md` for user-facing changes
-4. Update `SOURCE-OF-TRUTH.md` if deployment or architecture changes
-5. Run `npm run sync-docs` when changing `src/data/projectState.ts` or feature batches
+3. Run `npm run check:routes` — all lazy routes must resolve
+4. Run `npm run test:e2e` — browser smoke tests must pass
+5. Run `npm run check:bundle` — review unexpected bundle growth
+6. Run `npm run audit:dependencies` — no high/critical advisories
+7. Update `CHANGELOG.md` for user-facing changes
+8. Update `SOURCE-OF-TRUTH.md` if deployment or architecture changes
+9. Run `npm run sync-docs` when changing `src/data/projectState.ts` or feature batches
 
 ## Pull Request Guidelines
 

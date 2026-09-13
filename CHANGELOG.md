@@ -2,7 +2,13 @@
 
 All notable changes to Tadbuy are documented here.
 
-## [5.0.130] — 2026-09-01
+## [5.0.161] — 2026-09-13
+
+### Changed
+- Synchronized public version references and package lock metadata.
+- Added CI typecheck, production build, route smoke tests, bundle reporting, and dependency audit checks.
+- Refreshed canonical project, legal, and sitemap metadata.
+
 
 ### Added
 - Complete navbar facelift: new `src/components/Navbar.tsx` component replacing legacy Header

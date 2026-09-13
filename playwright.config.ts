@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Minimal Playwright stub — run `npm i -D @playwright/test && npx playwright install` to enable e2e.
+ * Browser smoke tests run locally and in CI against the same development server.
  */
 export default defineConfig({
   testDir: './e2e',
@@ -15,12 +15,10 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
-  webServer: process.env.CI
-    ? undefined
-    : {
-        command: 'npm run dev',
-        url: 'http://127.0.0.1:3000',
-        reuseExistingServer: !process.env.CI,
-        timeout: 120_000,
-      },
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://127.0.0.1:3000',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
+  },
 });

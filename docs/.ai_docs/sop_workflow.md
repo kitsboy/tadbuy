@@ -9,8 +9,12 @@
 ```bash
 cd ~/projects/tadbuy
 npm run dev   # Full UI + API at :3000
-npm run lint
-npm run build # Auto-syncs docs via prebuild
+1. Run `npm run lint`
+2. Run `npm run check:routes`
+3. Run `npm run build`
+4. Run `npm run check:bundle`
+5. Run `npm run test:e2e`
+6. Run `npm run audit:dependencies`
 ```
 
 ## Never on M3

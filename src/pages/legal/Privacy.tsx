@@ -30,7 +30,7 @@ export default function Privacy() {
         <Shield className="w-8 h-8 text-accent shrink-0" />
         <div>
           <h1 className="text-3xl font-bold text-text">Privacy Policy</h1>
-          <p className="text-muted text-sm mt-1">Last updated: May 6, 2026</p>
+          <p className="text-muted text-sm mt-1">Last updated: September 13, 2026</p>
         </div>
       </div>
 
@@ -44,7 +44,7 @@ export default function Privacy() {
         <Section title="1. Who We Are">
           <p>
             GiveaBit Inc. ("Tadbuy", "we", "us", "our") operates the Tadbuy advertising platform
-            at tadbuy.com. We are the data controller for personal information collected through
+            at tadbuy.giveabit.io. We are the data controller for personal information collected through
             the platform. Our primary point of contact for privacy matters is{' '}
             <a href="mailto:Kimi@giveabit.io" className="text-accent hover:underline">
               Kimi@giveabit.io

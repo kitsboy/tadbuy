@@ -55,7 +55,7 @@ export default function Cookies() {
         <Cookie className="w-8 h-8 text-accent shrink-0" />
         <div>
           <h1 className="text-3xl font-bold text-text">Cookie Policy</h1>
-          <p className="text-muted text-sm mt-1">Last updated: May 6, 2026</p>
+          <p className="text-muted text-sm mt-1">Last updated: September 13, 2026</p>
         </div>
       </div>
 

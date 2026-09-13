@@ -1,6 +1,6 @@
 # tadbuy — Agent Context Map
 
-**Phase:** BETA · **Version:** v5.0.6 · **Updated:** 2026-07-07
+**Phase:** BETA · **Version:** v5.0.161 · **Updated:** 2026-09-13
 
 ## Machine Roles
 

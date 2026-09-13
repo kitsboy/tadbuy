@@ -1,6 +1,6 @@
 # SOURCE-OF-TRUTH.md — Tadbuy (Give A Bit Project)
 
-**Last Updated**: 2026-08-29
+**Last Updated**: 2026-09-13
 
 ## Project Overview (Marketing Pitch)
 Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Twitter/X, Facebook, Instagram, YouTube, Reddit, LinkedIn, TikTok, and Nostr. Pay in Bitcoin via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps. Features: campaign builder, **Global Reach geo dashboard** (`/geo`), geospatial targeting, AI creative (Gemini), PPQ.AI, publisher portal, analytics, wallet, settlements, 8 languages, Agent API. Part of Give A Bit (giveabit.io).
@@ -8,9 +8,9 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Tw
 ## GitHub (Code Source of Truth)
 - Repo: https://github.com/kitsboy/tadbuy.git
 - Branch: main (production)
-- Version: **v5.0.129** (BETA — navbar breathing room, 2026-08-29)
+- Version: **v5.0.161** (BETA — CI and documentation hygiene pass, 2026-09-13)
 - M3 workspace: `~/projects/tadbuy/`
-- Last commit: `2cdbc1c` (SW cache `tadbuy-v5.0.129`; navbar feature `9a0bba6`)
+- Last commit: `304c10e` (current main tip; service-worker cache `tadbuy-v5.0.161`)
 
 ## Deployment Details
 - **Live URL**: https://tadbuy.giveabit.io/
@@ -28,7 +28,7 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Tw
 - [x] Desktop nav from **1280px** (`xl`): 72px bar, 14px labels, 4 primary links + two-column More
 - [x] Below 1280: hamburger + full-screen drawer (descriptions, scroll, footer does not cover links)
 - [x] Removed unused `Header` from `App.tsx`; currency wired through Navbar
-- [x] Service worker cache name synced to `tadbuy-v5.0.129`
+- [x] Service worker cache name synced to the current release during the CI/docs pass
 
 ## Platform Split
 
@@ -110,10 +110,10 @@ For automated agents (Grok, Kimi, Qwen):
 - [x] Security hardening + i18n complete (v5.0.85)
 - [x] All 10 quick-win improvements shipped
 - [x] Navbar breathing room (v5.0.129)
-- [ ] Confirm CF Pages deploy of v5.0.129 (live was v5.0.93 during 2026-08-29 check)
+- [ ] Confirm current CF Pages deploy and production asset cache health
 - [ ] Fedimint mint — **blocked** (Fedi 0.10 vs Guardian 0.11, Andrea `t_8ee7c976`)
 - [ ] Umbrel LND — **blocked** (node offline, Rosa `t_46208fbe`)
-- [ ] Automated E2E tests (Playwright stub ready)
+- [x] Automated E2E smoke tests (Playwright, 11 checks in CI)
 - [ ] **Cam priority (soon):** Fedi/Fedimint on all 5 apps + **every future Give A Bit app** — one mint, one invite
 - [ ] Propagate `VITE_FEDIMINT_INVITE` + `VITE_API_BASE_URL` to sibling CF Pages (Andrea `t_ec77b1e5`)
 
