@@ -1,6 +1,13 @@
 # Cloudflare Pages SPA routing — serve index.html for all unmatched routes
 /*    /index.html   200
 
+# Thank-you pages — real static pages (200, not the SPA shell) so advertisers
+# and leads never bounce to the homepage or a dead end.
+/thank-you /thank-you.html 200
+/thanks    /thank-you.html 200
+/thankyou  /thank-you.html 200
+/success   /thank-you.html 200
+
 # Canonical www → non-www
 https://www.tadbuy.giveabit.io/*   https://tadbuy.giveabit.io/:splat   301
 

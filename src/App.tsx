@@ -52,6 +52,7 @@ const CaseStudies      = lazy(() => import('./pages/CaseStudies'));
 const Platforms        = lazy(() => import('./pages/Platforms'));
 const PlatformDetail   = lazy(() => import('./pages/PlatformDetail'));
 const BuyAds           = lazy(() => import('./pages/BuyAds'));
+const ThankYou         = lazy(() => import('./pages/ThankYou'));
 const GeoTargeting     = lazy(() => import('./pages/GeoTargeting'));
 const CommandMenu            = lazy(() => import('./components/CommandMenu'));
 const KeyboardShortcutsHelp = lazy(() => import('./components/KeyboardShortcutsHelp'));
@@ -129,6 +130,7 @@ function RoutedPages({ currency, rates }: { currency: string; rates: Record<stri
         <Route path="/ppq"         element={<PpqGuide />} />
         <Route path="/bolt12"      element={<Bolt12Info />} />
         <Route path="/pitch"         element={<Pitch />} />
+        <Route path="/thank-you"    element={<ThankYou />} />
         <Route path="/intelligence"  element={<Intelligence />} />
         <Route path="/integrations"  element={<Integrations />} />
         <Route path="/enterprise"    element={<Enterprise />} />
