@@ -28,7 +28,7 @@
 
 **Git State:**
 - Branch: `main`
-- Commit: pending
+- Commit: `2bd8aa8` (merged and pushed)
 - Local excluded change: `public/sw.js`
 
 **Next for Kimi:**
