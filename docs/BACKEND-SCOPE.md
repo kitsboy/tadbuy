@@ -5,7 +5,7 @@
 "today" claim was measured 2026-09-13 against `origin/main` @ `700abed` and the live host; §7 has the
 re-runnable checks.
 
-## 1. Where the code stands (measured — do not trust `SOURCE-OF-TRUTH.md` here)
+## 1. Where the code stands (measured, not remembered)
 
 | Check | Result |
 |---|---|
