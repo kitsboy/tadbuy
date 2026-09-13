@@ -1,5 +1,11 @@
 # Kimi M4 Setup Checklist — Give A Bit Mint + API Proxy
 
+> **⚠️ PHASE 1 (the API proxy at `api.giveabit.io`) IS RETIRED — 2026-09-13. Do NOT execute the proxy sections
+> below.** The host answers HTTP 530 / Cloudflare error 1033 (its origin/tunnel is gone), no live page needs it,
+> and it has been removed from the code and the CSP (Kanban `t_5fc250b7`). Restoring it requires a real origin —
+> a funnel or tunnel pointed at a laptop is not one. Fedimint mint / Umbrel sections are still staged work;
+> see `docs/M4-SERVER-REF.md`.
+
 **Machine:** M4 (HERMES / Obsidian)  
 **Owner:** Kimi  
 **Code lives on M3 only:** `~/projects/tadbuy/` — Grok edits + push → Cloudflare.  

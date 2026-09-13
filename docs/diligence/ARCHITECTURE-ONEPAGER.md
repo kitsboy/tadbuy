@@ -34,7 +34,7 @@ React/Vite · Express API (M4 path) · Lightning · Nostr · Cloudflare Pages SP
 
 ## Architecture notes
 - SPA on CF Pages
-- API proxy path (M4 / api.giveabit.io planned/active phases)
+- API proxy path (M4 / api.giveabit.io **retired 2026-09-13** — HTTP 530 / Cloudflare 1033; the SPA is static-only today)
 - Campaign state (BroadcastChannel + optional Firestore notes in docs)
 - Lightning invoices + Nostr ZAP endpoints
 - Agent docs in docs/.ai_docs/ for automation

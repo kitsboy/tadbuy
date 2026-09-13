@@ -21,7 +21,7 @@ If an API process already runs under HERMES (e.g. historical `tadbuy-api`), Kimi
 |---------|---------|------------|
 | Give A Bit Fedimint Mint | Shared ecash for all projects | `mint.giveabit.io` |
 | Fedi Gateway | Mobile wallet access to mint | Fedi app deep link |
-| API Proxy | Express APIs for static Cloudflare sites | `api.giveabit.io` → tunnel → local port |
+| API Proxy | Express APIs for static Cloudflare sites | ❌ **RETIRED 2026-09-13** — was `api.giveabit.io` → tunnel → M4 local port; host answers HTTP 530 / Cloudflare 1033 and is removed from the app code + CSP. Restore only with a real origin. |
 | Umbrel | Full Bitcoin + LND node | Local LAN / Tailscale |
 
 ## Projects using Give A Bit Mint

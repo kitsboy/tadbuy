@@ -75,7 +75,11 @@ Share the same invite across: tadbuy, satohash, giveabit, motopass, openstrata.
 
 ---
 
-## Step 5 — API Proxy (M4 → production)
+## Step 5 — API Proxy (M4 → production) — **RETIRED 2026-09-13, do not follow**
+
+> The proxy at `api.giveabit.io` is retired: HTTP 530 / Cloudflare error 1033, origin gone, removed from the code
+> and the CSP (Kanban `t_5fc250b7`). This section is kept for the record only. Set `VITE_API_BASE_URL` **only**
+> when a real API origin answers.
 
 Cloudflare Pages serves **static files only**. For live payments:
 

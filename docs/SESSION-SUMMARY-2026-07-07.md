@@ -16,7 +16,7 @@ Shipped Tadbuy v5 enhancements (85 + 100 geo), fixed desktop nav and SPA routing
 - [x] `/geo` page live at https://tadbuy.giveabit.io/geo
 - [x] Nav + routing bugs resolved
 - [x] All docs updated and committed
-- [x] API proxy still live at `api.giveabit.io` (Phase 1)
+- [x] API proxy still live at `api.giveabit.io` (Phase 1) — **HISTORICAL: retired 2026-09-13 (HTTP 530 / Cloudflare 1033)**
 
 ## What We Are Still Aiming to Finish
 - [ ] Fedimint mint rollout — blocked on Fedi 0.10 vs Guardian 0.11 (Andrea `t_8ee7c976`)

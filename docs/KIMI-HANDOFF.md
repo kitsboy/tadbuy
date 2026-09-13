@@ -34,6 +34,56 @@
 **Next for Kimi:**
 - Confirm GitHub Actions/Cloudflare Pages deployment after push
 - Keep `ENABLE_LN_PAYOUTS=false` until persisted wallet ledger and external payout controls are live
+## Session — 2026-09-13 · api.giveabit.io removed from the app (Ziggy/THOR, Kanban t_3b53ad15)
+
+**Product call — option 2: it is not coming back, so the calls come off the pages.**
+
+`api.giveabit.io` answers **HTTP 530 / Cloudflare error 1033 on every path** because it was a
+Cloudflare Tunnel to the M4 laptop and the tunnel no longer exists. Verified before deciding, not
+assumed: `cloudflared` is not installed on THOR, there is no `/root/.cloudflared` or
+`/etc/cloudflared`, no cloudflared process and no cloudflared container, and the Cloudflare API
+reports **0 tunnels on the account — active *and* deleted** (both `/cfd_tunnel?is_deleted=false` and
+`?is_deleted=true`, plus `/tunnels`). A 1033 with no tunnel to reconnect is permanent, not an outage.
+The only host that could restore it is a laptop, which is not an origin.
+
+**Root cause beyond the tunnel:** `src/lib/apiBase.ts` hardcoded `https://api.giveabit.io` as a
+"staged" base, so `/beta`'s and `/health`'s health probe always went there. (The intent was the env
+var: the `tadbuy` Pages project carries ` VITE_API_BASE_URL` — note the **leading space in the key
+name**, so Vite never reads it, and its value has a **trailing space** too. Inert today; a landmine
+if anyone "fixes" the key, because the value points at the dead host.)
+
+**What changed:**
+
+1. `src/lib/apiBase.ts` — `STAGED_API` deleted, `checkApiHealth()` deleted. `getApiBase()` now
+   returns `VITE_API_BASE_URL` (trimmed, trailing slashes stripped) or `''` (same-origin). No host is
+   baked into the build anymore.
+2. `src/pages/Health.tsx` — no longer renders a status row fed by a failed request. It states what it
+   actually checks (app version from the served bundle; that the static site served this page), says
+   plainly that the backend API is **not** checked and no request is made, and only probes when a
+   base URL is genuinely configured for the build.
+3. `src/pages/Beta.tsx` — API Status card is now a static, truthful note ("No backend API in this
+   build"), plus the false claims removed from the page description and the "API proxy at
+   api.giveabit.io ✅" bullet.
+4. `src/components/ConsumerWorkflow.tsx` — "Supabase + Lightning webhook via api.giveabit.io" →
+   "Needs the backend API — not deployed yet".
+5. `src/data/ecosystemConfig.ts` — `api.status` was `'live'` with that dead `baseUrl`. Now `'none'`,
+   `baseUrl: ''`.
+
+Their card deliberately left `connect-src` untouched (the CSP was never the *cause*). **Follow-up
+(`t_5fc250b7`, Ziggy): the retired host is now out of the policy as well** — an allowlist entry for a hostname
+that no longer exists is dead privilege that invites a future re-point, so `src/lib/security/csp.ts` **and** the
+live `public/_headers` no longer carry `https://api.giveabit.io`. Nothing else in the policy moved, and the
+same card marked every older "Phase 1 API proxy live" line in the docs as historical (this file, the two session
+summaries, `SOURCE-OF-TRUTH.md`, `TECHNICAL_DOCUMENTATION.md`, `M4-SERVER-REF.md`, the M4 setup checklist,
+`SETUP-GUIDE.md`, the diligence onepager, `.env.example`).
+
+**Evidence (real Chromium, not repo greps):** local `dist/` served with the repo's real `_headers`,
+all 34 routes: **0 console errors / page errors / failed requests / non-2xx**, and the only external
+hosts contacted were `analytics.giveabit.io`, `mempool.space`, `satohash.io`. Same sweep re-run
+against the live site after deploy (see below).
+
+---
+
 ## Session — 2026-09-13 · Dead-code CSP-blocked price fetches removed (Nova/THOR, Kanban t_b5bcda4e)
 
 **Product call — delete, do not consolidate.** Three unreferenced modules fetched hosts our own
@@ -78,7 +128,8 @@ single host**.
 allow — harmless today only because `VITE_FIREBASE_API_KEY` is unconfigured in the live build (no
 `AIza…` in the served chunk, so `initializeFirebase()` returns early). The day client Firebase auth
 or Firestore is switched on, login breaks with a CSP violation. That is a product decision
-(client-side Firebase vs our own `api.giveabit.io` auth surface), not a header tweak.
+(client-side Firebase vs our own API auth surface — the `api.giveabit.io` proxy this referred to is **retired**,
+see the 2026-09-13 note above), not a header tweak.
 
 ---
 
@@ -818,7 +869,8 @@ GIT
 **Chat topic:** Phase 1 complete; Supabase swap; Fedi guidance; blockers parked.
 
 **Finished this session:**
-- Phase 1 verified live (`api.giveabit.io`, Supabase, PM2, cloudflared)
+- Phase 1 verified live (`api.giveabit.io`, Supabase, PM2, cloudflared) — **HISTORICAL: `api.giveabit.io` retired
+  2026-09-13 (Kanban t_3b53ad15 / t_5fc250b7)**
 - M3 Supabase migration + docs through Session 7
 - Cam briefed on Fedi: keep installed, wait for invite
 
@@ -839,8 +891,8 @@ GIT
 **Machine:** M3 (Grok) — syncing Kimi confirmation + blockers
 **Project:** tadbuy
 
-### Phase 1 — CONFIRMED LIVE ✅ (Kimi verified)
-- [x] `api.giveabit.io` → `{"ok":true}`
+### Phase 1 — CONFIRMED LIVE ✅ (Kimi verified) — **now HISTORICAL: `api.giveabit.io` retired 2026-09-13**
+- [x] `api.giveabit.io` → `{"ok":true}` (historical — host answers HTTP 530 / Cloudflare 1033 now)
 - [x] Supabase 5 tables + RLS (no Firebase Admin, no Gemini on server)
 - [x] Tadbuy SPA redeployed with `VITE_API_BASE_URL`
 - [x] PM2 + cloudflared tunnel on M4
@@ -877,15 +929,15 @@ GIT
 **Project:** tadbuy
 
 ### Done on M4 (Kimi — Phase 1)
-- [x] `api.giveabit.io` → Cloudflare Tunnel → M4 `localhost:3000` (HTTP/2 200, `{"ok":true}`)
+- [x] `api.giveabit.io` → Cloudflare Tunnel → M4 `localhost:3000` (HTTP/2 200, `{"ok":true}`) — **RETIRED 2026-09-13 (HTTP 530 / Cloudflare 1033); historical**
 - [x] Cloudflare Tunnel launch agent (survives login)
 - [x] PM2 `tadbuy-api` + pm2-logrotate at `~/.hermes/servers/tadbuy-api/` (NOT `~/projects/`)
 - [x] Supabase: 5 tables + RLS, `supabaseAdmin.ts` deployed, Firebase Admin removed
-- [x] `VITE_API_BASE_URL=https://api.giveabit.io` on CF Pages, SPA redeployed
+- [x] `VITE_API_BASE_URL=https://api.giveabit.io` on CF Pages, SPA redeployed — **removed 2026-09-13 with the proxy (no API host configured now)**
 
 ### Done on M3 (Grok — this session)
 - [x] Docs synced: SOURCE-OF-TRUTH, EXEC-SUMMARY, context_map, Beta page, ecosystemConfig
-- [x] `/api/beta/status` returns `api: "live"`; ecosystem config includes `apiProxyStatus: "live"`
+- [x] `/api/beta/status` returns `api: "live"`; ecosystem config includes `apiProxyStatus: "live"` — **historical: ecosystem config now reads `status: 'none'` (2026-09-13)**
 
 ### What's Next (Phases 2–5 — when ready)
 - [ ] Phase 2: Fedimint mint — `FEDIMINT_GATEWAY_URL`, `VITE_FEDIMINT_INVITE`
@@ -919,10 +971,10 @@ GIT
 
 ### What's Next (Kimi / Cam on M4)
 1. **Cam:** Run `supabase-schema.sql` in Supabase dashboard (project `cegzfjbsadwchonpxwmv`)
-2. **Cam:** Enable Tailscale Funnel → Kimi runs `tailscale funnel 3000` → DNS `api.giveabit.io`
+2. **Cam:** ~~Enable Tailscale Funnel → Kimi runs `tailscale funnel 3000` → DNS `api.giveabit.io`~~ — **no longer applicable: the proxy is retired (2026-09-13); restore needs a real origin, not a funnel**
 3. **Kimi:** Redeploy bundle from `main` to `~/.hermes/servers/tadbuy-api/` (`npm install && npm run build && pm2 restart tadbuy-api`)
 4. **Kimi:** Optional PM2 auto-start via launchd
-5. Set `VITE_API_BASE_URL=https://api.giveabit.io` on Cloudflare Pages when funnel is live
+5. ~~Set `VITE_API_BASE_URL=https://api.giveabit.io` on Cloudflare Pages when funnel is live~~ — **not applicable; no API host configured (proxy retired 2026-09-13)**
 
 ### Git State
 - Last commit SHA: a031a22
@@ -940,7 +992,7 @@ GIT
 - [x] tadbuy-ai-orientation skill references corrected
 
 ### Still to execute on M4 (Phases 1–5)
-- [ ] Phase 1: API proxy + `api.giveabit.io`
+- [–] Phase 1: API proxy + `api.giveabit.io` — **RETIRED 2026-09-13** (origin gone; HTTP 530 / Cloudflare 1033)
 - [ ] Phase 2: Give A Bit Fedimint Mint
 - [ ] Phase 3: Umbrel LND (when ready)
 - [ ] Phase 4: Propagate invite to 5 apps
@@ -951,7 +1003,7 @@ GIT
 - [x] Dual-copy note added to GitHub checklist
 
 ### Handoff signal when Phase 1 complete
-> "API proxy live at api.giveabit.io — /beta shows green"
+> "API proxy live at api.giveabit.io — /beta shows green" — **sent in July; the host is retired as of 2026-09-13**
 
 ---
 
@@ -960,7 +1012,7 @@ GIT
 **ACTION REQUIRED ON M4:** Follow `docs/KIMI-M4-SETUP-CHECKLIST.md`
 
 ### Your checklist (in order)
-1. Phase 1 — Clone tadbuy on M4, run API proxy with PM2, expose api.giveabit.io
+1. Phase 1 — Clone tadbuy on M4, run API proxy with PM2, expose api.giveabit.io — **RETIRED 2026-09-13 (the proxy is gone; do not re-run this step)**
 2. Phase 2 — Install Fedimint, create "Give A Bit Mint", generate fm-invite, configure Fedi
 3. Phase 3 — Connect Umbrel LND when node is ready (not yet)
 4. Phase 4 — Propagate VITE_FEDIMINT_INVITE to all 5 Give A Bit apps
@@ -972,7 +1024,7 @@ GIT
 - [x] Give A Bit Mint staged for tadbuy, satohash, giveabit, motopass, openstrata
 
 ### Tell Cam when Phase 1 is done
-> "API proxy live at api.giveabit.io — /beta page will show green"
+> "API proxy live at api.giveabit.io — /beta page will show green" — **historical: host retired 2026-09-13**
 
 ---
 

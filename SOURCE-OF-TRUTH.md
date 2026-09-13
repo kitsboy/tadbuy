@@ -18,7 +18,7 @@ Tadbuy is a Bitcoin-native advertising platform (DSP). Advertisers buy ads on Tw
 - **Platform**: Cloudflare Pages (static SPA)
   - Build: `npm run build` → `dist/` (runs `sync-docs` via prebuild)
   - Node 20, auto-deploy on push to `main`
-- **API proxy**: `api.giveabit.io` → Cloudflare Tunnel → M4 process (ops/env on M4; **no working git pull on M4**) ✅
+- **API proxy**: ❌ **RETIRED 2026-09-13** — `api.giveabit.io` answered HTTP 530 / Cloudflare 1033 (`error code: 1033`) because its origin (an M4 tunnel + PM2 process) is gone; the host is out of the code and out of `connect-src`. Restore = a real origin + `VITE_API_BASE_URL`. (Superseded: `api.giveabit.io` → Cloudflare Tunnel → M4 process, ops/env on M4)
 - **Supabase**: Project `cegzfjbsadwchonpxwmv` — **server DB** via service_role (canonical data store)
 - **Auth**: SPA still has **legacy Firebase Auth** client (`VITE_FIREBASE_*`) — intent is **Supabase Auth**; migration TODO on M3. Do not treat Firebase Admin as the server stack.
 - **Local dev**: `npm run dev` or `npm start` on **M3 only**
@@ -104,7 +104,7 @@ For automated agents (Grok, Kimi, Qwen):
 - [x] Rewrote public/robots.txt to block AI scrapers and sensitive paths
 
 ## Gaps / Next
-- [x] M4 Phase 1: API proxy live (`api.giveabit.io`)
+- [x] M4 Phase 1: API proxy live (`api.giveabit.io`) — **retired 2026-09-13 (HTTP 530 / Cloudflare 1033)**
 - [x] /geo page — 100 enhancements
 - [x] SPA routing fix
 - [x] Security hardening + i18n complete (v5.0.85)

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { FlaskConical, Server, Smartphone, Bitcoin, Shield, ExternalLink } from 'lucide-react';
@@ -10,25 +9,19 @@ import { PageShell } from '@/components/PageShell';
 import { ConsumerWorkflow } from '@/components/ConsumerWorkflow';
 import { EcosystemLinks } from '@/components/EcosystemLinks';
 import { GIVEABIT_ECOSYSTEM } from '@/data/ecosystemConfig';
-import { checkApiHealth } from '@/lib/apiBase';
 import { PROJECT_STATE } from '@/data/projectState';
 import { SafeLink } from '@/components/SafeLink';
 
 export default function Beta() {
-  usePageMeta('BETA Status', 'What works now, what needs M4 server setup, and the consumer payment workflow for Tadbuy.');
-
-  const [apiHealth, setApiHealth] = useState<Awaited<ReturnType<typeof checkApiHealth>> | null>(null);
-
-  useEffect(() => {
-    checkApiHealth().then(setApiHealth);
-  }, []);
+  usePageMeta('BETA Status', 'What works now, what still needs a backend server, and the consumer payment workflow for Tadbuy.');
 
   const { federation, infrastructure } = GIVEABIT_ECOSYSTEM;
 
   return (
     <PageShell
       title="What Works Right Now"
-      description={`Tadbuy UI is live on Cloudflare Pages. API at api.giveabit.io. BETA ${PROJECT_STATE.version}.`}
+      description={`Tadbuy UI is live on Cloudflare Pages. No backend API is deployed for this build. BETA ${PROJECT_STATE.version}.`}
+
       badge={<Badge variant="accent" className="gap-1.5"><FlaskConical className="w-3.5 h-3.5" /> BETA · {PROJECT_STATE.version}</Badge>}
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'BETA' }]}
       showDemoBadge
@@ -40,15 +33,16 @@ export default function Beta() {
         <p className="text-xs text-muted mt-2">14 batches × 25 enhancements = 350 total shipped</p>
       </Card>
 
-      {apiHealth && (
-        <Card className={apiHealth.ok ? 'border-green/30' : 'border-accent/30'}>
-          <CardTitle>API Status</CardTitle>
-          <p className={`text-sm font-bold ${apiHealth.ok ? 'text-green' : 'text-accent'}`}>
-            {apiHealth.ok ? '● Online' : '○ Offline / Static Mode'}
-          </p>
-          <p className="text-xs text-muted mt-1">{apiHealth.message}</p>
-        </Card>
-      )}
+      <Card className="glass-panel">
+        <CardTitle>API Status</CardTitle>
+        <p className="text-sm font-bold">○ No backend API in this build</p>
+        <p className="text-xs text-muted mt-1">
+          The Tadbuy UI is a static SPA on Cloudflare Pages. Its payment and campaign endpoints live
+          in the repo&apos;s own Node server, which is not deployed — so nothing is probed here and no
+          status is claimed. <Link to="/health" className="underline">/health</Link> lists exactly what
+          is checked.
+        </p>
+      </Card>
 
       <Card className="glass-panel">
         <CardTitle>Consumer Workflow</CardTitle>
@@ -64,7 +58,7 @@ export default function Beta() {
           <div className="flex justify-between"><span className="text-muted">Gateway (M4)</span><span className="font-mono text-xs">{federation.stagedGateway}</span></div>
           <p className="text-xs text-muted leading-relaxed pt-2">
             One mint for all Give A Bit projects: Tadbuy, Satohash, Give A Bit, MotoPass, OpenStrata.
-            Federation runs on <strong>M4 HERMES</strong> — not M3.
+            Federation is staged to run on <strong>M4 HERMES</strong> — not M3.
           </p>
           <SafeLink href={infrastructure.fedi.url} target="_blank" showIcon className="inline-flex items-center gap-1 text-xs text-accent font-bold hover:underline">
             Get Fedi wallet <ExternalLink className="w-3 h-3" />
@@ -78,7 +72,7 @@ export default function Beta() {
           <ul className="text-xs text-muted space-y-2">
             <li>• Fedimint guardian + mint</li>
             <li>• Umbrel full BTC node (when ready)</li>
-            <li>• API proxy at api.giveabit.io ✅</li>
+            <li>• API proxy — none deployed</li>
             <li>• Fedi gateway for mint.giveabit.io</li>
           </ul>
           <p className="text-[10px] text-muted mt-3 font-mono">Ref: docs/M4-SERVER-REF.md</p>

@@ -1,5 +1,9 @@
 # Session Summary — 2026-07-03 (Goodbye)
 
+> **HISTORICAL DOCUMENT — kept for the record.** One fact in it is no longer true: the M4 API proxy at
+> `api.giveabit.io` was **retired 2026-09-13** (the host answers HTTP 530 / Cloudflare error 1033, its origin is
+> gone, and it is out of the code and the CSP). Everything else is a 2026-07-03 snapshot.
+
 ## Chat Topic
 
 Completed Tadbuy **Phase 1** (API proxy + Supabase migration on M4), parked Phases 2–3 on external blockers, and clarified **Fedi wallet setup** for Cam.
@@ -8,7 +12,7 @@ Completed Tadbuy **Phase 1** (API proxy + Supabase migration on M4), parked Phas
 
 - Swapped server-side DB from Firebase Admin → **Supabase** (`supabaseAdmin.ts`, `supabase-schema.sql`, `server.ts`)
 - Removed Gemini `/api/ai/optimize` and firebase-admin from server
-- Kimi deployed M4: `api.giveabit.io` → Cloudflare Tunnel → PM2 at `~/.hermes/servers/tadbuy-api/`
+- Kimi deployed M4: `api.giveabit.io` → Cloudflare Tunnel → PM2 at `~/.hermes/servers/tadbuy-api/` (**retired 2026-09-13 — historical**)
 - Verified live: `{"ok":true}`, Supabase 5 tables, SPA redeployed with `VITE_API_BASE_URL`
 - Documented Phase 2–3 blockers + Kanban tasks (Andrea, Rosa)
 - Explained Fedi to Cam: keep app installed, wait for `fm-invite://` — do not join a federation yet
@@ -43,7 +47,7 @@ Completed Tadbuy **Phase 1** (API proxy + Supabase migration on M4), parked Phas
 
 ## Update / Status
 
-**As of 2026-07-03:** Tadbuy v4.4.0-ELITE BETA. UI live at tadbuy.giveabit.io. API live at api.giveabit.io. Fedimint and Lightning remain staged until blockers clear. Grok on M3 is ready to wire Fedi into sibling repos and any **new** Give A Bit apps when invite is live.
+**As of 2026-07-03:** Tadbuy v4.4.0-ELITE BETA. UI live at tadbuy.giveabit.io. ~~API live at api.giveabit.io~~ (**retired 2026-09-13 — HTTP 530 / Cloudflare 1033**). Fedimint and Lightning remain staged until blockers clear. Grok on M3 is ready to wire Fedi into sibling repos and any **new** Give A Bit apps when invite is live.
 
 **Last commits:** `4965fda` (blockers), `111dfa6` (handoff SHA)
 
