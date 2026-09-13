@@ -2,11 +2,11 @@
   "schema": "gab.product-metrics.v1",
   "productId": "tadbuy",
   "name": "Tadbuy",
-  "updatedAt": "2026-09-13T20:14:57.730Z",
+  "updatedAt": "2026-09-13T20:12:49.066Z",
   "window": {
     "label": "30d",
-    "from": "2026-08-14T20:14:57.730Z",
-    "to": "2026-09-13T20:14:57.730Z"
+    "from": "2026-08-14T20:12:49.066Z",
+    "to": "2026-09-13T20:12:49.066Z"
   },
   "health": {
     "status": "green",
