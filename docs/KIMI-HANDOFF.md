@@ -1,3 +1,35 @@
+## Session — 2026-09-13 · Playwright cold-start flake fixed (Grok M3)
+
+**Done:**
+- Updated the `platforms query pre-selects platform` Playwright test to wait for initial network idle and allow the observed cold Vite transform window before asserting the selected `Nostr` platform
+- Confirmed the test passes on three repeated first attempts against the CI-style dev server
+- Confirmed the full Playwright suite passes **11/11**
+- Confirmed TypeScript typecheck passes
+- Merged newer remote `main` changes without losing the test fix
+
+**Decisions:**
+- Kept the homepage production code-split; the fix belongs in the browser test because the failure was a dev-server cold-transform timing race
+- Kept the assertion semantic and unchanged: it still verifies that `Nostr` is visible for `?platforms=nostr`
+- Existing local `public/sw.js` change remains deliberately uncommitted
+
+**Verification:**
+- `CI=true npx playwright test e2e/buy-flow.spec.ts --grep "platforms query" --repeat-each=3 --workers=1` ✅ 3/3
+- `CI=true npm run test:e2e` ✅ 11/11
+- `npm run lint` ✅
+- `git diff --check` ✅
+
+**Git State:**
+- Branch: `main`
+- Test fix: `f1f3a3d`
+- Merge tip: local merge commit, pending push
+- Handoff commit: pending
+- Local excluded change: `public/sw.js`
+
+**Next for Kimi:**
+- Confirm GitHub Actions/Cloudflare Pages deployment after the push
+
+---
+
 ## Session — 2026-09-13 · API and security hardening (Grok M3)
 
 **Done:**
