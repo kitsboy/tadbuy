@@ -1,6 +1,10 @@
 /**
  * Single source of truth for auto-evolving docs, pitch page, and marketing.
- * Updated by sync-docs.ts on every build from live metrics when available.
+ *
+ * `version` and `lastSynced` are rewritten by scripts/sync-version.ts on every
+ * build (prebuild hook) — do not hand-edit them. Everything else in here is
+ * hand-maintained and must stay verifiable: no unmeasured counters, no claims
+ * a reader cannot check.
  */
 export const PROJECT_STATE = {
   version: 'v5.0.178',
