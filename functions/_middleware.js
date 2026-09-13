@@ -4,6 +4,19 @@
  */
 const SKIP_PREFIXES = ['/assets/', '/api/', '/.well-known/']
 
+// Real Pages Functions under /api/ — the middleware runs BEFORE Functions, so
+// a bare path-prefix block on /api/ would break these. Keep this list in sync
+// with functions/api/*. Any other /api/* path that does not answer with a real
+// (non-HTML) response is a "no such endpoint" and gets a JSON 404 below.
+const REAL_API_FUNCTIONS = new Set(['/api/csp-report'])
+
+const API_NOT_FOUND = (pathname) =>
+  JSON.stringify({
+    error: 'Not Found',
+    message: `No API route at ${pathname} on this host.`,
+    hint: 'this deployment is a static demo — see /beta'
+  })
+
 const CRAWLER_RE =
   /(googlebot|bingbot|yandex|baiduspider|duckduckbot|slurp|gptbot|claude|anthropic|perplexity|chatgpt|applebot|semrushbot|ahrefsbot|mj12bot|bytespider|ccbot|facebookexternalhit|twitterbot|linkedinbot)/i
 
@@ -84,6 +97,30 @@ export async function onRequest(context) {
         headers: { 'content-type': 'text/html; charset=utf-8', 'x-robots-tag': 'index, follow', 'cache-control': 'public, max-age=3600' }
       })
     }
+  }
+
+  // ── Unmatched /api/* must never be answered with the SPA shell ──────────────
+  // public/_redirects ends with `/* /index.html 200`, so GET /api/<anything>
+  // used to come back as HTTP 200 text/html (a fake "endpoint exists") and
+  // POST as 405/0 bytes. Both mean "no such endpoint" and must answer the
+  // same way. Real Pages Functions pass through untouched; the SPA shell
+  // (text/html) and empty-body responses are converted to a JSON 404.
+  if (url.pathname === '/api' || url.pathname.startsWith('/api/')) {
+    if (REAL_API_FUNCTIONS.has(url.pathname)) return next()
+    const res = await next()
+    const ct = (res.headers.get('content-type') || '').toLowerCase()
+    // A real API answers JSON (even for errors); a non-HTML, non-error
+    // response also passes. Everything else is the static host answering.
+    if (ct.includes('application/json') || (!ct.includes('text/html') && res.status < 400)) return res
+    return new Response(API_NOT_FOUND(url.pathname), {
+      status: 404,
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+        'access-control-allow-origin': '*',
+        'x-robots-tag': 'noindex'
+      }
+    })
   }
 
   if (request.method !== 'GET') return next()
