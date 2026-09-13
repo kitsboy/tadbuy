@@ -52,7 +52,11 @@ export function registerBatch20Routes(app: Express) {
         contact: { name: 'Give A Bit', url: 'https://giveabit.io' },
       },
       servers: [
-        { url: 'https://api.giveabit.io', description: 'Production' },
+        // api.giveabit.io is retired (HTTP 530 / Cloudflare 1033 since 2026-09-13) — never
+        // publish it as "Production" again; only an explicitly configured host is advertised.
+        ...(process.env.VITE_API_BASE_URL
+          ? [{ url: process.env.VITE_API_BASE_URL, description: 'Configured (VITE_API_BASE_URL)' }]
+          : []),
         { url: 'http://127.0.0.1:3000', description: 'Local dev' },
       ],
       paths: {

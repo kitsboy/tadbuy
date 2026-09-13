@@ -70,7 +70,11 @@ export function registerBatch22Routes(app: Express) {
         version: 'v5.0.2',
         description: 'Authenticated agent endpoints for autonomous campaign management',
       },
-      servers: [{ url: 'https://api.giveabit.io' }, { url: 'http://localhost:3000' }],
+      // api.giveabit.io retired 2026-09-13 (HTTP 530 / Cloudflare 1033) — not advertised.
+      servers: [
+        ...(process.env.VITE_API_BASE_URL ? [{ url: process.env.VITE_API_BASE_URL }] : []),
+        { url: 'http://localhost:3000' },
+      ],
       components: {
         securitySchemes: {
           agentAuth: { type: 'http', scheme: 'bearer', description: 'AGENT_API_KEY' },

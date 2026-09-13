@@ -38,7 +38,9 @@ export function registerBatch13Routes(app: Express) {
   app.get('/api/api-reference/endpoints', (_req, res) => {
     res.json({
       version: 'v5.0.0-PLATINUM',
-      baseUrl: process.env.VITE_API_BASE_URL || 'https://api.giveabit.io',
+      // No hardcoded production host: api.giveabit.io was retired 2026-09-13
+      // (HTTP 530 / Cloudflare 1033). Empty unless VITE_API_BASE_URL is set.
+      baseUrl: process.env.VITE_API_BASE_URL || '',
       count: API_ENDPOINTS.length,
       endpoints: API_ENDPOINTS,
     });
@@ -48,7 +50,12 @@ export function registerBatch13Routes(app: Express) {
     res.json({
       openapi: '3.1.0',
       info: { title: 'Tadbuy API', version: 'v5.0.0-PLATINUM', description: 'Bitcoin-native ad platform REST API' },
-      servers: [{ url: 'https://api.giveabit.io' }, { url: 'http://localhost:3000' }],
+      // Only advertise a server we can actually reach: the retired api.giveabit.io
+      // (HTTP 530 / Cloudflare 1033 since 2026-09-13) is gone from this list.
+      servers: [
+        ...(process.env.VITE_API_BASE_URL ? [{ url: process.env.VITE_API_BASE_URL }] : []),
+        { url: 'http://localhost:3000' },
+      ],
       paths: Object.fromEntries(
         API_ENDPOINTS.map(e => [
           e.path.replace('/api', ''),

@@ -3,7 +3,8 @@
   "version": "v4.4.0-ELITE",
   "phase": "BETA",
   "live_url": "https://tadbuy.giveabit.io",
-  "api_proxy": "https://api.giveabit.io",
+  "api_proxy": null,
+  "api_proxy_status": "none deployed — api.giveabit.io was retired 2026-09-13 (HTTP 530 / Cloudflare 1033)",
   "fedimint_mint": {
     "name": "Give A Bit Mint",
     "domain": "giveabit.io",
@@ -13,7 +14,7 @@
   },
   "machines": {
     "m3": { "role": "dev", "path": "~/projects/tadbuy" },
-    "m4": { "role": "server", "services": ["fedimint", "umbrel", "api-proxy", "fedi-gateway"] }
+    "m4": { "role": "server", "services": ["fedimint", "umbrel", "fedi-gateway"], "retired": ["api-proxy (api.giveabit.io) — retired 2026-09-13, HTTP 530 / Cloudflare 1033"] }
   },
   "pages": {
     "campaign_builder": "/",

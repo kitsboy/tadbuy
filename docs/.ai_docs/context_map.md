@@ -15,7 +15,7 @@
 |-------|-----------|
 | Frontend | React 19 + Vite + Tailwind v4 + React Router v7 |
 | Hosting | Cloudflare Pages (static SPA) |
-| API | Express server.ts — M3 dev or M4 proxy (`api.giveabit.io` live ✅) |
+| API | Express `server.ts` — dev only (`npm run dev` / `npm start`). **No deployed host**: `api.giveabit.io` was retired 2026-09-13 (HTTP 530 / Cloudflare error 1033) |
 | DB (server) | Supabase (`cegzfjbsadwchonpxwmv`) via `supabaseAdmin.ts` |
 | DB (client auth) | Firebase (`tadbuy-e3555`) — client SDK only |
 | Payments | Lightning (Umbrel), Fedimint ecash, BTC, Nostr Zap |
@@ -52,7 +52,7 @@
 
 ## API Architecture
 
-Cloudflare Pages = **static SPA**. `/api/*` routed via `VITE_API_BASE_URL=https://api.giveabit.io` → M4 PM2 (live ✅).
+Cloudflare Pages = **static SPA**. **No API proxy**: `api.giveabit.io` was retired 2026-09-13 (HTTP 530 / Cloudflare error 1033) and is out of the code and out of `connect-src`; `/api/*` only resolves when a host is configured via `VITE_API_BASE_URL` — none is deployed today.
 Local dev: `npm run dev` on M3.
 
 ## Geo Page APIs (batch 24)
