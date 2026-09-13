@@ -5,7 +5,8 @@ import { getSafeAuth } from '@/firebase';
 import { getApiBase } from '@/lib/apiBase';
 
 export async function getAuthHeaders(
-  extra?: HeadersInit
+  extra?: HeadersInit,
+  forceRefresh = false
 ): Promise<Record<string, string>> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -22,7 +23,7 @@ export async function getAuthHeaders(
     const auth = getSafeAuth();
     const user = auth?.currentUser;
     if (user) {
-      const token = await user.getIdToken();
+      const token = await user.getIdToken(forceRefresh);
       headers['Authorization'] = `Bearer ${token}`;
     }
   } catch {
@@ -41,8 +42,19 @@ export async function authFetch(path: string, init?: RequestInit): Promise<Respo
     headers: authHeaders,
   };
 
+  const request = () => fetch(url, merged);
   try {
-    return await fetch(url, merged);
+    const response = await request();
+    if (response.status !== 401) return response;
+
+    // Firebase ID tokens expire. Refresh once, then retry the original request;
+    // never loop indefinitely on a genuinely unauthenticated request.
+    const refreshedHeaders = await getAuthHeaders(init?.headers, true);
+    const retryResponse = await fetch(url, { ...merged, headers: refreshedHeaders });
+    if (retryResponse.status !== 401) return retryResponse;
+
+    if (base !== '') return fetch(path, { ...merged, headers: refreshedHeaders });
+    return retryResponse;
   } catch {
     if (base !== '') {
       return fetch(path, merged);

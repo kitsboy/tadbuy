@@ -36,7 +36,7 @@ class EB extends React.Component<Props, State> {
             <p className="text-sm text-[#a1a1aa] mb-6 leading-relaxed">
               An unexpected error occurred. The incident has been logged. Please reload and try again.
             </p>
-            {state.error?.message && (
+            {import.meta.env.DEV && state.error?.message && (
               <div className="bg-[#18181b] border border-[#3f3f46] rounded-lg p-3 font-mono text-xs text-red mb-6 text-left break-all leading-relaxed">
                 {state.error.message}
               </div>

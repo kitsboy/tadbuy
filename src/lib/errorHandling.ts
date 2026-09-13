@@ -1,13 +1,12 @@
-export const logError = (error: any, context: string) => {
-  console.error(`[${context}]`, error);
-  fetch("/api/logs", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      message: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : null,
-      context,
-      timestamp: new Date().toISOString()
-    })
-  }).catch(console.error);
+import * as Sentry from '@sentry/react';
+
+/** Report an error locally and to Sentry without shipping raw stack details to an API endpoint. */
+export const logError = (error: unknown, context: string) => {
+  const normalized = error instanceof Error ? error : new Error(String(error));
+  if (import.meta.env.DEV) {
+    console.error(`[${context}]`, normalized);
+  }
+  Sentry.captureException(normalized, {
+    tags: { context: context.slice(0, 64) },
+  });
 };

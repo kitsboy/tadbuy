@@ -10,11 +10,19 @@ export const initSentry = () => {
       dsn,
       integrations: [
         Sentry.browserTracingIntegration(),
-        Sentry.replayIntegration(),
+        Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true }),
       ],
-      tracesSampleRate: 1.0,
-      replaysSessionSampleRate: 0.1,
-      replaysOnErrorSampleRate: 1.0,
+      tracesSampleRate: 0.1,
+      replaysSessionSampleRate: 0.05,
+      replaysOnErrorSampleRate: 0.25,
+      beforeSend(event) {
+        if (event.request) {
+          delete event.request.cookies;
+          delete event.request.headers;
+          delete event.request.data;
+        }
+        return event;
+      },
     });
   }
 };

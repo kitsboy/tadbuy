@@ -1,4 +1,42 @@
-## Session — 2026-09-13 · CI/release checks + documentation hygiene (Grok M3)
+## Session — 2026-09-13 · API and security hardening (Grok M3)
+
+**Done:**
+- Added request IDs, privacy-safe request logging, bounded JSON bodies, explicit proxy trust configuration, redacted server errors, and graceful SIGTERM/SIGINT shutdown
+- Added outbound blockchain request timeout and non-2xx handling
+- Added idempotency-key enforcement and payload-conflict detection for payment confirmation, settlement, and marketplace bids
+- Added webhook constant-time secret comparison and ten-minute replay protection
+- Tightened campaign ownership so owner-less legacy rows cannot be modified by authenticated users
+- Made Fedimint/Nostr/creative/publisher/enterprise/proof/IPFS/AI/carbon stubs return explicit staged/unsupported responses instead of fabricated success
+- Added CSP report intake with bounded logging and no payload echo
+- Added Firebase token refresh retry in `authFetch`
+- Reduced Sentry traces/replay sampling and scrubbed request data; client errors no longer POST to the nonexistent `/api/logs` endpoint
+- Added clipboard fallback helper, hid production error details, and routed API docs raw links through `SafeLink`
+
+**Verification:**
+- `npm run lint` ✅
+- `npm run check:routes` ✅
+- `npm run build` ✅ (`postbuild` dist verification passed)
+- `npm run check:bundle` ✅
+- `npm run audit:dependencies` ✅ high-severity gate; existing low/moderate transitive advisories remain
+- `npm run test:e2e` ✅ 11 tests
+- `git diff --check` ✅
+
+**Decisions:**
+- Batch 3/4 changes remain compatible with the staged payment architecture; real Fedimint, LND, Supabase Auth, and provider integrations remain external blockers
+- Existing local `public/sw.js` change remains deliberately uncommitted
+- Generated `LATEST-UPDATE.md` and `public/metrics.json` changes from verification are excluded as unrelated
+
+**Git State:**
+- Branch: `main`
+- Commit: pending
+- Local excluded change: `public/sw.js`
+
+**Next for Kimi:**
+- Confirm GitHub Actions/Cloudflare Pages deployment after push
+- Keep `ENABLE_LN_PAYOUTS=false` until persisted wallet ledger and external payout controls are live
+
+---
+
 
 **Done:**
 - Added strict CI install (`npm ci`), TypeScript check, full `npm run build`, route integrity check, bundle report, Playwright browser smoke tests, high-severity dependency audit, production deploy verification, production asset-cache verification, and failure diagnostics upload

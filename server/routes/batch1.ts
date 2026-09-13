@@ -1,5 +1,13 @@
 import type { Express, Request, Response } from 'express';
+import { requireAuth } from '../../src/lib/api/userAuth.ts';
 import { anonymizeIp, extractClientIp } from '../../src/lib/privacy/ipAnonymize.ts';
+
+const staged = (message: string) => ({
+  demo: true,
+  supported: false,
+  status: 'staged' as const,
+  message,
+});
 
 // In-memory Fedimint session store (production: use encrypted session/DB)
 const fedimintSessions = new Map<string, {
@@ -37,43 +45,16 @@ export function registerBatch1Routes(app: Express) {
     });
   });
 
-  app.post('/api/fedimint/join', (req, res) => {
-    const { invite } = req.body;
-    if (!invite || typeof invite !== 'string') {
-      return res.status(400).json({ message: 'invite code required (fm-invite://...)' });
-    }
-    const federationId = 'fm_' + Buffer.from(invite).toString('base64url').slice(0, 12);
-    const session = {
-      federationId,
-      federationName: process.env.FEDIMINT_FEDERATION_NAME || 'Give A Bit Mint',
-      balanceMsats: 5_000_000, // 5000 sats demo balance
-      invite,
-    };
-    fedimintSessions.set(getSessionId(req), session);
-    res.json({ connected: true, ...session });
+  app.post('/api/fedimint/join', requireAuth, (req, res) => {
+    return res.status(503).json(staged('Fedimint join is staged until the Give A Bit gateway is connected.'));
   });
 
-  app.post('/api/fedimint/pay', (req, res) => {
-    const { amountSats, memo } = req.body;
-    const session = fedimintSessions.get(getSessionId(req));
-    if (!session) return res.status(400).json({ message: 'Join a federation first' });
-    const amountMsats = (amountSats || 0) * 1000;
-    if (amountMsats > session.balanceMsats) {
-      return res.status(400).json({ message: 'Insufficient ecash balance' });
-    }
-    session.balanceMsats -= amountMsats;
-    const operationId = 'fmop_' + Date.now().toString(36);
-    console.log(`Fedimint payment: ${amountSats} sats — ${memo}`);
-    res.json({ success: true, operationId, amountMsats, message: 'Ecash payment settled' });
+  app.post('/api/fedimint/pay', requireAuth, (_req, res) => {
+    res.status(503).json(staged('Fedimint payments are staged until the Give A Bit gateway is connected.'));
   });
 
-  app.post('/api/fedimint/redeem', (req, res) => {
-    const { notes } = req.body;
-    if (!notes) return res.status(400).json({ message: 'ecash notes required' });
-    const session = fedimintSessions.get(getSessionId(req));
-    if (!session) return res.status(400).json({ message: 'Join a federation first' });
-    session.balanceMsats += 1_000_000; // demo redeem
-    res.json({ balanceMsats: session.balanceMsats });
+  app.post('/api/fedimint/redeem', requireAuth, (_req, res) => {
+    res.status(503).json(staged('Fedimint redemption is staged until the Give A Bit gateway is connected.'));
   });
 
   // ─── Nostr (NIP-57, NIP-98, NIP-46, NIP-90) ─────────────────────────────
@@ -107,24 +88,12 @@ export function registerBatch1Routes(app: Express) {
     });
   });
 
-  app.post('/api/nostr/nip46/sign', (req, res) => {
-    const { pubkey, payload } = req.body;
-    res.json({
-      pubkey,
-      signature: 'sig_demo_' + Buffer.from(payload || '').toString('base64url').slice(0, 16),
-      method: 'NIP-46-bunker',
-      message: 'Connect NIP-46 bunker signer for production signatures',
-    });
+  app.post('/api/nostr/nip46/sign', requireAuth, (_req, res) => {
+    res.status(501).json(staged('NIP-46 signing requires a connected bunker signer.'));
   });
 
-  app.post('/api/nostr/nip90/dvm', (req, res) => {
-    const { kind, input } = req.body;
-    res.json({
-      status: 'completed',
-      kind: kind || 5000,
-      result: { optimized: input, model: 'ppq-ai-v1' },
-      payment: { amount: 21, unit: 'sats' },
-    });
+  app.post('/api/nostr/nip90/dvm', requireAuth, (_req, res) => {
+    res.status(501).json(staged('NIP-90 jobs require a connected DVM and payment verifier.'));
   });
 
   // ─── Lightning Channels / Liquidity ───────────────────────────────────────
@@ -193,10 +162,8 @@ export function registerBatch1Routes(app: Express) {
   });
 
   // ─── Cashu Ecash ──────────────────────────────────────────────────────────
-  app.post('/api/cashu/redeem', (req, res) => {
-    const { token } = req.body;
-    if (!token) return res.status(400).json({ message: 'Cashu token required' });
-    res.json({ success: true, amountSats: 5000, message: 'Cashu token redeemed' });
+  app.post('/api/cashu/redeem', requireAuth, (_req, res) => {
+    res.status(501).json(staged('Cashu redemption is not connected to a mint.'));
   });
 
   // ─── Silent Payments (BIP-352) ────────────────────────────────────────────
@@ -220,8 +187,8 @@ export function registerBatch1Routes(app: Express) {
   });
 
   // ─── PYNYM Privacy Layer ──────────────────────────────────────────────────
-  app.post('/api/privacy/pynym/register', (_req, res) => {
-    res.json({ pynymId: 'pynym_' + Date.now().toString(36), status: 'registered' });
+  app.post('/api/privacy/pynym/register', requireAuth, (_req, res) => {
+    res.status(501).json(staged('PYNYM registration requires the privacy service connection.'));
   });
 
   // ─── Ark / LSP Submarine Swap ─────────────────────────────────────────────

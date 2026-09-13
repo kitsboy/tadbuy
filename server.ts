@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import express from "express";
 import session from "express-session";
 import cookieParser from "cookie-parser";
@@ -54,6 +55,16 @@ import { HUBHASH_CAMPAIGNS } from "./src/data/hubhashCampaigns.ts";
 import fs from "fs";
 import { jsPDF } from "jspdf";
 import * as Sentry from "@sentry/node";
+import {
+  getIdempotencyKey,
+  getReplayKey,
+  redactError,
+  rememberWithTtl,
+  requestIdMiddleware,
+  requestLogger,
+  type RequestWithId,
+  withTimeout,
+} from "./src/lib/api/serverHardening.ts";
 
 // ─── Startup Guards ────────────────────────────────────────────────────────────
 if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
@@ -65,7 +76,16 @@ if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
 if (process.env.SENTRY_DSN) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
-    tracesSampleRate: 1.0,
+    tracesSampleRate: 0.1,
+    sendDefaultPii: false,
+    beforeSend(event) {
+      if (event.request) {
+        delete event.request.cookies;
+        delete event.request.headers;
+        delete event.request.data;
+      }
+      return event;
+    },
   });
 }
 
@@ -141,8 +161,15 @@ async function startServer() {
   const app = express();
   const PORT = process.env.PORT || 3000;
   const campaignRepo = new SupabaseCampaignRepository();
+  const idempotencyResponses = new Map<string, { status: number; body: unknown; fingerprint: string; expiresAt: number }>();
+  const webhookReplayKeys = new Map<string, number>();
 
-  app.use(express.json());
+  // Cloudflare/tunnel deployments must provide the hop count explicitly so
+  // rate-limit keys use the real client address without trusting spoofed headers.
+  app.set('trust proxy', process.env.TRUST_PROXY === 'false' ? false : Number(process.env.TRUST_PROXY || 1));
+  app.use(requestIdMiddleware);
+  app.use(requestLogger);
+  app.use(express.json({ limit: '256kb', type: ['application/json', 'application/csp-report', 'application/reports+json'] }));
   app.use(cookieParser());
   app.use(session({
     secret: process.env.SESSION_SECRET || 'super-secret-key-change-in-production',
@@ -221,6 +248,17 @@ async function startServer() {
     } else {
       res.json({ ok: true });
     }
+  });
+
+  // CSP reports contain browser-generated URLs and snippets; accept only a
+  // bounded object and acknowledge them without echoing payload details.
+  app.post('/api/csp-report', (req, res) => {
+    const report = req.body?.['csp-report'] ?? req.body;
+    if (!report || typeof report !== 'object' || Array.isArray(report)) {
+      return res.status(400).json({ error: 'Invalid CSP report' });
+    }
+    console.info(`[csp] ${String((req as RequestWithId).requestId ?? '-')} ${String((report as { 'violated-directive'?: string })['violated-directive'] ?? 'unknown').slice(0, 128)}`);
+    res.status(204).end();
   });
 
   // ─── Admin Routes ───────────────────────────────────────────────────────────
@@ -441,7 +479,7 @@ async function startServer() {
     try {
       const existing = await campaignRepo.getById(id);
       if (!existing) return res.status(404).json({ error: 'Campaign not found' });
-      if (existing.userId && existing.userId !== userId) {
+      if (existing.userId !== userId) {
         return res.status(403).json({ error: 'Forbidden' });
       }
       await campaignRepo.update(id, { status });
@@ -453,6 +491,17 @@ async function startServer() {
 
   // Confirm payment server-side and activate campaign (client cannot force live)
   app.post("/api/payments/confirm", requireAuth, strictLimiter, async (req, res) => {
+    const idempotencyKey = getIdempotencyKey(req);
+    if (!idempotencyKey) {
+      return res.status(400).json({ error: 'Idempotency-Key header required' });
+    }
+    const cacheKey = `payment-confirm:${(req as AuthedRequest).userId}:${idempotencyKey}`;
+    const fingerprint = JSON.stringify(req.body ?? {});
+    const cached = idempotencyResponses.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      if (cached.fingerprint !== fingerprint) return res.status(409).json({ error: 'Idempotency key reused with different request' });
+      return res.status(cached.status).json(cached.body);
+    }
     const invoiceId = typeof req.body?.invoiceId === 'string' ? req.body.invoiceId : '';
     const campaignId = typeof req.body?.campaignId === 'string' ? req.body.campaignId : '';
     if (!invoiceId || invoiceId === 'pending') {
@@ -496,11 +545,15 @@ async function startServer() {
           paymentConfirmedAt?: string;
           userId?: string;
         });
-        return res.json({ paid: true, status: 'live', campaignId });
+        const responseBody = { paid: true, status: 'live', campaignId };
+        idempotencyResponses.set(cacheKey, { status: 200, body: responseBody, fingerprint, expiresAt: Date.now() + 24 * 60 * 60 * 1000 });
+        return res.json(responseBody);
       }
 
       const activated = await activateCampaignByInvoice(invoiceId);
-      res.json({ paid: true, activated });
+      const responseBody = { paid: true, activated };
+      idempotencyResponses.set(cacheKey, { status: 200, body: responseBody, fingerprint, expiresAt: Date.now() + 24 * 60 * 60 * 1000 });
+      res.json(responseBody);
     } catch {
       res.status(500).json({ error: 'Failed to confirm payment' });
     }
@@ -628,8 +681,12 @@ async function startServer() {
       (req.headers['authorization']?.startsWith('Bearer ')
         ? req.headers.authorization.slice(7)
         : '');
-    if (!provided || provided !== secret) {
+    if (!provided || provided.length !== secret.length || !crypto.timingSafeEqual(Buffer.from(provided), Buffer.from(secret))) {
       return res.status(401).json({ error: 'Unauthorized webhook' });
+    }
+    const replayKey = getReplayKey(req);
+    if (!rememberWithTtl(webhookReplayKeys, replayKey, 10 * 60 * 1000)) {
+      return res.status(409).json({ error: 'Webhook replay rejected' });
     }
 
     try {
@@ -657,7 +714,8 @@ async function startServer() {
   // ─── Blockchain Info ────────────────────────────────────────────────────────
   app.get("/api/blockchain/info", async (req, res) => {
     try {
-      const response = await fetch('https://mempool.space/api/blocks/tip/height');
+      const response = await fetch('https://mempool.space/api/blocks/tip/height', withTimeout({ cache: 'no-store' }, 4_000));
+      if (!response.ok) return res.status(503).json({ error: 'Blockchain provider unavailable' });
       const height = await response.text();
       res.json({ height: parseInt(height, 10) });
     } catch {
@@ -668,6 +726,17 @@ async function startServer() {
   // ─── Settle / Withdraw ──────────────────────────────────────────────────────
   // Requires auth + explicit ENABLE_LN_PAYOUTS. Amount is sats only (never BTC float).
   app.post("/api/settle", requireAuth, requireLnPayoutsEnabled, strictLimiter, async (req, res) => {
+    const idempotencyKey = getIdempotencyKey(req);
+    if (!idempotencyKey) {
+      return res.status(400).json({ error: 'Idempotency-Key header required' });
+    }
+    const cacheKey = `settle:${(req as AuthedRequest).userId}:${idempotencyKey}`;
+    const fingerprint = JSON.stringify(req.body ?? {});
+    const cached = idempotencyResponses.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      if (cached.fingerprint !== fingerprint) return res.status(409).json({ error: 'Idempotency key reused with different request' });
+      return res.status(cached.status).json(cached.body);
+    }
     const { error, value } = settleSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
@@ -684,20 +753,22 @@ async function startServer() {
           userId,
           amountSats,
           address,
-          txid: (payment as { id?: string }).id || 'ln_' + Math.random().toString(36).slice(2),
+          txid: (payment as { id?: string }).id || `ln_${(req as RequestWithId).requestId}`,
           timestamp: new Date().toISOString(),
           status: 'completed',
           paymentType,
         };
         settlements.push(settlement);
-        return res.json({ status: 'success', txid: settlement.txid });
+      const responseBody = { status: 'success', txid: settlement.txid };
+        idempotencyResponses.set(cacheKey, { status: 200, body: responseBody, fingerprint, expiresAt: Date.now() + 24 * 60 * 60 * 1000 });
+        return res.json(responseBody);
       } catch {
         return res.status(503).json({
           error: 'Lightning payment failed — LND may not be configured',
         });
       }
     } else {
-      const txid = 'onchain_pending_' + Math.random().toString(36).slice(2);
+      const txid = `onchain_pending_${(req as RequestWithId).requestId}`;
       console.log(`On-chain payment queued: ${amountSats} sats → ${address} (user ${userId})`);
       settlements.push({
         id: settlements.length + 1,
@@ -709,16 +780,28 @@ async function startServer() {
         status: 'pending',
         paymentType,
       });
-      res.json({
+      const responseBody = {
         status: 'pending',
         txid,
         message: 'On-chain transaction queued — requires node integration to broadcast',
-      });
+      };
+      idempotencyResponses.set(cacheKey, { status: 200, body: responseBody, fingerprint, expiresAt: Date.now() + 24 * 60 * 60 * 1000 });
+      res.json(responseBody);
     }
   });
 
   // ─── Marketplace Bids ───────────────────────────────────────────────────────
   app.post("/api/marketplace/bid", requireAuth, async (req, res) => {
+    const idempotencyKey = getIdempotencyKey(req);
+    if (!idempotencyKey) return res.status(400).json({ error: 'Idempotency-Key header required' });
+    const userId = (req as AuthedRequest).userId!;
+    const cacheKey = `bid:${userId}:${idempotencyKey}`;
+    const fingerprint = JSON.stringify(req.body ?? {});
+    const cached = idempotencyResponses.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      if (cached.fingerprint !== fingerprint) return res.status(409).json({ error: 'Idempotency key reused with different request' });
+      return res.status(cached.status).json(cached.body);
+    }
     const { error, value } = bidSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
@@ -726,7 +809,9 @@ async function startServer() {
     try {
       const userId = (req as AuthedRequest).userId!;
       const { id } = await createBid({ ...value, userId });
-      res.json({ success: true, id, message: 'Bid placed successfully' });
+      const responseBody = { success: true, id, message: 'Bid placed successfully' };
+      idempotencyResponses.set(cacheKey, { status: 200, body: responseBody, fingerprint, expiresAt: Date.now() + 24 * 60 * 60 * 1000 });
+      res.json(responseBody);
     } catch {
       res.status(500).json({ error: 'Failed to store bid' });
     }
@@ -787,7 +872,11 @@ async function startServer() {
   // ─── Phase 1-5: 20-Point Upgrades Public API ─────────────────────────────
   
   // Phase 1 & 2: Tracking — IP stripped, fp hashed, 30-day retention (see impressionLogs.ts)
-  const demoStub = <T extends Record<string, unknown>>(payload: T) => ({ demo: true as const, ...payload });
+  const demoStub = <T extends Record<string, unknown>>(payload: T) => ({
+    demo: true as const,
+    supported: false,
+    ...payload,
+  });
 
   app.post("/api/v1/retargeting/track", async (req, res) => {
     const body = req.body ?? {};
@@ -919,10 +1008,13 @@ async function startServer() {
 
   // ─── Centralized Error Handler ──────────────────────────────────────────────
   app.use((err: Error, req: express.Request, res: express.Response, _next: express.NextFunction) => {
-    console.error(err.stack);
-    if (process.env.SENTRY_DSN) Sentry.captureException(err);
-    // Never leak internal error messages to clients
-    res.status(500).json({ error: 'Internal Server Error' });
+    const requestId = (req as RequestWithId).requestId;
+    console.error(`[http-error] ${requestId ?? '-'} ${req.method} ${req.originalUrl}`, err.message);
+    if (process.env.SENTRY_DSN) Sentry.captureException(err, { tags: { request_id: requestId ?? 'unknown' } });
+    if ((err as { type?: string }).type === 'entity.too.large') {
+      return res.status(413).json({ error: 'Request body too large', requestId });
+    }
+    res.status(500).json({ error: redactError(err), requestId });
   });
 
   // ─── Vite / Static Serving ──────────────────────────────────────────────────
@@ -941,10 +1033,24 @@ async function startServer() {
   }
 
   const HOST = process.env.HOST || "127.0.0.1";
-  app.listen(Number(PORT), HOST, () => {
+  const server = app.listen(Number(PORT), HOST, () => {
     console.log(`🚀 Tadbuy server running on http://${HOST}:${PORT}`);
     console.log(`   ENV: ${process.env.NODE_ENV || 'development'}`);
   });
+
+  const shutdown = (signal: string) => {
+    console.info(`[shutdown] ${signal}`);
+    server.close((error) => {
+      if (error) {
+        console.error('[shutdown] close failed:', error.message);
+        process.exitCode = 1;
+      }
+      process.exit();
+    });
+    setTimeout(() => process.exit(1), 10_000).unref();
+  };
+  process.once('SIGTERM', () => shutdown('SIGTERM'));
+  process.once('SIGINT', () => shutdown('SIGINT'));
 }
 
 startServer();

@@ -1,113 +1,184 @@
 import type { Express, Response } from 'express';
+import { requireAuth } from '../../src/lib/api/userAuth.ts';
+
+const staged = (message: string) => ({
+  demo: true,
+  supported: false,
+  status: 'staged' as const,
+  message,
+});
 
 const sseClients = new Set<Response>();
 
 export function registerBatch4Routes(app: Express) {
   // Enterprise & Scale (features 76-100)
 
-  app.get('/api/v4/auth/oauth/authorize', (req, res) => {
-    const { client_id, redirect_uri, code_challenge } = req.query;
-    res.json({ authorizationUrl: `/api/v4/auth/oauth/callback?client_id=${client_id}&redirect_uri=${redirect_uri}`, pkce: !!code_challenge });
+  app.get('/api/v4/auth/oauth/authorize', (_req, res) => {
+    res.status(501).json(staged('OAuth authorization requires a configured identity provider.'));
   });
 
-  app.post('/api/v4/auth/webauthn/register', (_req, res) => {
-    res.json({ challenge: 'webauthn_challenge_' + Date.now(), rpName: 'Tadbuy' });
+  app.post('/api/v4/auth/webauthn/register', requireAuth, (_req, res) => {
+    res.status(501).json(staged('WebAuthn registration requires a server-side challenge store.'));
   });
 
-  app.post('/api/v4/auth/nostr', (req, res) => {
-    const { pubkey, method } = req.body;
-    res.json({ token: 'nostr_' + Date.now().toString(36), pubkey, method: method || 'nip-07' });
+  app.post('/api/v4/auth/nostr', requireAuth, (_req, res) => {
+    res.status(501).json(staged('Nostr token exchange requires cryptographic event verification.'));
   });
 
   app.get('/api/v4/auth/migration-status', (_req, res) => {
-    res.json({ firebase: true, selfHosted: false, progress: 0.15, target: 'Q4 2026' });
+    res.json({
+      firebase: true,
+      selfHosted: false,
+      progress: 0,
+      target: 'not scheduled',
+      demo: true,
+      supported: false,
+      message: 'Self-hosted auth migration is not enabled on this deployment.',
+    });
   });
 
-  app.post('/api/v4/encrypt/campaign', (req, res) => {
-    res.json({ encrypted: true, algorithm: 'AES-256-GCM', campaignId: req.body.campaignId });
+  app.post('/api/v4/encrypt/campaign', requireAuth, (_req, res) => {
+    res.status(501).json(staged('Campaign encryption requires managed key storage and envelope encryption.'));
   });
 
-  app.post('/api/v4/zkp/verify-delivery', (req, res) => {
-    res.json({ verified: true, impressions: req.body.impressions, proof: 'zkp_demo_' + Date.now().toString(36) });
+  app.post('/api/v4/zkp/verify-delivery', requireAuth, (_req, res) => {
+    res.status(501).json(staged('Delivery proof verification requires a configured proof verifier.'));
   });
 
-  app.post('/api/v4/ipfs/upload', (req, res) => {
-    res.json({ cid: 'bafy' + Date.now().toString(36), url: `ipfs://bafy${Date.now().toString(36)}` });
+  app.post('/api/v4/ipfs/upload', requireAuth, (_req, res) => {
+    res.status(501).json(staged('IPFS uploads require a configured pinning service.'));
   });
 
   app.get('/api/v4/cdn/edge-status', (_req, res) => {
-    res.json({ regions: ['us-east', 'eu-west', 'ap-south'], cacheHitRate: 0.94 });
+    res.json({
+      ...staged('Edge telemetry is not connected on this deployment.'),
+      regions: [],
+      cacheHitRate: null,
+    });
   });
 
-  // WebSocket-like live counter via SSE
+  // Server-sent events remain available for UI compatibility, but never imply live data.
   app.get('/api/v4/live/impressions', (req, res) => {
+    if (sseClients.size >= 100) {
+      return res.status(503).json(staged('The live impression stream is at capacity.'));
+    }
+
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
     sseClients.add(res);
-    req.on('close', () => sseClients.delete(res));
+    res.write(`event: status\ndata: ${JSON.stringify(staged('Live impression telemetry is staged.'))}\n\n`);
+
     const interval = setInterval(() => {
-      res.write(`data: ${JSON.stringify({ impressions: Math.floor(Math.random() * 1000) + 50000, ts: Date.now() })}\n\n`);
+      if (!res.writableEnded) {
+        res.write(`data: ${JSON.stringify({ ...staged('Live impression telemetry is staged.'), impressions: null, ts: Date.now() })}\n\n`);
+      }
     }, 3000);
-    req.on('close', () => clearInterval(interval));
+
+    req.on('close', () => {
+      clearInterval(interval);
+      sseClients.delete(res);
+    });
   });
 
   app.get('/api/v4/status', (_req, res) => {
     res.json({
-      status: 'operational',
+      status: 'degraded',
+      demo: true,
+      supported: false,
       services: {
-        api: 'up', lightning: 'up', fedimint: 'up', firebase: 'up', cloudflare: 'up',
+        api: 'unknown',
+        lightning: 'not_configured',
+        fedimint: 'not_configured',
+        firebase: 'configured_by_client',
+        cloudflare: 'unknown',
       },
-      uptime: 99.99,
+      uptime: null,
+      message: 'Enterprise service telemetry is staged; individual endpoint health is not available.',
     });
   });
 
   app.get('/api/v4/roadmap', (_req, res) => {
     res.json({
+      demo: true,
+      supported: false,
       items: [
-        { id: 'fedimint-v2', title: 'Fedimint WASM SDK', votes: 142, status: 'in-progress' },
-        { id: 'mobile-app', title: 'Capacitor Mobile App', votes: 98, status: 'planned' },
-        { id: 'zkp-ads', title: 'ZK Proof Ad Delivery', votes: 76, status: 'planned' },
+        { id: 'fedimint-v2', title: 'Fedimint WASM SDK', votes: null, status: 'planned' },
+        { id: 'mobile-app', title: 'Capacitor Mobile App', votes: null, status: 'planned' },
+        { id: 'zkp-ads', title: 'ZK Proof Ad Delivery', votes: null, status: 'planned' },
       ],
+      message: 'Roadmap voting data is not connected.',
     });
   });
 
-  app.get('/api/v4/referral', (_req, res) => {
-    res.json({ code: 'TADBIT', rewardSats: 5000, referrals: 23 });
+  app.get('/api/v4/referral', requireAuth, (_req, res) => {
+    res.json({
+      demo: true,
+      supported: false,
+      code: null,
+      rewardSats: null,
+      referrals: null,
+      message: 'Referral accounting is not connected.',
+    });
   });
 
   app.get('/api/v4/lighthouse', (_req, res) => {
-    res.json({ performance: 96, accessibility: 98, bestPractices: 100, seo: 100 });
+    res.json({
+      demo: true,
+      supported: false,
+      performance: null,
+      accessibility: null,
+      bestPractices: null,
+      seo: null,
+      message: 'Lighthouse scores are available from CI reports, not this API.',
+    });
   });
 
   app.get('/api/v4/bundle-budget', (_req, res) => {
-    res.json({ mainChunk: 612, limit: 650, status: 'ok' });
+    res.json({
+      demo: true,
+      supported: false,
+      mainChunk: null,
+      limit: null,
+      status: 'not_reported',
+      message: 'Bundle budgets are reported during CI builds.',
+    });
   });
 
-  app.post('/api/v4/ai/strategist', async (req, res) => {
-    const { question } = req.body;
-    res.json({
-      answer: `For "${question || 'my campaign'}", I recommend starting with Nostr + Lightning at 0.001 BTC budget, targeting #bitcoin interests with PPQ.AI CPC optimization.`,
-      model: 'tadbuy-strategist-v1',
-    });
+  app.post('/api/v4/ai/strategist', requireAuth, (_req, res) => {
+    res.status(501).json(staged('AI strategy requires a configured model provider.'));
   });
 
   app.get('/api/v4/benchmark/pricing', (_req, res) => {
     res.json({
-      tadbuy: { avgCpm: 6.2, fee: 0.15 },
-      industry: { google: 12.5, facebook: 10.8, twitter: 8.4 },
+      demo: true,
+      supported: false,
+      tadbuy: { avgCpm: null, fee: null },
+      industry: { google: null, facebook: null, twitter: null },
+      message: 'Pricing benchmarks are not connected to a live dataset.',
     });
   });
 
-  app.post('/api/v4/carbon/offset', (req, res) => {
-    res.json({ offsetSats: req.body.sats || 1000, method: 'mining-credits', certified: true });
+  app.post('/api/v4/carbon/offset', requireAuth, (_req, res) => {
+    res.status(501).json(staged('Carbon offsets require a verified provider and certificate ledger.'));
   });
 
-  // Broadcast impression updates to SSE clients
-  setInterval(() => {
-    const data = JSON.stringify({ type: 'impression', count: Math.floor(Math.random() * 100) });
+  // Broadcast only explicit staged status to connected clients.
+  const broadcastInterval = setInterval(() => {
+    const data = JSON.stringify({
+      ...staged('Live impression telemetry is staged.'),
+      type: 'status',
+      count: null,
+    });
     for (const client of sseClients) {
-      try { client.write(`data: ${data}\n\n`); } catch { sseClients.delete(client); }
+      try {
+        if (!client.writableEnded) client.write(`data: ${data}\n\n`);
+      } catch {
+        sseClients.delete(client);
+      }
     }
   }, 5000);
+  broadcastInterval.unref?.();
 }

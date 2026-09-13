@@ -23,7 +23,9 @@ export class RouteErrorBoundary extends Component<RouteErrorBoundaryProps, Route
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('[RouteErrorBoundary]', error, info.componentStack);
+    if (import.meta.env.DEV) {
+      console.error('[RouteErrorBoundary]', error, info.componentStack);
+    }
   }
 
   handleRetry = () => {

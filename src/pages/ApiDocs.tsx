@@ -66,11 +66,11 @@ export default function ApiDocs() {
           <Button variant="secondary" size="sm" onClick={refreshSpec} className="flex-1 gap-1">
             <RefreshCw className="w-3.5 h-3.5" /> Refresh
           </Button>
-          <a href={specUrl} target="_blank" rel="noopener noreferrer">
+          <SafeLink href={specUrl} target="_blank">
             <Button variant="outline" size="sm" className="flex-1 gap-1">
               <ExternalLink className="w-3.5 h-3.5" /> Open Raw JSON
             </Button>
-          </a>
+          </SafeLink>
         </div>
       </div>
     </Card>
@@ -98,11 +98,11 @@ export default function ApiDocs() {
           <Button variant="secondary" size="sm" onClick={refreshSpec} className="gap-1">
             <RefreshCw className="w-3.5 h-3.5" /> Refresh Spec
           </Button>
-          <a href={specUrl} target="_blank" rel="noopener noreferrer">
+          <SafeLink href={specUrl} target="_blank">
             <Button variant="outline" size="sm" className="gap-1">
               <Download className="w-3.5 h-3.5" /> Download JSON
             </Button>
-          </a>
+          </SafeLink>
         </div>
       </div>
 
@@ -126,9 +126,9 @@ export default function ApiDocs() {
           <h3 className="font-bold text-sm">Direct Links</h3>
         </div>
         <div className="grid sm:grid-cols-2 gap-2 text-sm">
-          <a href={specUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline flex items-center gap-1">
+          <SafeLink href={specUrl} target="_blank" className="text-accent hover:underline flex items-center gap-1">
             <ExternalLink className="w-3.5 h-3.5" /> OpenAPI JSON Spec
-          </a>
+          </SafeLink>
           <SafeLink href="https://editor.swagger.io/?url=https://api.tadbuy.giveabit.io/api/v3/openapi.json" target="_blank" showIcon className="text-accent hover:underline flex items-center gap-1">
             <ExternalLink className="w-3.5 h-3.5" /> Open in Swagger Editor
           </SafeLink>
