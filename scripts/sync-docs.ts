@@ -27,9 +27,11 @@ async function main() {
   console.log('📄 Syncing auto-evolving docs...');
 
   const live = await fetchLiveMetrics();
-  const t = PROJECT_STATE.executive.traction;
-  const impressions = live?.impressions ?? 1_240_000;
-  const campaigns = live?.totalCampaigns ?? t.campaignsLaunched;
+
+  // Traction is live-only: no static fallbacks. If /api/metrics is unreachable
+  // (as at the CF Pages origin) every row reads "—" rather than an estimate.
+  const num = (v: number | undefined | null) =>
+    typeof v === 'number' ? `${v.toLocaleString()}+` : '—';
 
   writeDoc('EXECUTIVE.md', `# Tadbuy — Executive Summary
 
@@ -41,15 +43,15 @@ ${PROJECT_STATE.executive.mission}
 ## Vision
 ${PROJECT_STATE.executive.vision}
 
-## Traction (Live)
+## Traction (live metrics only)
+_Source: /api/metrics. Rows read "—" when the endpoint is unreachable — no estimated or hardcoded counters are published._
+
 | Metric | Value |
 |--------|-------|
-| Campaigns | ${campaigns.toLocaleString()}+ |
-| Impressions | ${impressions.toLocaleString()}+ |
-| Publishers | ${t.publishers}+ |
-| Platforms | ${t.platforms} |
-| Avg Settlement | <${t.avgSettlementSeconds}s |
-| Sats Processed | ${(t.satsProcessed / 1e9).toFixed(1)}B+ |
+| Campaigns | ${num(live?.totalCampaigns)} |
+| Live campaigns | ${num(live?.liveCampaigns)} |
+| Impressions | ${num(live?.impressions)} |
+| Clicks | ${num(live?.clicks)} |
 
 ## Differentiators
 ${PROJECT_STATE.executive.differentiators.map(d => `- ${d}`).join('\n')}

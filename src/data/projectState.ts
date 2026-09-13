@@ -12,14 +12,10 @@ export const PROJECT_STATE = {
   executive: {
     mission: 'Build the first truly sovereign advertising platform — advertisers buy with Bitcoin, creators earn in sats, no intermediary takes a cut of attention.',
     vision: 'Every ad impression settled in sats. Zero surveillance. Global reach via geospatial intelligence.',
-    traction: {
-      campaignsLaunched: 12847,
-      satsProcessed: 4_200_000_000,
-      publishers: 340,
-      platforms: 8,
-      languages: 8,
-      avgSettlementSeconds: 0.8,
-    },
+    // No traction counters live here on purpose. Unmeasured numbers (campaigns,
+    // sats processed, publishers, settlement time) must never ship as if they
+    // were measured — the /pitch page and docs/EXECUTIVE.md render live metrics
+    // only and show "—" when /api/metrics is unavailable.
     differentiators: [
       'Only Bitcoin-native DSP with Lightning, BOLT12, Fedimint ecash, and Nostr Zaps',
       'PPQ.AI optimization without surveillance pixels',

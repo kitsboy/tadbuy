@@ -56,7 +56,6 @@ const ThankYou         = lazy(() => import('./pages/ThankYou'));
 const GeoTargeting     = lazy(() => import('./pages/GeoTargeting'));
 const CommandMenu            = lazy(() => import('./components/CommandMenu'));
 const KeyboardShortcutsHelp = lazy(() => import('./components/KeyboardShortcutsHelp'));
-const LiveActivityWidget = lazy(() => import('./components/LiveActivityWidget'));
 const NotFound         = lazy(() => import('./pages/NotFound'));
 const Terms            = lazy(() => import('./pages/legal/Terms'));
 const Privacy          = lazy(() => import('./pages/legal/Privacy'));
@@ -256,7 +255,6 @@ export default function App() {
             <Suspense fallback={null}>
               <CommandMenu />
               <KeyboardShortcutsHelp />
-              <LiveActivityWidget />
             </Suspense>
             <MainContent currency={currency} setCurrency={setCurrency} rates={rates} />
             <BackToTop />

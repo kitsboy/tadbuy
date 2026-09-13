@@ -3,7 +3,6 @@ import { usePageMeta } from "@/hooks/usePageMeta";
 import { HeroBanner } from "@/components/HeroBanner";
 import { SatohashStampWidget } from "@/components/SatohashStampWidget";
 import { TrustBadges } from "@/components/TrustBadges";
-import { StatsBar } from "@/components/StatsBar";
 import { PlatformMarquee } from "@/components/PlatformMarquee";
 import { FloatingCampaignCTA } from "@/components/FloatingCampaignCTA";
 import { BITCOIN_ADDRESS, BITCOIN_URI } from "@/constants";
@@ -861,7 +860,6 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
         <>
           <HeroBanner />
           <SatohashStampWidget />
-          <StatsBar />
           <TrustBadges />
           <PlatformMarquee />
         </>
