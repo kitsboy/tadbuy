@@ -1,3 +1,51 @@
+## Session — 2026-09-13 · Dead-code CSP-blocked price fetches removed (Nova/THOR, Kanban t_b5bcda4e)
+
+**Product call — delete, do not consolidate.** Three unreferenced modules fetched hosts our own
+`connect-src` forbids. Nothing rendered them, so today's homepage was already clean (proved below);
+the risk was the next import. All three are now deleted, and **`connect-src` was not widened by a
+single host**.
+
+1. **`src/components/widgets/BtcPriceChart.tsx` → DELETED.** No mount site, and the ambient
+   live-price need is already served by the navbar `PriceTicker` (shipped in t_26794053). A "7D BTC"
+   sparkline needs daily OHLC, and the only allowlisted host (mempool.space) exposes
+   `/api/v1/historical-price` as a *single timestamp per call* — so keeping the chart meant ~8 extra
+   calls per visitor to a free public API for a decoration. Bad trade. **If a chart is ever wanted,
+   the design is a series we record ourselves (cron → our own store) served from an
+   already-allowlisted host, not a client-side scrape of a new one.**
+2. **`src/lib/liquid/twapOracle.ts` → DELETED.** Two independent reasons. (a) CSP: 2 of its 3
+   "sources" (`api.coinbase.com`, `api.kraken.com`) can never pass `connect-src`, so the
+   "multi-source TWAP" was structurally a single-source value wearing a multi-source type. (b) The
+   bigger one — **it fabricated the number**: the 24 "historical" points were
+   `Math.random() ± 0.5%` jitter around one spot price, averaged and labelled TWAP / "tamper-resistant
+   ... oracle". That is the same defect class as the `Math.random()` "24h change" badges removed in
+   t_26794053. **Nothing may be called a TWAP unless it is one.**
+3. **`src/lib/liquid/assetTracker.ts` → DELETED.** It `await`ed two fetches and **discarded both
+   results**, then returned `Math.random()` amounts with a hardcoded `$65,000` BTC price and a
+   hardcoded `+1.8%` change. Not a tracker — a random-number generator with a portfolio-shaped type.
+   Deleted rather than "fixed": a real portfolio view needs an account surface we deliberately do not
+   have yet, so any fix would be a fake of a different shape.
+
+**Evidence (live, not repo greps):**
+- *Live bundle before the change* — downloaded all 12 chunks of the served build (1,413,842 bytes):
+  `api.exchange.coinbase.com`, `api.coinbase.com`, `api.kraken.com`, `blockstream.info` are all
+  **absent**. Confirms the three modules were invisible today and the hazard is only the next import.
+- *Reachability* — none of the three is reachable from `src/main.tsx` (static import graph over
+  `src/`: 103 of 286 modules are unreachable — see the follow-up card).
+- *After* — `tsc --noEmit` clean, `check:routes` 38 lazy modules / 38 routes, `vite build` +
+  `verify-dist` pass, and the built `dist/` references none of those hosts.
+- *Real Chromium, live site* — homepage before and after: 0 console errors, 0 page errors,
+  0 failed requests; the only external reads are `mempool.space` (`/api/v1/prices`,
+  `/api/v1/fees/recommended`, `/api/blocks/tip/height`) plus our own `/api/*`.
+
+**Also found while tracing (not in scope, escalated to a follow-up card):** the shipped
+`vendor-firebase` chunk contains `identitytoolkit.googleapis.com`, which `connect-src` does not
+allow — harmless today only because `VITE_FIREBASE_API_KEY` is unconfigured in the live build (no
+`AIza…` in the served chunk, so `initializeFirebase()` returns early). The day client Firebase auth
+or Firestore is switched on, login breaks with a CSP violation. That is a product decision
+(client-side Firebase vs our own `api.giveabit.io` auth surface), not a header tweak.
+
+---
+
 ## Session — 2026-09-13 · HOTFIX: CI typecheck gate was red (Kimi/THOR, Kanban t_4270aab6)
 
 **Symptom:** run 34765850245 (commit 695b7c2) failed in the new `Typecheck` step; every later step skipped, so the deploy card stayed red.
