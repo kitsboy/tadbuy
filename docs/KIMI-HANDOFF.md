@@ -1,4 +1,37 @@
-## Session — 2026-09-11 · Satohash stamp above the fold (Grok M3)
+## Session — 2026-09-13 · CI/release checks + documentation hygiene (Grok M3)
+
+**Done:**
+- Added strict CI install (`npm ci`), TypeScript check, full `npm run build`, route integrity check, bundle report, Playwright browser smoke tests, high-severity dependency audit, production deploy verification, production asset-cache verification, and failure diagnostics upload
+- Added `scripts/check-routes.mjs` and `scripts/report-bundle.mjs`
+- Added public-route smoke coverage; full local suite now passes **11/11**
+- Refreshed README, changelog, contributing guide, source-of-truth, agent context/SOP, legal dates/domain, sitemap dates, and generated docs
+- Applied package-lock-only dependency remediation; audit gate now exits successfully at high severity (remaining findings are low/moderate transitive issues)
+
+**Decisions:**
+- Scope was the first two previously listed batches: documentation hygiene and CI/build/test/deployment checks
+- Existing local `public/sw.js` change was intentionally not staged or committed
+- Cloudflare Pages remains the deployer; CI verifies rather than replacing it
+
+**Verification:**
+- `npm run lint` ✅
+- `npm run check:routes` ✅
+- `npm run build` ✅ (`postbuild` dist verification passed)
+- `npm run check:bundle` ✅
+- `npm run audit:dependencies` ✅ high-severity gate
+- `npm run test:e2e` ✅ 11 tests
+- `git diff --check` ✅
+
+**Git State:**
+- SHA: `e04fc90`
+- Branch: `main`
+- Unpushed: `e04fc90` (ready to push)
+- Local uncommitted file: `public/sw.js` only; pre-existing and deliberately excluded
+
+**Next for Kimi:**
+- Confirm GitHub Actions and Cloudflare Pages deployment after push
+- Continue with Batch 3: API limits, request safety, validation, rate limiting, ownership, payment idempotency, webhook replay protection, honest demo responses, request IDs, and graceful shutdown
+
+---
 
 **Done:**
 - Lifted `SatohashStampWidget` onto Buy Ads home (`/`) immediately after `<HeroBanner />`, before `StatsBar`
