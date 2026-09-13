@@ -47,6 +47,7 @@ const KNOWN_ROUTES = [
   /^\/home\/?$/,
   /^\/advertise\/?$/,
   /^\/buy-ads\/?$/,
+  /^\/thank-you\/?$/, /^\/thanks\/?$/, /^\/thankyou\/?$/, /^\/success\/?$/,
 ]
 
 function isKnownRoute(pathname) {
