@@ -6,8 +6,6 @@
  * enables geo-targeted ad campaigns and proximity-based bidding.
  */
 
-import { nip19 } from 'nostr-tools';
-
 export interface GeoLocationEvent {
   kind: 0; // NIP-01 metadata
   pubkey: string;

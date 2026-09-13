@@ -242,7 +242,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <Router unstable_useTransitions={false}>
+      <Router useTransitions={false}>
         <ThemeProvider>
         <CurrencyProvider>
         <DemoProvider>
