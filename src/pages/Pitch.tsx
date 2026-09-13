@@ -12,7 +12,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, 
 import { SafeLink } from '@/components/SafeLink';
 
 export default function Pitch() {
-  usePageMeta('Investor Pitch', 'Tadbuy — the world\'s first Bitcoin-native DSP. Auto-updated pitch deck with live metrics, financials, and Fedimint strategy.');
+  usePageMeta('Investor Pitch', 'Tadbuy — the world\'s first Bitcoin-native DSP. Pitch deck with financials, Fedimint strategy, and traction shown only where it is measured.');
 
   const [metrics, setMetrics] = useState<{
     impressions: number;
@@ -42,7 +42,10 @@ export default function Pitch() {
         <div className="relative">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-bold uppercase tracking-widest mb-6">
             <Sparkles className="w-3.5 h-3.5" />
-            Auto-Updated · {PROJECT_STATE.lastSynced}
+            {/* Not "Auto-Updated": nothing regenerates this page with new numbers.
+                The release version is machine-written by scripts/sync-version.ts
+                on every build, so it is the one freshness marker that is true. */}
+            Static snapshot · {PROJECT_STATE.version}
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
             <span className="text-gradient-accent">Tadbuy</span>

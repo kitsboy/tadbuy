@@ -1,5 +1,5 @@
 # tadbuy — Last Updated 2026-09-13 by Grok
 
-Brief: v5.0.174 — docs sync from projectState
+Brief: v5.0.177 — docs sync from projectState
 Commit: sync
 Docs synced: 2026-09-13
