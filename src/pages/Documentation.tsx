@@ -10,7 +10,7 @@ export default function Documentation() {
   return (
     <PageShell
       title="Documentation"
-      description="Learn how to launch privacy-preserving, Bitcoin-native campaigns across 8 platforms."
+      description="Learn how advertisers and independent vendors coordinate transparent Bitcoin-native campaign placements."
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Docs' }]}
       maxWidth="max-w-4xl"
     >

@@ -17,7 +17,7 @@ export function PersonaOnboarding({ className }: { className?: string }) {
       id: 'advertiser' as const,
       icon: Megaphone,
       title: 'I want to advertise',
-      desc: 'Launch cross-platform campaigns and pay in sats',
+      desc: 'Plan one campaign across Nostr and independent publisher channels',
       to: '/#campaign-builder',
       color: 'text-accent',
     },

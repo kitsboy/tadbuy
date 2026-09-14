@@ -28,7 +28,7 @@ export function HeroBanner() {
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.1] mb-4">
             Buy ads with{' '}
-            <span className="bg-gradient-to-r from-accent via-fuchsia-300 to-accent bg-clip-text text-transparent" data-tip="Every campaign settles in real Bitcoin — Lightning, BOLT12, on-chain, or Nostr Zaps. No fiat rails, no surveillance, no intermediaries taking a cut of your media spend.">
+            <span className="bg-gradient-to-r from-accent via-fuchsia-300 to-accent bg-clip-text text-transparent" data-tip="Tadbuy coordinates transparent campaign placements. Vendors control their channels, and advertisers keep a clear proof trail.">
               Bitcoin
             </span>
             .<br className="hidden sm:block" />
@@ -36,8 +36,8 @@ export function HeroBanner() {
           </h1>
 
           <p className="text-sm md:text-base text-muted leading-relaxed max-w-lg mb-6">
-            Launch cross-platform campaigns on 8 networks. Settle instantly via Lightning,
-            BOLT12, on-chain, or Nostr Zaps — with AI-powered creative and geospatial targeting.
+            Start with Nostr, websites, newsletters, and podcasts. Vendors control their channels; Tadbuy coordinates the plan and proof.
+            Pay in sats when settlement is connected.
           </p>
 
           <div className="flex flex-wrap gap-3">
@@ -64,7 +64,7 @@ export function HeroBanner() {
         >
           {[
             { icon: Zap, label: 'Lightning', value: '<1s', sub: 'settlement', color: 'text-lightning', tip: 'Settlement over Bitcoin Lightning is near-instant — your campaign goes live and your budget settles in under a second, not days.' },
-            { icon: Globe, label: 'Platforms', value: '8', sub: 'networks', color: 'text-blue', tip: 'One budget, eight networks: X, Nostr, YouTube, Twitch, and more. Allocate weight per platform and Tadbuy spreads your sats across them.' },
+            { icon: Globe, label: 'Channels', value: '4', sub: 'Phase 1', color: 'text-blue', tip: 'Start with Nostr, websites, newsletters, and podcasts. More channels arrive only when vendor relationships, provider access, and reporting are ready.' },
             { icon: Shield, label: 'Privacy', value: '0', sub: 'tracking pixels', color: 'text-green', tip: 'No tracking pixels, no cross-site fingerprinting, no data resale. Your campaign and your audience stay private — that is the product.' },
             { icon: Sparkles, label: 'AI', value: 'PPQ', sub: 'optimization', color: 'text-purple', tip: 'Pays-Per-Qualified-view: the AI strategist helps you target the audience that actually converts — not vanity impressions.' },
           ].map((stat) => (

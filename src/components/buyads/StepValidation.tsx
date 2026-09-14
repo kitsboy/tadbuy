@@ -1,5 +1,6 @@
 export interface WizardStepData {
   selectedPlatforms: string[];
+  selectedDistributionChannels?: string[];
   btcAmount: number;
   headline: string;
   minBudgetBtc?: number;
@@ -19,14 +20,20 @@ export function validateWizardStep(step: number, data: WizardStepData): WizardVa
 
   if (step === 1) {
     if (!data.selectedPlatforms.length) {
-      errors.push('Select at least one platform');
+      errors.push('Select at least one execution platform');
     }
     if (!data.btcAmount || data.btcAmount < minBudget) {
       errors.push(`Minimum budget is ${minBudget} BTC`);
     }
   }
 
-  if (step === 3) {
+  if (step === 2) {
+    if (data.selectedDistributionChannels && !data.selectedDistributionChannels.length) {
+      errors.push('Choose at least one distribution channel');
+    }
+  }
+
+  if (step === 4) {
     if (!data.headline?.trim()) {
       errors.push('Headline is required');
     }
@@ -38,6 +45,6 @@ export function validateWizardStep(step: number, data: WizardStepData): WizardVa
 /** Human-readable label for the current step validation block */
 export function stepValidationLabel(step: number): string {
   if (step === 1) return 'Platform & budget';
-  if (step === 3) return 'Creative';
+  if (step === 4) return 'Creative';
   return '';
 }

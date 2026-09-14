@@ -121,7 +121,7 @@ export default function StepCreative({
           <div>
             <div className="text-[12px] font-bold text-blue mb-1">Powered by PPQ.AI</div>
             <div className="text-[11px] text-muted leading-relaxed">
-              Create once, deploy everywhere. PPQ.AI connects directly to Twitter, Reddit, and other vendors via API. Your ad stays on balance—top it up with Bitcoin anytime to extend its life without recreating it.
+              Create one approved creative, then coordinate it with the vendors who control each channel. PPQ.AI can help adapt copy; it does not replace provider permissions or vendor approval.
             </div>
           </div>
         </div>

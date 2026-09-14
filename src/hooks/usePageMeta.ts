@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 const BASE_TITLE = 'Tadbuy';
 const DEFAULT_DESCRIPTION =
-  'Buy ads across 8 platforms. Pay in sats via Lightning, BOLT12, on-chain, or Nostr Zaps. The world\'s first Bitcoin-native DSP.';
+  'One campaign across Nostr and independent publisher channels. Coordinate placements, verify delivery, and prepare for Bitcoin-native settlement.';
 
 function setMetaTag(attr: 'name' | 'property', key: string, content: string) {
   let el = document.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;

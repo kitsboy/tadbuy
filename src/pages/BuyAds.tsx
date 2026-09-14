@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { QRCodeSVG } from "qrcode.react";
 import { CheckCircle2, Bot, X, Monitor, Smartphone, Wifi, Globe, Calendar, Layers, Activity, Target, Settings2, Plus, Trash2, ShieldAlert } from "lucide-react";
 import { AD_PLATFORMS, allocateBudget, platformToCheckoutShape } from "@/data/platforms";
+import { publishCampaignNote } from "@/services/nostrService";
 import { PlatformWeightAllocator } from "@/components/PlatformWeightAllocator";
 import { FeeBreakdown } from "@/components/FeeBreakdown";
 import SuccessScreen from "@/components/buyads/SuccessScreen";
@@ -114,7 +115,7 @@ const paymentMethods = checkoutPaymentDefs.map(pm => ({
 }));
 
 export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { currency?: string, rate?: number, symbol?: string }) {
-  usePageMeta('Buy Ads', 'Launch Bitcoin-native ad campaigns across 8 platforms. Pay in sats via Lightning, BOLT12, on-chain, or Nostr Zaps.');
+  usePageMeta('Buy Ads', 'Plan a Bitcoin-native campaign across Nostr and independent publisher channels. Choose vendors, proof requirements, and delivery steps before payment.');
 
   const { user } = useAuth();
   // rate === 0 means "no live BTC/fiat rate yet" — the caller only passes a real
@@ -132,7 +133,9 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
   const [marketplaceSlot, setMarketplaceSlot] = useState<MarketplaceSlot | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
 
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['twitter']);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['nostr']);
+  const [selectedDistributionChannels, setSelectedDistributionChannels] = useState<string[]>(['nostr']);
+  const [nostrPublished, setNostrPublished] = useState<{ eventId: string; relays: string[] } | null>(null);
   const [btcAmount, setBtcAmount] = useState(0.0005);
   const [fiatAmount, setFiatAmount] = useState(0.0005 * rate);
   const [paymentMethod, setPaymentMethod] = useState('lightning');
@@ -303,7 +306,7 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
       });
       setCampaignName(`${market.country} Campaign`);
       setMode('complex');
-      setCurrentStep(2);
+      setCurrentStep(3);
     }
     const next = new URLSearchParams(searchParams);
     next.delete('geo');
@@ -330,6 +333,7 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
     setDescription(draft.description);
     setUrl(draft.url);
     setSelectedPlatforms(draft.selectedPlatforms);
+    if (draft.distributionChannels?.length) setSelectedDistributionChannels(draft.distributionChannels);
     setBtcAmount(draft.btcAmount);
     setPaymentMethod(draft.paymentMethod);
     setMode(draft.mode);
@@ -342,6 +346,7 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
       description,
       url,
       selectedPlatforms,
+      distributionChannels: selectedDistributionChannels,
       btcAmount,
       paymentMethod,
       mode,
@@ -416,6 +421,21 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
     );
   };
 
+  const toggleDistributionChannel = (id: string) => {
+    setSelectedDistributionChannels(prev =>
+      prev.includes(id)
+        ? prev.filter(channel => channel !== id)
+        : [...prev, id]
+    );
+    if (id !== 'nostr') return;
+    setNostrPublished(null);
+  };
+
+  const publishNostrCampaign = async () => {
+    const result = await publishCampaignNote({ campaignName, headline, description, url });
+    setNostrPublished({ eventId: result.event.id, relays: result.relays });
+  };
+
   const handleCopyInvoice = () => {
     const textToCopy = paymentMethod === 'bolt12' ? bolt12Offer : (paymentMethod === 'lightning' ? bolt11Invoice : BITCOIN_ADDRESS);
     navigator.clipboard.writeText(textToCopy);
@@ -453,7 +473,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
       console.error("AI generation failed", e);
       // Fallback
       setHeadline("Buy Ads with Bitcoin. Pay in Sats.");
-      setDescription("Tadbuy — the world's first Lightning-native DSP. Deploy to 8 platforms instantly.");
+      setDescription("Tadbuy coordinates Bitcoin-native placements across Nostr and independent publisher channels.");
     } finally {
       setIsAiGenerating(false);
     }
@@ -503,6 +523,8 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
       description,
       url: url.includes('?') ? `${url}&utm_source=tadbuy&utm_campaign=${encodeURIComponent(campaignName || 'Campaign')}` : `${url}?utm_source=tadbuy&utm_campaign=${encodeURIComponent(campaignName || 'Campaign')}`,
       platforms: selectedPlatforms,
+      distributionChannels: selectedDistributionChannels,
+      ...(nostrPublished ? { nostrPublication: nostrPublished } : {}),
       payment: paymentMethod,
       invoiceId: paidInvoiceId || null,
     };
@@ -819,11 +841,12 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
     description,
     url,
     selectedPlatforms,
+    selectedDistributionChannels,
     btcAmount,
     paymentMethod,
     hashtags,
     currentStep,
-  }), [campaignName, headline, description, url, selectedPlatforms, btcAmount, paymentMethod, hashtags, currentStep]);
+  }), [campaignName, headline, description, url, selectedPlatforms, selectedDistributionChannels, btcAmount, paymentMethod, hashtags, currentStep]);
 
   const loadWizardDraft = (data: Record<string, unknown>) => {
     if (typeof data.campaignName === 'string') setCampaignName(data.campaignName);
@@ -831,6 +854,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
     if (typeof data.description === 'string') setDescription(data.description);
     if (typeof data.url === 'string') setUrl(data.url);
     if (Array.isArray(data.selectedPlatforms)) setSelectedPlatforms(data.selectedPlatforms as string[]);
+    if (Array.isArray(data.selectedDistributionChannels)) setSelectedDistributionChannels(data.selectedDistributionChannels as string[]);
     if (typeof data.btcAmount === 'number') {
       setBtcAmount(data.btcAmount);
       setFiatAmount(data.btcAmount * rate);
@@ -849,7 +873,9 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
     setHeadline("Stack Sats Smarter — giveabit.io");
     setDescription("Bitcoin tools for the people. No banks. No middlemen.");
     setUrl("https://giveabit.io");
-    setSelectedPlatforms(['twitter']);
+    setSelectedPlatforms(['nostr']);
+    setSelectedDistributionChannels(['nostr']);
+    setNostrPublished(null);
     setBtcAmount(0.0005);
     setFiatAmount(0.0005 * rate);
     setHashtags([]);
@@ -911,7 +937,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
       <div id="campaign-builder" className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 scroll-mt-24 px-safe">
         <div className="min-w-0">
           <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">Create Campaign</h2>
-          <p className="text-muted mt-1 mb-3 text-sm sm:text-base">Launch your ad across the decentralized web in minutes.</p>
+          <p className="text-muted mt-1 mb-3 text-sm sm:text-base">Plan your creative, distribution channels, vendors, and proof path before payment.</p>
           <div className="flex flex-wrap items-center gap-3 mb-3">
             <HalvingCountdown currentHeight={currentBlockHeight} />
             <CurrencyDisplay sats={Math.round(btcAmount * 100_000_000)} btcRate={rate} fiatSymbol={symbol} />
@@ -962,6 +988,10 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
               platforms={platforms}
               checkoutPaymentMethods={paymentMethods}
               selectedPlatforms={selectedPlatforms}
+              selectedDistributionChannels={selectedDistributionChannels}
+              onToggleDistributionChannel={toggleDistributionChannel}
+              onPublishNostr={publishNostrCampaign}
+              nostrPublished={nostrPublished ? { eventId: nostrPublished.eventId, relays: nostrPublished.relays.length } : null}
               onTogglePlatform={togglePlatform}
               btcAmount={btcAmount}
               fiatAmount={fiatAmount}
@@ -1206,7 +1236,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                   <div>
                     <div className="text-[12px] font-bold text-blue mb-1">Powered by PPQ.AI</div>
                     <div className="text-[11px] text-muted leading-relaxed">
-                      Create once, deploy everywhere. PPQ.AI connects directly to Twitter, Reddit, and other vendors via API. Your ad stays on balance—top it up with Bitcoin anytime to extend its life without recreating it.
+                      Coordinate the campaign once, then work with selected vendors to publish through the channels they control. PPQ.AI can help refine the creative; provider APIs and automatic buying are later phases.
                     </div>
                   </div>
                 </div>

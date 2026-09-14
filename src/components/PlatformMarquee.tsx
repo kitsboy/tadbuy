@@ -8,7 +8,7 @@ export function PlatformMarquee() {
     <div className="mb-8 overflow-hidden rounded-xl border border-border bg-surface/30">
       <div className="px-4 py-2 border-b border-border">
         <span className="text-[10px] font-bold uppercase tracking-widest text-muted">
-          Deploy to 8 platforms · <Link to="/platforms" className="text-accent hover:underline normal-case">guides</Link>
+          Phase 1 distribution · <Link to="/platforms" className="text-accent hover:underline normal-case">see the roadmap</Link>
         </span>
       </div>
       <div className="relative h-12 flex items-center overflow-hidden group">

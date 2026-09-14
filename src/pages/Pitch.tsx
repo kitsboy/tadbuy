@@ -12,7 +12,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, 
 import { SafeLink } from '@/components/SafeLink';
 
 export default function Pitch() {
-  usePageMeta('Investor Pitch', 'Tadbuy — the world\'s first Bitcoin-native DSP. Pitch deck with financials, Fedimint strategy, and traction shown only where it is measured.');
+  usePageMeta('Investor Pitch', 'Tadbuy — a Bitcoin-native advertising marketplace connecting advertisers with independent distributors and transparent delivery proof.');
 
   const [metrics, setMetrics] = useState<{
     impressions: number;
@@ -103,8 +103,7 @@ export default function Pitch() {
         <Card className="border-green/20">
           <CardTitle>Our Solution</CardTitle>
           <p className="text-sm text-muted leading-relaxed">
-            Geospatial ad-tech with Lightning, Fedimint ecash, and Nostr Zaps. Cross-platform campaigns
-            with AI optimization — zero tracking pixels, instant sats settlement.
+            Independent publishers and Nostr vendors can list placements, accept campaigns, and submit delivery proof. Provider APIs and automated buying are later phases—not assumed capabilities.
           </p>
         </Card>
       </section>

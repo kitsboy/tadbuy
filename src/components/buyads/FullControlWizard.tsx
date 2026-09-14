@@ -8,11 +8,12 @@ import StepPlatformBudget from './StepPlatformBudget';
 import StepTargeting from './StepTargeting';
 import StepCreative from './StepCreative';
 import StepReviewPay from './StepReviewPay';
+import { DistributionPlan } from './DistributionPlan';
 import { CampaignTemplates, type CampaignTemplate } from './CampaignTemplates';
 import { validateWizardStep } from './StepValidation';
 import { useNamedDrafts } from '@/hooks/useNamedDrafts';
 
-const STEPS = ['Budget', 'Targeting', 'Creative', 'Payment'] as const;
+const STEPS = ['Budget', 'Distribution', 'Targeting', 'Creative', 'Payment'] as const;
 
 interface FullControlWizardProps {
   currentStep: number;
@@ -20,6 +21,10 @@ interface FullControlWizardProps {
   platforms: Array<{ id: string; name: string; icon: ReactNode; cpm: number }>;
   checkoutPaymentMethods: Array<{ id: string; name: string; sub: string; icon: ReactNode; color: string; border: string; bg: string }>;
   selectedPlatforms: string[];
+  selectedDistributionChannels: string[];
+  onToggleDistributionChannel: (id: string) => void;
+  onPublishNostr: () => Promise<void>;
+  nostrPublished?: { eventId: string; relays: number } | null;
   onTogglePlatform: (id: string) => void;
   btcAmount: number;
   fiatAmount: number;
@@ -79,6 +84,7 @@ export function FullControlWizard(props: FullControlWizardProps) {
   const next = () => {
     const result = validateWizardStep(currentStep, {
       selectedPlatforms: props.selectedPlatforms,
+      selectedDistributionChannels: props.selectedDistributionChannels,
       btcAmount: props.btcAmount,
       headline: props.headline,
     });
@@ -187,6 +193,17 @@ export function FullControlWizard(props: FullControlWizardProps) {
         </>
       )}
       {currentStep === 2 && (
+        <DistributionPlan
+          selectedChannels={props.selectedDistributionChannels}
+          onToggleChannel={props.onToggleDistributionChannel}
+          headline={props.headline}
+          description={props.description}
+          url={props.url}
+          onPublishNostr={props.onPublishNostr}
+          nostrPublished={props.nostrPublished}
+        />
+      )}
+      {currentStep === 3 && (
         <StepTargeting
           targeting={props.targeting}
           setTargeting={props.setTargeting}
@@ -196,7 +213,7 @@ export function FullControlWizard(props: FullControlWizardProps) {
           setSelectedLanguages={props.setSelectedLanguages}
         />
       )}
-      {currentStep === 3 && (
+      {currentStep === 4 && (
         <StepCreative
           headline={props.headline}
           setHeadline={props.setHeadline}
@@ -223,7 +240,7 @@ export function FullControlWizard(props: FullControlWizardProps) {
           campaignName={props.campaignName}
         />
       )}
-      {currentStep === 4 && (
+      {currentStep === 5 && (
         <StepReviewPay
           estimates={props.estimates}
           btcAmount={props.btcAmount}
@@ -250,7 +267,7 @@ export function FullControlWizard(props: FullControlWizardProps) {
         </Alert>
       )}
 
-      {currentStep < 4 && (
+      {currentStep < 5 && (
         <div className="sticky bottom-0 z-20 -mx-1 px-1 pt-3 pb-safe bg-gradient-to-t from-background via-background to-transparent">
           <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-3 items-stretch sm:items-center">
             <Button
@@ -289,7 +306,7 @@ export function FullControlWizard(props: FullControlWizardProps) {
           </div>
         </div>
       )}
-      {currentStep > 1 && currentStep < 4 && (
+      {currentStep > 1 && currentStep < 5 && (
         <p className="text-[10px] text-muted text-center">Step {currentStep} of {totalSteps}</p>
       )}
     </div>

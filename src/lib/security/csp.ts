@@ -33,6 +33,7 @@ export const DEFAULT_CSP: CspDirectives = {
     'https://*.nostr.build',
     'wss://relay.damus.io',
     'wss://nos.lol',
+    'wss://relay.snort.social',
     'https://analytics.giveabit.io',
   ],
   fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],

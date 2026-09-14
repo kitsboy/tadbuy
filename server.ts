@@ -101,6 +101,11 @@ const campaignSchema = Joi.object({
   // Analytics / display fields
   dates:        Joi.string().optional().allow('', null),
   platforms:    Joi.array().items(Joi.string()).optional(),
+  distributionChannels: Joi.array().items(Joi.string()).max(20).optional(),
+  nostrPublication: Joi.object({
+    eventId: Joi.string().max(200).required(),
+    relays: Joi.array().items(Joi.string().uri({ scheme: ['wss'] })).max(20).required(),
+  }).optional(),
   spendBtc:     Joi.number().optional(),
   spendUsd:     Joi.number().optional(),
   impressions:  Joi.number().integer().min(0).optional(),

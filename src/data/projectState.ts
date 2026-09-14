@@ -9,21 +9,21 @@
 export const PROJECT_STATE = {
   version: 'v5.0.182',
   phase: 'BETA' as const,
-  lastSynced: '2026-09-13',
+  lastSynced: '2026-09-14',
   liveUrl: 'https://tadbuy.giveabit.io',
   repo: 'https://github.com/kitsboy/tadbuy',
 
   executive: {
-    mission: 'Build the first truly sovereign advertising platform — advertisers buy with Bitcoin, creators earn in sats, no intermediary takes a cut of attention.',
-    vision: 'Every ad impression settled in sats. Zero surveillance. Global reach via geospatial intelligence.',
+    mission: 'Build a sovereign advertising marketplace where advertisers buy transparent placements, independent publishers earn in sats, and campaign delivery is verifiable.',
+    vision: 'One campaign plan across independent distributors — zero surveillance, clear fees, and Bitcoin-native settlement when the rails are ready.',
     // No traction counters live here on purpose. Unmeasured numbers (campaigns,
     // sats processed, publishers, settlement time) must never ship as if they
     // were measured — the /pitch page and docs/EXECUTIVE.md render live metrics
     // only and show "—" when /api/metrics is unavailable.
     differentiators: [
-      'Only Bitcoin-native DSP with Lightning, BOLT12, Fedimint ecash, and Nostr Zaps',
+      'Phase 1 Nostr publishing plus accountable website, newsletter, and podcast inventory',
+      'Vendor marketplace with transparent placement proof and campaign plans',
       'PPQ.AI optimization without surveillance pixels',
-      'Agent API for autonomous Nostr bots',
       'Give A Bit ecosystem integration',
     ],
   },
@@ -31,7 +31,7 @@ export const PROJECT_STATE = {
   financials: {
     currency: 'USD',
     fiscalYear: 2026,
-    revenueModel: '15% platform fee on ad spend + publisher marketplace commission',
+    revenueModel: '15% coordination fee on campaign spend + publisher marketplace commission when settlement is enabled',
     projections: [
       { year: 2026, revenue: 420_000, adSpend: 2_800_000, users: 2_400 },
       { year: 2027, revenue: 1_850_000, adSpend: 12_300_000, users: 18_000 },
@@ -52,9 +52,9 @@ export const PROJECT_STATE = {
   },
 
   marketing: {
-    tagline: 'Buy ads with Bitcoin. Pay in sats, not surveillance.',
-    pitch: 'Tadbuy is the world\'s first Bitcoin-native DSP. Launch cross-platform campaigns and pay via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps.',
-    cta: 'Start your first campaign at tadbuy.giveabit.io',
+    tagline: 'One campaign. Independent distributors. Transparent proof.',
+    pitch: 'Tadbuy coordinates Bitcoin-native advertising placements across Nostr and independent websites, newsletters, and podcasts. Advertisers plan once, vendors publish through channels they control, and every delivery has a clear proof path.',
+    cta: 'Plan your first distribution campaign at tadbuy.giveabit.io',
     audiences: ['Bitcoin businesses', 'Independent creators', 'Nostr communities', 'Privacy-conscious brands'],
   },
 

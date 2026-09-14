@@ -12,6 +12,10 @@ export interface Campaign {
   // Display/analytics fields
   dates?: string;
   platforms?: string[];
+  /** Channels selected for the advertiser's delivery plan. */
+  distributionChannels?: string[];
+  /** NIP-07 publication receipt when the advertiser publishes to Nostr. */
+  nostrPublication?: { eventId: string; relays: string[] };
   spendBtc?: number;
   spendUsd?: number;
   impressions?: number;

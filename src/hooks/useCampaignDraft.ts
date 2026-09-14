@@ -9,6 +9,7 @@ export interface CampaignDraft {
   description: string;
   url: string;
   selectedPlatforms: string[];
+  distributionChannels?: string[];
   btcAmount: number;
   paymentMethod: string;
   mode: 'simple' | 'complex';
