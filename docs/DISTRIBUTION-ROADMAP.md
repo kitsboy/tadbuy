@@ -45,11 +45,15 @@ Tadbuy must never imply that it automatically posts to or buys inventory from a 
 - Vendor inventory has a channel, format, audience description, price, and proof requirements.
 - Campaigns remain draft/pending until a real payment and backend settlement path exists.
 
-### Phase 2 — Community distribution
+### Phase 2 — Community distribution (pilot foundation shipped)
 
-**Channel:** Reddit.
+**Channel:** Reddit, beginning with vendor-assisted community and creator placements.
 
-Start with approved subreddit/community and creator placements. Evaluate Reddit Ads API campaign execution and reporting only after provider approval, policy review, and a real account connection. Community rules and disclosure remain mandatory.
+**Shipped foundation:** Advertisers can request eligible vendor-assisted placements; vendors can accept or decline, mark a placement published, submit URL/screenshot/date/notes as proof, and review the proof record. The current pilot uses browser-local records and does not activate payment or Reddit API automation.
+
+**Operational gates before a live pilot:** Confirm approved communities and vendors, durable authenticated storage, ownership and moderation rules, sponsorship disclosure, cancellation/refund/dispute policy, and a real proof-review process.
+
+Evaluate Reddit Ads API campaign execution and reporting only after provider approval, policy review, and a real account connection. Community rules and disclosure remain mandatory.
 
 ### Phase 3 — Provider-managed networks
 
