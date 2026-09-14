@@ -3,7 +3,7 @@
  * Drop-in replacement for firestoreAdmin.ts in server.ts (Node.js context).
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import type { Campaign, CampaignRepository } from './types';
+import type { Campaign, CampaignRepository, DurablePlacementRequestRecord, VendorInventoryRecord, VendorProfileRecord } from './types';
 
 const TABLE = 'campaigns';
 
@@ -84,6 +84,244 @@ function campaignToRow(campaign: Omit<Campaign, 'id'> | Partial<Campaign>): Omit
   };
 }
 
+
+function rowToVendorProfile(row: Record<string, unknown>): VendorProfileRecord {
+  return {
+    id: String(row.id),
+    ownerId: String(row.owner_id),
+    displayName: String(row.display_name ?? ''),
+    npub: String(row.npub ?? ''),
+    ...(row.pubkey_hex ? { pubkeyHex: String(row.pubkey_hex) } : {}),
+    nip05: String(row.nip05 ?? ''),
+    nip05Status: String(row.nip05_status ?? 'unverified') as VendorProfileRecord['nip05Status'],
+    ...(row.nip05_checked_at ? { nip05CheckedAt: String(row.nip05_checked_at) } : {}),
+    nip05Evidence: (row.nip05_evidence ?? {}) as Record<string, unknown>,
+    lightningAddress: String(row.lightning_address ?? ''),
+    audience: String(row.audience ?? ''),
+    geography: String(row.geography ?? ''),
+    channels: Array.isArray(row.channels) ? row.channels.map(String) : [],
+    status: String(row.status ?? 'draft') as VendorProfileRecord['status'],
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at),
+  };
+}
+
+function rowToVendorInventory(row: Record<string, unknown>): VendorInventoryRecord {
+  return {
+    id: String(row.id),
+    ownerId: String(row.owner_id),
+    vendorProfileId: String(row.vendor_profile_id),
+    ...(row.vendor_profiles && typeof row.vendor_profiles === 'object' && 'display_name' in (row.vendor_profiles as Record<string, unknown>) ? { vendorDisplayName: String((row.vendor_profiles as Record<string, unknown>).display_name) } : {}),
+    name: String(row.name ?? ''),
+    channel: String(row.channel ?? ''),
+    format: String(row.format ?? ''),
+    placement: String(row.placement ?? ''),
+    audience: String(row.audience ?? ''),
+    geography: Array.isArray(row.geography) ? row.geography.map(String) : [],
+    minBidSats: Number(row.min_bid_sats ?? 0),
+    currentBidSats: Number(row.current_bid_sats ?? 0),
+    proofRequirements: Array.isArray(row.proof_requirements) ? row.proof_requirements.map(String) : [],
+    disclosureRequired: row.disclosure_required !== false,
+    status: String(row.status ?? 'draft') as VendorInventoryRecord['status'],
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at),
+  };
+}
+
+function rowToPlacementRequest(row: Record<string, unknown>): DurablePlacementRequestRecord {
+  return {
+    id: String(row.id),
+    advertiserId: String(row.advertiser_id),
+    vendorId: String(row.vendor_id),
+    inventoryId: String(row.inventory_id),
+    slotName: String(row.slot_name ?? ''),
+    publisher: String(row.publisher ?? ''),
+    channel: String(row.channel ?? ''),
+    format: String(row.format ?? ''),
+    audience: String(row.audience ?? ''),
+    budgetSats: Number(row.budget_sats ?? 0),
+    advertiserLabel: String(row.advertiser_label ?? ''),
+    message: String(row.message ?? ''),
+    disclosureRequired: row.disclosure_required !== false,
+    proofRequirements: Array.isArray(row.proof_requirements) ? row.proof_requirements.map(String) : [],
+    status: String(row.status ?? 'offered') as DurablePlacementRequestRecord['status'],
+    createdAt: String(row.created_at),
+    ...(row.accepted_at ? { acceptedAt: String(row.accepted_at) } : {}),
+    ...(row.published_at ? { publishedAt: String(row.published_at) } : {}),
+    ...(row.proof ? { proof: row.proof as DurablePlacementRequestRecord['proof'] } : {}),
+  };
+}
+
+export async function upsertVendorProfile(profile: {
+  ownerId: string;
+  displayName: string;
+  npub: string;
+  nip05: string;
+  lightningAddress: string;
+  audience: string;
+  geography: string;
+  channels: string[];
+  status?: VendorProfileRecord['status'];
+}): Promise<VendorProfileRecord> {
+  const { data, error } = await getAdminDb().from('vendor_profiles').upsert({
+    owner_id: profile.ownerId,
+    display_name: profile.displayName,
+    npub: profile.npub,
+    nip05: profile.nip05,
+    lightning_address: profile.lightningAddress,
+    audience: profile.audience,
+    geography: profile.geography,
+    channels: profile.channels,
+    status: profile.status ?? 'draft',
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'owner_id' }).select().single();
+  if (error) throw error;
+  return rowToVendorProfile(data as Record<string, unknown>);
+}
+
+export async function recordNip05Verification(input: {
+  ownerId: string;
+  nip05: string;
+  pubkeyHex: string;
+  status: VendorProfileRecord['nip05Status'];
+  evidence: Record<string, unknown>;
+}): Promise<VendorProfileRecord> {
+  const { data, error } = await getAdminDb().from('vendor_profiles').update({
+    nip05: input.nip05,
+    pubkey_hex: input.pubkeyHex,
+    nip05_status: input.status,
+    nip05_checked_at: new Date().toISOString(),
+    nip05_evidence: input.evidence,
+    updated_at: new Date().toISOString(),
+  }).eq('owner_id', input.ownerId).select().single();
+  if (error) throw error;
+  return rowToVendorProfile(data as Record<string, unknown>);
+}
+
+export async function getVendorProfile(ownerId: string): Promise<VendorProfileRecord | null> {
+  const { data, error } = await getAdminDb().from('vendor_profiles').select('*').eq('owner_id', ownerId).maybeSingle();
+  if (error) throw error;
+  return data ? rowToVendorProfile(data as Record<string, unknown>) : null;
+}
+
+export async function listVendorInventory(options?: { ownerId?: string; publishedOnly?: boolean }): Promise<VendorInventoryRecord[]> {
+  let query = getAdminDb().from('vendor_inventory').select('*, vendor_profiles(display_name)').order('created_at', { ascending: false });
+  if (options?.ownerId) query = query.eq('owner_id', options.ownerId);
+  if (options?.publishedOnly) query = query.eq('status', 'published');
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data ?? []).map(row => rowToVendorInventory(row as Record<string, unknown>));
+}
+
+export async function createVendorInventory(input: {
+  ownerId: string;
+  vendorProfileId: string;
+  name: string;
+  channel: string;
+  format: string;
+  placement: string;
+  audience: string;
+  geography: string[];
+  minBidSats: number;
+  proofRequirements: string[];
+  disclosureRequired: boolean;
+  status?: VendorInventoryRecord['status'];
+}): Promise<VendorInventoryRecord> {
+  const { data, error } = await getAdminDb().from('vendor_inventory').insert({
+    owner_id: input.ownerId,
+    vendor_profile_id: input.vendorProfileId,
+    name: input.name,
+    channel: input.channel,
+    format: input.format,
+    placement: input.placement,
+    audience: input.audience,
+    geography: input.geography,
+    min_bid_sats: input.minBidSats,
+    current_bid_sats: input.minBidSats,
+    proof_requirements: input.proofRequirements,
+    disclosure_required: input.disclosureRequired,
+    status: input.status ?? 'draft',
+    updated_at: new Date().toISOString(),
+  }).select().single();
+  if (error) throw error;
+  return rowToVendorInventory(data as Record<string, unknown>);
+}
+
+export async function updateVendorInventory(ownerId: string, id: string, input: Partial<Omit<VendorInventoryRecord, 'id' | 'ownerId' | 'vendorProfileId' | 'createdAt' | 'updatedAt'>>): Promise<VendorInventoryRecord> {
+  const update: Record<string, unknown> = {
+    ...(input.name !== undefined ? { name: input.name } : {}),
+    ...(input.channel !== undefined ? { channel: input.channel } : {}),
+    ...(input.format !== undefined ? { format: input.format } : {}),
+    ...(input.placement !== undefined ? { placement: input.placement } : {}),
+    ...(input.audience !== undefined ? { audience: input.audience } : {}),
+    ...(input.geography !== undefined ? { geography: input.geography } : {}),
+    ...(input.minBidSats !== undefined ? { min_bid_sats: input.minBidSats } : {}),
+    ...(input.proofRequirements !== undefined ? { proof_requirements: input.proofRequirements } : {}),
+    ...(input.disclosureRequired !== undefined ? { disclosure_required: input.disclosureRequired } : {}),
+    ...(input.status !== undefined ? { status: input.status } : {}),
+    updated_at: new Date().toISOString(),
+  };
+  const { data, error } = await getAdminDb().from('vendor_inventory').update(update).eq('id', id).eq('owner_id', ownerId).select().single();
+  if (error) throw error;
+  return rowToVendorInventory(data as Record<string, unknown>);
+}
+
+export async function createDurablePlacementRequest(input: {
+  advertiserId: string;
+  vendorId: string;
+  publisher?: string;
+  inventory: VendorInventoryRecord;
+  advertiserLabel: string;
+  budgetSats: number;
+  message: string;
+}): Promise<DurablePlacementRequestRecord> {
+  const { data, error } = await getAdminDb().from('placement_requests').insert({
+    advertiser_id: input.advertiserId,
+    vendor_id: input.vendorId,
+    inventory_id: input.inventory.id,
+    slot_name: input.inventory.name,
+    publisher: input.publisher ?? input.vendorId,
+    channel: input.inventory.channel,
+    format: input.inventory.format,
+    audience: input.inventory.audience,
+    budget_sats: input.budgetSats,
+    advertiser_label: input.advertiserLabel,
+    message: input.message,
+    disclosure_required: input.inventory.disclosureRequired,
+    proof_requirements: input.inventory.proofRequirements,
+    status: 'offered',
+  }).select().single();
+  if (error) throw error;
+  return rowToPlacementRequest(data as Record<string, unknown>);
+}
+
+export async function listDurablePlacementRequests(userId: string): Promise<DurablePlacementRequestRecord[]> {
+  const { data, error } = await getAdminDb().from('placement_requests').select('*').or(`advertiser_id.eq.${userId},vendor_id.eq.${userId}`).order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map(row => rowToPlacementRequest(row as Record<string, unknown>));
+}
+
+export async function transitionDurablePlacementRequest(userId: string, id: string, status: DurablePlacementRequestRecord['status'], proof?: DurablePlacementRequestRecord['proof']): Promise<DurablePlacementRequestRecord> {
+  const existing = await getAdminDb().from('placement_requests').select('*').eq('id', id).or(`advertiser_id.eq.${userId},vendor_id.eq.${userId}`).single();
+  if (existing.error || !existing.data) throw new Error('Placement request not found');
+  const current = rowToPlacementRequest(existing.data as Record<string, unknown>);
+  const isVendor = current.vendorId === userId;
+  const isAdvertiser = current.advertiserId === userId;
+  const vendorStatuses: DurablePlacementRequestRecord['status'][] = ['accepted', 'declined', 'published', 'proof_submitted'];
+  const advertiserStatuses: DurablePlacementRequestRecord['status'][] = ['verified'];
+  if ((vendorStatuses.includes(status) && !isVendor) || (advertiserStatuses.includes(status) && !isAdvertiser)) {
+    throw new Error('User is not allowed to perform this placement transition');
+  }
+  const allowed: Record<string, string[]> = { offered: ['accepted', 'declined'], accepted: ['published'], published: ['proof_submitted'], proof_submitted: ['verified'] };
+  if (!allowed[current.status]?.includes(status)) throw new Error('Invalid placement transition');
+  const update: Record<string, unknown> = { status };
+  if (status === 'accepted') update.accepted_at = new Date().toISOString();
+  if (status === 'published') update.published_at = new Date().toISOString();
+  if (status === 'proof_submitted') update.proof = proof ?? null;
+  const { data, error } = await getAdminDb().from('placement_requests').update(update).eq('id', id).select().single();
+  if (error) throw error;
+  return rowToPlacementRequest(data as Record<string, unknown>);
+}
 export class SupabaseCampaignRepository implements CampaignRepository {
   private get db() { return getAdminDb(); }
 

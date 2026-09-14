@@ -36,7 +36,7 @@ function StatusTimeline({ status }: { status: PlacementStatus }) {
   );
 }
 
-function ProofForm({ request, onSubmit }: { request: PlacementRequest; onSubmit: (proof: PlacementProof) => void }) {
+function ProofForm({ request, onSubmit, busy }: { request: PlacementRequest; onSubmit: (proof: PlacementProof) => void; busy: boolean }) {
   const [proof, setProof] = useState<PlacementProof>({
     url: '',
     screenshotRef: '',
@@ -65,7 +65,7 @@ function ProofForm({ request, onSubmit }: { request: PlacementRequest; onSubmit:
       </p>
       <div>
         <Label htmlFor={`proof-url-${request.id}`}>Published URL or event reference</Label>
-        <Input id={`proof-url-${request.id}`} value={proof.url} onChange={event => setProof({ ...proof, url: event.target.value })} placeholder="https://… or Nostr event ID" maxLength={500} />
+        <Input id={`proof-url-${request.id}`} value={proof.url} onChange={event => { setProof({ ...proof, url: event.target.value }); setError(null); }} placeholder="https://… or Nostr event ID" maxLength={500} />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
@@ -82,17 +82,28 @@ function ProofForm({ request, onSubmit }: { request: PlacementRequest; onSubmit:
         <Textarea id={`proof-notes-${request.id}`} value={proof.notes} onChange={event => setProof({ ...proof, notes: event.target.value })} placeholder="Describe where and when the placement appeared…" rows={2} maxLength={500} />
       </div>
       {error && <p className="text-[11px] text-red">{error}</p>}
-      <Button type="submit" size="sm" className="gap-2"><Send className="w-3.5 h-3.5" /> Submit proof</Button>
+      <Button type="submit" size="sm" className="gap-2" disabled={busy}><Send className="w-3.5 h-3.5" /> {busy ? 'Saving proof…' : 'Submit proof'}</Button>
     </form>
   );
 }
 
-function RequestCard({ request, onTransition }: { request: PlacementRequest; onTransition: (id: string, status: PlacementStatus, proof?: PlacementProof) => boolean }) {
+function RequestCard({ request, onTransition }: { request: PlacementRequest; onTransition: (id: string, status: PlacementStatus, proof?: PlacementProof) => Promise<boolean> }) {
   const [showProof, setShowProof] = useState(false);
+  const [busy, setBusy] = useState(false);
   const canAccept = request.status === 'offered';
   const canPublish = request.status === 'accepted';
   const canSubmitProof = request.status === 'published';
   const canReview = request.status === 'proof_submitted';
+
+  const transition = async (status: PlacementStatus, proof?: PlacementProof) => {
+    setBusy(true);
+    try {
+      const ok = await onTransition(request.id, status, proof);
+      if (ok && status === 'proof_submitted') setShowProof(false);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <Card className="border-border/80 bg-surface/40 p-4 sm:p-5">
@@ -101,6 +112,7 @@ function RequestCard({ request, onTransition }: { request: PlacementRequest; onT
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant={statusVariant(request.status)} dot>{PLACEMENT_STATUS_LABELS[request.status]}</Badge>
             <span className="text-[10px] text-muted font-mono">{request.id}</span>
+            {request.durable && <Badge variant="success">Durable</Badge>}
           </div>
           <h3 className="text-sm font-extrabold">{request.slotName}</h3>
           <p className="text-xs text-muted">{request.publisher} · {request.channel} · {request.format}</p>
@@ -131,37 +143,38 @@ function RequestCard({ request, onTransition }: { request: PlacementRequest; onT
       {(canAccept || canPublish || canSubmitProof || canReview) && (
         <div className="flex flex-wrap gap-2 mt-4">
           {canAccept && <>
-            <Button size="sm" className="gap-1.5" onClick={() => onTransition(request.id, 'accepted')}><Check className="w-3.5 h-3.5" /> Accept request</Button>
-            <Button size="sm" variant="secondary" className="gap-1.5" onClick={() => onTransition(request.id, 'declined')}><X className="w-3.5 h-3.5" /> Decline</Button>
+            <Button size="sm" className="gap-1.5" disabled={busy} onClick={() => void transition('accepted')}><Check className="w-3.5 h-3.5" /> Accept request</Button>
+            <Button size="sm" variant="secondary" className="gap-1.5" disabled={busy} onClick={() => void transition('declined')}><X className="w-3.5 h-3.5" /> Decline</Button>
           </>}
-          {canPublish && <Button size="sm" className="gap-1.5" onClick={() => onTransition(request.id, 'published')}><Send className="w-3.5 h-3.5" /> Mark published</Button>}
-          {canSubmitProof && <Button size="sm" variant="secondary" className="gap-1.5" onClick={() => setShowProof(value => !value)}><FileCheck2 className="w-3.5 h-3.5" /> {showProof ? 'Hide proof form' : 'Submit proof'}</Button>}
-          {canReview && <Button size="sm" className="gap-1.5" onClick={() => onTransition(request.id, 'verified')}><CheckCircle2 className="w-3.5 h-3.5" /> Mark proof reviewed</Button>}
+          {canPublish && <Button size="sm" className="gap-1.5" disabled={busy} onClick={() => void transition('published')}><Send className="w-3.5 h-3.5" /> Mark published</Button>}
+          {canSubmitProof && <Button size="sm" variant="secondary" className="gap-1.5" disabled={busy} onClick={() => setShowProof(value => !value)}><FileCheck2 className="w-3.5 h-3.5" /> {showProof ? 'Hide proof form' : 'Submit proof'}</Button>}
+          {canReview && <Button size="sm" className="gap-1.5" disabled={busy} onClick={() => void transition('verified')}><CheckCircle2 className="w-3.5 h-3.5" /> Mark proof reviewed</Button>}
         </div>
       )}
-      {showProof && canSubmitProof && <ProofForm request={request} onSubmit={proof => { onTransition(request.id, 'proof_submitted', proof); setShowProof(false); }} />}
+      {showProof && canSubmitProof && <ProofForm request={request} busy={busy} onSubmit={proof => void transition('proof_submitted', proof)} />}
     </Card>
   );
 }
 
 export function PlacementRequestInbox() {
-  const { requests, transitionPlacement } = usePlacementRequests();
+  const { requests, transitionPlacement, durable, durableLoading } = usePlacementRequests();
   const active = requests.filter(request => request.status !== 'declined' && request.status !== 'verified');
 
   return (
     <Card className="glass-panel border-blue/20">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <MessageSquare className="w-4 h-4 text-blue" />
             <CardTitle className="mb-0">Community placement requests</CardTitle>
             <Badge variant="info">Phase 2 pilot</Badge>
+            {durable && <Badge variant="success">Durable</Badge>}
           </div>
           <p className="text-xs text-muted mt-1 leading-relaxed max-w-2xl">
-            Review vendor-assisted requests and record the delivery trail. These browser-local pilot records are not connected to payment or automatic Reddit publishing.
+            Review vendor-assisted requests and record the delivery trail. {durable ? 'These records are loaded from authenticated storage.' : 'These browser-local pilot records are not connected to payment or automatic Reddit publishing.'}
           </p>
         </div>
-        <div className="flex items-center gap-1.5 text-[10px] text-muted shrink-0"><Clock3 className="w-3.5 h-3.5" /> {active.length} active</div>
+        <div className="flex items-center gap-1.5 text-[10px] text-muted shrink-0"><Clock3 className="w-3.5 h-3.5" /> {durableLoading ? 'Loading…' : `${active.length} active`}</div>
       </div>
 
       <Alert variant="warning" className="mb-4">

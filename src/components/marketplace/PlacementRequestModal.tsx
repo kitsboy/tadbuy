@@ -7,24 +7,32 @@ import type { PlacementRequest } from '@/data/placementRequests';
 interface PlacementRequestModalProps {
   slot: MarketplaceSlot;
   onClose: () => void;
-  onCreate: (input: { advertiserLabel: string; budgetSats: number; message: string }) => PlacementRequest;
+  onCreate: (input: { advertiserLabel: string; budgetSats: number; message: string }) => Promise<PlacementRequest>;
 }
 
 export function PlacementRequestModal({ slot, onClose, onCreate }: PlacementRequestModalProps) {
   const [advertiserLabel, setAdvertiserLabel] = useState('');
   const [budgetSats, setBudgetSats] = useState(String(slot.currentBidSats));
   const [message, setMessage] = useState('');
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
     const budget = Number(budgetSats);
     if (!Number.isFinite(budget) || budget < slot.minBidSats) {
       setError(`Enter at least ${slot.minBidSats.toLocaleString()} sats.`);
       return;
     }
-    onCreate({ advertiserLabel, budgetSats: budget, message });
-    onClose();
+    setSaving(true);
+    try {
+      await onCreate({ advertiserLabel, budgetSats: budget, message });
+      onClose();
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : 'Placement request could not be saved.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -64,8 +72,8 @@ export function PlacementRequestModal({ slot, onClose, onCreate }: PlacementRequ
           The vendor controls the community account or property. They must accept before publishing, disclose sponsorship, and submit delivery proof afterward.
         </div>
         <div className="flex flex-col-reverse sm:flex-row gap-3 pt-1">
-          <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
-          <Button type="submit" className="flex-1">Send placement request</Button>
+          <Button type="button" variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>Cancel</Button>
+          <Button type="submit" className="flex-1" disabled={saving}>{saving ? 'Saving request…' : 'Send placement request'}</Button>
         </div>
       </form>
     </Modal>

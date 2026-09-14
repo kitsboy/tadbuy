@@ -43,11 +43,76 @@ export interface Campaign {
   splitPayments?: { address: string; percentage: number }[];
   auditLogs?: { timestamp: string; action: string; userId: string }[];
 }
-
 export interface CampaignRepository {
   getAll(): Promise<Campaign[]>;
+  getByUserId?(userId: string): Promise<Campaign[]>;
   getById(id: string): Promise<Campaign | null>;
   create(campaign: Omit<Campaign, 'id'>): Promise<Campaign>;
   update(id: string, campaign: Partial<Campaign>): Promise<void>;
   delete(id: string): Promise<void>;
+}
+
+export type VendorIdentityStatus = 'unverified' | 'pending' | 'verified' | 'failed';
+export type VendorProfileStatus = 'draft' | 'published' | 'suspended';
+export type VendorInventoryStatus = 'draft' | 'published' | 'paused';
+
+export interface VendorProfileRecord {
+  id: string;
+  ownerId: string;
+  displayName: string;
+  npub: string;
+  pubkeyHex?: string;
+  nip05: string;
+  nip05Status: VendorIdentityStatus;
+  nip05CheckedAt?: string;
+  nip05Evidence?: Record<string, unknown>;
+  lightningAddress: string;
+  audience: string;
+  geography: string;
+  channels: string[];
+  status: VendorProfileStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface VendorInventoryRecord {
+  id: string;
+  ownerId: string;
+  vendorProfileId: string;
+  vendorDisplayName?: string;
+  name: string;
+  channel: string;
+  format: string;
+  placement: string;
+  audience: string;
+  geography: string[];
+  minBidSats: number;
+  currentBidSats: number;
+  proofRequirements: string[];
+  disclosureRequired: boolean;
+  status: VendorInventoryStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DurablePlacementRequestRecord {
+  id: string;
+  advertiserId: string;
+  vendorId: string;
+  inventoryId: string;
+  slotName: string;
+  publisher: string;
+  channel: string;
+  format: string;
+  audience: string;
+  budgetSats: number;
+  advertiserLabel: string;
+  message: string;
+  disclosureRequired: boolean;
+  proofRequirements: string[];
+  status: 'offered' | 'accepted' | 'declined' | 'published' | 'proof_submitted' | 'verified';
+  createdAt: string;
+  acceptedAt?: string;
+  publishedAt?: string;
+  proof?: { url: string; screenshotRef: string; publishedAt: string; notes: string };
 }

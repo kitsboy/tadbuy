@@ -35,6 +35,10 @@ export interface PlacementRequest {
   acceptedAt?: string;
   publishedAt?: string;
   proof?: PlacementProof;
+  /** Present when this request is backed by the durable vendor marketplace. */
+  durable?: boolean;
+  vendorId?: string;
+  inventoryId?: string;
 }
 
 export const PLACEMENT_STATUS_ORDER: PlacementStatus[] = [
@@ -106,6 +110,7 @@ export function createPlacementRequest(input: {
     proofRequirements: placementProofRequirements(channel),
     status: 'offered',
     createdAt: new Date().toISOString(),
+    ...(input.slot.durable ? { durable: true, vendorId: input.slot.vendorId, inventoryId: input.slot.inventoryId ?? input.slot.id } : {}),
   };
 }
 
