@@ -52,7 +52,8 @@
 
 ## Git and verification
 
-- Feature commits: `be2f362`, `67ad9ff`, `7802b3b` (pending push).
+- Feature commits: `be2f362`, `67ad9ff`, `7802b3b`.
+- Handoff commit: `23b846d`; automatic version-bump commits advanced the synchronized remote to `1015bac` / v5.0.192.
 - Typecheck, route integrity, production build/dist verification, bundle check, full E2E **12/12**, and diff check passed.
 - Generated docs/metrics and the pre-existing local `public/sw.js` change remain intentionally excluded from the feature commits.
 
