@@ -17,7 +17,11 @@ export interface MarketplaceSlot {
   status: 'available' | 'hot';
   tags: string[];
   platformType?: string;
-  /** ISO timestamp — hot slots with active auctions */
+  /** Set for records loaded from the durable vendor marketplace. */
+  durable?: boolean;
+  vendorId?: string;
+  inventoryId?: string;
+
   auctionEndsAt?: string;
 }
 

@@ -521,10 +521,10 @@ export default function Marketplace() {
     }
   };
 
-  const handlePlacementRequest = (input: { advertiserLabel: string; budgetSats: number; message: string }) => {
+  const handlePlacementRequest = async (input: { advertiserLabel: string; budgetSats: number; message: string }) => {
     if (!requestSlot) throw new Error('No placement selected');
-    const request = requestPlacement({ slot: requestSlot, ...input });
-    addToast('Placement request saved for vendor review', 'success', 2600);
+    const request = await requestPlacement({ slot: requestSlot, ...input });
+    addToast(request.durable ? 'Placement saved to durable vendor records' : 'Placement request saved for vendor review', 'success', 2600);
     return request;
   };
 
@@ -534,12 +534,19 @@ export default function Marketplace() {
   }, []);
 
   useEffect(() => {
-    fetch("/api/marketplace/slots/live")
-      .then(r => r.ok ? r.json() : null)
-      .then(data => {
-        if (data?.slots?.length) setInventory(data.slots);
-      })
-      .catch(() => { /* keep static inventory */ });
+    const loadInventory = async () => {
+      const [liveResult, durableResult] = await Promise.allSettled([
+        fetch("/api/marketplace/slots/live").then(response => response.ok ? response.json() : null),
+        fetch("/api/marketplace/inventory/public").then(response => response.ok ? response.json() : null),
+      ]);
+      const live = liveResult.status === 'fulfilled' ? liveResult.value : null;
+      const durable = durableResult.status === 'fulfilled' ? durableResult.value : null;
+      const baseSlots = live?.slots?.length ? live.slots as MarketplaceSlot[] : MARKETPLACE_SLOTS;
+      const durableSlots = Array.isArray(durable?.slots) ? durable.slots as MarketplaceSlot[] : [];
+      const durableIds = new Set(durableSlots.map(slot => slot.id));
+      setInventory([...baseSlots.filter(slot => !durableIds.has(slot.id)), ...durableSlots]);
+    };
+    void loadInventory();
   }, []);
 
   const handleBidPlaced = (slotId: string, bidSats: number) => {

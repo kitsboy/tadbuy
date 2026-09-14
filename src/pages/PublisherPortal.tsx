@@ -13,6 +13,7 @@ import {
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { PlacementRequestInbox } from "@/components/publisher/PlacementRequestInbox";
 import { VendorProfileCard } from "@/components/publisher/VendorProfileCard";
+import { VendorInventoryManager } from "@/components/publisher/VendorInventoryManager";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const EARNINGS_TREND = [
@@ -142,6 +143,7 @@ export default function PublisherPortal() {
       </div>
 
       <VendorProfileCard />
+      <VendorInventoryManager />
       <PlacementRequestInbox />
 
       <Alert variant="info">
