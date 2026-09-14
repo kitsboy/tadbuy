@@ -14,8 +14,10 @@ export function registerBatch5Routes(app: Express) {
       },
       projects: ['tadbuy', 'giveabit', 'satohash', 'motopass', 'openstrata'],
       umbrel: { configured: !!(process.env.UMBREL_LND_SOCKET && process.env.UMBREL_LND_CERT) },
-      apiProxy: process.env.VITE_API_BASE_URL || 'https://api.giveabit.io',
-      apiProxyStatus: 'live',
+      // No default API host: api.giveabit.io was retired 2026-09-13 (HTTP 530 / Cloudflare
+      // 1033). Only advertise a proxy URL when one is explicitly configured.
+      apiProxy: process.env.VITE_API_BASE_URL || '',
+      apiProxyStatus: process.env.VITE_API_BASE_URL ? 'configured' : 'none_deployed',
     });
   });
 
