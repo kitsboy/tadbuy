@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { motion } from "motion/react";
 import { Card, CardTitle, Button } from "@/components/ui";
 import { StatCard, Tabs, TabsList, TabsTrigger, TabsContent, Badge, Progress } from "@/components/ui/index";
+import { Alert } from "@/components/ui/Alert";
 import {
   DollarSign, Monitor, Zap, TrendingUp, BarChart2,
   Copy, Check, ArrowUpRight, Settings, Code2,
@@ -10,6 +11,8 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { PlacementRequestInbox } from "@/components/publisher/PlacementRequestInbox";
+import { VendorProfileCard } from "@/components/publisher/VendorProfileCard";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const EARNINGS_TREND = [
@@ -137,6 +140,13 @@ export default function PublisherPortal() {
         <StatCard label="Avg Fill Rate" value={`${AVG_FILL}%`} icon={TrendingUp} color="text-blue" />
         <StatCard label="Active Slots" value={`${ACTIVE_COUNT} / ${SLOTS.length}`} icon={Monitor} color="text-accent" />
       </div>
+
+      <VendorProfileCard />
+      <PlacementRequestInbox />
+
+      <Alert variant="info">
+        Phase 2 community distribution is vendor-assisted. Add only inventory you control, follow each community&apos;s rules, disclose sponsorship, and submit evidence after publication. Payouts and audience metrics remain staged until the backend ledger is live.
+      </Alert>
 
       <Tabs defaultValue="overview">
         <TabsList className="w-full flex-wrap">

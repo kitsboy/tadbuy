@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Button, Input, Label, Modal, Select } from "@/components/ui";
 import { Chip, SkeletonCard, EmptyState } from "@/components/ui/index";
 import { useToast } from "@/components/Toast";
-import { useNavigate } from "react-router-dom";
+
 import {
   Search, Filter, Zap, Users, Globe, TrendingUp,
   CheckCircle, ChevronDown, X, BarChart2, Star,
@@ -18,6 +18,8 @@ import {
 } from "@/data/marketplaceSlots";
 import { MARKETPLACE_PLATFORM_TYPES } from '@/data/platforms';
 import { PageShell } from '@/components/PageShell';
+import { PlacementRequestModal } from '@/components/marketplace/PlacementRequestModal';
+import { usePlacementRequests } from '@/hooks/usePlacementRequests';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -32,6 +34,12 @@ const CATEGORIES = [
   "Bitcoin Tools",
   "Bitcoin Community",
 ] as const;
+
+const VENDOR_ASSISTED_PLATFORMS = new Set(['Nostr', 'Blogs', 'Newsletters', 'Podcasts', 'Reddit']);
+
+function canRequestVendorPlacement(slot: MarketplaceSlot): boolean {
+  return VENDOR_ASSISTED_PLATFORMS.has(slot.platformType || '');
+}
 
 const SORT_OPTIONS = [
   { value: "best_ctr",         label: "Best CTR" },
@@ -238,8 +246,7 @@ function BidModal({ slot, onClose, onBidPlaced }: { slot: MarketplaceSlot; onClo
 
 // ─── Featured Card ────────────────────────────────────────────────────────────
 
-function FeaturedCard({ slot, onBid }: { slot: MarketplaceSlot; onBid: (slot: MarketplaceSlot) => void }) {
-  const navigate = useNavigate();
+function FeaturedCard({ slot, onBid, onRequestPlacement }: { slot: MarketplaceSlot; onBid: (slot: MarketplaceSlot) => void; onRequestPlacement: (slot: MarketplaceSlot) => void }) {
   const [watchlist, setWatchlist] = useLocalStorage<string[]>("tadbuy_marketplace_watchlist", []);
   const saved = watchlist.includes(slot.id);
   return (
@@ -305,13 +312,19 @@ function FeaturedCard({ slot, onBid }: { slot: MarketplaceSlot; onBid: (slot: Ma
         >
           <Zap className="w-4 h-4" /> Bid Now
         </Button>
-        <Button
-          variant="secondary"
-          className="flex-1"
-          onClick={() => navigate(`/?slot=${slot.id}`)}
-        >
-          Buy Ad Slot
-        </Button>
+        {canRequestVendorPlacement(slot) ? (
+          <Button
+            variant="secondary"
+            className="flex-1"
+            onClick={() => onRequestPlacement(slot)}
+          >
+            Request placement
+          </Button>
+        ) : (
+          <span className="flex-1 inline-flex items-center justify-center rounded-lg border border-border px-3 py-2 text-[10px] font-bold text-muted text-center">
+            Provider access later
+          </span>
+        )}
       </div>
     </motion.div>
   );
@@ -319,8 +332,7 @@ function FeaturedCard({ slot, onBid }: { slot: MarketplaceSlot; onBid: (slot: Ma
 
 // ─── Slot Card ────────────────────────────────────────────────────────────────
 
-function SlotCard({ slot, onBid }: { slot: MarketplaceSlot; onBid: (slot: MarketplaceSlot) => void }) {
-  const navigate = useNavigate();
+function SlotCard({ slot, onBid, onRequestPlacement }: { slot: MarketplaceSlot; onBid: (slot: MarketplaceSlot) => void; onRequestPlacement: (slot: MarketplaceSlot) => void }) {
   const isHot = slot.status === "hot";
   const [watchlist, setWatchlist] = useLocalStorage<string[]>("tadbuy_marketplace_watchlist", []);
   const saved = watchlist.includes(slot.id);
@@ -459,14 +471,19 @@ function SlotCard({ slot, onBid }: { slot: MarketplaceSlot; onBid: (slot: Market
           >
             <Zap className="w-4 h-4" /> Bid Now
           </Button>
-          <Button
-            variant="secondary"
-            className="px-3"
-            onClick={() => navigate(`/?slot=${slot.id}`)}
-            title="Open in Buy Ads"
-          >
-            <ArrowUpDown className="w-3.5 h-3.5" />
-          </Button>
+          {canRequestVendorPlacement(slot) ? (
+            <Button
+              variant="secondary"
+              className="flex-1"
+              onClick={() => onRequestPlacement(slot)}
+            >
+              Request placement
+            </Button>
+          ) : (
+            <span className="flex-1 inline-flex items-center justify-center rounded-lg border border-border px-3 py-2 text-[10px] font-bold text-muted text-center">
+              Provider access later
+            </span>
+          )}
         </div>
       </div>
     </motion.div>
@@ -490,6 +507,8 @@ export default function Marketplace() {
   const [loading, setLoading]               = useState(true);
   const [watchlist, setWatchlist]           = useLocalStorage<string[]>("tadbuy_marketplace_watchlist", []);
   const [showWatchlistOnly, setShowWatchlistOnly] = useState(false);
+  const [requestSlot, setRequestSlot] = useState<MarketplaceSlot | null>(null);
+  const { requestPlacement } = usePlacementRequests();
   const { addToast } = useToast();
 
   const toggleWatchlist = (slotId: string) => {
@@ -500,6 +519,13 @@ export default function Marketplace() {
       setWatchlist([...watchlist, slotId]);
       addToast('Saved to watchlist', 'success', 1500);
     }
+  };
+
+  const handlePlacementRequest = (input: { advertiserLabel: string; budgetSats: number; message: string }) => {
+    if (!requestSlot) throw new Error('No placement selected');
+    const request = requestPlacement({ slot: requestSlot, ...input });
+    addToast('Placement request saved for vendor review', 'success', 2600);
+    return request;
   };
 
   useEffect(() => {
@@ -633,13 +659,12 @@ export default function Marketplace() {
         {/* ── Featured Slots ─────────────────────────────────────────────── */}
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <Star className="w-4 h-4 text-accent fill-accent" />
-            <h2 className="text-sm font-extrabold uppercase tracking-wider text-accent">Featured Slots</h2>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-muted">Featured Slots</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {featuredSlots.map(slot => (
               <div key={slot.id}>
-                <FeaturedCard slot={slot} onBid={setBidSlot} />
+                <FeaturedCard slot={slot} onBid={setBidSlot} onRequestPlacement={setRequestSlot} />
               </div>
             ))}
           </div>
@@ -830,7 +855,7 @@ export default function Marketplace() {
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                   {filtered.map((slot, i) => (
                     <div key={slot.id ?? i}>
-                      <SlotCard slot={slot} onBid={setBidSlot} />
+                      <SlotCard slot={slot} onBid={setBidSlot} onRequestPlacement={setRequestSlot} />
                     </div>
                   ))}
                 </div>
@@ -846,6 +871,13 @@ export default function Marketplace() {
           slot={bidSlot}
           onClose={() => setBidSlot(null)}
           onBidPlaced={handleBidPlaced}
+        />
+      )}
+      {requestSlot && (
+        <PlacementRequestModal
+          slot={requestSlot}
+          onClose={() => setRequestSlot(null)}
+          onCreate={handlePlacementRequest}
         />
       )}
     </>
