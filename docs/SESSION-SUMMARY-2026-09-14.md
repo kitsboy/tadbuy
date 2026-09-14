@@ -1,7 +1,7 @@
 # Tadbuy — Multi-channel marketplace plan
 
 **Updated:** 2026-09-14
-**Status:** Phase 2 community-distribution pilot foundation shipped on M3; Kimi/THOR operational response is pending.
+**Status:** Phase 2 community-distribution foundation shipped; durable marketplace, owned inventory, and NIP-05 evidence groundwork are now implemented on M3. Supabase migration and THOR operational approval remain required before a live pilot.
 
 ## What changed
 
@@ -27,17 +27,19 @@
 - Added advertiser **Request placement** flow for vendor-assisted marketplace inventory.
 - Added browser-local placement records and the lifecycle `offered → accepted → published → proof_submitted → verified`.
 - Added vendor inbox controls, delivery-proof fields, and a browser-local vendor profile with NIP-05/npub, Lightning Address, audience, geography, and channel permissions.
-- Added Phase 2 Playwright coverage for the complete advertiser-to-vendor proof lifecycle.
+- Added durable authenticated server routes and `supabase-vendor-marketplace.sql` for vendor profiles, owned inventory, and placement requests.
+- Added owner-controlled inventory creation/editing with draft, published, and paused states; published listings merge into Marketplace.
+- Added server-derived vendor ownership, durable lifecycle transitions, and role checks for vendor actions versus advertiser proof review.
+- Added NIP-19 npub decoding and read-only NIP-05 resolver evidence with explicit UI states; no blanket trust claim is created.
 
 ## Next work
 
-1. Receive Kimi/THOR’s response with confirmed pilot communities, identities, policies, and Otto/Grok Bot agent assignments.
-2. Move placement requests, vendor profiles, and inventory to durable authenticated backend storage.
-3. Add real vendor inventory creation/editing and advertiser/vendor ownership controls.
-4. Define and implement moderation, disclosure, cancellation, refund, dispute, and pilot acceptance rules.
-5. Test NIP-05 resolution and Nostr publication with real identities and an unlocked signer.
+1. Kimi/THOR: apply and review `supabase-vendor-marketplace.sql`, configure server-only Supabase credentials, and confirm the API origin/backup path.
+2. Receive Kimi’s confirmed pilot communities, identities, moderation rules, and Otto/Grok Bot/sub-agent assignments.
+3. Complete manual approval and identity policy before opening public vendor onboarding.
+4. Add cancellation, refund, dispute, and settlement ledger controls before any real campaign payment or payout.
+5. Test NIP-05 resolution and Nostr publication with approved identities and an unlocked signer.
 6. Evaluate a controlled Reddit provider/API connection only after provider access, policy, account, and reporting gates are satisfied.
-7. Add durable settlement before treating campaign payments, vendor balances, escrow, or payouts as live.
 
 ## Product rules
 
@@ -50,9 +52,8 @@
 
 ## Git and verification
 
-- Feature commit: `45bd22c`.
-- Remote tip after automatic version bumps: `9b18acc` / v5.0.188.
-- Focused Phase 2 E2E: 1/1 passed; typecheck, route integrity, bundle check, and diff check passed.
-- The pre-existing local `public/sw.js` change remains intentionally uncommitted.
+- Feature commits: `be2f362`, `67ad9ff`, `7802b3b` (pending push).
+- Typecheck, route integrity, production build/dist verification, bundle check, full E2E **12/12**, and diff check passed.
+- Generated docs/metrics and the pre-existing local `public/sw.js` change remain intentionally excluded from the feature commits.
 
 *Safe Harbour · Part of the [Give A Bit](https://giveabit.io) family.*
