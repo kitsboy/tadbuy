@@ -1,7 +1,7 @@
 {
   "name": "Tadbuy — Bitcoin Ad Platform",
   "short_name": "Tadbuy",
-  "description": "The world's first Bitcoin-native DSP. Buy ads across 8 platforms, pay in sats with Lightning Network, BOLT12, or Nostr Zap.",
+  "description": "Bitcoin-native advertising marketplace: plan campaigns across Nostr and independent publisher channels, then verify delivery.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#18181b",

@@ -53,6 +53,14 @@ _Source: /api/metrics. Rows read "—" when the endpoint is unreachable — no e
 | Impressions | ${num(live?.impressions)} |
 | Clicks | ${num(live?.clicks)} |
 
+## Distribution model
+${PROJECT_STATE.marketing.pitch}
+
+Phase 1: Nostr publishing plus vendor-assisted websites, newsletters, and podcasts. Later phases add Reddit, Meta, Google/YouTube, Spotify, Pinterest, LinkedIn, TikTok, and DOOH only when provider access and reporting are real.
+
+## Honest product boundary
+Tadbuy coordinates campaign plans, vendor relationships, proof, and future settlement. It does not claim automatic third-party publishing, live reach, or live payout without a connected backend and verified records.
+
 ## Differentiators
 ${PROJECT_STATE.executive.differentiators.map(d => `- ${d}`).join('\n')}
 
@@ -70,6 +78,11 @@ Tadbuy integrates **Fedimint ecash** as a first-class payment rail — enabling 
 
 ## Revenue Model
 ${f.revenueModel}
+
+Advertisers pay an itemized coordination fee. Vendors set or accept placement prices. Marketplace commission and publisher settlement activate only when the real backend ledger and payment rails are connected.
+
+## Distribution roadmap
+See [docs/DISTRIBUTION-ROADMAP.md](./DISTRIBUTION-ROADMAP.md) for the phased channel plan.
 
 ## Projections (${f.currency})
 | Year | Platform Revenue | Ad Spend Volume | Active Users |
@@ -101,6 +114,15 @@ ${f.projections.map(p => `| ${p.year} | $${p.revenue.toLocaleString()} | $${p.ad
 **Tagline:** ${PROJECT_STATE.marketing.tagline}
 
 **Pitch:** ${PROJECT_STATE.marketing.pitch}
+
+## Phase 1 Channels
+- **Nostr** — NIP-07 signed publication with relay acknowledgements
+- **Websites & blogs** — vendor-assisted placement
+- **Newsletters** — vendor-assisted sponsorship
+- **Podcasts** — vendor-assisted audio placement
+
+## Later Channels
+Reddit · Meta (Facebook + Instagram) · Google/YouTube · Spotify · Pinterest · LinkedIn · TikTok · digital out-of-home
 
 **CTA:** ${PROJECT_STATE.marketing.cta}
 
@@ -179,8 +201,14 @@ FEDIMINT_GATEWAY_URL=https://your-mint-gateway
 | Umbrel Lightning | ⏳ Not ready |
 | Real payments | 🔶 Demo mode |
 
+## Distribution status
+- **Phase 1:** Nostr, websites/blogs, newsletters, podcasts
+- **Later:** Reddit, Meta, Google/YouTube, Spotify, Pinterest
+- **Specialist:** LinkedIn and TikTok
+- **Future:** digital out-of-home screen marketplace
+
 ## Consumer Workflow
-1. Browse & plan → 2. Create campaign → 3. Pay → 4. Go live → 5. Track results
+1. Plan campaign → 2. Choose distribution → 3. Prepare creative → 4. Review proof path → 5. Pay when a real rail is connected → 6. Track delivery
 
 ## Key Pages
 | Page | URL |

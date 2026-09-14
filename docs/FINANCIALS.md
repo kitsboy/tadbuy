@@ -1,9 +1,14 @@
 # Tadbuy — Financial Overview
 
-**Auto-generated:** 2026-09-13 · **FY:** 2026
+**Auto-generated:** 2026-09-14 · **FY:** 2026
 
 ## Revenue Model
-15% platform fee on ad spend + publisher marketplace commission
+15% coordination fee on campaign spend + publisher marketplace commission when settlement is enabled
+
+Advertisers pay an itemized coordination fee. Vendors set or accept placement prices. Marketplace commission and publisher settlement activate only when the real backend ledger and payment rails are connected.
+
+## Distribution roadmap
+See [docs/DISTRIBUTION-ROADMAP.md](./DISTRIBUTION-ROADMAP.md) for the phased channel plan.
 
 ## Projections (USD)
 | Year | Platform Revenue | Ad Spend Volume | Active Users |

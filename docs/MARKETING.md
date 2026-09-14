@@ -1,12 +1,21 @@
 # Tadbuy — Marketing
 
-**Auto-generated:** 2026-09-13
+**Auto-generated:** 2026-09-14
 
-**Tagline:** Buy ads with Bitcoin. Pay in sats, not surveillance.
+**Tagline:** One campaign. Independent distributors. Transparent proof.
 
-**Pitch:** Tadbuy is the world's first Bitcoin-native DSP. Launch cross-platform campaigns and pay via Lightning, Fedimint ecash, BOLT12, on-chain, or Nostr Zaps.
+**Pitch:** Tadbuy coordinates Bitcoin-native advertising placements across Nostr and independent websites, newsletters, and podcasts. Advertisers plan once, vendors publish through channels they control, and every delivery has a clear proof path.
 
-**CTA:** Start your first campaign at tadbuy.giveabit.io
+## Phase 1 Channels
+- **Nostr** — NIP-07 signed publication with relay acknowledgements
+- **Websites & blogs** — vendor-assisted placement
+- **Newsletters** — vendor-assisted sponsorship
+- **Podcasts** — vendor-assisted audio placement
+
+## Later Channels
+Reddit · Meta (Facebook + Instagram) · Google/YouTube · Spotify · Pinterest · LinkedIn · TikTok · digital out-of-home
+
+**CTA:** Plan your first distribution campaign at tadbuy.giveabit.io
 
 ## Target Audiences
 - Bitcoin businesses

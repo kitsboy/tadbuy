@@ -1,4 +1,72 @@
-## Session — 2026-09-13 · Playwright cold-start flake fixed (Grok M3)
+## Session — 2026-09-14 · Phase 1 distribution marketplace and Nostr-first flow (Grok M3)
+
+**Done:**
+- Defined Tadbuy as an advertiser + independent vendor marketplace: one campaign, independent distributors, transparent proof.
+- Added the Phase 1 roadmap for Nostr, websites/blogs, newsletters, and podcasts; later phases cover Reddit, Meta, Google/YouTube, Spotify, Pinterest, LinkedIn, TikTok, and DOOH.
+- Added a dedicated responsive Distribution step to Full Control campaign creation.
+- Added channel maturity, execution mode, and proof requirements in `src/data/distributionChannels.ts`.
+- Added NIP-07 browser signing and multi-relay publication with relay acknowledgements in `src/services/nostrService.ts`.
+- Persisted selected distribution channels and Nostr publication receipts in campaign drafts/types and validated server input.
+- Made Nostr the default first-run distribution choice and added `relay.snort.social` to the WebSocket CSP allowlist.
+- Replaced unsupported “automatic everywhere” language across product, SEO, pitch, README, executive, marketing, beta, and roadmap docs.
+- Restored `docs/IMPROVEMENT-ROADMAP.md` after interrupted output had corrupted it into one-character lines.
+
+**Decisions:**
+- Phase 1 is vendor-assisted/manual for websites, newsletters, and podcasts; Tadbuy must not claim automatic third-party publishing without provider permissions, account access, execution, and verified reporting.
+- Nostr publication is a signed event and relay receipt—not proof of impressions, clicks, conversions, or payment.
+- Payment state remains separate from distribution/delivery state. Real campaign activation, vendor balances, refunds, and payouts remain staged until durable backend ledger and settlement controls exist.
+- `api.giveabit.io` remains retired. M3 owns code; THOR owns operations and Kimi/HERMES coordination.
+
+**Verification:**
+- `npm run lint` ✅
+- `npm run check:routes` ✅ 38 lazy modules / 38 route declarations
+- `npm run build` ✅ Vite build, SEO prerender, legal chunk warm, and dist verification (74 JS chunks)
+- `npm run check:bundle` ✅ 75 assets / 2923.5 KiB
+- `CI=true npm run test:e2e` ✅ 11/11
+- `git diff --check` ✅
+
+**Git State:**
+- Branch: `main`
+- Base SHA: `572227c23bfaebe56022ee8a03ffedfc1d432f52`
+- Unpushed commits: none
+- Working tree contains this Phase 1 implementation and docs update, uncommitted by design
+- Existing local `public/sw.js` modification is preserved and should be reviewed separately before commit
+
+**Next for Kimi/Cam:**
+- Test NIP-07 publication in Chromium with a real unlocked signer and confirm relay acknowledgements.
+- Add NIP-05/vendor identity, vendor profiles, inventory records, offer/accept workflow, proof submission, and delivery timeline.
+- Coordinate NIP-05 rollout with Give A Bit, Satohash, MotoPass, Stranded, and related ecosystem accounts.
+- Keep real payments and payouts disabled until the backend ledger and settlement path are durable.
+
+---
+
+
+**Done:**
+- Reviewed `https://ppq.ai/integrate` and the live PayPerQ API documentation using Chromium
+- Confirmed the public API is OpenAI-compatible at `https://api.ppq.ai/chat/completions`
+- Confirmed documented top-ups fund PPQ AI credits via `POST /topup/create/{method}`, including `btc-lightning`
+- Confirmed documented 402/L402 flow pays for PPQ API requests, not Tadbuy campaign spend
+- Mapped the requested model: per-customer PPQ accounts, embedded PPQ checkout, combined Tadbuy balance, PPQ Lightning, and a target 10% revenue share
+- Did not integrate the public top-up API because it would sell PPQ AI credits and cannot safely activate Tadbuy campaigns or split a 90/10 balance
+- Did not copy or expose the API key visible in the logged-in PPQ documentation page
+
+**Decisions:**
+- No code change until PayPerQ provides the partner/merchant contract and sandbox/API details
+- PPQ must not be represented as Tadbuy's campaign payment rail based on the public docs alone
+- Before implementation, require: embedded/white-label checkout contract, per-customer account/reference mapping, signed payment webhook or status API, combined-balance semantics, refunds/disputes, and written revenue-share settlement terms
+- When the contract exists, implement server-only credentials, signed webhook verification, idempotent payment records, a 90/10 ledger, and activation only after verified settlement
+
+**Git State:**
+- SHA before handoff: `572227c23bfaebe56022ee8a03ffedfc1d432f52`
+- No code changes or commits made for this review
+- Existing working tree was clean before handoff edits
+
+**Next for Kimi/Cam:**
+- Obtain PayPerQ partner onboarding/API documentation and written revenue-share terms
+- Keep Tadbuy campaign payments staged until a real receiver/backend and verified settlement path exist
+
+---
+
 
 **Done:**
 - Updated the `platforms query pre-selects platform` Playwright test to wait for initial network idle and allow the observed cold Vite transform window before asserting the selected `Nostr` platform

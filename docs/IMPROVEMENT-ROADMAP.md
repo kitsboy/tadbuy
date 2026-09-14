@@ -1,195 +1,128 @@
-# Tadbuy — Future Improvements Roadmap (Q4 2026 - Q1 2027)
+# Tadbuy — Improvement Roadmap
 
-**Last Updated:** 2026-09-01  
-**Current Version:** v5.0.141  
-**Live Site:** https://tadbuy.giveabit.io  
+**Updated:** 2026-09-14
+**Current direction:** advertiser + independent vendor marketplace
 
----
+## Product direction
 
-## ✅ Recently Shipped (Reference)
+> **One campaign. Independent distributors. Transparent proof.**
 
-### **Session 2026-08-29 → 2026-09-01**
-- ✅ **Navbar facelift** (v5.0.130) — Spacious responsive navigation
-- ✅ **Real-time BTC prices** (v5.0.137) — Coinbase API integration
-- ✅ **Build verified** — 74 JS chunks, lint clean
-- ✅ **Documentation synced** — All handoffs updated
+Tadbuy helps advertisers plan campaigns and buy placements from independent vendors across selected channels. Vendors publish through the accounts or properties they control and submit delivery proof. Tadbuy coordinates the relationship, status, reporting, and—once the backend ledger is ready—settlement.
 
----
+Tadbuy should not describe a channel as automatically connected until its provider permissions, account connection, execution path, and reporting are implemented and verified.
 
-## 🚀 Future Improvement Opportunities
+## Current cycle — Phase 1
 
-### **Priority 1: User Experience Enhancements** (Q4 2026)
+### P0 — Clear user flow
 
-#### **A. Onboarding Flow Polish**
-- **FirstVisitChecklist** - Add persona-specific welcome tour
-- **PersonaOnboarding** - 3-step interactive guide
-- **Interactive tutorial overlay** for new users
-- **Progress indicators** for multi-step forms
-- **Empty states** with helpful actions
+- [x] Add a dedicated Distribution step to Full Control campaign creation.
+- [x] Default the first campaign plan to Nostr.
+- [x] Show execution mode and proof requirements before payment.
+- [x] Keep delivery state separate from payment state.
+- [x] Persist selected distribution channels in campaign drafts.
+- [ ] Add vendor placement records and offer/accept workflow.
+- [ ] Add proof submission for URLs, screenshots, dates, and episode timestamps.
+- [ ] Add the delivery timeline: planned → offered → accepted → published → proof submitted → verified.
 
-#### **B. Performance Optimizations**
-- **Code splitting** for heavy routes (Campaigns, Analytics, Geo)
-- **Lazy loading** for charts and maps
-- **Image optimization** for marketing assets
-- **Bundle analysis** - currently 581KB main bundle (target: <500KB)
-- **Service worker** improvements for offline support
+### P1 — Nostr pilot
 
-#### **C. Accessibility Improvements**
-- **Keyboard shortcuts** expansion (currently Cmd+K)
-- **Screen reader** support audit
-- **Focus management** for modals and drawers
-- **Color contrast** audit across all themes
-- **ARIA labels** consistency check
+- [x] Support browser-controlled NIP-07 signing.
+- [x] Publish sponsored campaign notes to configured relays.
+- [x] Surface relay acknowledgements and the event ID.
+- [ ] Add NIP-05 identity/profile connection for vendors and advertisers.
+- [ ] Add a small approved relay set and clear failure/retry handling.
+- [ ] Add vendor moderation and disclosure rules.
+- [ ] Verify the Nostr pilot with Give A Bit, Satohash, MotoPass, and other approved ecosystem accounts.
 
----
+### P2 — Direct publisher inventory
 
-### **Priority 2: Feature Additions** (Q1 2027)
+- [ ] Create vendor profiles with channel, format, audience, geography, price, availability, and proof requirements.
+- [ ] Let vendors list websites, newsletters, podcasts, and Nostr inventory.
+- [ ] Let advertisers request or purchase a placement without implying automatic publication.
+- [ ] Add vendor acceptance, cancellation, revision, and dispute states.
+- [ ] Keep inventory and performance claims partner-owned and evidence-backed.
 
-#### **D. Campaign Management**
-- **Bulk actions UI** - Already shipped in v5.0.99, could expand
-- **Campaign templates** - Pre-built campaigns for common use cases
-- **A/B testing** - Split testing for ad variants
-- **Auto-optimization** - ML-based bid adjustments
+## Channel roadmap
 
-#### **E. Analytics & Reporting**
-- **Custom date ranges** - Currently limited presets
-- **Export functionality** - CSV/PDF reports
-- **Real-time updates** - WebSocket for live data
-- **Cohort analysis** - User retention tracking
-- **Attribution modeling** - Multi-touch attribution
+### Phase 1 — Now
 
-#### **F. Payment & Wallet**
-- **Fedimint integration** - BLOCKED (mint: `t_8ee7c976`)
-- **Umbrel LND integration** - BLOCKED (node: `t_46208fbe`)
-- **Multi-currency support** - Currently USD/CAD/EUR/GBP
-- **Invoice generation** improvements
-- **Settlement history** filtering and search
+- **Nostr:** NIP-07 publication with relay acknowledgements.
+- **Websites and blogs:** vendor-assisted placement.
+- **Newsletters:** vendor-assisted sponsorship.
+- **Podcasts:** vendor-assisted host-read, pre-roll, or mid-roll placement.
 
----
+### Phase 2 — Community distribution
 
-### **Priority 3: Technical Debt** (Ongoing)
+- **Reddit:** begin with approved community and creator placements; investigate Ads API execution only after provider access, policy review, and reporting are real.
 
-#### **G. Code Quality**
-- **TypeScript strict mode** - Enable strict checks
-- **Component prop types** - Convert to TypeScript interfaces
-- **Custom hooks extraction** - Reduce component complexity
-- **Error boundaries** - Add more granular boundaries
-- **Loading states** - Consistent loading UI
+### Phase 3 — Provider-managed networks
 
-#### **H. Testing**
-- **Unit tests** - Currently no test suite
-- **Integration tests** - Critical user flows
-- **E2E tests** - Playwright setup
-- **Visual regression** - Screenshot comparisons
-- **Performance budgets** - Lighthouse CI
+- **Meta:** Facebook and Instagram as one integration.
+- **Google/YouTube:** begin with creator sponsorships, then evaluate Google Ads API campaigns.
+- **Spotify:** evaluate audio inventory and reporting.
+- **Pinterest:** evaluate visual campaign execution.
 
-#### **I. Security**
-- **CSP refinements** - Audit current policy
-- **Dependency scanning** - Already fixed in v5.0.130
-- **API rate limiting** - Server-side enforcement
-- **Input validation** - Zod schemas for forms
-- **Authentication audit** - Firebase auth flow review
+Every provider integration needs OAuth/account permissions, policy handling, spend reconciliation, provider campaign IDs, and verified reporting.
 
----
+### Phase 4 — Specialist channels
 
-## 🎯 Next Session Recommendations
+- **LinkedIn:** premium B2B and lead-generation inventory.
+- **TikTok:** specialist short-form video and creator inventory.
 
-### **Immediate (Next 1-2 Sessions)**
+These are valuable later, but should not delay the Phase 1 marketplace.
 
-1. **Performance Audit & Optimization** (4-6 hours)
-   - Bundle analysis with `vite-bundle-visualizer`
-   - Code splitting for heavy routes
-   - Image lazy loading
-   - Target: Reduce main bundle to <500KB
+### Phase 5 — Digital out-of-home
 
-2. **Accessibility Audit** (2-3 hours)
-   - Lighthouse accessibility score (target: 100)
-   - Keyboard navigation testing
-   - Screen reader testing
-   - ARIA labels audit
+Build a separate screen-owner marketplace for large displays. A listing should include location, format, operating hours, audience estimate, price, and playback evidence. Later, evaluate programmatic DOOH partners such as Broadsign or Place Exchange only after contracts and measurement are available.
 
-3. **Onboarding Flow** (3-4 hours)
-   - Interactive welcome tour
-   - Persona-based recommendations
-   - Progress tracking
+Playback is not the same as a verified human impression; DOOH reporting must preserve that distinction.
 
-### **Medium Term (1-2 Months)**
+## Business model
 
-4. **Testing Infrastructure** (6-8 hours)
-   - Vitest setup
-   - Component tests for critical paths
-   - E2E tests with Playwright
-   - CI/CD integration
+1. Advertiser creates one campaign and distribution plan.
+2. Vendor lists or accepts a placement it controls.
+3. Tadbuy coordinates creative, timing, status, proof, and reporting.
+4. Advertiser pays an itemized campaign or coordination fee when a real payment rail is connected.
+5. Tadbuy earns a marketplace commission or coordination fee.
+6. Vendor settlement and payouts remain staged until a persisted backend ledger, refunds/disputes flow, and verified payment controls exist.
 
-5. **Campaign Templates** (4-6 hours)
-   - Pre-built campaign templates
-   - Industry-specific defaults
-   - One-click campaign creation
+## Data and trust requirements
 
-### **Long Term (3-6 Months)**
+- Campaign distribution channels are explicit and stored with the draft.
+- Vendor placement records include channel, vendor, inventory, price, status, and proof requirements.
+- Payment status never implies delivery status.
+- Nostr receipts store the signed event ID and acknowledged relay URLs.
+- Reach, impressions, CTR, earnings, and settlement must come from real records—not decorative or fabricated numbers.
+- Public copy must distinguish live, vendor-assisted, staged, and future capabilities.
 
-6. **Advanced Analytics** (10-15 hours)
-   - Custom dashboards
-   - Export functionality
-   - Real-time updates
-   - Attribution modeling
+## Design quality bar
 
-7. **Mobile App** (20+ hours)
-   - React Native setup
-   - Core feature parity
-   - Push notifications
-   - App store deployment
+- Mobile-first layouts with one clear decision per screen.
+- Minimum 44px touch targets and visible keyboard focus.
+- Responsive cards that remain readable without dense desktop tables.
+- Desktop layouts with generous hierarchy and a clear plan summary.
+- Reduced-motion support and readable contrast.
+- Sticky actions must never cover essential content.
+- World-class means the interface makes the business relationship understandable; it must not hide uncertainty behind decoration.
+
+## Verification gates
+
+Before calling Phase 1 ready:
+
+- `npm run lint`
+- `npm run check:routes`
+- `npm run build`
+- `npm run check:bundle` when available
+- `CI=true npm run test:e2e`
+- `git diff --check`
+- Manual mobile and desktop review of the campaign flow
+- Manual NIP-07 test with a browser signer and configured relay set
+
+## Related documents
+
+- [Distribution roadmap](./DISTRIBUTION-ROADMAP.md)
+- [Session summary](./SESSION-SUMMARY-2026-09-14.md)
+- [Kimi handoff](./KIMI-HANDOFF.md)
 
 ---
-
-## 🔧 Technical Blockers
-
-### **Active Blockers**
-- **Fedimint mint connection** - Need Andrea (`t_8ee7c976`) to complete setup on THOR
-- **Umbrel LND connection** - Need Rosa (`t_46208fbe`) to complete setup on THOR
-- **Payment processing** - Currently in demo mode until above are resolved
-
-### **Resolved Blockers**
-- ✅ CF Pages deployment (was v5.0.93, now v5.0.141)
-- ✅ Real-time BTC price fetching (Coinbase API)
-- ✅ Navbar facelift (responsive, accessible)
-
----
-
-## 📊 Success Metrics
-
-### **Current State (v5.0.141)**
-- **Build Size:** 581KB main bundle
-- **Lighthouse Score:** TBD (run audit)
-- **Routes:** 25+ functional routes
-- **Languages:** 8 fully translated (en/es/fr/de/pt/ja/zh/ar)
-- **Components:** 53 reusable components
-- **Documentation:** Complete handoffs and changelog
-
-### **Target State (Q1 2027)**
-- **Build Size:** <500KB main bundle
-- **Lighthouse Score:** 95+ across all categories
-- **Test Coverage:** 70%+ for critical paths
-- **Performance:** <2s LCP, <100ms INP
-- **Accessibility:** 100% WCAG 2.1 AA compliance
-
----
-
-## 🎉 Summary
-
-The Tadbuy platform is in excellent shape with:
-- **✅ All critical issues resolved**
-- **✅ Modern, responsive UI**
-- **✅ Real-time data integration**
-- **✅ Complete documentation**
-- **✅ Clean, maintainable codebase**
-
-**Ready for next improvement cycle when you are!**
-
----
-
-**Next Steps for You (Cam):**
-1. Review this roadmap
-2. Choose 1-2 priorities for next session
-3. Provide any specific requirements or constraints
-4. I'll execute the plan systematically
+*Part of the [Give A Bit](https://giveabit.io) family.*

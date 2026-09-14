@@ -20,7 +20,7 @@ owner: Give A Bit
 Digital advertising runs on surveillance capitalism — banks, credit cards, 20–40% platform fees, and tracking pixels everywhere.
 
 ## Solution
-Tadbuy is the world's first Bitcoin-native DSP. The campaign builder targets 8 platforms — Twitter/X, Facebook, Instagram, Nostr, YouTube, Reddit, LinkedIn, TikTok (`src/data/platforms.ts`). Payment rails: Lightning, Fedimint ecash, BOLT12, on-chain BTC, Nostr Zaps — **payments are in demo mode**: a campaign that cannot obtain a real invoice is saved as a draft instead of being marked paid, so no ad spend moves and no sats are custodied today. PPQ.AI optimization without surveillance pixels. **Global Reach** (`/geo`) — 25-market geo dashboard with map, insights, and CSV export.
+Tadbuy is a Bitcoin-native advertising marketplace connecting advertisers with independent vendors. Phase 1 coordinates Nostr, websites, newsletters, and podcasts: advertisers plan once, vendors publish through channels they control, and delivery proof is explicit. Reddit, Meta, Google/YouTube, Spotify, Pinterest, LinkedIn, TikTok, and digital out-of-home are later phases. Payment rails remain in demo/staged mode: a campaign that cannot obtain a real invoice is saved as a draft instead of being marked paid, so no ad spend moves and no sats are custodied today. PPQ.AI helps adapt creative without surveillance pixels; **Global Reach** (`/geo`) provides a 25-market geo dashboard.
 
 ## Traction
 No measured traction counters are published yet. The platform is in BETA with
@@ -40,6 +40,11 @@ estimated. Live counters, when available, come from /api/metrics.
 - **Phase 3 (parked):** Umbrel LND — node not reachable from the ops box, no channels funded. *(unverified — not checkable from the ops box)*
 
 ## Strategic Direction
+
+- **Product:** advertiser campaign coordination plus an independent publisher/vendor placement marketplace.
+- **Phase 1:** NIP-07 Nostr publishing, plus vendor-assisted websites, newsletters, and podcasts.
+- **Later:** Reddit community/API work; Meta, Google/YouTube, Spotify, Pinterest; specialist LinkedIn/TikTok; then DOOH screen inventory.
+- **Truth rule:** no automatic provider execution, live reach, vendor payout, or settlement claim without real access and verified records.
 - **Code & deploys:** the family's own machines — no third-party PaaS, no managed host holding keys.
 - **M4-hosted services** (Fedimint guardian, API proxy, Umbrel, Fedi gateway) are only as available as that machine is; the API proxy is currently down (see Phase 1).
 - **Not using:** Railway/Fly.io.

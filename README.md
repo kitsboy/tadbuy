@@ -3,7 +3,7 @@
   <h1>Tadbuy</h1>
   <p><strong>The world's first Bitcoin-native advertising platform.</strong></p>
   <p><code>v5.0.161</code> · 535+ enhancements · BETA</p>
-  <p>Buy ads across 8 platforms. Pay in sats via Lightning, BOLT12, on-chain, or Nostr Zaps.</p>
+  <p>One campaign across Nostr and independent publisher channels. Plan in sats; verify delivery.</p>
   <p>
     <a href="https://tadbuy.giveabit.io">Live Site</a> ·
     <a href="https://giveabit.io">Give A Bit</a> ·
@@ -15,7 +15,7 @@
 
 ## What is Tadbuy?
 
-Tadbuy is a sovereign Demand-Side Platform (DSP) built for the Bitcoin era. Advertisers launch cross-platform campaigns on Twitter/X, Facebook, Instagram, YouTube, Reddit, LinkedIn, TikTok, and Nostr — paying only in Bitcoin with no banks or credit cards.
+Tadbuy is a sovereign advertiser-plus-vendor marketplace built for the Bitcoin era. Advertisers create one campaign plan; independent vendors offer placements on Nostr, websites, newsletters, and podcasts; vendors publish through channels they control and submit proof. Reddit, Meta, Google/YouTube, Spotify, Pinterest, LinkedIn, TikTok, and digital out-of-home are later phases—not assumed automatic integrations.
 
 **Key features:**
 - Step-by-step campaign builder with geospatial targeting

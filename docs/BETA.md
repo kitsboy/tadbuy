@@ -1,6 +1,6 @@
 # Tadbuy — BETA Status
 
-**Auto-generated:** 2026-09-13 · **Version:** v5.0.180
+**Auto-generated:** 2026-09-14 · **Version:** v5.0.182
 
 ## Phase: BETA
 
@@ -16,8 +16,14 @@
 | Umbrel Lightning | ⏳ Not ready |
 | Real payments | 🔶 Demo mode |
 
+## Distribution status
+- **Phase 1:** Nostr, websites/blogs, newsletters, podcasts
+- **Later:** Reddit, Meta, Google/YouTube, Spotify, Pinterest
+- **Specialist:** LinkedIn and TikTok
+- **Future:** digital out-of-home screen marketplace
+
 ## Consumer Workflow
-1. Browse & plan → 2. Create campaign → 3. Pay → 4. Go live → 5. Track results
+1. Plan campaign → 2. Choose distribution → 3. Prepare creative → 4. Review proof path → 5. Pay when a real rail is connected → 6. Track delivery
 
 ## Key Pages
 | Page | URL |
