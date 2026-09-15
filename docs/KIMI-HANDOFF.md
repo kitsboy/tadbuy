@@ -27,7 +27,7 @@
 - `git diff --check` ✅
 
 **Git State:**
-- Safety implementation and test changes committed as `f72177e`; documentation committed as `7c1a68f`; automatic version-bump commits advanced the synchronized remote to `55970ec` / v5.0.196.
+- Safety implementation and test changes committed as `f72177e`; documentation committed as `7c1a68f` and `ff2fa69`; automatic version-bump commits advanced the synchronized remote to `be13898` / v5.0.198.
 - Generated docs/metrics and the pre-existing `public/sw.js` change remain excluded.
 
 **Kimi / THOR / Otto request:**

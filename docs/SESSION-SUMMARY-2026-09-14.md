@@ -55,7 +55,7 @@
 ## Git and verification
 
 - Feature commits: `be2f362`, `67ad9ff`, `7802b3b`.
-- Safety/policy commit: `f72177e`; handoff/status commit: `7c1a68f`; automatic version-bump commits advanced the synchronized remote to `55970ec` / v5.0.196.
+- Safety/policy commit: `f72177e`; handoff/status commits: `7c1a68f`, `ff2fa69`; automatic version-bump commits advanced the synchronized remote to `be13898` / v5.0.198.
 - Typecheck, route integrity, production build/dist verification, bundle check, full E2E **12/12**, and diff check passed.
 - Generated docs/metrics and the pre-existing local `public/sw.js` change remain intentionally excluded from feature commits.
 
