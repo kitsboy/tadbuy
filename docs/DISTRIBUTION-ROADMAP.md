@@ -53,6 +53,14 @@ Tadbuy must never imply that it automatically posts to or buys inventory from a 
 
 **Operational gates before a live pilot:** Confirm approved communities and vendors, durable authenticated storage, ownership and moderation rules, sponsorship disclosure, cancellation/refund/dispute policy, and a real proof-review process.
 
+**Safe pilot policy while those decisions are finalized:**
+
+- Vendor profiles and inventory are private drafts until operator approval; a resolver match does not replace manual approval.
+- A request is an offer to coordinate, not a payment authorization. The vendor must accept before publishing.
+- Proof requires a publication reference, date, and explicit confirmation that sponsorship disclosure was applied.
+- A cancellation, refund, or dispute is recorded for operator review only; no sats move until the settlement ledger and refund controls are live.
+- Prohibited or community-disallowed creative is rejected; vendors may pause or decline inventory without penalty while policy is staged.
+
 Evaluate Reddit Ads API campaign execution and reporting only after provider approval, policy review, and a real account connection. Community rules and disclosure remain mandatory.
 
 ### Phase 3 — Provider-managed networks

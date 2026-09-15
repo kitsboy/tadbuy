@@ -1,5 +1,5 @@
-# tadbuy — Last Updated 2026-09-14 by Grok
+# tadbuy — Last Updated 2026-09-15 by Grok
 
-Brief: durable vendor marketplace, owned inventory, and NIP-05 evidence groundwork
-Commit: 1015bac (pushed; includes automatic version bumps)
-Docs synced: 2026-09-14
+Brief: marketplace safety safeguards, proof disclosure validation, and pilot-policy handoff
+Commit: f72177e (implementation committed locally; documentation batch pending push)
+Docs synced: 2026-09-15

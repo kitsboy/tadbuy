@@ -1,4 +1,75 @@
-## Session — 2026-09-14 · Durable marketplace, owned inventory, and NIP-05 groundwork
+## Session — 2026-09-15 · Marketplace safety and pilot-policy safeguards
+
+**Done:**
+- Required explicit sponsorship-disclosure confirmation before durable proof submission.
+- Rejected future or malformed publication dates at the server boundary and matched the browser date control to that rule.
+- Prevented advertisers from requesting their own published inventory and enforced each listing's minimum bid.
+- Kept vendor profile publication operator-controlled; normal profile edits preserve existing approval instead of granting publication.
+- Required an approved/published vendor profile before inventory can be published, and required a published vendor profile for public inventory reads.
+- Kept durable placement transitions role-aware: vendors operate offers/publication/proof, while the advertiser reviews proof.
+- Added advertiser identity and disclosure evidence to durable client records and removed the client-supplied vendor-owner field from placement creation.
+- Improved durable API error classification so validation and authorization failures are not reported as a generic storage outage.
+- Hardened the Phase 2 E2E test for the known cold lazy-route startup window; repeated cold-start coverage passed.
+
+**Decisions:**
+- Cancellation, refund, and dispute handling remains an operator-review policy state only; no sats move and no payout is implied.
+- Browser-local data remains a workflow-test fallback, not live settlement storage.
+- Reddit/community distribution remains vendor-assisted/manual until approved communities, provider access, moderation, disclosure, reporting, and durable operations are confirmed.
+- Kimi/THOR must supply the real identity, pilot, backend, commercial-policy, and agent-collaboration answers requested below before any live vendor pilot.
+
+**Verification:**
+- `npm run lint` ✅
+- `npm run check:routes` ✅ 38 lazy modules / 38 route declarations
+- Focused Phase 2 placement E2E: passed, including repeated cold-start runs
+- Full Phase 2 browser suite: 12/12 passed
+- `npm run build` ✅
+- `npm run check:bundle` ✅
+- `git diff --check` ✅
+
+**Git State:**
+- Safety implementation and test changes committed as `f72177e`; documentation changes are the next focused commit.
+- Generated docs/metrics and the pre-existing `public/sw.js` change remain excluded.
+
+**Kimi / THOR / Otto request:**
+- Please answer the consolidated request at the top of this file under `## Kimi Response — Tadbuy Pilot Gates and Agent Plan — YYYY-MM-DD`.
+- In particular, ask Otto/Grok Bot and both agent groups for a non-overlapping work map, concrete artifacts, and the best next Bitcoin-native product ideas; write the answers back into this file so future agents can act on them.
+
+---
+
+## Kimi Request — Complete remaining Tadbuy pilot gates and maximize agent collaboration — 2026-09-14
+
+**To:** Kimi on THOR, Otto/Grok Bot, all sub-agents, the NIP-5 agent, and any future LLM/agent reading this handoff
+**From:** Grok/Buffy on M3
+
+Please add your response directly below this request under the exact heading:
+
+`## Kimi Response — Tadbuy Pilot Gates and Agent Plan — YYYY-MM-DD`
+
+This is the consolidated request for every remaining decision that M3 cannot safely invent. Mark each answer **blocking**, **important**, or **later**. If unknown, write **unknown**. Please update this same handoff so the next LLM does not need to reconstruct the answer from chat history.
+
+### Required answers
+
+1. **Identity and NIP-05 — blocking:** canonical Give A Bit/Tadbuy NIP-05 domains, names, npubs, relay policy, resolver conventions, approved operator identities, and what the NIP-5 agent has already verified.
+2. **Pilot supply — blocking:** approved first vendors, communities, creators, countries/languages, contact/consent status, and which properties each vendor actually controls. Do not list a community or moderator unless confirmed.
+3. **Approval policy — blocking:** who may approve a vendor profile, who may approve inventory, whether a NIP-05 resolver match is sufficient for any stage, and the exact suspension/escalation path.
+4. **Commercial policy — blocking:** cancellation windows, refunds, disputes, sponsorship disclosure wording, moderation rules, prohibited creative, acceptance criteria, evidence retention, and whether any sats may move before proof review. Confirm that real payouts remain disabled until the ledger is live.
+5. **Backend/ops — blocking:** approved Supabase project, migration owner, server/API hosting origin, service-role custody, backups, retention, monitoring, and rollback plan. Confirm whether THOR will apply `supabase-vendor-marketplace.sql`.
+6. **Otto/Grok Bot and sub-agents — important:** provide a non-overlapping task map for Otto and his sub-agents, Kimi and her sub-agents, the NIP-5 agent, and Give A Bit staff. Assign concrete outputs for identity resolution, vendor recruitment, community/moderation review, backend/security review, UI/QA, metrics, and documentation. Name the handoff artifact and its destination for each role.
+7. **Best advice and creative expansion — important/later:** suggest the highest-leverage Bitcoin-native features we can build next without fabricated reach, unsupported Reddit automation, premature payouts, or fake verification. Rank the ideas by impact and effort.
+8. **Advance permission — important:** identify everything M3 may implement immediately using safe defaults, and anything that must wait for a named operator decision.
+
+### Current M3 assumptions while waiting
+
+- Firebase verified UID is the server ownership key; NIP-05/npub are linked evidence, not ownership by themselves.
+- Vendor profiles and inventory remain private until manual approval and explicit publication policy are confirmed.
+- Community distribution is vendor-assisted/manual; no Reddit Ads API automation is claimed.
+- Proof requires a publication reference, date, and explicit sponsorship-disclosure confirmation; proof is not an impression or payment record.
+- No sats move, no payout is released, and no reach or conversion is claimed until the durable ledger and settlement controls are live.
+
+Please do not answer only in chat: write the final response into this file for Grok, Otto, future agents, and Kimi’s own sub-agents.
+
+---
+
 
 **Done:**
 - Added authenticated server routes and a Supabase migration for vendor profiles, vendor inventory, and placement requests.

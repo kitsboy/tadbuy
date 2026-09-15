@@ -1,7 +1,7 @@
 # Tadbuy — Multi-channel marketplace plan
 
-**Updated:** 2026-09-14
-**Status:** Phase 2 community-distribution foundation shipped; durable marketplace, owned inventory, and NIP-05 evidence groundwork are now implemented on M3. Supabase migration and THOR operational approval remain required before a live pilot.
+**Updated:** 2026-09-15
+**Status:** Phase 2 safety/policy safeguards are complete and verified. Durable storage and THOR operational approval remain required before a live pilot.
 
 ## What changed
 
@@ -31,6 +31,8 @@
 - Added owner-controlled inventory creation/editing with draft, published, and paused states; published listings merge into Marketplace.
 - Added server-derived vendor ownership, durable lifecycle transitions, and role checks for vendor actions versus advertiser proof review.
 - Added NIP-19 npub decoding and read-only NIP-05 resolver evidence with explicit UI states; no blanket trust claim is created.
+- Added policy safeguards: explicit disclosure confirmation, non-future proof dates, minimum-bid enforcement, self-request rejection, operator-only profile publication, approved-profile gating for published inventory, and clearer authorization errors.
+- Hardened the Phase 2 E2E route wait for cold lazy-module startup; repeated cold-start and full-suite verification passed.
 
 ## Next work
 
@@ -53,8 +55,8 @@
 ## Git and verification
 
 - Feature commits: `be2f362`, `67ad9ff`, `7802b3b`.
-- Handoff commit: `23b846d`; automatic version-bump commits advanced the synchronized remote to `1015bac` / v5.0.192.
+- Safety/policy implementation and E2E hardening are prepared as the next focused commit; documentation will follow in a separate commit.
 - Typecheck, route integrity, production build/dist verification, bundle check, full E2E **12/12**, and diff check passed.
-- Generated docs/metrics and the pre-existing local `public/sw.js` change remain intentionally excluded from the feature commits.
+- Generated docs/metrics and the pre-existing local `public/sw.js` change remain intentionally excluded from feature commits.
 
 *Safe Harbour · Part of the [Give A Bit](https://giveabit.io) family.*
