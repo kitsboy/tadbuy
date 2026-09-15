@@ -148,7 +148,10 @@ function rowToPlacementRequest(row: Record<string, unknown>): DurablePlacementRe
     createdAt: String(row.created_at),
     ...(row.accepted_at ? { acceptedAt: String(row.accepted_at) } : {}),
     ...(row.published_at ? { publishedAt: String(row.published_at) } : {}),
-    ...(row.proof ? { proof: row.proof as DurablePlacementRequestRecord['proof'] } : {}),
+    ...(row.proof ? { proof: {
+      ...(row.proof as Record<string, unknown>),
+      disclosureConfirmed: (row.proof as Record<string, unknown>).disclosureConfirmed === true,
+    } as DurablePlacementRequestRecord['proof'] } : {}),
   };
 }
 
@@ -198,6 +201,11 @@ export async function recordNip05Verification(input: {
   return rowToVendorProfile(data as Record<string, unknown>);
 }
 
+export async function setVendorProfileStatus(ownerId: string, status: VendorProfileRecord['status']): Promise<VendorProfileRecord> {
+  const { data, error } = await getAdminDb().from('vendor_profiles').update({ status, updated_at: new Date().toISOString() }).eq('owner_id', ownerId).select().single();
+  if (error) throw error;
+  return rowToVendorProfile(data as Record<string, unknown>);
+}
 export async function getVendorProfile(ownerId: string): Promise<VendorProfileRecord | null> {
   const { data, error } = await getAdminDb().from('vendor_profiles').select('*').eq('owner_id', ownerId).maybeSingle();
   if (error) throw error;
@@ -205,9 +213,11 @@ export async function getVendorProfile(ownerId: string): Promise<VendorProfileRe
 }
 
 export async function listVendorInventory(options?: { ownerId?: string; publishedOnly?: boolean }): Promise<VendorInventoryRecord[]> {
-  let query = getAdminDb().from('vendor_inventory').select('*, vendor_profiles(display_name)').order('created_at', { ascending: false });
+  let query = getAdminDb().from('vendor_inventory').select('*, vendor_profiles!inner(display_name, status)').order('created_at', { ascending: false });
   if (options?.ownerId) query = query.eq('owner_id', options.ownerId);
-  if (options?.publishedOnly) query = query.eq('status', 'published');
+  if (options?.publishedOnly) {
+    query = query.eq('status', 'published').eq('vendor_profiles.status', 'published');
+  }
   const { data, error } = await query;
   if (error) throw error;
   return (data ?? []).map(row => rowToVendorInventory(row as Record<string, unknown>));

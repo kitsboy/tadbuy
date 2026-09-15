@@ -114,5 +114,5 @@ export interface DurablePlacementRequestRecord {
   createdAt: string;
   acceptedAt?: string;
   publishedAt?: string;
-  proof?: { url: string; screenshotRef: string; publishedAt: string; notes: string };
+  proof?: { url: string; screenshotRef: string; publishedAt: string; notes: string; disclosureConfirmed: boolean };
 }

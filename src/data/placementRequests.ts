@@ -15,6 +15,7 @@ export interface PlacementProof {
   screenshotRef: string;
   publishedAt: string;
   notes: string;
+  disclosureConfirmed: boolean;
 }
 
 export interface PlacementRequest {
@@ -27,8 +28,9 @@ export interface PlacementRequest {
   audience: string;
   budgetSats: number;
   advertiserLabel: string;
+  advertiserId?: string;
   message: string;
-  disclosureRequired: true;
+  disclosureRequired: boolean;
   proofRequirements: string[];
   status: PlacementStatus;
   createdAt: string;

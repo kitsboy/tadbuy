@@ -25,8 +25,9 @@ function fromDurableRequest(value: DurablePlacementRequestRecord): PlacementRequ
     audience: value.audience,
     budgetSats: value.budgetSats,
     advertiserLabel: value.advertiserLabel,
+    advertiserId: value.advertiserId,
     message: value.message,
-    disclosureRequired: true,
+    disclosureRequired: value.disclosureRequired,
     proofRequirements: value.proofRequirements,
     status: value.status,
     createdAt: value.createdAt,
@@ -90,7 +91,6 @@ export function usePlacementRequests() {
         method: 'POST',
         body: JSON.stringify({
           inventoryId: input.slot.inventoryId ?? input.slot.id,
-          vendorId: input.slot.vendorId,
           advertiserLabel: input.advertiserLabel,
           budgetSats: input.budgetSats,
           message: input.message,

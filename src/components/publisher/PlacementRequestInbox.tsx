@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Check, CheckCircle2, Clock3, FileCheck2, MessageSquare, Send, X, Zap } from 'lucide-react';
 import { Button, Card, CardTitle, Input, Label, Textarea } from '@/components/ui';
 import { Alert, Badge } from '@/components/ui/index';
+import { useAuth } from '@/components/AuthProvider';
 import { usePlacementRequests } from '@/hooks/usePlacementRequests';
 import {
   PLACEMENT_STATUS_HELP,
@@ -42,6 +43,7 @@ function ProofForm({ request, onSubmit, busy }: { request: PlacementRequest; onS
     screenshotRef: '',
     publishedAt: new Date().toISOString().slice(0, 10),
     notes: '',
+    disclosureConfirmed: false,
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -49,6 +51,10 @@ function ProofForm({ request, onSubmit, busy }: { request: PlacementRequest; onS
     event.preventDefault();
     if (!proof.url.trim() || !proof.publishedAt) {
       setError('Add the published URL or event reference and publication date.');
+      return;
+    }
+    if (request.disclosureRequired && !proof.disclosureConfirmed) {
+      setError('Confirm that sponsorship disclosure was applied before submitting proof.');
       return;
     }
     onSubmit({ ...proof, url: proof.url.trim(), screenshotRef: proof.screenshotRef.trim(), notes: proof.notes.trim() });
@@ -61,7 +67,7 @@ function ProofForm({ request, onSubmit, busy }: { request: PlacementRequest; onS
         <div className="text-xs font-extrabold">Submit delivery proof</div>
       </div>
       <p className="text-[10px] text-muted leading-relaxed">
-        Required for this listing: {request.proofRequirements.join(' · ')}. Proof records delivery evidence only; it does not create impression or conversion data.
+        Required for this listing: {request.proofRequirements.join(' · ')}. Sponsorship disclosure confirmation is mandatory. Proof records delivery evidence only; it does not create impression or conversion data.
       </p>
       <div>
         <Label htmlFor={`proof-url-${request.id}`}>Published URL or event reference</Label>
@@ -74,13 +80,17 @@ function ProofForm({ request, onSubmit, busy }: { request: PlacementRequest; onS
         </div>
         <div>
           <Label htmlFor={`proof-date-${request.id}`}>Publication date</Label>
-          <Input id={`proof-date-${request.id}`} type="date" value={proof.publishedAt} onChange={event => setProof({ ...proof, publishedAt: event.target.value })} />
+          <Input id={`proof-date-${request.id}`} type="date" max={new Date().toISOString().slice(0, 10)} value={proof.publishedAt} onChange={event => setProof({ ...proof, publishedAt: event.target.value })} />
         </div>
       </div>
       <div>
         <Label htmlFor={`proof-notes-${request.id}`}>Vendor note <span className="normal-case font-normal">— optional</span></Label>
         <Textarea id={`proof-notes-${request.id}`} value={proof.notes} onChange={event => setProof({ ...proof, notes: event.target.value })} placeholder="Describe where and when the placement appeared…" rows={2} maxLength={500} />
       </div>
+      {request.disclosureRequired && <label className="flex items-start gap-2 rounded-xl border border-accent/25 bg-accent/5 px-3 py-2.5 text-[11px] text-text cursor-pointer">
+        <input type="checkbox" checked={proof.disclosureConfirmed} onChange={event => { setProof({ ...proof, disclosureConfirmed: event.target.checked }); setError(null); }} className="mt-0.5 accent-accent" />
+        <span>I confirm the sponsorship disclosure was applied according to the community or property rules.</span>
+      </label>}
       {error && <p className="text-[11px] text-red">{error}</p>}
       <Button type="submit" size="sm" className="gap-2" disabled={busy}><Send className="w-3.5 h-3.5" /> {busy ? 'Saving proof…' : 'Submit proof'}</Button>
     </form>
@@ -88,12 +98,17 @@ function ProofForm({ request, onSubmit, busy }: { request: PlacementRequest; onS
 }
 
 function RequestCard({ request, onTransition }: { request: PlacementRequest; onTransition: (id: string, status: PlacementStatus, proof?: PlacementProof) => Promise<boolean> }) {
+  const { user } = useAuth();
   const [showProof, setShowProof] = useState(false);
   const [busy, setBusy] = useState(false);
-  const canAccept = request.status === 'offered';
-  const canPublish = request.status === 'accepted';
-  const canSubmitProof = request.status === 'published';
-  const canReview = request.status === 'proof_submitted';
+  const durableVendor = Boolean(request.durable && user?.uid === request.vendorId);
+  const durableAdvertiser = Boolean(request.durable && user?.uid === request.advertiserId);
+  const canActAsVendor = !request.durable || durableVendor;
+  const canActAsAdvertiser = !request.durable || durableAdvertiser;
+  const canAccept = canActAsVendor && request.status === 'offered';
+  const canPublish = canActAsVendor && request.status === 'accepted';
+  const canSubmitProof = canActAsVendor && request.status === 'published';
+  const canReview = canActAsAdvertiser && request.status === 'proof_submitted';
 
   const transition = async (status: PlacementStatus, proof?: PlacementProof) => {
     setBusy(true);
@@ -136,6 +151,7 @@ function RequestCard({ request, onTransition }: { request: PlacementRequest; onT
           <div className="break-all"><span className="text-muted">Reference:</span> {request.proof.url}</div>
           <div><span className="text-muted">Date:</span> {request.proof.publishedAt}</div>
           {request.proof.screenshotRef && <div className="break-all"><span className="text-muted">Screenshot:</span> {request.proof.screenshotRef}</div>}
+          {request.proof.disclosureConfirmed && <div className="text-green">Sponsorship disclosure confirmed</div>}
           {request.proof.notes && <div><span className="text-muted">Note:</span> {request.proof.notes}</div>}
         </div>
       )}

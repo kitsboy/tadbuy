@@ -55,6 +55,12 @@ function bodyStringArray(value: unknown, maxItems: number, maxItemLength: number
     .slice(0, maxItems);
 }
 
+function validPublishedDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const timestamp = Date.parse(`${value}T00:00:00.000Z`);
+  return Number.isFinite(timestamp) && timestamp <= Date.now();
+}
+
 function publicSlot(inventory: VendorInventoryRecord) {
   return {
     id: inventory.id,
@@ -104,6 +110,7 @@ export function registerBatch26Routes(app: Express) {
     const displayName = bodyString(req.body?.displayName, 80);
     if (!displayName) return res.status(400).json({ error: 'displayName is required' });
     try {
+      const existing = await getVendorProfile(ownerId);
       const profile = await upsertVendorProfile({
         ownerId,
         displayName,
@@ -113,7 +120,8 @@ export function registerBatch26Routes(app: Express) {
         audience: bodyString(req.body?.audience, 500),
         geography: bodyString(req.body?.geography, 300),
         channels: bodyStringArray(req.body?.channels, 10, 80),
-        status: req.body?.status === 'published' ? 'published' : 'draft',
+        // Public profile publication is an operator-controlled action. Preserve an existing approval.
+        status: existing?.status ?? 'draft',
       });
       return res.json({ source: 'supabase', durable: true, profile });
     } catch {
@@ -199,6 +207,13 @@ export function registerBatch26Routes(app: Express) {
 
   app.patch('/api/vendor/inventory/:id', requireAuth, async (req, res) => {
     try {
+      const requestedStatus = req.body?.status as VendorInventoryRecord['status'] | undefined;
+      if (requestedStatus === 'published') {
+        const profile = await getVendorProfile((req as AuthedRequest).userId!);
+        if (profile?.status !== 'published') {
+          return res.status(409).json({ error: 'Vendor profile approval is required before publishing inventory' });
+        }
+      }
       const inventory = await updateVendorInventory((req as AuthedRequest).userId!, req.params.id, {
         ...(req.body?.name !== undefined ? { name: bodyString(req.body.name, 120) } : {}),
         ...(req.body?.channel !== undefined ? { channel: bodyString(req.body.channel, 60) } : {}),
@@ -212,7 +227,13 @@ export function registerBatch26Routes(app: Express) {
         ...(req.body?.status !== undefined && ['draft', 'published', 'paused'].includes(req.body.status) ? { status: req.body.status as VendorInventoryRecord['status'] } : {}),
       });
       return res.json({ source: 'supabase', durable: true, inventory });
-    } catch {
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('not found')) {
+        return res.status(404).json({ error: 'Inventory not found or not owned by this user' });
+      }
+      if (error instanceof Error && error.message.includes('violates')) {
+        return res.status(400).json({ error: 'Inventory update violates a marketplace constraint' });
+      }
       return staged(res, 'Inventory update was validated but durable storage is unavailable.');
     }
   });
@@ -237,6 +258,8 @@ export function registerBatch26Routes(app: Express) {
     try {
       const inventory = (await listVendorInventory()).find(item => item.id === inventoryId && item.status === 'published');
       if (!inventory) return res.status(404).json({ error: 'Published inventory not found' });
+      if (inventory.ownerId === advertiserId) return res.status(409).json({ error: 'You cannot request your own inventory' });
+      if (budgetSats < inventory.minBidSats) return res.status(400).json({ error: `Budget must be at least ${inventory.minBidSats} sats for this listing` });
       const request = await createDurablePlacementRequest({ advertiserId, vendorId: inventory.ownerId, publisher: inventory.vendorDisplayName, inventory, advertiserLabel, budgetSats, message: bodyString(req.body?.message, 500) });
       return res.status(201).json({ source: 'supabase', durable: true, request });
     } catch {
@@ -250,16 +273,26 @@ export function registerBatch26Routes(app: Express) {
       return res.status(400).json({ error: 'Invalid placement status' });
     }
     try {
-      const proof = req.body?.proof && typeof req.body.proof === 'object' ? {
-        url: bodyString(req.body.proof.url, 500),
-        screenshotRef: bodyString(req.body.proof.screenshotRef, 500),
-        publishedAt: bodyString(req.body.proof.publishedAt, 40),
-        notes: bodyString(req.body.proof.notes, 500),
-      } : undefined;
+        const proof = req.body?.proof && typeof req.body.proof === 'object' ? {
+          url: bodyString(req.body.proof.url, 500),
+          screenshotRef: bodyString(req.body.proof.screenshotRef, 500),
+          publishedAt: bodyString(req.body.proof.publishedAt, 40),
+          notes: bodyString(req.body.proof.notes, 500),
+          disclosureConfirmed: req.body.proof.disclosureConfirmed === true,
+        } : undefined;
+        if (status === 'proof_submitted' && (!proof?.url || !proof.publishedAt || !validPublishedDate(proof.publishedAt) || !proof.disclosureConfirmed)) {
+          return res.status(400).json({ error: 'Proof requires a valid non-future publication date, reference, and sponsorship disclosure confirmation' });
+        }
       const request = await transitionDurablePlacementRequest((req as AuthedRequest).userId!, req.params.id, status, proof);
       return res.json({ source: 'supabase', durable: true, request });
-    } catch {
-      return staged(res, 'Placement transition was validated but durable storage is unavailable or the transition is not allowed.');
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('not allowed')) {
+        return res.status(403).json({ error: error.message });
+      }
+      if (error instanceof Error && error.message.includes('Invalid placement transition')) {
+        return res.status(409).json({ error: error.message });
+      }
+      return staged(res, 'Placement transition was validated but durable storage is unavailable.');
     }
   });
 }

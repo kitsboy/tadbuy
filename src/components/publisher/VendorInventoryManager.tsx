@@ -153,7 +153,7 @@ export function VendorInventoryManager() {
             <Badge variant={durable ? 'success' : 'outline'}>{durable ? 'Durable' : 'Backend staged'}</Badge>
           </div>
           <p className="text-xs text-muted mt-1 leading-relaxed max-w-2xl">
-            Create listings only for channels or properties you control. New listings start private; publishing is an explicit owner action. No audience figures are generated here.
+            Create listings only for channels or properties you control. New listings start private; publishing is an explicit owner action after operator profile approval. No audience figures are generated here.
           </p>
         </div>
         <Button size="sm" variant="secondary" className="gap-1.5" onClick={() => { reset(); window.setTimeout(() => document.getElementById('vendor-inventory-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0); }}>
