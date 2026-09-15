@@ -247,7 +247,7 @@ export default function Footer() {
                 </>
               ) : (
                 <p className="text-xs text-zinc-300 leading-relaxed">
-                  Thanks — we'll send the next product update from <span className="text-accent">@giveabit</span>.
+                  Thanks — we'll send the next product update from <span className="text-accent">@give_bit</span>.
                 </p>
               )}
             </div>

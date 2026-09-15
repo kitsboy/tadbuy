@@ -27,7 +27,7 @@ export default function AdEmbed() {
           </div>
           <div>
             <div className="text-xs font-extrabold leading-none">giveabit.io</div>
-            <div className="text-[9px] opacity-70">@giveabit · Promoted</div>
+            <div className="text-[9px] opacity-70">@give_bit · Promoted</div>
           </div>
         </div>
 

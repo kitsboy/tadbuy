@@ -71,7 +71,7 @@ export function PlatformPreviewTabs({ platforms, variants, adImage }: PlatformPr
               <div className="text-[10px] mb-2 flex items-center gap-1.5 opacity-80">
                 <span className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4">{active.icon}</span>
                 <strong>giveabit.io</strong>
-                <span className="opacity-70">@giveabit · {active.name}</span>
+                <span className="opacity-70">@give_bit · {active.name}</span>
               </div>
               <div className="text-[15px] font-bold mb-1 leading-tight">{v.headline || 'Your Headline Here'}</div>
               <div className="text-[13px] leading-relaxed opacity-90">{v.description || 'Your description will appear here.'}</div>
