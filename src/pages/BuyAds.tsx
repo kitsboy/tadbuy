@@ -1629,7 +1629,7 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
                       >
                         <div className="absolute top-2 right-2 bg-black/10 rounded text-[9px] px-1.5 py-0.5 font-bold tracking-wider uppercase opacity-90">Sponsored</div>
                         <div className="text-[10px] mb-2 flex items-center gap-1.5 opacity-80">
-                          <span className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4">{selectedPlatformsData[0]?.icon}</span> <strong>giveabit.io</strong> <span className="opacity-90">@giveabit · Promoted</span>
+                          <span className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4">{selectedPlatformsData[0]?.icon}</span> <strong>giveabit.io</strong> <span className="opacity-90">@give_bit · Promoted</span>
                         </div>
                         <div className="text-[15px] font-bold mb-1 leading-tight">{v.headline || "Your Headline Here"}</div>
                         <div className="text-[13px] leading-relaxed opacity-90">{v.description || "Your description will appear here."}</div>
