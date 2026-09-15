@@ -1,3 +1,26 @@
+## Session — 2026-09-15 · Truth fix: the X handle, and the build tag
+
+**Done:**
+- Four user-facing strings rendered `@giveabit` while the canonical family handle is **`@give_bit`** (which the same bundle already defined, and which both hosts already linked as `twitter.com/give_bit`):
+  - `src/components/Footer.tsx` — newsletter confirmation: "we'll send the next product update from @giveabit"
+  - `src/components/buyads/PlatformPreviewTabs.tsx` — ad preview label "@giveabit · {platform}"
+  - `src/pages/embed/AdEmbed.tsx` — embed card "@giveabit · Promoted"
+  - `src/pages/BuyAds.tsx` — campaign-builder ad preview "@giveabit · Promoted"
+- Version `5.0.198` → `5.0.199` (`package.json` + `src/data/projectState.ts`). The copy fix deployed while the footer still read v5.0.198, so a reader could not tell whether they had the fixed build.
+
+**Commits:** `bc3cca8` (first three strings) · `e73bddc` (fourth) · `ce8c610` (version).
+
+**Decisions:**
+- `@giveabit.io` (email domain / NIP-05 namespace) and `@giveabit/…` (npm package scope) are **correct** and were deliberately not touched. `@giveabit` is only wrong where it stands for an X handle.
+- Version bumped by hand because the automatic version-bump workflow had not run; a copy fix that deploys under an unchanged tag is indistinguishable from a stale deploy.
+
+**Verification (live, not repo-level):** swept every served chunk of both hosts for `@giveabit` minus `giveabit.io` → **zero remaining**; `@give_bit · Promoted` present in the `AdEmbed` and `BuyAds` chunks; build tag `v5.0.199` read from the served `projectState` chunk.
+
+**Lesson:** the first sweep reported "exactly three" and missed `BuyAds.tsx` — the live-bundle check caught it. Same failure as an earlier grep in this session that matched `@giveabit.io`. **Match the plain string; do the exclusions in the shell afterwards.** A pattern that can silently not-match is worse than no pattern.
+
+**Git State:**
+- HEAD == `origin/main` (`ce8c610`). No unpushed work.
+
 ## Session — 2026-09-15 · Marketplace safety and pilot-policy safeguards
 
 **Done:**
