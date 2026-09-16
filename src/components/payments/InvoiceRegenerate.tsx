@@ -14,18 +14,13 @@ export function InvoiceRegenerate({ amountSats, description, onRegenerated }: In
   const handleRegenerate = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/lightning/invoice', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amountSats, description: description ?? 'Tadbuy Campaign' }),
+      // No /api/lightning/invoice backend on the static host — regenerate a local
+      // demo invoice so the payment preview still works; nothing is sent.
+      await new Promise(r => setTimeout(r, 400));
+      onRegenerated?.({
+        invoice: `lnbc${amountSats}n1p...regenerated_demo`,
+        expiresAt: new Date(Date.now() + 3600000).toISOString(),
       });
-      const data = await res.json();
-      if (data.payment_request || data.invoice) {
-        onRegenerated?.({
-          invoice: data.payment_request ?? data.invoice,
-          expiresAt: data.expires_at ?? new Date(Date.now() + 3600000).toISOString(),
-        });
-      }
     } catch {
       onRegenerated?.({
         invoice: `lnbc${amountSats}n1p...regenerated_demo`,

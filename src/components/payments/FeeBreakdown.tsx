@@ -1,14 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Loader2, Receipt } from 'lucide-react';
+import { Receipt } from 'lucide-react';
 import { formatSats } from '@/lib/utils';
-
-interface FeeBreakdownData {
-  amountSats: number;
-  platformFeePct: number;
-  platformFeeSats: number;
-  publisherSats: number;
-  totalSats: number;
-}
 
 interface FeeBreakdownProps {
   amountSats: number;
@@ -16,36 +7,16 @@ interface FeeBreakdownProps {
 }
 
 export function FeeBreakdown({ amountSats, className }: FeeBreakdownProps) {
-  const [fees, setFees] = useState<FeeBreakdownData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!amountSats) return;
-    setLoading(true);
-    fetch(`/api/payments/fees?amountSats=${amountSats}`)
-      .then(r => r.json())
-      .then(setFees)
-      .catch(() => {
-        const platformFeeSats = Math.round(amountSats * 0.15);
-        setFees({
-          amountSats,
-          platformFeePct: 15,
-          platformFeeSats,
-          publisherSats: amountSats - platformFeeSats,
-          totalSats: amountSats,
-        });
-      })
-      .finally(() => setLoading(false));
-  }, [amountSats]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center gap-2 text-xs text-muted py-2">
-        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-        Calculating fees…
-      </div>
-    );
-  }
+  // Fees are computed locally — the platform has no /api/payments/fees endpoint on
+  // the static host, so no request is made. 15% platform fee is the stated rate.
+  const platformFeeSats = Math.round(amountSats * 0.15);
+  const fees = {
+    amountSats,
+    platformFeePct: 15,
+    platformFeeSats,
+    publisherSats: amountSats - platformFeeSats,
+    totalSats: amountSats,
+  };
 
   if (!fees) return null;
 

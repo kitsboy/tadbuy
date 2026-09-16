@@ -26,16 +26,8 @@ export default function Changelog() {
 
   useEffect(() => {
     async function load() {
-      try {
-        const res = await fetch('/api/seo/changelog');
-        if (res.ok) {
-          const data = await res.json();
-          setContent(data.content);
-          setSource(data.source ?? 'api');
-          return;
-        }
-      } catch { /* fallback */ }
-
+      // No /api/seo/changelog endpoint on the static host — use the committed
+      // CHANGELOG.md asset, then the project-state snapshot as fallback.
       try {
         const res = await fetch('/CHANGELOG.md');
         if (res.ok) {

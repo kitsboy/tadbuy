@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Zap, ArrowDown, ArrowUp } from 'lucide-react';
 import { Card, CardTitle } from '@/components/ui';
 import { StatCard, Progress } from '@/components/ui/index';
@@ -10,19 +9,15 @@ interface ChannelInfo {
   active: boolean;
 }
 
-export function LightningLiquidity() {
-  const [channels, setChannels] = useState<ChannelInfo[]>([]);
-  const [alias, setAlias] = useState<string | null>(null);
+// Labelled demo sample — the platform has no /api/lightning/channels backend on the
+// static host, so this widget renders representative liquidity and makes no request.
+const SAMPLE_CHANNELS: ChannelInfo[] = [
+  { localBalance: 3_200_000, remoteBalance: 4_800_000, capacity: 8_000_000, active: true },
+  { localBalance: 1_500_000, remoteBalance: 2_500_000, capacity: 4_000_000, active: true },
+];
 
-  useEffect(() => {
-    fetch('/api/lightning/channels')
-      .then(r => r.json())
-      .then(d => {
-        setChannels(d.channels ?? []);
-        setAlias(d.alias ?? null);
-      })
-      .catch(() => {});
-  }, []);
+export function LightningLiquidity() {
+  const channels = SAMPLE_CHANNELS;
 
   const totalLocal = channels.reduce((s, c) => s + c.localBalance, 0);
   const totalRemote = channels.reduce((s, c) => s + c.remoteBalance, 0);
@@ -34,7 +29,8 @@ export function LightningLiquidity() {
     <Card className="glass-panel">
       <CardTitle className="flex items-center gap-2">
         <Zap className="w-4 h-4 text-lightning" />
-        Channel Liquidity {alias && <span className="text-muted font-normal">— {alias}</span>}
+        Channel Liquidity
+        <span className="text-muted font-normal">— demo</span>
       </CardTitle>
 
       <div className="grid grid-cols-2 gap-4 mb-4">

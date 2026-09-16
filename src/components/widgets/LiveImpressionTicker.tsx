@@ -1,28 +1,11 @@
-import { useEffect, useState } from 'react';
 import { Activity } from 'lucide-react';
 
-interface LiveStats {
-  impressionsPerMinute: number;
-  clicksPerMinute: number;
-  activeCampaigns: number;
-}
+// Labelled demo sample — the platform has no /api/analytics/live backend on the
+// static host, so this ticker renders representative figures and makes no request.
+const SAMPLE = { impressionsPerMinute: 1420, clicksPerMinute: 18, activeCampaigns: 6 };
 
 export function LiveImpressionTicker() {
-  const [stats, setStats] = useState<LiveStats | null>(null);
-
-  useEffect(() => {
-    const fetchLive = () => {
-      fetch('/api/analytics/live')
-        .then(r => r.json())
-        .then(setStats)
-        .catch(() => {});
-    };
-    fetchLive();
-    const interval = setInterval(fetchLive, 15000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (!stats) return null;
+  const stats = SAMPLE;
 
   return (
     <span className="flex items-center gap-1.5 text-[10px] font-mono text-muted">
@@ -30,7 +13,7 @@ export function LiveImpressionTicker() {
       <strong className="text-green">{stats.impressionsPerMinute.toLocaleString()}</strong>
       <span>imp/min</span>
       <span className="text-border">·</span>
-      <span>{stats.activeCampaigns} live</span>
+      <span>{stats.activeCampaigns} live (demo)</span>
     </span>
   );
 }

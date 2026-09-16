@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import {
@@ -13,20 +12,6 @@ import { SafeLink } from '@/components/SafeLink';
 
 export default function Pitch() {
   usePageMeta('Investor Pitch', 'Tadbuy — a Bitcoin-native advertising marketplace connecting advertisers with independent distributors and transparent delivery proof.');
-
-  const [metrics, setMetrics] = useState<{
-    impressions: number;
-    clicks: number;
-    totalCampaigns: number;
-    liveCampaigns: number;
-  } | null>(null);
-
-  useEffect(() => {
-    fetch('/api/metrics')
-      .then(r => r.json())
-      .then(setMetrics)
-      .catch(() => {});
-  }, []);
 
   const { executive, financials, marketing, fedimint } = PROJECT_STATE;
 
@@ -64,17 +49,16 @@ export default function Pitch() {
         </div>
       </section>
 
-      {/* Live Traction — live-only. No static fallback: when /api/metrics is
-          unreachable we show "—", never an estimate. */}
+      {/* Live Traction — live-only. No static fallback: the platform has no /api/metrics
+          backend on the static host, so these show "—", never an estimate. */}
       <section>
         <h2 className="text-2xl font-extrabold mb-6 flex items-center gap-2">
           <TrendingUp className="w-6 h-6 text-accent" /> Traction
-          {metrics && <span className="text-xs font-mono text-green font-normal ml-2">● live</span>}
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border rounded-2xl overflow-hidden border border-border">
           {[
-            { label: 'Campaigns', value: metrics ? `${metrics.totalCampaigns.toLocaleString()}+` : '—' },
-            { label: 'Impressions', value: metrics ? `${metrics.impressions.toLocaleString()}+` : '—' },
+            { label: 'Campaigns', value: '—' },
+            { label: 'Impressions', value: '—' },
             { label: 'Publishers', value: '—' },
             { label: 'Settlement', value: '—' },
           ].map(s => (

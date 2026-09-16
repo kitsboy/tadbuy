@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, Target, Zap, ArrowRight, ShieldCheck, Bitcoin, RefreshCw } from 'lucide-react';
 import { Card, CardTitle, Button } from '@/components/ui';
@@ -12,30 +11,12 @@ import { useToast } from '@/components/Toast';
 
 export default function Hubhash() {
   usePageMeta('Hubhash', 'Crowdfund Bitcoin ad campaigns with provable escrow and automatic refunds.');
-  const [campaigns, setCampaigns] = useState<HubhashCampaign[]>(HUBHASH_CAMPAIGNS);
+  const campaigns = HUBHASH_CAMPAIGNS;
   const { addToast } = useToast();
 
-  useEffect(() => {
-    fetch('/api/hubhash/campaigns')
-      .then(r => r.ok ? r.json() : null)
-      .then(d => { if (d?.campaigns) setCampaigns(d.campaigns); })
-      .catch(() => {});
-  }, []);
-
-  const pledge = async (campaign: HubhashCampaign) => {
-    try {
-      const res = await fetch('/api/hubhash/contribute', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ campaignId: campaign.id, amountSats: 10_000 }),
-      });
-      const data = await res.json();
-      if (data.demo) {
-        addToast('Demo pledge recorded — refundable if goal not met', 'success');
-      }
-    } catch {
-      addToast('Pledge API unavailable — demo mode', 'error');
-    }
+  // Demo-mode pledge: recorded locally only — nothing is sent and nothing is charged.
+  const pledge = (campaign: HubhashCampaign) => {
+    addToast(`Demo pledge for "${campaign.title}" recorded locally — nothing was sent or charged.`, 'success');
   };
 
   return (

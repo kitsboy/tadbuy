@@ -1,6 +1,6 @@
 # Tadbuy — Financial Overview
 
-**Auto-generated:** 2026-09-14 · **FY:** 2026
+**Auto-generated:** 2026-09-16 · **FY:** 2026
 
 ## Revenue Model
 15% coordination fee on campaign spend + publisher marketplace commission when settlement is enabled
