@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { campaigns, getPlatformIcon } from '@/data/campaigns';
-import { Card, CardTitle } from '@/components/ui';
+import { Card } from '@/components/ui';
+import { Badge } from '@/components/ui/Badge';
 
 export default function AdEmbed() {
   const { id } = useParams();
@@ -20,7 +21,11 @@ export default function AdEmbed() {
         }}
       >
         <div className="absolute top-2 right-2 bg-black/10 rounded text-[8px] px-1.5 py-0.5 font-bold tracking-wider uppercase opacity-70">Sponsored</div>
-        
+
+        <div className="mb-3">
+          <Badge variant="outline" className="normal-case">Illustrative — not a real campaign</Badge>
+        </div>
+
         <div className="flex items-center gap-2 mb-3">
           <div className="w-8 h-8 rounded-full bg-white/50 flex items-center justify-center border border-black/5">
             <PlatformIcon className="w-4 h-4" />

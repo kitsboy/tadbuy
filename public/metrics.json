@@ -2,11 +2,11 @@
   "schema": "gab.product-metrics.v1",
   "productId": "tadbuy",
   "name": "Tadbuy",
-  "updatedAt": "2026-09-16T20:49:49.495Z",
+  "updatedAt": "2026-09-16T21:36:59.473Z",
   "window": {
     "label": "30d",
-    "from": "2026-08-17T20:49:49.495Z",
-    "to": "2026-09-16T20:49:49.495Z"
+    "from": "2026-08-17T21:36:59.473Z",
+    "to": "2026-09-16T21:36:59.473Z"
   },
   "health": {
     "status": "green",
@@ -102,12 +102,12 @@
     },
     {
       "key": "active_publishers",
-      "label": "Active publishers",
-      "value": 9,
-      "unit": "publishers",
+      "label": "Publisher types in demo inventory",
+      "value": 8,
+      "unit": "types",
       "format": "number",
       "priority": 3,
-      "hint": "Unique marketplace publishers in app inventory."
+      "hint": "Distinct publisher descriptions in the demo marketplace catalog. No external publisher has listed inventory with Tadbuy."
     },
     {
       "key": "active_platforms",

@@ -49,7 +49,7 @@ export const campaigns: Campaign[] = [
     payment: '🔮 BOLT 12',
     headline: "Zap the Future",
     description: "Decentralized advertising on Nostr. Pure signal, no noise.",
-    url: "https://nostr.com",
+    url: "https://example.com/landing-page",
     bgHue: 45,
     bgLightness: 90,
     textColor: "#18181b"
@@ -72,7 +72,7 @@ export const campaigns: Campaign[] = [
     payment: '₿ On-chain',
     headline: "Bitcoin is Hope",
     description: "Watch the latest documentary on the orange pill.",
-    url: "https://youtube.com",
+    url: "https://example.com/landing-page",
     bgHue: 0,
     bgLightness: 95,
     textColor: "#18181b"

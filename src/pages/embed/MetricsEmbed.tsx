@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { campaigns } from '@/data/campaigns';
 import { Card, CardTitle } from '@/components/ui';
+import { Badge } from '@/components/ui/Badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const data = [
@@ -22,10 +23,14 @@ export default function MetricsEmbed() {
   return (
     <div className="p-4 bg-bg min-h-screen">
       <Card className="h-full border-accent/20 shadow-[0_0_20px_rgba(247,147,26,0.05)]">
+        <div className="mb-3">
+          <Badge variant="outline" className="normal-case">Illustrative — not a real campaign</Badge>
+        </div>
+
         <div className="flex justify-between items-center mb-4">
           <div>
             <CardTitle className="text-sm mb-0">{campaign.name}</CardTitle>
-            <div className="text-[10px] text-muted uppercase tracking-widest font-bold">Real-time Metrics</div>
+            <div className="text-[10px] text-muted uppercase tracking-widest font-bold">Sample Metrics</div>
           </div>
           <div className="text-right">
             <div className="text-lg font-extrabold text-accent">{campaign.impressions.toLocaleString()}</div>
@@ -77,7 +82,7 @@ export default function MetricsEmbed() {
             <img src="https://camtaylor.ca/wp-content/uploads/2019/02/Bitcoin.svg.png" alt="BTC" className="w-3 h-3" referrerPolicy="no-referrer" />
             <span className="text-[9px] font-bold text-muted uppercase tracking-widest">Powered by Tadbuy</span>
           </div>
-          <div className="text-[9px] text-muted italic">Live updates via Hubhash</div>
+          <div className="text-[9px] text-muted italic">Sample figures — no live sync</div>
         </div>
       </Card>
     </div>
