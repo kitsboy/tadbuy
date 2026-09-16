@@ -155,11 +155,20 @@ See the card metadata and commit message for the diff; verbatim:
 
 Rendered verification (real Chromium, live URL) and the deploy commit are recorded on the card.
 
+**Shipped and verified:** commits `e4199ed` and `b802185` (version v5.0.211) on `kitsboy/tadbuy`
+`main`; CI (`Deploy tadbuy to Cloudflare Pages`) green on the head commit; CF Pages live. Real-Chromium render of
+`https://tadbuy.giveabit.io/case-studies` on 2026-09-16 prints card titles `A DCA EXCHANGE`,
+`A LIGHTNING PAYMENTS APP`, `A BITCOIN REWARDS CARD` and the string `no brand is named below`; the
+words `swan`, `strike`, `fold` appear **nowhere** in the rendered page text, and the served
+`CaseStudies-*.js` chunk carries only the archetype strings.
+
 ---
 
 ## 5. Follow-ups raised
 
 1. **`/marketplace` publisher names** — same class, own card (§3). Not fixed here.
+   Raised as **`t_dc16c07f`** (assignee: ziggy, parent `t_902d8e2e`), which carries the four named
+   slots, the archetype rule and the rendered-verification requirement.
 2. Nothing else in `src/`, `public/`, `docs/` or the repo-wide grep carries a real brand plus
    invented performance as of this ruling (`Swan Signal … / Swan Bitcoin` in `marketplaceSlots.ts`
    is item 1; `docs/GEMINI-RESEARCH-PROMPT.md` mentions brands only as external research examples in
