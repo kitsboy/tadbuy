@@ -25,7 +25,7 @@ const CASE_STUDIES = [
     roi: '3.2×',
     platforms: ['Nostr', 'Newsletters', 'Twitter'],
     summary:
-      'Swan ran a Lightning-funded campaign targeting Bitcoin-curious audiences via Nostr zaps and newsletter sponsorships. PPQ.AI optimized headlines around "stack sats" without surveillance retargeting.',
+      'How a DCA exchange would run a Lightning-funded campaign targeting Bitcoin-curious audiences via Nostr zaps and newsletter sponsorships. PPQ.AI can help refine headlines around "stack sats" without surveillance retargeting.',
     results: [
       { label: 'Impressions', value: '2.1M' },
       { label: 'Sign-ups', value: '8,420' },
@@ -42,7 +42,7 @@ const CASE_STUDIES = [
     roi: '2.7×',
     platforms: ['YouTube', 'Podcasts', 'Blogs'],
     summary:
-      'Strike promoted instant global payments using Tadbuy\'s marketplace slots on BTC Sessions and Bitcoin Audible. Settlement completed in under a second per impression via Lightning.',
+      'How a payments app would promote instant global payments using marketplace slots on Bitcoin podcasts and YouTube. Lightning settlement lands in under a second per impression.',
     results: [
       { label: 'Impressions', value: '1.4M' },
       { label: 'App installs', value: '12,100' },
@@ -59,7 +59,7 @@ const CASE_STUDIES = [
     roi: '4.1×',
     platforms: ['Stacker News', 'Primal', 'Reddit'],
     summary:
-      'Fold targeted Bitcoin community feeds with native ad formats. Fedimint ecash checkout let them A/B test creatives without exposing card data or waiting for invoice NET-30 terms.',
+      'How a Bitcoin rewards card would target Bitcoin community feeds with native ad formats. Fedimint ecash checkout would let it test creatives without exposing card data or waiting for invoice NET-30 terms.',
     results: [
       { label: 'Impressions', value: '890K' },
       { label: 'Card activations', value: '4,200' },
@@ -69,15 +69,27 @@ const CASE_STUDIES = [
 ] as const;
 
 export default function CaseStudies() {
-  usePageMeta('Case Studies', 'Bitcoin brand advertising success stories on Tadbuy.');
+  usePageMeta('Case Studies', 'Illustrative campaign walkthroughs with sample figures — no campaign has run on Tadbuy yet.');
 
   return (
     <PageShell
       title="Bitcoin Brand Case Studies"
-      description="How leading Bitcoin brands run campaigns with sats, not surveillance."
-      badge={<Badge variant="accent" className="gap-1.5"><TrendingUp className="w-3.5 h-3.5" /> Success Stories</Badge>}
+      description="Illustrative walkthroughs of how a campaign is meant to work once the backend is connected. Sample figures — not reported results."
+      badge={<Badge variant="outline" className="gap-1.5"><TrendingUp className="w-3.5 h-3.5" /> Illustrative</Badge>}
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Case Studies' }]}
     >
+
+      {/* Truth label (t_913bf909). No campaign has ever run on Tadbuy: there is no
+          backend and no settlement in this build (see /beta), and /pitch shows every
+          campaign counter as "—". Without this line the cards read as reported results
+          from named brands. Keep it above the cards. */}
+      <p className="text-xs text-muted leading-relaxed border border-border rounded-xl p-3 bg-surface">
+        <strong className="text-text">Sample content — nothing here is a reported result.</strong> No campaign has run
+        on Tadbuy yet: this build has no backend and no settlement (see{' '}
+        <Link to="/beta" className="text-accent hover:underline">BETA status</Link>), so no brand below has advertised
+        with us and no figure below was measured. Each card shows the shape of a campaign a brand would run; treat every
+        number as a sample.
+      </p>
 
       {CASE_STUDIES.map(study => (
         <Card key={study.id} className="space-y-4">
@@ -87,8 +99,9 @@ export default function CaseStudies() {
               <p className="text-xs text-accent font-semibold mt-1">{study.tagline}</p>
             </div>
             <div className="flex gap-2 flex-wrap">
-              <Badge variant="success" dot>ROI {study.roi}</Badge>
-              <Badge variant="default">CTR {study.ctr}</Badge>
+              <Badge variant="outline">Illustrative — not a real campaign</Badge>
+              <Badge variant="default">Sample ROI {study.roi}</Badge>
+              <Badge variant="default">Sample CTR {study.ctr}</Badge>
             </div>
           </div>
 
