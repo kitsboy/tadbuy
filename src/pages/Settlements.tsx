@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { Card, CardTitle } from "@/components/ui";
 import { Badge } from "@/components/ui/index";
-import { cn } from "@/lib/utils";
 import { BITCOIN_ADDRESS } from "@/constants";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { PageShell } from '@/components/PageShell';
@@ -30,88 +29,43 @@ const SkeletonRow = () => (
   </tr>
 );
 
+// Preview sample rows — labelled in the UI as sample data. No backend exists on
+// the static host to produce real settlements (see /beta), and we never invent
+// a real-looking chain record as if it settled.
+const SAMPLE_SETTLEMENTS: Settlement[] = [
+  {
+    id: "DEMO-1",
+    amount: 0.000125,
+    paymentType: "lightning",
+    address: "demo…payout-1",
+    txid: "",
+    status: "completed",
+  },
+  {
+    id: "DEMO-2",
+    amount: 0.00005,
+    paymentType: "on-chain",
+    address: "demo…payout-2",
+    txid: "",
+    status: "pending",
+  },
+];
+
 export default function Settlements() {
   usePageMeta('Settlements', 'On-chain and Lightning settlement history for your Bitcoin address.');
 
-  const [settlements, setSettlements] = useState<Settlement[]>([]);
-  const [loading, setLoading]         = useState(true);
-  const [wsStatus, setWsStatus]       = useState<"connecting" | "live" | "error">("connecting");
-  const socketRef = useRef<WebSocket | null>(null);
+  // Preview build: no settlements backend on the static host and the mempool
+  // WebSocket is not in connect-src (and would be dead weight on a sample page),
+  // so this renders labelled sample rows instead of firing requests that cannot
+  // succeed. Real settlements arrive with the backend (see /beta).
+  const [settlements, setSettlements] = useState<Settlement[]>(SAMPLE_SETTLEMENTS);
+  const [loading, setLoading]         = useState(false);
 
-  // Allow user to track any Bitcoin address — defaults to the project address
+  // Allow user to track any Bitcoin address — local-only in this preview; we
+  // cannot watch the chain without a backend, so switching clears to an honest
+  // empty state instead of pretending.
   const [trackedAddress, setTrackedAddress] = useState(BITCOIN_ADDRESS);
   const [addressInput, setAddressInput]     = useState(BITCOIN_ADDRESS);
-
-  // ── REST fetch (authenticated — only your settlements) ─────────────────────
-  useEffect(() => {
-    import("@/lib/authFetch")
-      .then(({ authFetch }) => authFetch("/api/settlements"))
-      .then(res => { if (!res.ok) throw new Error("API unavailable"); return res.json(); })
-      .then((data: Settlement[]) => setSettlements(data))
-      .catch(() => setSettlements([]))
-      .finally(() => setLoading(false));
-  }, []);
-
-  // ── Mempool WebSocket — watch OUR address only ──────────────────────────────
-  useEffect(() => {
-    let socket: WebSocket;
-    let retryTimeout: ReturnType<typeof setTimeout>;
-
-    const connect = () => {
-      try {
-        socket = new WebSocket("wss://mempool.space/api/v1/ws");
-        socketRef.current = socket;
-
-        socket.onopen = () => {
-          setWsStatus("live");
-          // Track only our specific address — not all global mempool activity
-          socket.send(JSON.stringify({
-            action: "track-address",
-            data: trackedAddress,
-          }));
-        };
-
-        socket.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data as string);
-            // Only surface events for our tracked address
-            if (data["address-transactions"]) {
-              const tx = data["address-transactions"][0];
-              if (tx) {
-                setSettlements(prev => [{
-                  id: tx.txid.slice(0, 8).toUpperCase(),
-                  amount: (tx.vout?.reduce((a: number, v: { value: number }) => a + v.value, 0) ?? 0) / 1e8,
-                  paymentType: "on-chain",
-                  address: trackedAddress,
-                  txid: tx.txid,
-                  status: "pending",
-                }, ...prev]);
-              }
-            }
-          } catch {
-            // Malformed message — ignore silently
-          }
-        };
-
-        socket.onerror = () => setWsStatus("error");
-
-        socket.onclose = () => {
-          setWsStatus("error");
-          // Auto-reconnect after 10s
-          retryTimeout = setTimeout(connect, 10_000);
-        };
-      } catch {
-        setWsStatus("error");
-      }
-    };
-
-    connect();
-
-    return () => {
-      clearTimeout(retryTimeout);
-      socketRef.current?.close();
-    };
-  }, [trackedAddress]); // Re-connect whenever the tracked address changes
 
   return (
     <PageShell
@@ -120,14 +74,9 @@ export default function Settlements() {
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Settlements' }]}
       showDemoBadge
       actions={
-        <div className={cn(
-          "flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border font-mono",
-          wsStatus === "live"       && "text-green  bg-green/10  border-green/20",
-          wsStatus === "connecting" && "text-lightning bg-lightning/10 border-lightning/20",
-          wsStatus === "error"      && "text-red    bg-red/10    border-red/20",
-        )}>
+        <div className="flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border font-mono text-muted border-border">
           <Activity className="w-3 h-3" />
-          {wsStatus === "live" ? "Mempool Live" : wsStatus === "connecting" ? "Connecting…" : "WS Error"}
+          Preview — sample data
         </div>
       }
     >
@@ -145,8 +94,9 @@ export default function Settlements() {
             const trimmed = addressInput.trim();
             if (trimmed) {
               setTrackedAddress(trimmed);
+              // Local-only: without a chain watcher this preview cannot follow
+              // an address, so switching shows the honest empty state.
               setSettlements([]);
-              setWsStatus("connecting");
             }
           }}
           className="px-4 py-2.5 bg-accent text-black font-bold text-xs rounded-xl hover:bg-accent/80 transition-colors whitespace-nowrap"
@@ -179,9 +129,9 @@ export default function Settlements() {
                     <div className="w-16 h-16 rounded-full bg-surface/50 border border-border flex items-center justify-center">
                       <Clock className="w-7 h-7 text-muted" />
                     </div>
-                    <div className="font-bold text-text">No settlements yet</div>
+                    <div className="font-bold text-text">No settlements shown</div>
                     <div className="text-xs max-w-sm mx-auto leading-relaxed">
-                      Your completed payments and publisher payouts will appear here when the mempool confirms them.
+                      This preview build has no settlement backend and cannot watch the chain — enter an address only to see how tracking will work. Real completed payments and payouts appear here with the backend.
                     </div>
                   </div>
                 </td>
@@ -225,7 +175,7 @@ export default function Settlements() {
       <CardTitle className="text-[10px]">
         Tracking address:&nbsp;
         <span className="font-mono text-muted normal-case tracking-normal font-normal">
-          {BITCOIN_ADDRESS}
+          {trackedAddress}
         </span>
       </CardTitle>
     </PageShell>

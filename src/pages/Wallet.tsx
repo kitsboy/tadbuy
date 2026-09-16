@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { motion } from "motion/react";
 import { Card, CardTitle, Button, Input, Label, FormGroup, Modal } from "@/components/ui";
 import { Tabs, TabsList, TabsTrigger, TabsContent, StatCard, Alert } from "@/components/ui/index";
@@ -9,7 +9,6 @@ import { LightningLiquidity } from "@/components/payments/LightningLiquidity";
 import { FedimintPanel } from "@/components/payments/FedimintPanel";
 import { BitcoinProtocolSuite } from "@/components/widgets/BitcoinProtocolSuite";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { authFetch } from "@/lib/authFetch";
 import { PageShell } from '@/components/PageShell';
 import { FeeBreakdown } from '@/components/FeeBreakdown';
 import { BITCOIN_ADDRESS } from '@/constants';
@@ -17,13 +16,16 @@ import { BITCOIN_ADDRESS } from '@/constants';
 export default function Wallet() {
   usePageMeta('Wallet', 'Manage Lightning, Fedimint ecash, and on-chain balances for your Tadbuy campaigns.');
 
-  const [balance, setBalance] = useState<number | null>(null);
+  // Preview build: no wallet backend on the static host, so balances are
+  // labelled placeholders and nothing here can create a real invoice or
+  // settle. No /api/* request is fired — none can succeed.
+  const [balance, setBalance] = useState<number>(125_000);
   const [fedimintBalance, setFedimintBalance] = useState(5000);
   const [invoice, setInvoice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showQR, setShowQR] = useState(false);
-  const [nodeOnline, setNodeOnline] = useState(true);
+  const [nodeOnline, setNodeOnline] = useState(false);
   const { addToast } = useToast();
 
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
@@ -31,48 +33,9 @@ export default function Wallet() {
   const [withdrawAddress, setWithdrawAddress] = useState('');
   const [withdrawLoading, setWithdrawLoading] = useState(false);
 
-  useEffect(() => {
-    authFetch("/api/lightning/info")
-      .then(res => res.json())
-      .then(info => {
-        if (info.confirmed_balance != null) {
-          setBalance(info.confirmed_balance);
-          setNodeOnline(true);
-        } else {
-          setBalance(125_000);
-          setNodeOnline(false);
-        }
-      })
-      .catch(() => {
-        setBalance(125_000);
-        setNodeOnline(false);
-      });
-
-    authFetch("/api/wallet/balances")
-      .then(res => res.json())
-      .then(data => {
-        if (data.fedimint?.sats) setFedimintBalance(data.fedimint.sats);
-      })
-      .catch(() => {});
-  }, []);
-
   const handleCreateInvoice = async () => {
-    setLoading(true);
-    try {
-      const response = await authFetch("/api/lightning/invoice", {
-        method: 'POST',
-        body: JSON.stringify({ amountSats: 1000, description: "Tadbuy Wallet Funding" })
-      });
-      if (!response.ok) throw new Error('Invoice failed');
-      const inv = await response.json();
-      setInvoice(inv.request);
-      setShowQR(true);
-      addToast("Invoice created successfully", "success");
-    } catch {
-      addToast("Failed to create invoice", "error");
-    } finally {
-      setLoading(false);
-    }
+    // No Lightning backend in this preview build — never fabricate an invoice.
+    addToast("Invoices are not available in this preview build — no Lightning backend yet.", "info");
   };
 
   const handleCopy = () => {
@@ -94,30 +57,10 @@ export default function Wallet() {
       addToast("Enter a valid amount in sats", "error");
       return;
     }
-    setWithdrawLoading(true);
-    try {
-      const res = await authFetch('/api/settle', {
-        method: 'POST',
-        body: JSON.stringify({
-          amountSats,
-          address: withdrawAddress,
-          paymentType: 'lightning',
-        }),
-      });
-      if (res.status === 403) {
-        addToast("Withdrawals disabled until payouts are enabled on the server", "error");
-        return;
-      }
-      if (!res.ok) throw new Error(`Server error ${res.status}`);
-      addToast("Withdrawal submitted successfully", "success");
-      setShowWithdrawModal(false);
-      setWithdrawAmount('');
-      setWithdrawAddress('');
-    } catch {
-      addToast("Withdrawal failed — please try again", "error");
-    } finally {
-      setWithdrawLoading(false);
-    }
+    // No settlement backend in this preview build — a real withdrawal cannot
+    // be submitted, and we never fabricate one.
+    addToast("Withdrawals are not available in this preview build — no settlement backend yet.", "info");
+    setWithdrawLoading(false);
   };
 
   const totalBalance = (balance ?? 0) + fedimintBalance;

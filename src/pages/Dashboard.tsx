@@ -2,6 +2,7 @@ import { useState, useEffect, type ComponentType } from "react";
 import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { Card, CardTitle, Button } from "@/components/ui";
+import { useToast } from "@/components/Toast";
 import { Monitor, TrendingUp, DollarSign, MousePointerClick, Zap, RefreshCw, Plus, BarChart2, UserPlus } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { BITCOIN_ADDRESS } from "@/constants";
@@ -112,33 +113,14 @@ const MetricCard = ({ title, raw, fmt, icon: Icon, trend, loading }: MetricCardP
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function Dashboard() {
   usePageMeta('Dashboard', 'Real-time Bitcoin ad performance and campaign overview.');
+  const { addToast } = useToast();
 
+  // Preview build: no metrics backend on the static host, so this renders the
+  // labelled sample dataset. No /api/metrics fetch and no polling — a request
+  // that cannot succeed is not fired.
   const [metrics, setMetrics] = useState<Metrics>(MOCK_METRICS);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isLive, setIsLive] = useState(false);
-
-  const fetchMetrics = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/metrics");
-      if (!res.ok) throw new Error("API unavailable");
-      const data: Metrics = await res.json();
-      setMetrics(data);
-      setIsLive(true);
-    } catch {
-      // Fall back to mock data — page still looks great
-      setMetrics(MOCK_METRICS);
-      setIsLive(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMetrics();
-    const interval = setInterval(fetchMetrics, 30_000); // Poll every 30s (not 5s)
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <PageShell
@@ -149,8 +131,8 @@ export default function Dashboard() {
       maxWidth="max-w-[1440px]"
     >
       <div className="flex items-center justify-end mb-4">
-        <Button size="sm" className="gap-2" onClick={fetchMetrics} disabled={loading}>
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+        <Button size="sm" variant="secondary" className="gap-2" onClick={() => addToast("Sample data — no metrics backend in this preview build", "info")}>
+          <RefreshCw className="w-4 h-4" />
           Refresh
         </Button>
       </div>

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, type ElementType } from "react";
+import { useState, useMemo, type ElementType } from "react";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { PageShell } from '@/components/PageShell';
 import { motion, AnimatePresence } from "motion/react";
@@ -17,31 +17,15 @@ import { generateAdCreative, OptimizationSuggestion } from "@/services/geminiSer
 import { useToast } from "@/components/Toast";
 import React from 'react';
 import { ShareCampaignCard } from '@/components/ShareCampaignCard';
-import { authFetch } from '@/lib/authFetch';
 import { downloadCsv, campaignsToCsvRows } from '@/lib/exportCsv';
 
 export default function Campaigns() {
   usePageMeta('Campaigns', 'Manage, export, and share your Bitcoin-native ad campaigns.');
+  // Preview build: no campaigns backend on the static host. Sample campaigns
+  // render from src/data/campaigns and every action is local-only — no /api/*
+  // request is fired because none can succeed.
   const [campaignsList, setCampaignsList] = useState<Campaign[]>(initialCampaigns);
 
-  // Load the authenticated user's campaigns — fall back to mock data if unavailable
-  useEffect(() => {
-    const loadCampaigns = async () => {
-      try {
-        const res = await authFetch('/api/campaigns');
-        if (res.ok) {
-          const data: Campaign[] = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            setCampaignsList(data);
-            return;
-          }
-        }
-      } catch {
-        // API unavailable — keep showing mock data silently
-      }
-    };
-    loadCampaigns();
-  }, []);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState<string | null>(null);
@@ -69,18 +53,10 @@ export default function Campaigns() {
     const current = campaignsList.find(c => c.id === id);
     if (!current) return;
     const next = current.status === 'live' ? 'paused' : 'live';
+    // Local-only — no backend in this preview build, and the change is real on
+    // the device even though nothing can persist it.
     setCampaignsList(prev => prev.map(c => c.id === id ? { ...c, status: next } : c));
-    try {
-      const res = await authFetch(`/api/campaigns/${id}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: next }),
-      });
-      if (!res.ok) throw new Error('API error');
-    } catch {
-      setCampaignsList(prev => prev.map(c => c.id === id ? { ...c, status: current.status } : c));
-      addToast('Status saved locally — API unavailable', 'error');
-    }
+    addToast('Status changed locally (preview build)', 'info');
   };
 
   const pauseSelected = () => {
