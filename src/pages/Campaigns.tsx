@@ -577,7 +577,7 @@ export default function Campaigns() {
         {showShareModal && (
           <div className="p-6">
             <CardTitle>Share & Embed</CardTitle>
-            <p className="text-xs text-muted mb-6">Share real-time metrics for <strong>{campaignsList.find(c => c.id === showShareModal)?.name}</strong>.</p>
+            <p className="text-xs text-muted mb-6">Share sample metrics for <strong>{campaignsList.find(c => c.id === showShareModal)?.name}</strong>.</p>
             
             <div className="space-y-6">
               {(() => {
@@ -595,7 +595,7 @@ export default function Campaigns() {
               })()}
 
               <div>
-                <Label>Embed Real-time Metrics (iFrame)</Label>
+                <Label className="normal-case">Embed Sample Metrics (iFrame)</Label>
                 <div className="relative mt-2">
                   <pre className="bg-surface p-3 rounded-lg text-[10px] font-mono text-muted border border-border overflow-x-auto">
                     {`<iframe src="${currentOrigin}/embed/metrics/${showShareModal}" width="100%" height="400" frameborder="0"></iframe>`}
