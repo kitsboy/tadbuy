@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useDebounce } from './useDebounce';
 import { useLocalStorage } from './useLocalStorage';
-import { useApiFetch } from './useApiFetch';
 import {
   GEO_MARKETS,
   GEO_REGIONS,
@@ -13,14 +12,6 @@ import {
 
 export type GeoSortKey = 'impressions' | 'ctr' | 'spend' | 'trend' | 'name';
 export type GeoViewMode = 'split' | 'map' | 'list';
-
-type GeoApiCountries = { countries: GeoMarket[] };
-type GeoApiStats = {
-  countriesReached: number;
-  totalImpressions: number;
-  globalCtr: number;
-  topMarket: GeoMarket;
-};
 
 export function useGeoPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -36,18 +27,9 @@ export function useGeoPage() {
 
   const debouncedSearch = useDebounce(search, 250);
 
-  const { data: apiCountries, loading, error, refetch } = useApiFetch<GeoApiCountries>('/api/geo/countries');
-  const { data: apiStats } = useApiFetch<GeoApiStats>('/api/geo/stats');
-
-  const markets = useMemo(() => {
-    const base = apiCountries?.countries?.length
-      ? apiCountries.countries.map(c => {
-          const full = GEO_MARKETS.find(m => m.code === c.code);
-          return full ? { ...full, ...c } : ({ ...GEO_MARKETS[0], ...c } as GeoMarket);
-        })
-      : GEO_MARKETS;
-    return base;
-  }, [apiCountries]);
+  // Static demo data — the platform has no /api/geo endpoints on the static host, so
+  // this surface renders representative GEO_MARKETS and never makes a request.
+  const markets = GEO_MARKETS;
 
   const filtered = useMemo(() => {
     let list = [...markets];
@@ -80,6 +62,15 @@ export function useGeoPage() {
     () => compareCodes.map(c => markets.find(m => m.code === c)).filter(Boolean) as GeoMarket[],
     [compareCodes, markets]
   );
+  const apiStats = useMemo(() => {
+    const top = [...GEO_MARKETS].sort((a, b) => b.impressions - a.impressions)[0];
+    return {
+      countriesReached: GEO_MARKETS.length,
+      totalImpressions: GEO_MARKETS.reduce((s, m) => s + m.impressions, 0),
+      globalCtr: GEO_MARKETS.reduce((s, m) => s + m.ctr, 0) / Math.max(GEO_MARKETS.length, 1),
+      topMarket: top,
+    };
+  }, []);
 
   useEffect(() => {
     if (selectedCode) {
@@ -133,7 +124,9 @@ export function useGeoPage() {
     watchlist, toggleWatchlist,
     compareCodes, compareMarkets, toggleCompare, setCompareCodes,
     targetingOpen, setTargetingOpen,
-    loading, error, refetch,
+    loading: false,
+    error: null,
+    refetch: () => {},
     apiStats,
     clearFilters,
     allMarkets: markets,

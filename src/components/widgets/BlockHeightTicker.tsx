@@ -8,16 +8,13 @@ export function BlockHeightTicker({ className }: { className?: string }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Live source only: mempool.space (real, CORS-open, CSP-allowed). There is no
+    // platform /api/blockchain/info endpoint on the static host — do not probe it.
     const fetchHeight = async () => {
       try {
-        // Try the platform's API first, fall back to mempool.space.
-        let res = await fetch('/api/blockchain/info');
-        if (!res.ok) {
-          res = await fetch('https://mempool.space/api/blocks/tip/height');
-        }
+        const res = await fetch('https://mempool.space/api/blocks/tip/height');
         if (res.ok) {
-          const data = await res.json();
-          const h = typeof data === 'number' ? data : data.height ?? data.tipHeight ?? null;
+          const h = await res.json();
           if (typeof h === 'number') {
             setHeight(h);
           }

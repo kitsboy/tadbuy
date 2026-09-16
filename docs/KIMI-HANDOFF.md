@@ -1,3 +1,15 @@
+# DECISION NOTE — 2026-09-16 · Cut the API-shaped UI (Option 2)
+
+**Context:** Tadbuy is a demo-mode preview on a static Cloudflare Pages host with no backend. `GET /api/<anything>` returns the SPA shell (200 HTML) and `POST` returns 405, so every `/api/*` call in the UI was a request that cannot succeed — 14 of them fired on 6 public routes (measured live with headless Chromium), polling 404s so the homepage never reached network-idle.
+
+**Decision (executed by t_a6f44865):** no page fires a request that cannot succeed. All dead `/api/*` call sites on reachable surfaces were removed and replaced with labelled static/sample/demo state. The only `/api/*` fetch left anywhere is `/api/csp-report` (the one real Cloudflare Pages Function). Auth-gated account surfaces (wallet, campaigns, settlements, dashboard, analytics, vendor records, placement requests) are the sibling CSP card's lane (t_69ff1772) and were left for it.
+
+**What the demo outcome means:** nothing invented a success before, and nothing does now. Money-shaped actions (bid, pledge, launch) are either local-only or labelled "demo — nothing charged or submitted". The campaign builder keeps its local draft and produces a labelled demo outcome — it is the funnel, so the demo mechanic stays there by design.
+
+**Sources of truth:** `docs/BETA.md` API row updated to "UI cut — no page calls /api/*". `docs/BACKEND-SCOPE.md` (t_90e1c3d1) remains the plan for the real backend, which is separate and deferred. The `/beta` page copy and `api.giveabit.io` claims are owned by the sibling copy card (t_913bf909).
+
+---
+
 ## Session — 2026-09-15 · Truth fix: the X handle, and the build tag
 
 **Done:**

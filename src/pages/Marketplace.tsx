@@ -138,24 +138,14 @@ function BidModal({ slot, onClose, onBidPlaced }: { slot: MarketplaceSlot; onClo
     setLoading(true);
     try {
       const bidAmount = Number(bidSats);
-      const { authFetch } = await import("@/lib/authFetch");
-      const res = await authFetch("/api/marketplace/bid", {
-        method: "POST",
-        body: JSON.stringify({
-          slotId: slot.id,
-          slotName: slot.name,
-          bidSats: bidAmount,
-          budgetSats: budgetSats ? Number(budgetSats) : null,
-        }),
-      });
-      if (res.status === 401) throw new Error("Sign in required to place a bid");
-      if (!res.ok) throw new Error("Bid failed");
+      // Demo mode — nothing is sent or charged. The platform has no /api/marketplace/bid
+      // endpoint on the static host, so this bid is recorded locally only.
       const outbidBy = bidAmount - slot.currentBidSats;
       addToast(
         `Outbid! You beat the previous bid by ${outbidBy.toLocaleString()} sats on "${slot.name}"`,
         "info"
       );
-      addToast(`Bid placed for ${bidAmount.toLocaleString()} sats! ⚡`, "success");
+      addToast(`Demo bid of ${bidAmount.toLocaleString()} sats recorded locally — nothing was charged. ⚡`, "success");
       onBidPlaced(slot.id, bidAmount);
       onClose();
     } catch {
@@ -533,21 +523,9 @@ export default function Marketplace() {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    const loadInventory = async () => {
-      const [liveResult, durableResult] = await Promise.allSettled([
-        fetch("/api/marketplace/slots/live").then(response => response.ok ? response.json() : null),
-        fetch("/api/marketplace/inventory/public").then(response => response.ok ? response.json() : null),
-      ]);
-      const live = liveResult.status === 'fulfilled' ? liveResult.value : null;
-      const durable = durableResult.status === 'fulfilled' ? durableResult.value : null;
-      const baseSlots = live?.slots?.length ? live.slots as MarketplaceSlot[] : MARKETPLACE_SLOTS;
-      const durableSlots = Array.isArray(durable?.slots) ? durable.slots as MarketplaceSlot[] : [];
-      const durableIds = new Set(durableSlots.map(slot => slot.id));
-      setInventory([...baseSlots.filter(slot => !durableIds.has(slot.id)), ...durableSlots]);
-    };
-    void loadInventory();
-  }, []);
+  // Inventory is static in this build — the platform has no /api/marketplace endpoints
+  // on the static host, so no live/inventory requests are made. Durable vendor records
+  // connect once the backend is online (see the auth-gated placement hooks).
 
   const handleBidPlaced = (slotId: string, bidSats: number) => {
     setInventory(prev =>

@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react';
-import { motion } from 'motion/react';
-import { Brain, Target, BarChart3, CloudRain, MapPin, FlaskConical } from 'lucide-react';
-import { Card, CardTitle, Button } from '@/components/ui';
+import { Target, BarChart3, CloudRain, MapPin, FlaskConical } from 'lucide-react';
+import { Card, CardTitle } from '@/components/ui';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 import { ConversionFunnel } from '@/components/widgets/ConversionFunnel';
 import { RetentionChart } from '@/components/widgets/RetentionChart';
@@ -11,20 +9,21 @@ import { RevenueForecast } from '@/components/widgets/RevenueForecast';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { PageShell } from '@/components/PageShell';
 
+// Labelled demo sample — the platform has no analytics/AI backend on the static host,
+// so these surfaces render representative figures and never make a request.
+const HEATMAP_SAMPLE = [
+  { hour: 0, cpc: 0.02 }, { hour: 1, cpc: 0.015 }, { hour: 2, cpc: 0.01 }, { hour: 3, cpc: 0.01 },
+  { hour: 4, cpc: 0.012 }, { hour: 5, cpc: 0.015 }, { hour: 6, cpc: 0.02 }, { hour: 7, cpc: 0.03 },
+  { hour: 8, cpc: 0.045 }, { hour: 9, cpc: 0.06 }, { hour: 10, cpc: 0.07 }, { hour: 11, cpc: 0.075 },
+  { hour: 12, cpc: 0.08 }, { hour: 13, cpc: 0.085 }, { hour: 14, cpc: 0.09 }, { hour: 15, cpc: 0.095 },
+  { hour: 16, cpc: 0.1 }, { hour: 17, cpc: 0.105 }, { hour: 18, cpc: 0.1 }, { hour: 19, cpc: 0.09 },
+  { hour: 20, cpc: 0.075 }, { hour: 21, cpc: 0.06 }, { hour: 22, cpc: 0.045 }, { hour: 23, cpc: 0.03 },
+];
+
 export default function Intelligence() {
   usePageMeta('PPQ Intelligence', 'AI-powered targeting, A/B testing, funnel analytics, and weather-triggered campaign rules.');
 
-  const [heatmap, setHeatmap] = useState<{ hour: number; cpc: number }[]>([]);
-  const [abResult, setAbResult] = useState<{ significant: boolean; winner: string; confidence: number } | null>(null);
-
-  useEffect(() => {
-    fetch('/api/v2/analytics/bid-heatmap').then(r => r.json()).then(d => setHeatmap(d.heatmap ?? [])).catch(() => {});
-  }, []);
-
-  const runAbTest = () => {
-    fetch('/api/v2/ab-test/significance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
-      .then(r => r.json()).then(setAbResult).catch(() => {});
-  };
+  const heatmap = HEATMAP_SAMPLE;
 
   return (
     <PageShell
@@ -75,14 +74,14 @@ export default function Intelligence() {
           <div className="grid md:grid-cols-2 gap-6">
             <Card className="glass-panel">
               <CardTitle className="flex items-center gap-2"><FlaskConical className="w-4 h-4" /> A/B Significance</CardTitle>
-              <Button size="sm" onClick={runAbTest} className="mb-4">Run Analysis</Button>
-              {abResult && (
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span className="text-muted">Winner</span><span className="font-bold text-accent">Variant {abResult.winner}</span></div>
-                  <div className="flex justify-between"><span className="text-muted">Confidence</span><span className="font-mono">{abResult.confidence}%</span></div>
-                  <div className="flex justify-between"><span className="text-muted">Significant</span><span className={abResult.significant ? 'text-green' : 'text-muted'}>{abResult.significant ? 'Yes' : 'No'}</span></div>
-                </div>
-              )}
+              <p className="text-xs text-muted mb-3">
+                Sample outcome for a typical test — no analysis is run here (no backend on the static host).
+              </p>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between"><span className="text-muted">Winner</span><span className="font-bold text-accent">Variant B</span></div>
+                <div className="flex justify-between"><span className="text-muted">Confidence</span><span className="font-mono">96%</span></div>
+                <div className="flex justify-between"><span className="text-muted">Significant</span><span className="text-green">Yes</span></div>
+              </div>
             </Card>
 
             <Card className="glass-panel md:col-span-1">

@@ -1,35 +1,24 @@
-import { useEffect, useState } from 'react';
-import { motion } from 'motion/react';
-import { Shield, Activity, Map, Gift, Leaf, Bot } from 'lucide-react';
-import { Card, CardTitle, Button, Input } from '@/components/ui';
+import { useState } from 'react';
+import { Activity, Map, Gift, Leaf, Bot } from 'lucide-react';
+import { Card, CardTitle, Input } from '@/components/ui';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { PageShell } from '@/components/PageShell';
 import { Link } from 'react-router-dom';
 
+// Labelled demo state — the platform has no status/roadmap/AI backend on the static
+// host, so these surfaces render representative content and never make a request.
+const ROADMAP_SAMPLE = [
+  { id: '1', title: 'Nostr-native ad delivery', votes: 320, status: 'In progress' },
+  { id: '2', title: 'Fedimint ecash settlements', votes: 210, status: 'Planned' },
+  { id: '3', title: 'Self-custodial wallet dashboard', votes: 188, status: 'Planned' },
+  { id: '4', title: 'Publisher placement marketplace', votes: 144, status: 'Planned' },
+];
+
 export default function Enterprise() {
   usePageMeta('Enterprise', 'Status page, roadmap, referral program, AI strategist, and enterprise security features.');
 
-  const [status, setStatus] = useState<{ status: string; uptime: number; services: Record<string, string> } | null>(null);
-  const [roadmap, setRoadmap] = useState<{ id: string; title: string; votes: number; status: string }[]>([]);
-  const [lighthouse, setLighthouse] = useState<{ performance: number; accessibility: number; seo: number } | null>(null);
+  const roadmap = ROADMAP_SAMPLE;
   const [aiQuestion, setAiQuestion] = useState('');
-  const [aiAnswer, setAiAnswer] = useState('');
-
-  useEffect(() => {
-    fetch('/api/v4/status').then(r => r.json()).then(setStatus).catch(() => {});
-    fetch('/api/v4/roadmap').then(r => r.json()).then(d => setRoadmap(d.items ?? [])).catch(() => {});
-    fetch('/api/v4/lighthouse').then(r => r.json()).then(setLighthouse).catch(() => {});
-  }, []);
-
-  const askStrategist = async () => {
-    const res = await fetch('/api/v4/ai/strategist', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question: aiQuestion }),
-    });
-    const data = await res.json();
-    setAiAnswer(data.answer);
-  };
 
   return (
     <PageShell
@@ -39,37 +28,28 @@ export default function Enterprise() {
       maxWidth="max-w-5xl"
       showDemoBadge
     >
-      {status && (
-        <Card className="glass-panel border-green/20">
-          <CardTitle className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-green" />
-            System Status — <span className="text-green capitalize">{status.status}</span>
-          </CardTitle>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-2">
-            {Object.entries(status.services).map(([k, v]) => (
-              <div key={k} className="text-center p-2 rounded-lg bg-surface border border-border">
-                <div className={`w-2 h-2 rounded-full mx-auto mb-1 ${v === 'up' ? 'bg-green' : 'bg-red'}`} />
-                <div className="text-[10px] font-bold uppercase">{k}</div>
-              </div>
-            ))}
-          </div>
-          <p className="text-xs text-muted mt-3 font-mono">{status.uptime}% uptime · Fedimint operational</p>
-        </Card>
-      )}
+      <Card className="glass-panel border-green/20">
+        <CardTitle className="flex items-center gap-2">
+          <Activity className="w-4 h-4 text-green" />
+          System Status
+        </CardTitle>
+        <p className="text-xs text-muted mt-1">
+          This build is a demo-mode preview — a live status endpoint connects once the platform API is online.
+        </p>
+      </Card>
 
-      {lighthouse && (
-        <div className="grid grid-cols-3 gap-4">
-          {(['performance', 'accessibility', 'seo'] as const).map(k => (
-            <Card key={k} className="text-center p-4">
-              <div className="text-2xl font-extrabold text-accent">{lighthouse[k]}</div>
-              <div className="text-[10px] text-muted uppercase">{k}</div>
-            </Card>
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-3 gap-4">
+        {(['performance', 'accessibility', 'seo'] as const).map(k => (
+          <Card key={k} className="text-center p-4">
+            <div className="text-2xl font-extrabold text-accent">—</div>
+            <div className="text-[10px] text-muted uppercase">{k}</div>
+          </Card>
+        ))}
+      </div>
 
       <Card className="glass-panel">
         <CardTitle className="flex items-center gap-2"><Map className="w-4 h-4" /> Public Roadmap</CardTitle>
+        <p className="text-xs text-muted mb-3">Sample roadmap — live voting connects once the API is online.</p>
         <div className="space-y-2">
           {roadmap.map(item => (
             <div key={item.id} className="flex items-center justify-between p-3 rounded-lg bg-surface border border-border">
@@ -87,9 +67,12 @@ export default function Enterprise() {
         <CardTitle className="flex items-center gap-2"><Bot className="w-4 h-4 text-purple" /> AI Campaign Strategist</CardTitle>
         <div className="flex gap-2 mb-3">
           <Input value={aiQuestion} onChange={e => setAiQuestion(e.target.value)} placeholder="How should I launch my first Bitcoin ad?" className="flex-1" />
-          <Button onClick={askStrategist}>Ask</Button>
+          <span className="text-xs text-muted self-center">Preview — no backend yet</span>
         </div>
-        {aiAnswer && <p className="text-sm text-muted bg-surface p-3 rounded-lg border border-border">{aiAnswer}</p>}
+        <p className="text-xs text-muted">
+          The AI strategist connects once the platform API is online. In the meantime, use the campaign builder on the
+          home page for a guided, demo-mode launch.
+        </p>
       </Card>
 
       <div className="grid md:grid-cols-2 gap-4">
@@ -104,7 +87,7 @@ export default function Enterprise() {
       </div>
 
       <div className="text-center">
-        <Link to="/pitch"><Button variant="secondary">View Investor Pitch →</Button></Link>
+        <Link to="/pitch"><button className="px-4 py-2 rounded-lg bg-accent text-white text-sm font-semibold">View Investor Pitch →</button></Link>
       </div>
     </PageShell>
   );

@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { Megaphone, ShoppingCart, RotateCcw, Loader2 } from 'lucide-react';
+import { Megaphone, ShoppingCart, RotateCcw } from 'lucide-react';
 import { Card, CardTitle } from '@/components/ui';
 import { Badge } from '@/components/ui/Badge';
 import { cn } from '@/lib/utils';
@@ -22,69 +21,51 @@ const ICONS = {
   retargeting: RotateCcw,
 } as const;
 
+// Static demo templates — the platform has no /api/campaigns/templates endpoint on
+// the static host, so this widget renders curated starters and never makes a request.
+const TEMPLATES: CampaignTemplate[] = [
+  {
+    id: 'awareness',
+    name: 'Brand Awareness',
+    description: 'Maximize reach across social & Nostr',
+    icon: 'awareness',
+    platforms: ['twitter', 'nostr', 'instagram'],
+    budgetSats: 500_000,
+    headline: 'Stack sats, not surveillance',
+    copy: 'Reach privacy-conscious audiences. Pay in Lightning.',
+    hashtags: ['#bitcoin', '#nostr'],
+  },
+  {
+    id: 'sales',
+    name: 'Direct Sales',
+    description: 'Conversion-focused with urgency',
+    icon: 'sales',
+    platforms: ['facebook', 'tiktok', 'reddit'],
+    budgetSats: 750_000,
+    headline: 'Get 20% off — pay with Bitcoin',
+    copy: 'Limited-time offer. Lightning checkout in seconds.',
+    hashtags: ['#sats', '#deal'],
+  },
+  {
+    id: 'retargeting',
+    name: 'Retargeting',
+    description: 'Re-engage visitors who bounced',
+    icon: 'retargeting',
+    platforms: ['twitter', 'facebook', 'nostr'],
+    budgetSats: 300_000,
+    headline: 'Still thinking about it?',
+    copy: 'Come back and complete your purchase with sats.',
+    hashtags: ['#retarget'],
+  },
+];
+
 interface CampaignTemplatesProps {
   onApply: (template: CampaignTemplate) => void;
   selectedId?: string | null;
 }
 
 export function CampaignTemplates({ onApply, selectedId }: CampaignTemplatesProps) {
-  const [templates, setTemplates] = useState<CampaignTemplate[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/campaigns/templates')
-      .then(r => r.json())
-      .then(d => setTemplates(d.templates ?? []))
-      .catch(() => {
-        setTemplates([
-          {
-            id: 'awareness',
-            name: 'Brand Awareness',
-            description: 'Maximize reach across social & Nostr',
-            icon: 'awareness',
-            platforms: ['twitter', 'nostr', 'instagram'],
-            budgetSats: 500_000,
-            headline: 'Stack sats, not surveillance',
-            copy: 'Reach privacy-conscious audiences. Pay in Lightning.',
-            hashtags: ['#bitcoin', '#nostr'],
-          },
-          {
-            id: 'sales',
-            name: 'Direct Sales',
-            description: 'Conversion-focused with urgency',
-            icon: 'sales',
-            platforms: ['facebook', 'tiktok', 'reddit'],
-            budgetSats: 750_000,
-            headline: 'Get 20% off — pay with Bitcoin',
-            copy: 'Limited-time offer. Lightning checkout in seconds.',
-            hashtags: ['#sats', '#deal'],
-          },
-          {
-            id: 'retargeting',
-            name: 'Retargeting',
-            description: 'Re-engage visitors who bounced',
-            icon: 'retargeting',
-            platforms: ['twitter', 'facebook', 'nostr'],
-            budgetSats: 300_000,
-            headline: 'Still thinking about it?',
-            copy: 'Come back and complete your purchase with sats.',
-            hashtags: ['#retarget'],
-          },
-        ]);
-      })
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
-    return (
-      <Card className="glass-panel mb-4">
-        <div className="flex items-center gap-2 text-sm text-muted py-2">
-          <Loader2 className="w-4 h-4 animate-spin" />
-          Loading templates…
-        </div>
-      </Card>
-    );
-  }
+  const templates = TEMPLATES;
 
   return (
     <Card className="glass-panel mb-4">

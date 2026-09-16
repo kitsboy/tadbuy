@@ -32,28 +32,17 @@ export function ShareCampaignCard({
   const { copy, copied } = useCopyToClipboard();
 
   useEffect(() => {
-    const params = new URLSearchParams({
-      id: campaignId,
-      name: campaignName,
-      ...(headline ? { headline } : {}),
-      status,
-      ...(budgetSats != null ? { budgetSats: String(budgetSats) } : {}),
+    // Build the share card locally — no /api/delight/share-card endpoint on the
+    // static host, so no request is made. The card is derived from the campaign.
+    const base = PROJECT_STATE.liveUrl;
+    setCard({
+      ogTitle: `${campaignName} · Tadbuy Campaign`,
+      ogDescription: headline ?? 'Bitcoin-native advertising, paid in sats.',
+      ogImage: `${base}/og-image.svg`,
+      shareUrl: `${base}/embed/metrics/${campaignId}`,
+      tweetText: `🚀 ${campaignName} is live on Tadbuy — ${headline ?? 'Bitcoin-native ads'}. ${base}`,
+      nostrText: `Campaign ${campaignName} on Tadbuy ${base}/embed/metrics/${campaignId}`,
     });
-
-    fetch(`/api/delight/share-card?${params}`)
-      .then((r) => r.json())
-      .then(setCard)
-      .catch(() => {
-        const base = PROJECT_STATE.liveUrl;
-        setCard({
-          ogTitle: `${campaignName} · Tadbuy Campaign`,
-          ogDescription: headline ?? 'Bitcoin-native advertising, paid in sats.',
-          ogImage: `${base}/og-image.svg`,
-          shareUrl: `${base}/embed/metrics/${campaignId}`,
-          tweetText: `🚀 ${campaignName} is live on Tadbuy — ${headline ?? 'Bitcoin-native ads'}. ${base}`,
-          nostrText: `Campaign ${campaignName} on Tadbuy ${base}/embed/metrics/${campaignId}`,
-        });
-      });
   }, [campaignId, campaignName, headline, status, budgetSats]);
 
   if (!card) {

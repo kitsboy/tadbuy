@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Card, CardTitle, Button, Select, InfoTooltip } from "@/components/ui";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
@@ -14,6 +13,8 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
+// Static demo figures — the platform has no analytics backend on the static host,
+// so this page renders representative numbers and never makes a request.
 const STATIC_DATA = [
   { name: 'Mar 1', spend: 4000, sats: 120000 },
   { name: 'Mar 2', spend: 3000, sats: 180000 },
@@ -24,42 +25,10 @@ const STATIC_DATA = [
   { name: 'Mar 7', spend: 3490, sats: 360000 },
 ];
 
-interface ApiMetrics {
-  impressions: number;
-  clicks: number;
-  ctr: number;
-  spend: number;
-  trend?: Array<{ name: string; impressions: number; clicks: number; sats: number }>;
-  fallback?: boolean;
-  liveCampaigns?: number;
-  totalCampaigns?: number;
-}
-
 export default function Metrics() {
   usePageTitle('Metrics & Analytics');
-  const [apiMetrics, setApiMetrics] = useState<ApiMetrics | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-
-  useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
-        const res = await fetch('/api/metrics');
-        if (res.ok) {
-          const data: ApiMetrics = await res.json();
-          setApiMetrics(data);
-          setLastUpdated(new Date());
-        }
-      } catch {
-        // Keep showing static data silently
-      }
-    };
-    fetchMetrics();
-    const interval = setInterval(fetchMetrics, 60_000); // refresh every 60s
-    return () => clearInterval(interval);
-  }, []);
-
-  const data = apiMetrics?.trend?.map(t => ({ name: t.name, spend: t.impressions, sats: t.sats })) ?? STATIC_DATA;
-  const isLive = apiMetrics !== null && !apiMetrics.fallback;
+  const data = STATIC_DATA;
+  const isLive = false;
   const downloadPDF = () => {
     const doc = new jsPDF();
     doc.text("Ad Metrics Report", 10, 10);
@@ -99,8 +68,7 @@ export default function Metrics() {
             </span>
           </div>
           <p className="text-sm text-muted mt-1">
-            All currencies · All platforms · Live + historical
-            {lastUpdated && <span> · Updated {lastUpdated.toLocaleTimeString()}</span>}
+            All currencies · All platforms · Sample figures
           </p>
         </div>
         <div className="flex gap-2">
@@ -128,7 +96,7 @@ export default function Metrics() {
             <InfoTooltip content="Total number of times your ad was served to users." />
           </div>
           <div className="text-3xl font-extrabold my-1 text-green group-hover:scale-105 transition-transform origin-left">
-            {apiMetrics ? (apiMetrics.impressions >= 1_000_000 ? `${(apiMetrics.impressions / 1_000_000).toFixed(2)}M` : apiMetrics.impressions.toLocaleString()) : '1.24M'}
+            {('1.24M')}
           </div>
           <div className="text-[11px] text-muted font-mono">total reach</div>
           <div className="text-[11px] font-bold text-green mt-3 flex items-center gap-1.5 bg-green/10 w-fit px-2 py-0.5 rounded-full">

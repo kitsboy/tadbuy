@@ -20,7 +20,7 @@ import SuccessScreen from "@/components/buyads/SuccessScreen";
 import PaymentModal from "@/components/buyads/PaymentModal";
 
 import { getCheckoutPaymentMethods } from "@/lib/payments/registry";
-import { resolvePaymentOutcome, type PaymentOutcome } from "@/lib/campaignPaymentStatus";
+import { type PaymentOutcome } from "@/lib/campaignPaymentStatus";
 import { getMarketplaceSlot, slotToPlatforms, type MarketplaceSlot } from "@/data/marketplaceSlots";
 import { GEO_MARKETS } from "@/data/geoMarkets";
 import { useAuth } from "@/components/AuthProvider";
@@ -35,7 +35,6 @@ import { Alert } from "@/components/ui/Alert";
 import { SpendLimitBanner } from "@/components/SpendLimitBanner";
 import { AdPolicyNotice } from "@/components/AdPolicyNotice";
 import { TermsAcceptance } from "@/components/TermsAcceptance";
-import { authFetch } from "@/lib/authFetch";
 
 import { FedimintPanel } from "@/components/payments/FedimintPanel";
 import { FeeEstimator } from "@/components/widgets/FeeEstimator";
@@ -447,32 +446,13 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
   const generateAiCopy = async () => {
     setIsAiGenerating(true);
     try {
-      const res = await fetch('/api/ai/optimize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          campaign: {
-            headline,
-            description,
-            platforms: selectedPlatforms,
-            budget: btcAmount,
-          },
-          prompt: `Generate compelling ad copy for a Bitcoin/crypto advertising campaign targeting ${selectedPlatforms.join(', ')}.
-Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy and Bitcoin-native) and "description" (max 150 characters, conversion-focused). No extra fields.`,
-        }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.headline) setHeadline(data.headline);
-        if (data.description) setDescription(data.description);
-      } else {
-        // Fallback copy if AI service unavailable
-        setHeadline("The Future of Bitcoin Advertising is Here");
-        setDescription("Experience seamless, decentralized ad buying with Tadbuy. Instant settlements, global reach, AI-driven optimization.");
-      }
+      // No /api/ai/optimize backend on the static host — provide a local suggestion
+      // so the builder still works as a demo funnel. Nothing is sent anywhere.
+      await new Promise(r => setTimeout(r, 600)); // brief "thinking" for UX
+      setHeadline("The Future of Bitcoin Advertising is Here");
+      setDescription("Experience seamless, decentralized ad buying with Tadbuy. Instant settlements, global reach, AI-driven optimization.");
     } catch (e) {
       console.error("AI generation failed", e);
-      // Fallback
       setHeadline("Buy Ads with Bitcoin. Pay in Sats.");
       setDescription("Tadbuy coordinates Bitcoin-native placements across Nostr and independent publisher channels.");
     } finally {
@@ -514,10 +494,12 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
   };
 
   const writeCampaignToFirestore = async (paidInvoiceId: string | null) => {
+    // Local demo — the platform has no /api/campaigns backend on the static host,
+    // so no campaign is created remotely. The draft persists on the device via
+    // useCampaignDraft; this builds the receipt object only.
     const campaignData = {
       name: campaignName || `Campaign_${Date.now()}`,
       budgetSats: Math.round(btcAmount * 100_000_000),
-      // Server forces draft; live only after /api/payments/confirm
       status: 'draft' as const,
       createdAt: new Date().toISOString(),
       headline,
@@ -529,30 +511,15 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
       payment: paymentMethod,
       invoiceId: paidInvoiceId || null,
     };
-    const res = await authFetch('/api/campaigns', {
-      method: 'POST',
-      body: JSON.stringify(campaignData),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error((err as { error?: string }).error || 'Failed to create campaign');
-    }
-    return res.json() as Promise<{ id: string }>;
+    // Return a local demo id so the success screen has something stable to show.
+    return { id: `demo-${projectId}` } as { id: string };
   };
 
-  const finalizeCampaign = async (verified: boolean, paidInvoiceId: string | null) => {
-    const created = await writeCampaignToFirestore(paidInvoiceId);
-    if (verified && paidInvoiceId && created?.id) {
-      try {
-        await authFetch('/api/payments/confirm', {
-          method: 'POST',
-          body: JSON.stringify({ invoiceId: paidInvoiceId, campaignId: created.id }),
-        });
-      } catch {
-        // Campaign saved as draft; payment confirm can retry later
-      }
-    }
-    setPaymentOutcome(resolvePaymentOutcome(paymentMethod, verified));
+  const finalizeCampaign = async (_verified: boolean, _paidInvoiceId: string | null) => {
+    await writeCampaignToFirestore(null);
+    // Demo mode — nothing was charged or submitted. Real settlement connects once
+    // the platform API is online (see /beta). Draft remains on the device.
+    setPaymentOutcome('demo');
     setPaymentStatus('success');
     setShowInvoice(false);
     setIsDeploying(false);
@@ -589,114 +556,16 @@ Return valid JSON with exactly two fields: "headline" (max 60 characters, punchy
     setIsDeploying(true);
     setPaymentError(null);
 
-    if (paymentMethod === 'fedimint') {
-      setPaymentError('Use the Pay with Ecash button in the Fedimint panel above.');
+    // Demo mode — nothing is charged or submitted. The platform has no
+    // /api/lightning/invoice or /api/payments/confirm backend on the static host,
+    // so the launch always resolves to a labelled demo outcome.
+    try {
+      await finalizeCampaign(false, null);
+    } catch (e) {
+      setPaymentError(e instanceof Error ? e.message : 'Failed to save campaign');
+      setPaymentStatus('idle');
       deployLockRef.current = false;
       setIsDeploying(false);
-      return;
-    }
-
-    if (paymentMethod === 'lightning') {
-      // Capture invoice id in a local variable (avoid stale React state in poll)
-      let activeInvoiceId: string | null = null;
-
-      try {
-        const amountSats = Math.round(btcAmount * 100_000_000);
-        const res = await authFetch('/api/lightning/invoice', {
-          method: 'POST',
-          body: JSON.stringify({ amountSats, description: `Tadbuy Ad: ${headline}` })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.request) setBolt11Invoice(data.request);
-          if (data.id) {
-            activeInvoiceId = data.id as string;
-            setInvoiceId(data.id);
-          }
-        } else if (res.status === 401) {
-          setPaymentError('Sign in required to create a Lightning invoice.');
-          deployLockRef.current = false;
-          setIsDeploying(false);
-          return;
-        }
-      } catch (e) {
-        console.warn('Could not fetch real invoice — using demo fallback');
-      }
-
-      startInvoiceCountdown();
-      setPaymentStatus('waiting');
-
-      if (!activeInvoiceId) {
-        // Demo / LND offline: save as draft without claiming payment
-        stopInvoiceCountdown();
-        try {
-          await finalizeCampaign(false, null);
-        } catch (e) {
-          setPaymentError(e instanceof Error ? e.message : 'Failed to save campaign');
-          setPaymentStatus('idle');
-          deployLockRef.current = false;
-          setIsDeploying(false);
-        }
-        return;
-      }
-
-      const pollId = await new Promise<'success' | 'timeout'>((resolve) => {
-        let attempts = 0;
-        const MAX_ATTEMPTS = 40;
-        const poll = setInterval(async () => {
-          attempts++;
-          try {
-            const checkRes = await authFetch(`/api/lightning/check/${activeInvoiceId}`);
-            if (checkRes.ok) {
-              const checkData = await checkRes.json();
-              if (checkData.paid === true || checkData.status === 'settled') {
-                clearInterval(poll);
-                pollRef.current = null;
-                setPaymentStatus('processing');
-                resolve('success');
-                return;
-              }
-            }
-          } catch {
-            // transient — keep polling
-          }
-          if (attempts >= MAX_ATTEMPTS) {
-            clearInterval(poll);
-            pollRef.current = null;
-            resolve('timeout');
-          }
-        }, 3000);
-        pollRef.current = poll;
-      });
-
-      stopInvoiceCountdown();
-
-      if (pollId === 'success') {
-        try {
-          await finalizeCampaign(true, activeInvoiceId);
-        } catch (e) {
-          setPaymentError(e instanceof Error ? e.message : 'Failed to save campaign');
-          setPaymentStatus('idle');
-          deployLockRef.current = false;
-          setIsDeploying(false);
-        }
-      } else {
-        setPaymentError('Payment not detected within timeout. Please check your wallet and try again.');
-        setPaymentStatus('idle');
-        deployLockRef.current = false;
-        setIsDeploying(false);
-      }
-    } else {
-      // On-chain: save as draft/pending — not live until payment verified
-      setPaymentStatus('processing');
-      try {
-        await finalizeCampaign(false, null);
-      } catch (e) {
-        setPaymentError(e instanceof Error ? e.message : 'Failed to save campaign');
-        setPaymentStatus('idle');
-        deployLockRef.current = false;
-        setIsDeploying(false);
-      }
     }
   };
 

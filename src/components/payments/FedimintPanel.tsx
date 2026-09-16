@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Loader2, CheckCircle2, ExternalLink, Wallet } from 'lucide-react';
-import { Button, Input, Label, FormGroup } from '@/components/ui';
-import { Badge, Progress, Alert } from '@/components/ui/index';
-import { getFedimintStatus, joinFederation, payWithFedimint, formatEcashBalance, getDefaultFedimintInvite } from '@/services/fedimintService';
+import { Shield, ExternalLink, Wallet } from 'lucide-react';
+import { Input, Label, FormGroup } from '@/components/ui';
+import { Badge, Alert } from '@/components/ui/index';
+import { getDefaultFedimintInvite } from '@/services/fedimintService';
 import { GIVEABIT_ECOSYSTEM } from '@/data/ecosystemConfig';
 import { useToast } from '@/components/Toast';
 import { SafeLink } from '@/components/SafeLink';
@@ -20,50 +20,24 @@ export function FedimintPanel({
   /** At checkout: join happens in Wallet, not here */
   checkoutMode?: boolean;
 }) {
-  const [status, setStatus] = useState<Awaited<ReturnType<typeof getFedimintStatus>> | null>(null);
   const [invite, setInvite] = useState(getDefaultFedimintInvite());
-  const [loading, setLoading] = useState(false);
-  const [paying, setPaying] = useState(false);
   const { addToast } = useToast();
 
-  useEffect(() => {
-    getFedimintStatus().then(setStatus).catch(() => {});
-  }, []);
+  // Fedimint is not connected in this demo build — the platform has no /api/fedimint
+  // backend on the static host, so no status/join/pay request is made. The Mint is
+  // staged on M4 per docs/BETA.md; until then this surface is a labelled preview.
 
-  const handleJoin = async () => {
+  const handleJoin = () => {
     if (!invite.trim()) {
       addToast('Enter a Fedimint invite code', 'error');
       return;
     }
-    setLoading(true);
-    try {
-      const s = await joinFederation(invite.trim());
-      setStatus(s);
-      addToast('Joined Fedimint federation', 'success');
-    } catch (e) {
-      addToast(e instanceof Error ? e.message : 'Join failed', 'error');
-    } finally {
-      setLoading(false);
-    }
+    addToast('Demo — the Fedimint federation is not connected in this build. Nothing was sent.', 'info');
   };
 
-  const handlePay = async () => {
-    setPaying(true);
-    try {
-      const result = await payWithFedimint(amountSats, memo);
-      if (result.success) {
-        addToast('Fedimint ecash payment confirmed', 'success');
-        onSuccess?.();
-      }
-    } catch (e) {
-      addToast(e instanceof Error ? e.message : 'Payment failed', 'error');
-    } finally {
-      setPaying(false);
-    }
+  const handlePay = () => {
+    addToast('Demo — Fedimint payments are not connected in this build. Nothing was sent or charged.', 'info');
   };
-
-  const balanceSats = status?.balanceMsats ? Math.floor(status.balanceMsats / 1000) : 0;
-  const balancePct = balanceSats > 0 ? Math.min(100, Math.round((balanceSats / (balanceSats + amountSats)) * 100)) : 0;
 
   return (
     <div className="space-y-4 p-4 rounded-xl border border-green/30 bg-green/5">
@@ -73,49 +47,23 @@ export function FedimintPanel({
           <div className="text-sm font-bold text-text">Fedimint Ecash</div>
           <div className="text-[10px] text-muted">Privacy-preserving federation payments</div>
         </div>
-        <Badge variant={status?.connected ? 'success' : 'warning'} dot className="ml-auto">
-          {status?.connected ? 'Connected' : 'Not Joined'}
+        <Badge variant="warning" dot className="ml-auto">
+          Not connected (demo)
         </Badge>
         <SafeLink href="https://fedimint.org" className="text-muted hover:text-green" showIcon>
           <ExternalLink className="w-4 h-4" />
         </SafeLink>
       </div>
 
-      {status?.connected ? (
-        <div className="space-y-3">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted">Federation</span>
-            <span className="font-bold">{status.federationName ?? status.federationId ?? 'Connected'}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted">Balance</span>
-            <span className="font-mono font-bold text-green">{formatEcashBalance(status.balanceMsats)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted">Campaign cost</span>
-            <span className="font-mono font-bold text-accent">{amountSats.toLocaleString()} sats</span>
-          </div>
+      <Alert variant="info" title="Demo preview">
+        Fedimint is staged on M4 and connects once the platform API is online. Until then this panel is a labelled
+        preview — no federation is joined and no ecash is moved.
+      </Alert>
 
-          <Progress value={balancePct} showLabel variant="green" />
-
-          {balanceSats < amountSats && (
-            <Alert variant="warning" title="Insufficient Balance">
-              Your ecash balance is below the campaign cost. Redeem more notes or fund via Lightning.
-            </Alert>
-          )}
-
-          <Button onClick={handlePay} disabled={paying || balanceSats < amountSats} className="w-full gap-2">
-            {paying ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-            Pay with Ecash
-          </Button>
-        </div>
-      ) : checkoutMode ? (
-        <Alert variant="info" title="Connect Fedimint in Wallet">
-          Join the <strong>{GIVEABIT_ECOSYSTEM.federation.name}</strong> once in your Wallet — then pay here with ecash.
-          <Link to="/wallet" className="mt-3 flex items-center justify-center gap-2 text-xs font-bold text-green hover:underline">
-            <Wallet className="w-4 h-4" />
-            Open Wallet to join federation
-          </Link>
+      {checkoutMode ? (
+        <Alert variant="info" title="Pay with Fedimint">
+          In this demo build, the campaign builder resolves to a labelled demo outcome instead of a real ecash payment.
+          Use the Launch flow to see it.
         </Alert>
       ) : (
         <div className="space-y-3">
@@ -132,9 +80,13 @@ export function FedimintPanel({
               className="font-mono text-xs"
             />
           </FormGroup>
-          <Button onClick={handleJoin} disabled={loading} variant="secondary" className="w-full">
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Join Federation'}
-          </Button>
+          <button
+            type="button"
+            onClick={handleJoin}
+            className="w-full px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent text-sm font-bold"
+          >
+            Join Federation (demo)
+          </button>
         </div>
       )}
     </div>
