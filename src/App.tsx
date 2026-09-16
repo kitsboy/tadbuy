@@ -1,7 +1,7 @@
-import { BrowserRouter as Router, Routes, Route, useLocation, Link, Navigate } from 'react-router-dom';
-import { useState, useEffect, lazy, Suspense, type ReactNode } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { cn } from './lib/utils';
-import { AuthProvider, useAuth } from './components/AuthProvider';
+import { AuthProvider } from './components/AuthProvider';
 import { ToastProvider } from './components/Toast';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -20,6 +20,7 @@ import { OfflineBanner } from './components/OfflineBanner';
 import { Spinner } from './components/ui/Spinner';
 import { RouteErrorBoundary } from './components/RouteErrorBoundary';
 import { CURRENCY_SYMBOLS } from './constants';
+import { AccountPreviewBanner } from './components/AccountPreviewBanner';
 
 // ── Lazily loaded: all other routes load on-demand ───────────────────────────
 const Dashboard        = lazy(() => import('./pages/Dashboard'));
@@ -71,45 +72,6 @@ function PageLoader() {
   );
 }
 
-// ── Protected route guard ─────────────────────────────────────────────────────
-function ProtectedRoute({ children, reason }: { children: ReactNode; reason?: string }) {
-  const { user, loading } = useAuth();
-  const location = useLocation();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-4 text-muted" role="status" aria-live="polite">
-          <Spinner size="md" />
-          <p className="text-sm">Loading…</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center max-w-sm space-y-4">
-          <div className="text-4xl">🔐</div>
-          <h2 className="text-xl font-extrabold">Sign in required</h2>
-          <p className="text-sm text-muted">
-            {reason ?? 'You need to be signed in to access this page.'}
-          </p>
-          <Link
-            to={`/profile?return=${encodeURIComponent(location.pathname + location.search)}`}
-            className="inline-block mt-2 px-6 py-2 bg-accent text-black font-bold rounded-xl hover:opacity-90 transition-opacity"
-          >
-            Sign In
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  return <>{children}</>;
-}
-
 // ── Main content + routes ─────────────────────────────────────────────────────
 function RoutedPages({ currency, rates }: { currency: string; rates: Record<string, number> }) {
   const location = useLocation();
@@ -148,13 +110,14 @@ function RoutedPages({ currency, rates }: { currency: string; rates: Record<stri
         <Route path="/cookies"     element={<Cookies />} />
         <Route path="/debug-lightning" element={<DebugLightning />} />
 
-        {/* Protected */}
-        <Route path="/campaigns"  element={<ProtectedRoute reason="Sign in to manage your active Bitcoin-native ad campaigns."><Campaigns /></ProtectedRoute>} />
-        <Route path="/wallet"     element={<ProtectedRoute reason="Sign in to access your wallet balance, Lightning address, and Fedimint ecash."><Wallet /></ProtectedRoute>} />
-        <Route path="/settings"   element={<ProtectedRoute reason="Sign in to update your profile, language, and currency preferences."><ProfileSettings /></ProtectedRoute>} />
-        <Route path="/analytics"  element={<ProtectedRoute reason="Sign in to view your campaign performance metrics."><CampaignAnalytics /></ProtectedRoute>} />
-        <Route path="/settlements" element={<ProtectedRoute reason="Sign in to view your ad spending settlements and publisher payouts."><Settlements /></ProtectedRoute>} />
-        <Route path="/dashboard"  element={<ProtectedRoute reason="Sign in to see your real-time ad performance dashboard."><Dashboard /></ProtectedRoute>} />
+        {/* Account-scoped routes — previews, not a sign-in wall (accounts are not
+            available in this build; see AccountPreviewBanner) */}
+        <Route path="/campaigns"  element={<AccountPreviewBanner><Campaigns /></AccountPreviewBanner>} />
+        <Route path="/wallet"     element={<AccountPreviewBanner><Wallet /></AccountPreviewBanner>} />
+        <Route path="/settings"   element={<AccountPreviewBanner><ProfileSettings /></AccountPreviewBanner>} />
+        <Route path="/analytics"  element={<AccountPreviewBanner><CampaignAnalytics /></AccountPreviewBanner>} />
+        <Route path="/settlements" element={<AccountPreviewBanner><Settlements /></AccountPreviewBanner>} />
+        <Route path="/dashboard"  element={<AccountPreviewBanner><Dashboard /></AccountPreviewBanner>} />
 
         {/* Embeds */}
         <Route path="/embed/metrics/:id" element={<MetricsEmbed />} />

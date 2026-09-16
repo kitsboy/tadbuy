@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { CheckCircle2, Sparkles, LogIn, BarChart2 } from "lucide-react";
+import { CheckCircle2, Sparkles, BarChart2 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { Badge } from "@/components/ui/Badge";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
@@ -38,7 +38,6 @@ interface SuccessScreenProps {
   selectedPlatformsData: PlatformData[];
   estimates: EstimatesData;
   outcome: PaymentOutcome;
-  isAuthenticated: boolean;
   onReset: () => void;
 }
 
@@ -58,13 +57,11 @@ export default function SuccessScreen({
   selectedPlatformsData,
   estimates,
   outcome,
-  isAuthenticated,
   onReset,
 }: SuccessScreenProps) {
   const reducedMotion = usePrefersReducedMotion();
   const badge = outcomeBadge(outcome);
   const analyticsUrl = `/analytics?campaign=${encodeURIComponent(projectId)}`;
-  const campaignsUrl = isAuthenticated ? '/campaigns' : `/profile?return=${encodeURIComponent(analyticsUrl)}`;
 
   return (
     <AnimatePresence>
@@ -140,20 +137,6 @@ export default function SuccessScreen({
             Campaign ID: {projectId}
           </p>
 
-          {!isAuthenticated && (
-            <div className="bg-surface border border-border rounded-xl p-4 mb-6 text-left">
-              <p className="text-xs text-muted mb-3">
-                Sign in to claim this campaign and view analytics in your dashboard.
-              </p>
-              <Link to={`/profile?return=${encodeURIComponent(analyticsUrl)}`}>
-                <Button size="sm" className="w-full gap-2">
-                  <LogIn className="w-4 h-4" />
-                  Sign in to claim campaign
-                </Button>
-              </Link>
-            </div>
-          )}
-
           <div className="bg-surface border border-border rounded-2xl p-5 mb-6 text-left space-y-3 tadbuy-receipt-total">
             <div className="text-[10px] uppercase tracking-widest text-muted font-bold" data-tip="Your official campaign receipt. Every figure below is what actually happened — no estimates dressed up as facts.">Campaign Summary</div>
             <div className="flex justify-between text-sm">
@@ -200,9 +183,10 @@ export default function SuccessScreen({
                 See what happens next
               </Button>
             </Link>
-            <Link to={campaignsUrl} className="flex-1">
+            <Link to="/campaigns" className="flex-1">
               <Button variant="secondary" size="lg" className="w-full">
-                {isAuthenticated ? 'All Campaigns' : 'Sign in & Campaigns'}
+                <CheckCircle2 className="w-4 h-4" />
+                View Campaigns
               </Button>
             </Link>
           </div>

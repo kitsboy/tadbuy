@@ -23,14 +23,12 @@ import { getCheckoutPaymentMethods } from "@/lib/payments/registry";
 import { type PaymentOutcome } from "@/lib/campaignPaymentStatus";
 import { getMarketplaceSlot, slotToPlatforms, type MarketplaceSlot } from "@/data/marketplaceSlots";
 import { GEO_MARKETS } from "@/data/geoMarkets";
-import { useAuth } from "@/components/AuthProvider";
-import { AuthGateModal } from "@/components/AuthGateModal";
+import { useCampaignDraft, useAutoSaveDraft } from "@/hooks/useCampaignDraft";
 import { PersonaOnboarding } from "@/components/PersonaOnboarding";
 import { FirstVisitChecklist } from "@/components/FirstVisitChecklist";
 import { FullControlWizard } from "@/components/buyads/FullControlWizard";
 import type { CampaignTemplate } from "@/components/buyads/CampaignTemplates";
 import { ComingSoonPayments } from "@/components/buyads/ComingSoonPayments";
-import { useCampaignDraft, useAutoSaveDraft } from "@/hooks/useCampaignDraft";
 import { Alert } from "@/components/ui/Alert";
 import { SpendLimitBanner } from "@/components/SpendLimitBanner";
 import { AdPolicyNotice } from "@/components/AdPolicyNotice";
@@ -117,7 +115,6 @@ const paymentMethods = checkoutPaymentDefs.map(pm => ({
 export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { currency?: string, rate?: number, symbol?: string }) {
   usePageMeta('Buy Ads', 'Plan a Bitcoin-native campaign across Nostr and independent publisher channels. Choose vendors, proof requirements, and delivery steps before payment.');
 
-  const { user } = useAuth();
   // rate === 0 means "no live BTC/fiat rate yet" — the caller only passes a real
   // number once mempool.space has answered. Never substitute a hardcoded price:
   // the whole budget panel is a conversion from sats, so a stale rate is a lie.
@@ -127,7 +124,6 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
 
   const [currentStep, setCurrentStep] = useState(1);
   const [mode, setMode] = useState<'simple' | 'complex'>('simple');
-  const [showAuthGate, setShowAuthGate] = useState(false);
   const [showComingSoonPayments, setShowComingSoonPayments] = useState(false);
   const [paymentOutcome, setPaymentOutcome] = useState<PaymentOutcome>('demo');
   const [marketplaceSlot, setMarketplaceSlot] = useState<MarketplaceSlot | null>(null);
@@ -528,10 +524,6 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
   };
 
   const handleLaunchClick = () => {
-    if (!user) {
-      setShowAuthGate(true);
-      return;
-    }
     if (!termsAccepted) {
       return;
     }
@@ -539,10 +531,6 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
   };
 
   const handleFedimintSuccess = async () => {
-    if (!user) {
-      setShowAuthGate(true);
-      return;
-    }
     try {
       await finalizeCampaign(false, null);
     } catch (e) {
@@ -793,16 +781,9 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
           selectedPlatformsData={selectedPlatformsData}
           estimates={estimates}
           outcome={paymentOutcome}
-          isAuthenticated={!!user}
           onReset={resetForm}
         />
       )}
-
-      <AuthGateModal
-        isOpen={showAuthGate}
-        onClose={() => setShowAuthGate(false)}
-        returnPath="/"
-      />
 
       <div id="campaign-builder" className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 scroll-mt-24 px-safe">
         <div className="min-w-0">
@@ -1536,10 +1517,7 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
               >
                 ⚡ Deploy via PPQ.AI — Pay with Bitcoin
               </Button>
-              {!user && (
-                <p className="text-[10px] text-muted text-center mt-2">Sign in required before checkout</p>
-              )}
-              {user && !termsAccepted && (
+              {!termsAccepted && (
                 <p className="text-[10px] text-muted text-center mt-2">Accept terms to continue to payment</p>
               )}
             </div>
