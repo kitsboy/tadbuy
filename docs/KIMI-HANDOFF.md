@@ -1,4 +1,34 @@
+# DECISION NOTE — 2026-09-16 · Dead-code sweep closed by re-measurement: 4 dead modules → 2, connect-src narrowed by one host (t_7010056b, Ziggy)
+
+**Context.** Card `t_7010056b` was written against a census dated 2026-09-13 ("92 of 283 `src` modules unreachable from every entry point; 21 reference a host outside `connect-src`; 3 make real blocked fetches"). By the time this lane ran, that census was stale: the deletions themselves had **already landed on main** — commits `743776c` → `9a61812` (90 files, 8,788 lines, one batch per commit) are ancestors of `origin/main`, they were simply never reported, which is why the card re-opened with four "crashed, exited without reporting" attempts against it. Nothing was re-deleted; the branch (`wt/t_7010056b`) is fully contained in main.
+
+**Re-measured, independently, on `origin/main` @ `2e8be67`** — script `deadcode_report2.py` (walks the live tree; entry points = `src/main.tsx`, `server.ts`, **every** `scripts/*`, `functions/**/*.js`; the CSP allowlist is *parsed out of `public/_headers` connect-src* so the report can never drift from the shipped policy):
+
+| | card claim (2026-09-13) | measured (2026-09-16) |
+|---|---|---|
+| `src` modules | 283 total, 92 dead | 207 total, **4 dead** |
+| dead modules referencing a host outside `connect-src` | 21 | **1** (`src/lib/security/csp.ts`) |
+| dead modules making real blocked fetches | 3 | **0** |
+| dead modules referencing `/api/*` | — | **0** |
+
+**Action taken.** Deleted the last two dead modules that the card's do-not-touch list leaves unprotected:
+- `src/lib/security/csp.ts` — the second, non-served copy of the CSP story (a `DEFAULT_CSP` object with `styleSrc: fonts.googleapis.com`, `upgradeInsecureRequests`). `public/_headers` is the single served policy; two answers is how a stale one gets cited as "our policy". This was the *only* remaining dead module referencing a non-allowlisted host, so the card's DoD condition is now literally true.
+- `src/hooks/useDocumentTitle.ts` — superseded by the reachable `usePageMeta` (`src/lib/meta/`, warmed into `index.html` by `scripts/warm-legal-chunks.mjs`) and by prerendered `<title>`/meta in `scripts/prerender-seo.mjs`. No route mounts it.
+
+**Kept, deliberately:** `src/lib/db/firestore.ts` + `src/lib/db/firestoreAdmin.ts` are still dead but the card explicitly protects `src/lib/db/*` (they are the node server's lane, not the SPA's). Both reference **zero** `http(s)` hosts, so they carry no CSP hazard. They are now the only dead code left in `src` (2 of 207) and they are what keeps `firebase`/`firebase-admin` in the dependency tree. Whether they and the reachable-but-unused `src/firebase.ts` + `AuthProvider.tsx` should follow is the **product decision already flagged on the card** (client-side Firebase vs our own API surface) — not a dead-code decision, and untouched here.
+
+**What dead code costs, measured (not asserted).** Building `origin/main` **with the 88 already-deleted modules restored** yields the identical bundle to building it without them: 74 JS/CSS assets, **2955.4 KiB → 2955.8 KiB** (0.4 KiB delta, i.e. build-noise, same asset count) — Rollup only walks imported modules, so unreachable code costs repo surface and reader trust, **not kilobytes**. Verified by grep over `dist/assets/*.js`: no built chunk contains `blockstream.info`, `amboss`, `api.spark.xyz`, `joinmarket`, `mint.sats.cc`, `api.twilio.com`, `africastalking`, `unsplash`, `jsdelivr`, `myshopify`, `0x0swap` or `whirlpool`.
+
+**One host removed from `connect-src` (`https://*.supabase.co`) — a narrowing, not a widening.** The card invited this if the host was only held open by dead client code. Evidence: after a full build, **0 occurrences of `supabase` in any `dist/assets/*.js`** (only `dist/_headers` itself and `dist/metrics.json`); `@supabase/supabase-js` is imported solely by `src/lib/db/supabaseAdmin.ts` + `src/lib/db/impressionLogs.ts`, which `server.ts` consumes as the **node server**, where a browser `connect-src` directive has no effect. Every host left in `connect-src` is backed by shipped code: `mempool.space` (PriceTicker), `api.satohash.io` + nostr relays (BuyAds), `analytics.giveabit.io` (`index.html` loads `https://analytics.giveabit.io/script.js`). `https://*.nostr.build` had no client reference either and was **left alone on purpose**: it is a NIP-96 file host a near-term upload feature would want, and removing it is not this card's call — flagging it rather than guessing.
+
+**Not this lane:** `api.giveabit.io` 530 (card `t_3b53ad15`); the `identitytoolkit.googleapis.com`-in-`vendor-firebase` decision (product call, noted on the card, header must not be widened); `src/pages/ApiDocs.tsx` / `WebhookDebugger.tsx` (already deleted by the 2026-09-13 batches — if a public API reference is ever wanted it gets built against something real).
+
+**Sources of truth:** regenerated census attached to the card; `public/_headers` carries the narrowing rationale inline; `src/App.tsx` route table + `scripts/check-routes.mjs` guard the deletions.
+
+---
+
 # DECISION NOTE — 2026-09-16 · CSP is site-wide now; accounts are out of this build
+
 
 **Context:** Tadbuy's Content-Security-Policy lived in the `/` section of `public/_headers`, so every other SPA route shipped with no CSP (verified live 2026-09-13: `/profile` and `/api-docs` had none) — every CSP measurement of the prior week was taken against a header that only protected the homepage. The day the CSP is real site-wide, client Firebase auth stops working: `identitytoolkit.googleapis.com` is not in `connect-src` and must never be.
 
