@@ -1,3 +1,23 @@
+# DECISION NOTE — 2026-09-17 · Product call: `https://*.nostr.build` is removed from `connect-src` — no shipped or scheduled surface uploads a file (t_2039b0e1, Nova)
+
+**The question.** `t_7010056b` narrowed `connect-src` by `https://*.supabase.co` and deliberately *left* `https://*.nostr.build` in place, on the grounds that a NIP-96 file host plausibly serves a near-term upload feature. The card rule is one host, only for a live need, so it came back as a product call rather than a dead-code call: **does any shipped or near-term Tadbuy surface upload a file to a NIP-96 file server?**
+
+**Ruling: remove it.** `connect-src` now reads `'self' https://mempool.space https://api.satohash.io wss://relay.damus.io wss://nos.lol wss://relay.snort.social https://analytics.giveabit.io`. This is a narrowing — allowed by the rule; re-adding is one line, justified by a live need on the day it exists.
+
+**Why, measured rather than assumed (fresh clone of `origin/main` @ `8d84bdc`, full `npm run build`):**
+
+1. **Zero callers.** `grep -rIn "nostr.build" src server.ts scripts functions` → **0 matches**. After the build, the **only** file anywhere under `dist/` containing the string was `dist/_headers` itself — 0 hits across all 73 `dist/assets/*.js` chunks.
+2. **The upload that does exist never leaves the browser.** The campaign-creative picker (`src/pages/BuyAds.tsx` + `src/components/buyads/StepCreative.tsx`, `handleImageUpload`) does `FileReader.readAsDataURL(file)` into React state and renders it as a local preview. No fetch, no persistence — the data URL is gone on reload.
+3. **Nostr distribution is text-only.** `src/services/nostrService.ts` publishes a kind-1 note signed by the user's NIP-07 extension over the three `wss://` relays; the payload is headline/description/url. No media, no file host.
+4. **No phase plans one.** `docs/DISTRIBUTION-ROADMAP.md` phases 1–5 put Nostr on relay publication and treat proof as a *vendor-submitted* URL/screenshot/date — nothing in the roadmap is an in-app upload to a NIP-96 host.
+5. **A future nostr.build *image* would not need this entry anyway.** `img-src 'self' data: blob: https:` already permits rendering one; only an upload *fetch* needs `connect-src`. So removing the host blocks nothing the app can already display.
+
+**Why remove rather than keep "just in case":** that is precisely the drift the file's own comment forbids — a callerless host surviving sweeps because it looks plausible. Being wrong costs one line the day an upload UI ships; keeping it wrongly costs the rule itself.
+
+**Re-add trigger for the next sweep:** when an upload surface ships (creative sent to a file host, avatar, vendor proof upload), add the host back to `connect-src` in `public/_headers` and name the caller in the comment. The rationale lives inline in `public/_headers` so it is found without this file.
+
+---
+
 # DECISION NOTE — 2026-09-16 · Dead-code sweep closed by re-measurement: 4 dead modules → 2, connect-src narrowed by one host (t_7010056b, Ziggy)
 
 **Context.** Card `t_7010056b` was written against a census dated 2026-09-13 ("92 of 283 `src` modules unreachable from every entry point; 21 reference a host outside `connect-src`; 3 make real blocked fetches"). By the time this lane ran, that census was stale: the deletions themselves had **already landed on main** — commits `743776c` → `9a61812` (90 files, 8,788 lines, one batch per commit) are ancestors of `origin/main`, they were simply never reported, which is why the card re-opened with four "crashed, exited without reporting" attempts against it. Nothing was re-deleted; the branch (`wt/t_7010056b`) is fully contained in main.

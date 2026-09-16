@@ -44,17 +44,31 @@
 # [2026-09-16 t_7010056b] connect-src narrowed by one host: https://*.supabase.co.
 # Nothing in the shipped bundle references supabase.co (0 hits in dist/assets/*.js
 # after a full build); @supabase/supabase-js is imported only by src/lib/db/*, which
-# runs in the node server — a browser CSP directive cannot affect it. Every remaining
-# host is backed by shipped code: mempool.space (PriceTicker), api.satohash.io +
-# tadbuy relays/nostr.build (BuyAds), analytics.giveabit.io (index.html loads
-# https://analytics.giveabit.io/script.js).
+# runs in the node server — a browser CSP directive cannot affect it.
+# [2026-09-17 t_2039b0e1] connect-src narrowed by one host: https://*.nostr.build.
+# RULING (nova, product): REMOVE. Measured the same way as supabase — 0 hits in
+# src/ and 0 in dist/assets/*.js after a full build (the only occurrence anywhere in
+# dist/ was this file) — and nothing shipped or scheduled needs it: the campaign
+# creative picker reads the file locally (BuyAds `handleImageUpload` ->
+# FileReader.readAsDataURL; the data URL never leaves the page, it is preview-only
+# state) and Nostr distribution is a text-only kind-1 note signed by the user's
+# NIP-07 extension (src/services/nostrService.ts). docs/DISTRIBUTION-ROADMAP.md
+# phases 1-5 plan no NIP-96/NIP-94 upload, and Phase 1 proof is a vendor-submitted
+# URL/screenshot, not an in-app upload. Note only an upload *fetch* would need
+# connect-src — RENDERING a nostr.build image already works under
+# img-src 'self' data: blob: https:. Re-add the host (one line) the day an upload UI
+# ships; the live need justifies it then, and report-uri would surface the blocked
+# request until it does.
+# Every remaining host is backed by shipped code: mempool.space (PriceTicker),
+# api.satohash.io + the wss:// relays (BuyAds), analytics.giveabit.io (index.html
+# loads https://analytics.giveabit.io/script.js).
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(self), interest-cohort=(), payment=()
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://mempool.space https://analytics.giveabit.io https://satohash.io; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://mempool.space https://api.satohash.io https://*.nostr.build wss://relay.damus.io wss://nos.lol wss://relay.snort.social https://analytics.giveabit.io; frame-src 'self'; manifest-src 'self'; report-uri https://tadbuy.giveabit.io/api/csp-report
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://mempool.space https://analytics.giveabit.io https://satohash.io; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://mempool.space https://api.satohash.io wss://relay.damus.io wss://nos.lol wss://relay.snort.social https://analytics.giveabit.io; frame-src 'self'; manifest-src 'self'; report-uri https://tadbuy.giveabit.io/api/csp-report
 
 # Block access to sensitive files
 /.env
