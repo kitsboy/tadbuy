@@ -63,7 +63,7 @@ const CASE_STUDIES = [
     budgetSats: '500,000 sats',
     ctr: '5.1%',
     roi: '4.1×',
-    platforms: ['Stacker News', 'Primal', 'Reddit'],
+    platforms: ['Nostr', 'Community forums', 'Reddit'],
     summary:
       'How a Bitcoin rewards card would target Bitcoin community feeds with native ad formats. Fedimint ecash checkout would let it test creatives without exposing card data or waiting for invoice NET-30 terms.',
     results: [

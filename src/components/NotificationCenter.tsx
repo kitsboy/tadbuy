@@ -18,8 +18,8 @@ const MOCK_NOTIFICATIONS: Notification[] = [
   { id: 1, type: 'success', title: 'Campaign Live',       body: '"Bitcoin Summer" is now live and running.',      time: '2m ago',  read: false },
   { id: 2, type: 'success', title: 'Payment Received',    body: '₿0.0025 received for campaign top-up.',          time: '18m ago', read: false },
   { id: 3, type: 'warning', title: 'Low Balance Warning', body: 'Wallet balance below 5,000 sats. Top up soon.',  time: '1h ago',  read: false },
-  { id: 4, type: 'info',    title: 'New Bid on Slot',     body: 'Someone outbid you on "Nostr.com Sidebar".',     time: '3h ago',  read: true  },
-  { id: 5, type: 'success', title: 'Publisher Approved',  body: 'Bitcoin.org approved your placement request.',   time: '1d ago',  read: true  },
+  { id: 4, type: 'info',    title: 'New Bid on Slot',     body: 'Someone outbid you on "Nostr Client Sidebar".',        time: '3h ago',  read: true  },
+  { id: 5, type: 'success', title: 'Placement Approved',  body: 'A Bitcoin education site approved your placement request.', time: '1d ago',  read: true  },
 ];
 
 // ── Dot colour map ────────────────────────────────────────────────────────────
