@@ -1,10 +1,16 @@
-/** Shared marketplace inventory — used by Marketplace page and Buy Ads slot handoff */
+/** Shared marketplace inventory — used by Marketplace page and Buy Ads slot handoff.
+ *
+ *  Publisher identities here are DESCRIPTIVE ARCHETYPES, not real companies. No publisher has
+ *  listed inventory with Tadbuy and no auction has run; every slot below is example inventory.
+ *  Rule (see HQ docs/legal/LENNY-BRAND-SAMPLE-FIGURES-RULING.md): a real mark carrying invented
+ *  performance figures is a false attribution a label cannot cure — so never name a real
+ *  publisher, brand, property or show in this file. Keep the slot mechanic legible instead.
+ */
 
 export interface MarketplaceSlot {
   id: string;
   name: string;
   publisher: string;
-  publisherVerified: boolean;
   placement: string;
   format: string;
   category: string;
@@ -26,9 +32,9 @@ export interface MarketplaceSlot {
 }
 
 export const FEATURED_SLOT_IDS = [
-  'slot_yt_preroll',
-  'slot_btc_podcast',
-  'slot_stacker_banner',
+  'slot_youtube_preroll',
+  'slot_podcast_midroll',
+  'slot_community_banner',
 ] as const;
 
 /** Default auction window for hot slots (2 hours from seed time) */
@@ -38,10 +44,9 @@ function hotAuctionEnd(): string {
 
 export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
   {
-    id: 'slot_btc_hero',
-    name: 'Bitcoin.org Homepage Hero',
-    publisher: 'Bitcoin.org',
-    publisherVerified: true,
+    id: 'slot_education_hero',
+    name: 'Bitcoin Education Site Hero',
+    publisher: 'A Bitcoin education site',
     placement: 'Above the fold',
     format: '728×90 Leaderboard',
     category: 'Bitcoin & Crypto',
@@ -56,10 +61,9 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     platformType: 'Blogs',
   },
   {
-    id: 'slot_nostr_sidebar',
-    name: 'Nostr.com Sidebar',
-    publisher: 'Nostr.com',
-    publisherVerified: true,
+    id: 'slot_social_sidebar',
+    name: 'Nostr Client Sidebar',
+    publisher: 'A Nostr social client',
     placement: 'Article sidebar',
     format: '300×250 Rectangle',
     category: 'Social / Nostr',
@@ -74,10 +78,9 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     platformType: 'Nostr',
   },
   {
-    id: 'slot_stacker_banner',
-    name: 'Stacker News Top Banner',
-    publisher: 'Stacker News',
-    publisherVerified: true,
+    id: 'slot_community_banner',
+    name: 'Bitcoin Community Top Banner',
+    publisher: 'A Bitcoin community forum',
     placement: 'Top of feed',
     format: '970×250 Billboard',
     category: 'Bitcoin Community',
@@ -93,10 +96,9 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     auctionEndsAt: hotAuctionEnd(),
   },
   {
-    id: 'slot_ln_markets',
-    name: 'LN Markets Sidebar',
-    publisher: 'LN Markets',
-    publisherVerified: false,
+    id: 'slot_lightning_sidebar',
+    name: 'Lightning Trading App Sidebar',
+    publisher: 'A Lightning trading app',
     placement: 'Dashboard sidebar',
     format: '300×600 Half Page',
     category: 'Lightning / Finance',
@@ -111,10 +113,9 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     platformType: 'Newsletters',
   },
   {
-    id: 'slot_btcpay_footer',
-    name: 'BTCPay Server Footer',
-    publisher: 'BTCPay Server',
-    publisherVerified: true,
+    id: 'slot_tools_footer',
+    name: 'Open-Source Payments Docs Footer',
+    publisher: 'A Bitcoin payments project',
     placement: 'Documentation footer',
     format: '728×90 Leaderboard',
     category: 'Bitcoin Tools',
@@ -129,10 +130,9 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     platformType: 'Blogs',
   },
   {
-    id: 'slot_primal_feed',
-    name: 'Primal In-Feed Ad',
-    publisher: 'Primal',
-    publisherVerified: false,
+    id: 'slot_social_feed',
+    name: 'Nostr Client In-Feed Ad',
+    publisher: 'A Nostr social client',
     placement: 'Social feed',
     format: 'Native Feed Post',
     category: 'Social / Nostr',
@@ -147,11 +147,10 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     platformType: 'Nostr',
   },
   {
-    id: 'slot_btc_podcast',
-    name: 'Bitcoin Audible Mid-Roll',
-    publisher: 'Bitcoin Audible',
-    publisherVerified: true,
-    placement: 'Mid-roll (ep. 600+)',
+    id: 'slot_podcast_midroll',
+    name: 'Bitcoin Podcast Mid-Roll',
+    publisher: 'A Bitcoin podcast',
+    placement: 'Mid-roll',
     format: '60s Audio Ad',
     category: 'Bitcoin Community',
     audience: '95K listeners/episode',
@@ -166,10 +165,9 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     auctionEndsAt: hotAuctionEnd(),
   },
   {
-    id: 'slot_yt_preroll',
-    name: 'BTC Sessions Pre-Roll',
-    publisher: 'BTC Sessions',
-    publisherVerified: true,
+    id: 'slot_youtube_preroll',
+    name: 'Bitcoin YouTube Pre-Roll',
+    publisher: 'A Bitcoin YouTube channel',
     placement: 'YouTube pre-roll',
     format: '15s Video Ad',
     category: 'Bitcoin & Crypto',
@@ -185,10 +183,9 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     auctionEndsAt: hotAuctionEnd(),
   },
   {
-    id: 'slot_newsletter_swan',
-    name: 'Swan Signal Newsletter Sponsor',
-    publisher: 'Swan Bitcoin',
-    publisherVerified: true,
+    id: 'slot_newsletter_sponsor',
+    name: 'Bitcoin Newsletter Sponsor',
+    publisher: 'A Bitcoin newsletter',
     placement: 'Newsletter top sponsor',
     format: 'Sponsored Section',
     category: 'Bitcoin & Crypto',

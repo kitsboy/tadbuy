@@ -6,7 +6,7 @@ import { useToast } from "@/components/Toast";
 
 import {
   Search, Filter, Zap, Users, Globe, TrendingUp,
-  CheckCircle, ChevronDown, X, BarChart2, Star,
+  ChevronDown, X, BarChart2, Star,
   SlidersHorizontal, ArrowUpDown, ArrowUp, ArrowDown, PackageSearch, Heart, Bookmark,
 } from "lucide-react";
 import { usePageMeta } from "@/hooks/usePageMeta";
@@ -267,7 +267,6 @@ function FeaturedCard({ slot, onBid, onRequestPlacement }: { slot: MarketplaceSl
 
       <div className="flex items-center gap-2">
         <span className="text-xs font-bold text-muted">{slot.publisher}</span>
-        {slot.publisherVerified && <CheckCircle className="w-3.5 h-3.5 text-blue flex-shrink-0" />}
         {slot.status === "hot" && <span className="text-xs">🔥</span>}
         {slot.status === "hot" && slot.auctionEndsAt && (
           <HotAuctionCountdown endsAt={slot.auctionEndsAt} />
@@ -368,9 +367,6 @@ function SlotCard({ slot, onBid, onRequestPlacement }: { slot: MarketplaceSlot; 
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-1.5 min-w-0">
             <span className="text-xs font-bold text-muted truncate">{slot.publisher}</span>
-            {slot.publisherVerified && (
-              <CheckCircle className="w-3.5 h-3.5 text-blue flex-shrink-0" aria-label="Verified publisher" />
-            )}
           </div>
           {isHot ? (
             <div className="flex flex-col items-end gap-1">
@@ -641,6 +637,12 @@ export default function Marketplace() {
             </button>
           </div>
         </div>
+
+        {/* ── Example-inventory notice (no real publisher, no live auction) ── */}
+        <p className="text-[11px] text-muted border border-border rounded-lg px-3 py-2 bg-surface/40">
+          Example inventory — illustrative placements and figures. Publishers are described by
+          type, not named: no publisher has listed inventory with Tadbuy and no auction has run.
+        </p>
 
         {/* ── Featured Slots ─────────────────────────────────────────────── */}
         <div>

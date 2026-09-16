@@ -270,7 +270,7 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
     fetchBlockHeight();
   }, []);
 
-  // Marketplace slot handoff (?slot=slot_btc_hero)
+  // Marketplace slot handoff (?slot=slot_youtube_preroll)
   useEffect(() => {
     const slotId = searchParams.get('slot');
     if (!slotId) return;
