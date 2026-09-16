@@ -37,7 +37,7 @@ function main() {
   console.log(`   sats_processed:      ${kpi('sats_processed_total')}`);
   console.log(`   impressions:         ${kpi('impressions_delivered')}`);
   console.log(`   clicks:              ${kpi('clicks_delivered')}`);
-  console.log(`   active_publishers:   ${kpi('active_publishers')}`);
+  console.log(`   publisher types:     ${kpi('active_publishers')}  (demo inventory descriptions, no real publisher)`);
   console.log(`   active_platforms:    ${kpi('active_platforms')}`);
   console.log(`   source:              ${envelope.raw.source}`);
 }

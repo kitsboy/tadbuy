@@ -258,12 +258,12 @@ export function buildProductMetrics(input: MetricsBuildInput): ProductMetricsEnv
       },
       {
         key: 'active_publishers',
-        label: 'Active publishers',
+        label: 'Publisher types in demo inventory',
         value: input.publisherCount,
-        unit: 'publishers',
+        unit: 'types',
         format: 'number',
         priority: 3,
-        hint: 'Unique marketplace publishers in app inventory.',
+        hint: 'Distinct publisher descriptions in the demo marketplace catalog. No external publisher has listed inventory with Tadbuy.',
       },
       {
         key: 'active_platforms',
