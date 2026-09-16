@@ -1,3 +1,47 @@
+# DECISION NOTE — 2026-09-16 · Tadbuy capability claims made true (t_913bf909, Nova)
+
+**Context:** Tadbuy is a demo-mode preview on a static Cloudflare Pages host with no backend (t_1c9c0217 / t_a6f44865: "cut the API-shaped UI"). Four capability claims still read as present-tense working features, one of them contradicting the site's own demo banner. This card makes every page agree with `/beta`'s "No backend API is deployed for this build" line and the demo-mode banner. Decision per claim is grounded in family honesty patterns: "(planned)" / "(roadmap)" phrasing, or removal — never an invented status.
+
+## Decisions (per item, measured live with real Chromium on tadbuy.giveabit.io v5.0.204, 2026-09-16)
+
+**Item 1 — Homepage wizard "PPQ.AI connects directly to Twitter, Reddit, and other vendors via API": FIXED by the sibling card (t_a6f44865). Verified live, left as-is with evidence.**
+- Before (rendered 2026-09-13, "Powered by PPQ.AI" step): "Create once, deploy everywhere. PPQ.AI connects directly to Twitter, Reddit, and other vendors via API. Your ad stays on balance—top it up with Bitcoin anytime to extend its life without recreating it."
+- After (rendered 2026-09-16): "Coordinate the campaign once, then work with selected vendors to publish through the channels they control. PPQ.AI can help refine the creative; provider APIs and automatic buying are later phases."
+
+**Item 2 — "Agent API": removed from /pitch by the sibling card; the one survivor was the /compare table row. Reworded to the family's "(roadmap)" pattern (src/pages/Compare.tsx).**
+- Before: `Agent API | Nostr + REST agents` → After: `Agent API | Nostr + REST agents (roadmap)`.
+
+**Item 3 — "Fedimint Ecash · live" and the present-tense rail strip on /pitch contradicted the site's own demo banner and /beta ("Pay via Fedimint — STAGED · Demo now — real when Give A Bit Mint live on M4"). Removed the per-rail status claim; the rail set is now rendered as a roadmap set with one honest framing line (src/data/projectState.ts + src/pages/Pitch.tsx).**
+- Before: green "live" badges → "Fedimint Ecash · live", "Lightning · live", "On-chain BTC · live", "Nostr Zap · live", "LNURL-pay · live" (all false: no rail settles in this build).
+- After: a single muted strip of rail names under: "Rails this product is being built around — none settle in this build. Payments run in demo mode until the M4 Fedimint mint + Umbrel are connected. See what works →".
+- The "Fedimint Ecash Strategy" section also gained a grounded line: "Staged — not settling yet. Fedimint is demo mode in this build and turns real when the Give A Bit mint runs on M4. BETA status →".
+- `paymentMethods` now carries no `status` field (was the source of the false claims); scripts/sync-docs.ts updated so the generated docs/MARKETING.md rails list says the same instead of emitting "— undefined".
+- NASA-CAREFUL: all other Fedimint surface swept — /hubhash ("demo escrow holds sats" + DEMO label) and /enterprise ("IN PROGRESS/PLANNED") are already labelled honestly; left as-is.
+
+**Item 4 — Footer "API Reference" / "System Health" links: kept both, made the API Reference target honest.**
+- `/health` already honestly states no backend is configured → kept as-is (the link's target must, and does, tell the truth).
+- `/api-docs` (src/pages/ApiReference.tsx) did NOT state it: it sold a live API — "Tadbey uses LSATs ... You must include your Macaroon in the header", a curl to `https://api.tadbuy.giveabit.io/v1/campaigns` (that host does not resolve: curl = 000), "View full OpenAPI Specification", and "AI agents can discover capabilities via ..." Rewrote the page to a planned spec:
+  - New top notice: "Not deployed in this build. No backend API is deployed for this build (see BETA status), so no request on this page can succeed and no key or macaroon can be issued. What follows is the planned specification ... System Health lists what this deployment actually checks."
+  - Auth tab → "Planned scheme. Tadbuy will use LSATs ... No macaroon can be issued yet — the host below is not deployed." Curl block labelled "Example request — illustrative, not runnable today".
+  - Endpoints: removed `/v1/campaigns` and `/v1/metrics/:campaign_id` — neither path is implemented anywhere in the repo (decision rule: no endpoint advertised that does not exist). Kept the 3 paths that exist in `server/routes/`, all rendered "Not live yet" by the (already-cut) ApiExplorer.
+  - Agent Tools tab → "Planned. AI agents will be able to ...".
+  - "View full OpenAPI Specification" → "OpenAPI specification format (external — Tadbuy publishes no spec yet)" (it linked to swagger.io's format page, not a Tadbuy spec).
+
+## Verification
+- Live render (real Chromium) of the current production build before editing confirmed the exact before-strings above; the site-independent checks: `api.tadbuy.giveabit.io` → 000 (no DNS), `api.giveabit.io` → 530 (CF 1033, no origin).
+- `tsc --noEmit` clean; `npm run build` green; `check:routes` 38/38; e2e 15/15 pass.
+- Post-deploy re-render of /api-docs, /pitch, /compare will confirm the new strings on the served bundle (this card's DOD is the rendered page, done after deploy).
+
+## Files changed
+`src/pages/ApiReference.tsx`, `src/pages/Pitch.tsx`, `src/pages/Compare.tsx`, `src/data/projectState.ts`, `scripts/sync-docs.ts` (+ regenerated `docs/MARKETING.md`, `docs/BETA.md`, `docs/EXECUTIVE.md`, `docs/FEDIMINT.md`, `docs/GEO.md`, `LATEST-UPDATE.md`). Note `docs/KIMI-HANDOFF.md` earlier says `/beta` copy + `api.giveabit.io` claims are "owned by" t_913bf909 — that remains accurate: /beta was already honest; the api.giveabit.io claims are handled by the sibling Ziggy card t_5fc250b7.
+
+## Not in scope / flagged
+- `/integrations` "API explorers run against M4 proxy or local dev server" line — owned by mimi's t_a0ee3087 (runs after this card); left untouched to avoid a duplicate-card conflict.
+- The `/pitch` "100-Feature Roadmap Progress — 25/25 / 100/100" counters claim full completion of everything; flagged as a separate honesty question, not exercised here (out of this card's backend-capability scope).
+- Auth-gated account surfaces stay the CSP sibling card's lane (t_69ff1772).
+
+---
+
 # DECISION NOTE — 2026-09-16 · Cut the API-shaped UI (Option 2)
 
 **Context:** Tadbuy is a demo-mode preview on a static Cloudflare Pages host with no backend. `GET /api/<anything>` returns the SPA shell (200 HTML) and `POST` returns 405, so every `/api/*` call in the UI was a request that cannot succeed — 14 of them fired on 6 public routes (measured live with headless Chromium), polling 404s so the homepage never reached network-idle.

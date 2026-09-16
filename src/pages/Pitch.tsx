@@ -102,6 +102,14 @@ export default function Pitch() {
           </div>
         </div>
         <p className="text-sm text-muted mb-4">{fedimint.description}</p>
+        {/* Grounded in /beta: "Pay via Fedimint — STAGED · Demo now — real when Give A Bit
+            Mint live on M4". The section is a strategy, so it says so instead of reading
+            as a rail that is already accepting sats. */}
+        <p className="text-xs text-muted mb-4">
+          <strong className="text-text">Staged — not settling yet.</strong> Fedimint is demo mode in this build and
+          turns real when the Give A Bit mint runs on M4.{' '}
+          <Link to="/beta" className="text-accent hover:underline">BETA status →</Link>
+        </p>
         <div className="grid md:grid-cols-2 gap-3">
           {fedimint.benefits.map(b => (
             <div key={b} className="flex items-start gap-2 text-sm">
@@ -161,22 +169,25 @@ export default function Pitch() {
         </div>
       </section>
 
-      {/* Payment Rails */}
+      {/* Payment Rails. Deliberately no per-rail status badge: in this build no rail
+          settles (payments are demo mode until the M4 Fedimint mint + Umbrel are
+          connected). /beta owns the per-flow statuses — never contradict it here. */}
       <section>
-        <h2 className="text-2xl font-extrabold mb-6 flex items-center gap-2">
+        <h2 className="text-2xl font-extrabold mb-2 flex items-center gap-2">
           <Globe className="w-6 h-6 text-accent" /> Sovereign Payment Rails
         </h2>
+        <p className="text-xs text-muted mb-4">
+          Rails this product is being built around — <strong className="text-text">none settle in this build</strong>.
+          Payments run in demo mode until the M4 Fedimint mint + Umbrel are connected.{' '}
+          <Link to="/beta" className="text-accent hover:underline">See what works →</Link>
+        </p>
         <div className="flex flex-wrap gap-2">
           {PROJECT_STATE.paymentMethods.map(p => (
             <span
               key={p.id}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold border ${
-                p.status === 'live' ? 'border-green/40 bg-green/10 text-green' :
-                p.status === 'beta' ? 'border-accent/40 bg-accent/10 text-accent' :
-                'border-border text-muted'
-              }`}
+              className="px-3 py-1.5 rounded-full text-xs font-bold border border-border text-muted"
             >
-              {p.name} · {p.status}
+              {p.name}
             </span>
           ))}
         </div>

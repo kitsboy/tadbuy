@@ -24,15 +24,16 @@ Reddit · Meta (Facebook + Instagram) · Google/YouTube · Spotify · Pinterest 
 - Privacy-conscious brands
 
 ## Payment Rails (Marketing Points)
-- **Lightning** — live
-- **Fedimint Ecash** — live
-- **BOLT12 Offers** — beta
-- **On-chain BTC** — live
-- **Nostr Zap** — live
-- **Cashu Ecash** — beta
-- **LNURL-pay** — live
-- **Silent Payments** — beta
-- **BIP-47 Codes** — beta
+No per-rail status is published: in this build no rail settles — payments run in demo mode until the M4 Fedimint mint + Umbrel are connected. `/beta` owns the per-flow statuses.
+- Lightning
+- Fedimint Ecash
+- BOLT12 Offers
+- On-chain BTC
+- Nostr Zap
+- Cashu Ecash
+- LNURL-pay
+- Silent Payments
+- BIP-47 Codes
 
 ## Live URL
 https://tadbuy.giveabit.io

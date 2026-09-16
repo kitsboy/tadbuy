@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { Terminal, ExternalLink, Copy, CheckCircle2 } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui";
@@ -12,36 +13,11 @@ import { SafeLink } from "@/components/SafeLink";
 const AUTH_CURL = `curl -X GET https://api.tadbuy.giveabit.io/v1/campaigns \\
   -H "Grpc-Metadata-macaroon: YOUR_MACAROON_HEX"`;
 
+// Only paths that exist in the repository's own server (`server/routes/`) are listed.
+// The two /v1/* rows that were here advertised paths implemented nowhere in the repo —
+// an endpoint that does not exist is exactly the claim this page must not make
+// (decision note t_1c9c0217 / t_a6f44865: cut the API-shaped UI).
 const ENDPOINTS = [
-  {
-    method: 'POST' as const,
-    path: '/v1/campaigns',
-    description: 'Creates a new ad campaign and returns a BOLT 11 or BOLT 12 payment request for funding.',
-    request: `{
-  "name": "My API Campaign",
-  "budget_sats": 50000,
-  "platforms": ["twitter", "nostr"],
-  "targeting": {
-    "interests": ["bitcoin", "tech"]
-  }
-}`,
-    explorer: '/api/campaigns',
-    explorerLabel: 'List Campaigns',
-  },
-  {
-    method: 'GET' as const,
-    path: '/v1/metrics/:campaign_id',
-    description: 'Fetches real-time performance metrics for a specific campaign.',
-    request: `{
-  "id": "camp_98234",
-  "status": "live",
-  "impressions": 14502,
-  "clicks": 342,
-  "spend_sats": 12500
-}`,
-    explorer: '/api/metrics',
-    explorerLabel: 'Metrics',
-  },
   {
     method: 'GET' as const,
     path: '/api/marketplace/inventory',
@@ -87,16 +63,25 @@ function CopyButton({ text, id }: { text: string; id: string }) {
 }
 
 export default function ApiReference() {
-  usePageMeta('API Reference', 'REST API for campaigns, metrics, wallet, and agent automation.');
+  usePageMeta('API Reference', 'Planned REST API for campaigns, metrics, wallet, and agent tools — no backend is deployed in this build.');
   const { copied, copy } = useCopyToClipboard();
 
   return (
     <PageShell
       title="API Reference"
-      description="Integrate Tadbuy programmatically — campaigns, metrics, settlements, and agent tools."
+      description="The planned developer surface — campaigns, metrics, settlements, and agent tools. Nothing here is callable in this build."
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'API' }]}
       maxWidth="max-w-4xl"
     >
+      <Card className="glass-panel p-5 border-border mb-6">
+        <p className="text-sm text-muted leading-relaxed">
+          <strong className="text-text">Not deployed in this build.</strong> No backend API is deployed for this build
+          (see <Link to="/beta" className="text-accent hover:underline">BETA status</Link>), so no request on this page
+          can succeed and no key or macaroon can be issued. What follows is the planned specification — a label for
+          work that is scoped, not a live service. <Link to="/health" className="text-accent hover:underline">System
+          Health</Link> lists what this deployment actually checks.
+        </p>
+      </Card>
       <Tabs defaultValue="auth">
         <TabsList>
           <TabsTrigger value="auth">Authentication</TabsTrigger>
@@ -113,8 +98,13 @@ export default function ApiReference() {
               <CardTitle className="text-xl m-0">Authentication</CardTitle>
             </div>
             <p className="text-sm text-muted mb-4 leading-relaxed">
-              Tadbuy uses LSATs (Lightning Service Authentication Tokens) and Macaroons for API authentication.
-              You must include your Macaroon in the <code className="bg-bg px-1.5 py-0.5 rounded text-accent">Grpc-Metadata-macaroon</code> header.
+              <strong className="text-text">Planned scheme.</strong> Tadbuy will use LSATs (Lightning Service
+              Authentication Tokens) and Macaroons for API authentication, sent in the{' '}
+              <code className="bg-bg px-1.5 py-0.5 rounded text-accent">Grpc-Metadata-macaroon</code> header. No macaroon
+              can be issued yet — the host below is not deployed.
+            </p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-2">
+              Example request — illustrative, not runnable today
             </p>
             <div className="bg-bg p-4 rounded-xl border border-border font-mono text-xs text-muted relative group">
               <pre>{AUTH_CURL}</pre>
@@ -171,8 +161,10 @@ export default function ApiReference() {
           <Card className="glass-panel p-6">
             <CardTitle>Agent Discovery</CardTitle>
             <p className="text-sm text-muted mb-4 leading-relaxed">
-              AI agents can discover capabilities via <code className="text-accent">GET /api/agent/manifest/v2</code> and
-              list tools at <code className="text-accent">GET /api/agent/tools</code>.
+              <strong className="text-text">Planned.</strong> AI agents will be able to discover capabilities via{' '}
+              <code className="text-accent">GET /api/agent/manifest/v2</code> and list tools at{' '}
+              <code className="text-accent">GET /api/agent/tools</code>. Both paths exist in the repository's own server
+              and are not served by this static deployment.
             </p>
             <ApiExplorer endpoint="/api/agent/discovery" label="Agent Discovery" method="GET" />
             <ApiExplorer endpoint="/api/api-reference/endpoints" label="All Endpoints" method="GET" />
@@ -182,7 +174,7 @@ export default function ApiReference() {
 
       <div className="mt-8 pt-8 border-t border-border">
         <SafeLink href="https://swagger.io/specification/" target="_blank" showIcon className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors">
-          <ExternalLink className="w-4 h-4" /> View full OpenAPI Specification
+          <ExternalLink className="w-4 h-4" /> OpenAPI specification format (external — Tadbuy publishes no spec yet)
         </SafeLink>
       </div>
     </PageShell>

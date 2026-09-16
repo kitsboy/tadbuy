@@ -38,4 +38,4 @@ FEDIMINT_GATEWAY_URL=https://your-mint-gateway
 | /api/fedimint/pay | POST | Pay campaign with ecash |
 
 ---
-*Tadbuy v5.0.205*
+*Tadbuy v5.0.206*

@@ -15,7 +15,7 @@ const ROWS = [
   { feature: 'Audience targeting', tadbuy: 'Geo + interest (PPQ.AI)', traditional: 'Behavioral profiling' },
   { feature: 'Publisher payout', tadbuy: 'Instant Lightning sats', traditional: 'Monthly ACH/wire' },
   { feature: 'Minimum spend', tadbuy: '~$5 equivalent in sats', traditional: '$500–$10,000 minimums' },
-  { feature: 'Agent API', tadbuy: 'Nostr + REST agents', traditional: 'Locked enterprise APIs' },
+  { feature: 'Agent API', tadbuy: 'Nostr + REST agents (roadmap)', traditional: 'Locked enterprise APIs' },
   { feature: 'Chargebacks', tadbuy: 'None (Bitcoin finality)', traditional: 'Disputes & clawbacks' },
 ] as const;
 

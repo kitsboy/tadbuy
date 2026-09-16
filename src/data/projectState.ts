@@ -72,16 +72,20 @@ export const PROJECT_STATE = {
     ],
   },
 
+  // Rails the product is built around. Deliberately no per-rail status: in this build
+  // no rail settles — payments run in demo mode until the M4 Fedimint mint + Umbrel are
+  // connected. `/beta` owns the per-flow statuses (Lightning BETA, Fedimint STAGED,
+  // on-chain BETA) and this data must never contradict it.
   paymentMethods: [
-    { id: 'lightning', name: 'Lightning', status: 'live' },
-    { id: 'fedimint', name: 'Fedimint Ecash', status: 'live' },
-    { id: 'bolt12', name: 'BOLT12 Offers', status: 'beta' },
-    { id: 'btc', name: 'On-chain BTC', status: 'live' },
-    { id: 'zap', name: 'Nostr Zap', status: 'live' },
-    { id: 'cashu', name: 'Cashu Ecash', status: 'beta' },
-    { id: 'lnurl', name: 'LNURL-pay', status: 'live' },
-    { id: 'silent', name: 'Silent Payments', status: 'beta' },
-    { id: 'bip47', name: 'BIP-47 Codes', status: 'beta' },
+    { id: 'lightning', name: 'Lightning' },
+    { id: 'fedimint', name: 'Fedimint Ecash' },
+    { id: 'bolt12', name: 'BOLT12 Offers' },
+    { id: 'btc', name: 'On-chain BTC' },
+    { id: 'zap', name: 'Nostr Zap' },
+    { id: 'cashu', name: 'Cashu Ecash' },
+    { id: 'lnurl', name: 'LNURL-pay' },
+    { id: 'silent', name: 'Silent Payments' },
+    { id: 'bip47', name: 'BIP-47 Codes' },
   ],
 
   featureBatches: {

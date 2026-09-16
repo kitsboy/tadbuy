@@ -130,7 +130,8 @@ Reddit · Meta (Facebook + Instagram) · Google/YouTube · Spotify · Pinterest 
 ${PROJECT_STATE.marketing.audiences.map(a => `- ${a}`).join('\n')}
 
 ## Payment Rails (Marketing Points)
-${PROJECT_STATE.paymentMethods.map(p => `- **${p.name}** — ${p.status}`).join('\n')}
+No per-rail status is published: in this build no rail settles — payments run in demo mode until the M4 Fedimint mint + Umbrel are connected. \`/beta\` owns the per-flow statuses.
+${PROJECT_STATE.paymentMethods.map(p => `- ${p.name}`).join('\n')}
 
 ## Live URL
 ${PROJECT_STATE.liveUrl}
