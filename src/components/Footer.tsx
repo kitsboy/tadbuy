@@ -472,6 +472,8 @@ export default function Footer() {
 
             <div className="text-[10px] text-muted font-mono">
               © 2026 Give A Bit — family of Bitcoin-native tools. All rights reserved.
+              <br />
+              No cookies. We use self-hosted, cookie-less analytics. Nothing to consent to.
             </div>
           </div>
         </div>
