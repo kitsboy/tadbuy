@@ -14,10 +14,16 @@ function platformGuideHref(label: string): string | null {
   return p ? `/platforms/${p.slug}` : null;
 }
 
+// Brand names removed on legal ruling (Lenny, card t_902d8e2e): pairing a real
+// trademark with invented performance figures is not cured by a label — a real mark
+// next to "Sample ROI 3.2×" still reads as a claim about that company, and nominative
+// fair use fails its no-endorsement prong. Cards stay (the mechanic is the point),
+// counterparties become descriptive archetypes; figures stay, now attached to nobody.
+// Ruling: /root/hq/docs/legal/LENNY-BRAND-SAMPLE-FIGURES-RULING.md
 const CASE_STUDIES = [
   {
-    id: 'swan',
-    brand: 'Swan Bitcoin',
+    id: 'dca-exchange',
+    brand: 'A DCA exchange',
     tagline: 'DCA messaging to cold audiences',
     budget: '₿ 0.012',
     budgetSats: '1,200,000 sats',
@@ -33,8 +39,8 @@ const CASE_STUDIES = [
     ],
   },
   {
-    id: 'strike',
-    brand: 'Strike',
+    id: 'lightning-payments-app',
+    brand: 'A Lightning payments app',
     tagline: 'Lightning payments awareness',
     budget: '₿ 0.008',
     budgetSats: '800,000 sats',
@@ -50,8 +56,8 @@ const CASE_STUDIES = [
     ],
   },
   {
-    id: 'fold',
-    brand: 'Fold',
+    id: 'bitcoin-rewards-card',
+    brand: 'A Bitcoin rewards card',
     tagline: 'Bitcoin rewards for everyday spend',
     budget: '₿ 0.005',
     budgetSats: '500,000 sats',
@@ -86,9 +92,9 @@ export default function CaseStudies() {
       <p className="text-xs text-muted leading-relaxed border border-border rounded-xl p-3 bg-surface">
         <strong className="text-text">Sample content — nothing here is a reported result.</strong> No campaign has run
         on Tadbuy yet: this build has no backend and no settlement (see{' '}
-        <Link to="/beta" className="text-accent hover:underline">BETA status</Link>), so no brand below has advertised
-        with us and no figure below was measured. Each card shows the shape of a campaign a brand would run; treat every
-        number as a sample.
+        <Link to="/beta" className="text-accent hover:underline">BETA status</Link>), so no brand is named below and no
+        figure below was measured. Each card shows the shape of a campaign a brand would run; treat every number as a
+        sample.
       </p>
 
       {CASE_STUDIES.map(study => (
