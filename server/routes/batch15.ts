@@ -27,12 +27,12 @@ export function registerBatch15Routes(app: Express) {
     });
   });
 
-  app.get('/api/mempool/fees', async (_req, res) => {
-    try {
-      const r = await fetch('https://mempool.space/api/v1/fees/recommended');
-      res.json(await r.json());
-    } catch {
-      res.json({ fastestFee: 5, halfHourFee: 4, hourFee: 3, economyFee: 2 });
-    }
-  });
+  // NOTE (2026-09-16): the former `/api/mempool/fees` dev proxy is DELETED.
+  // Nothing called it after the client moved to the one live source
+  // (https://mempool.space/api/v1/fees/recommended, see
+  // src/hooks/useMempoolFees.ts), and its `catch` invented a
+  // `{ fastestFee: 5, halfHourFee: 4, hourFee: 3 }` snapshot — exactly the
+  // "constant rendered as a measurement" defect this change removes. Do not
+  // reintroduce a server-side fee fallback: a fee we have not measured must
+  // render as unavailable, not as a number.
 }

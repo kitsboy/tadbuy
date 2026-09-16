@@ -9,12 +9,7 @@ import { FeeBreakdown } from "@/components/payments/FeeBreakdown";
 import { DemoModeBadge } from "@/components/payments/DemoModeBadge";
 import { InvoiceRegenerate } from "@/components/payments/InvoiceRegenerate";
 import { TermsAcceptance } from "@/components/TermsAcceptance";
-
-interface MempoolFees {
-  fastestFee: number;
-  halfHourFee: number;
-  hourFee: number;
-}
+import { ASSUMED_TX_VBYTES, type MempoolFees } from "@/hooks/useMempoolFees";
 
 interface PaymentModalProps {
   show: boolean;
@@ -24,7 +19,12 @@ interface PaymentModalProps {
   invoiceSecondsLeft: number;
   invoiceCopied: boolean;
   onCopyInvoice: () => void;
-  mempoolFees: MempoolFees;
+  /**
+   * A measured mempool.space snapshot, or `null` while we have none — see
+   * `useMempoolFees`. `null` renders as "unavailable", never as a placeholder
+   * number dressed up as an estimate.
+   */
+  mempoolFees: MempoolFees | null;
   btcAmount: number;
   fiatAmount: number;
   paymentMethod: string;
@@ -251,9 +251,19 @@ export default function PaymentModal({
                 <div className="bg-surface border border-border rounded-xl p-3 text-left">
                   <div className="text-[10px] text-muted uppercase font-bold mb-1">Network Fee</div>
                   <div className="text-lg font-extrabold text-green">
-                    {paymentMethod === 'btc' ? `~${((mempoolFees.fastestFee * 140) / 100000000).toFixed(8)} ₿` : '0.00000 ₿'}
+                    {paymentMethod === 'btc'
+                      ? (mempoolFees
+                          ? `~${((mempoolFees.fastestFee * ASSUMED_TX_VBYTES) / 100000000).toFixed(8)} ₿`
+                          : '—')
+                      : '0.00000 ₿'}
                   </div>
-                  <div className="text-[10px] text-muted">{paymentMethod === 'btc' ? `Estimated (${mempoolFees.fastestFee} sat/vB)` : 'Lightning Free'}</div>
+                  <div className="text-[10px] text-muted">
+                    {paymentMethod === 'btc'
+                      ? (mempoolFees
+                          ? `Estimated (${mempoolFees.fastestFee} sat/vB)`
+                          : 'Fee rate unavailable')
+                      : 'Lightning Free'}
+                  </div>
                 </div>
               </div>
 

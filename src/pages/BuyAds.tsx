@@ -40,6 +40,7 @@ import { authFetch } from "@/lib/authFetch";
 import { FedimintPanel } from "@/components/payments/FedimintPanel";
 import { FeeEstimator } from "@/components/widgets/FeeEstimator";
 import { MempoolFeeTip } from "@/components/MempoolFeeTip";
+import { useMempoolFees } from "@/hooks/useMempoolFees";
 import { CurrencyDisplay } from "@/components/widgets/CurrencyDisplay";
 import { HalvingCountdown } from "@/components/widgets/HalvingCountdown";
 
@@ -155,14 +156,14 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
   const [hashtagInput, setHashtagInput] = useState('');
   const [adImage, setAdImage] = useState<string | null>(null);
   const [isAiGenerating, setIsAiGenerating] = useState(false);
-  const [mempoolFees, setMempoolFees] = useState({ fastestFee: 5, halfHourFee: 4, hourFee: 3 });
-
-  useEffect(() => {
-    fetch('https://mempool.space/api/v1/fees/recommended')
-      .then(res => res.json())
-      .then(data => setMempoolFees(data))
-      .catch(console.error);
-  }, []);
+  /**
+   * Live mempool.space fee snapshot, or `null` while we have none (see
+   * `useMempoolFees`). This used to be initialised to a hardcoded
+   * `{ fastestFee: 5, halfHourFee: 4, hourFee: 3 }` and assigned any JSON body
+   * straight from the fetch, so the payment step could print an invented
+   * `Estimated (5 sat/vB)` as if it were measured.
+   */
+  const mempoolFees = useMempoolFees();
 
   // --- Advanced Mode State ---
   const [platformWeights, setPlatformWeights] = useState<Record<string, number>>({ twitter: 100 });
