@@ -23,7 +23,7 @@ export default function Integrations() {
   return (
     <PageShell
       title="Integrations Hub"
-      description="API explorers run against M4 proxy or local dev server. Status badges reflect honest rollout — not all endpoints are production-ready."
+      description="The Tadbuy API is planned, not live in this build. Integrations below are a roadmap preview — no endpoint is callable yet and nothing runs from this page."
       badge={<StatusPill status="beta" />}
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Integrations' }]}
       actions={
@@ -77,7 +77,7 @@ export default function Integrations() {
 
       <Card className="glass-panel">
         <h2 className="text-sm font-bold mb-2">OpenAPI 3.1 Spec</h2>
-        <p className="text-sm text-muted mb-4">Fetch the machine-readable API spec (requires API server online).</p>
+        <p className="text-sm text-muted mb-4">The machine-readable OpenAPI spec will be published when the API goes live — no spec is served in this build.</p>
         <ApiExplorer endpoint="/api/v3/openapi.json" label="OpenAPI" />
         <Link to="/api-docs" className="inline-block mt-4">
           <Button variant="secondary" className="gap-2"><Code className="w-4 h-4" /> Human Docs</Button>
