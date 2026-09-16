@@ -202,6 +202,85 @@ export async function stampHash(
   }
 }
 
+export type SatohashVerifyResult = {
+  ok: boolean;
+  verified: boolean;
+  verified_method?: 'bitcoind' | 'esplora';
+  bitcoin_block_height?: number | null;
+  ots_download_url?: string;
+  explainer?: string;
+  status?: string;
+  error?: string;
+  reason?: string | null;
+  httpStatus?: number;
+  data?: unknown;
+};
+
+/**
+ * POST /api/verify — resolve a SHA-256 hash against the Bitcoin blockchain.
+ * Truth source: `presented` (`.verified`) + `(verified_method, bitcoin_block_height)`
+ * are authoritative; `registry.status` is NOT proof (registry = index, not chain).
+ * Graceful offline: returns ok:false (does not throw) when the API is down.
+ */
+export async function verifyHash(
+  hash: string,
+  opts?: { signal?: AbortSignal },
+): Promise<SatohashVerifyResult> {
+  const normalized = hash.trim().toLowerCase().replace(/^0x/, '');
+  if (!HEX64.test(normalized)) {
+    return { ok: false, verified: false, error: 'Hash must be 64 hex characters (SHA-256)' };
+  }
+  try {
+    const res = await fetch(`${getSatohashApiUrl()}/api/verify`, {
+      method: 'POST',
+      headers: stampHeaders(),
+      body: JSON.stringify({ hash: normalized }),
+      signal: opts?.signal,
+    });
+    let body: Record<string, unknown> = {};
+    try {
+      body = (await res.json()) as Record<string, unknown>;
+    } catch {
+      /* non-JSON body */
+    }
+    if (!res.ok) {
+      const msg =
+        (typeof body.error === 'string' && body.error) ||
+        (typeof body.message === 'string' && body.message) ||
+        `Satohash verify failed (HTTP ${res.status})`;
+      return {
+        ok: false,
+        verified: body.verified === true,
+        verified_method: body.verified_method as SatohashVerifyResult['verified_method'],
+        bitcoin_block_height: typeof body.bitcoin_block_height === 'number' ? body.bitcoin_block_height : null,
+        ots_download_url: typeof body.ots_download_url === 'string' ? body.ots_download_url : undefined,
+        explainer: typeof body.explainer === 'string' ? body.explainer : undefined,
+        reason: typeof body.reason === 'string' ? body.reason : null,
+        error: msg,
+        httpStatus: res.status,
+        data: body,
+      };
+    }
+    return {
+      ok: true,
+      verified: body.verified === true,
+      verified_method: body.verified_method as SatohashVerifyResult['verified_method'],
+      bitcoin_block_height: typeof body.bitcoin_block_height === 'number' ? body.bitcoin_block_height : null,
+      ots_download_url: typeof body.ots_download_url === 'string' ? body.ots_download_url : undefined,
+      explainer: typeof body.explainer === 'string' ? body.explainer : undefined,
+      reason: typeof body.reason === 'string' ? body.reason : null,
+      httpStatus: res.status,
+      data: body,
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      verified: false,
+      error: err instanceof Error ? err.message : 'Satohash API unreachable',
+    };
+  }
+}
+
 /**
  * GET /api/stamps/:id — proof status for a stamp id. Never throws.
  */

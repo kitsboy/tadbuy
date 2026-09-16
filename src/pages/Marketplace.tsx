@@ -20,6 +20,7 @@ import { MARKETPLACE_PLATFORM_TYPES } from '@/data/platforms';
 import { PageShell } from '@/components/PageShell';
 import { PlacementRequestModal } from '@/components/marketplace/PlacementRequestModal';
 import { usePlacementRequests } from '@/hooks/usePlacementRequests';
+import { TrustProofMoments } from '@/components/trust/TrustProofMoments';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -847,6 +848,11 @@ export default function Marketplace() {
               )}
             </AnimatePresence>
           </div>
+        </div>
+
+        {/* ── Proof of trust — four moments sealed to a Bitcoin block ─── */}
+        <div className="mt-12 border-t border-border pt-8">
+          <TrustProofMoments />
         </div>
       </PageShell>
 

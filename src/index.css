@@ -365,6 +365,22 @@
   border: 1px solid rgba(244, 114, 182, 0.28);
 }
 
+/* ── Family trust tokens — HowProofWorks proof UI ──────────────────────
+   The shared trust component reads the family token names (--accent-gold,
+   --bg-secondary, --border, --text-primary/secondary, --surface-raised,
+   --accent-success/alert). We map them onto Tadbuy's jewel-tone theme so the
+   proof surfaces blend in, keeping the family brass gold accent. */
+.trust-proof-surface {
+  --accent-gold: #B8893A;
+  --accent-success: #4ade80;
+  --accent-alert: #f87171;
+  --border: #3f3f46;
+  --bg-secondary: #27272a;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --surface-raised: #202024;
+}
+
 /* ── HeroBanner — richer pink jewel aurora ────────────────────────────── */
 .hero-jewel-orbit {
   position: absolute;
