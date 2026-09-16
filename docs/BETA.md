@@ -1,6 +1,6 @@
 # Tadbuy — BETA Status
 
-**Auto-generated:** 2026-09-16 · **Version:** v5.0.204
+**Auto-generated:** 2026-09-16 · **Version:** v5.0.205
 
 ## Phase: BETA
 
@@ -11,7 +11,7 @@
 | Global Reach (/geo) | ✅ Live — 100 enhancements, 25 markets |
 | Metrics / Analytics UI | ✅ Live |
 | SPA routing | ✅ Fixed (React Router v7 sync) |
-| API (/api/*) | ⏳ Needs M4 proxy or `npm run dev` |
+| API (/api/*) | ✅ UI cut — no page calls /api/* (demo-mode preview; backend is a separate, deferred plan) |
 | Fedimint (Give A Bit Mint) | ⏳ Staged on M4 |
 | Umbrel Lightning | ⏳ Not ready |
 | Real payments | 🔶 Demo mode |

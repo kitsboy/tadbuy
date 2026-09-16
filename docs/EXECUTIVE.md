@@ -1,6 +1,6 @@
 # Tadbuy — Executive Summary
 
-**Auto-generated:** 2026-09-16 · **Version:** v5.0.204
+**Auto-generated:** 2026-09-16 · **Version:** v5.0.205
 
 ## Mission
 Build a sovereign advertising marketplace where advertisers buy transparent placements, independent publishers earn in sats, and campaign delivery is verifiable.
@@ -13,10 +13,10 @@ _Source: /api/metrics. Rows read "—" when the endpoint is unreachable — no e
 
 | Metric | Value |
 |--------|-------|
-| Campaigns | — |
-| Live campaigns | — |
-| Impressions | — |
-| Clicks | — |
+| Campaigns | 0+ |
+| Live campaigns | 0+ |
+| Impressions | 1,240,000+ |
+| Clicks | 14,820+ |
 
 ## Distribution model
 Tadbuy coordinates Bitcoin-native advertising placements across Nostr and independent websites, newsletters, and podcasts. Advertisers plan once, vendors publish through channels they control, and every delivery has a clear proof path.
