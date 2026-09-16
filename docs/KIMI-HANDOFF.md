@@ -1,3 +1,15 @@
+# DECISION NOTE — 2026-09-16 · CSP is site-wide now; accounts are out of this build
+
+**Context:** Tadbuy's Content-Security-Policy lived in the `/` section of `public/_headers`, so every other SPA route shipped with no CSP (verified live 2026-09-13: `/profile` and `/api-docs` had none) — every CSP measurement of the prior week was taken against a header that only protected the homepage. The day the CSP is real site-wide, client Firebase auth stops working: `identitytoolkit.googleapis.com` is not in `connect-src` and must never be.
+
+**Decision (executed by t_69ff1772):** move the policy into the `/*` catch-all block so it is genuinely site-wide; keep `report-uri`; do not widen `connect-src` (family rule: one host, only for a live need). Because sign-in would then be CSP-blocked, and because an account currently buys the user nothing on a build with no backend: **no accounts in this build**. `AuthGateModal` is deleted; the 6 ProtectedRoute routes (`/campaigns` `/wallet` `/settings` `/analytics` `/settlements` `/dashboard`) render as labelled previews (`AccountPreviewBanner`, same pattern as `/metrics` and `/marketplace`); `/profile` is an honest "accounts not available in this preview build" state; the success screen no longer offers "Sign in to claim".
+
+**What this means for the real backend:** the account surface must be rebuilt with **Supabase Auth** (sibling real-backend card `t_90e1c3d1` plan / `docs/BACKEND-SCOPE.md`). `src/components/AuthProvider.tsx` + `src/firebase.ts` remain reachable through the App wrapper (intentionally untouched — deletion is `t_7010056b`'s lane) and can be replaced wholesale when Supabase auth lands.
+
+**Sources of truth:** `public/_headers` comment documents why the CSP must stay in `/*`. The verification record (curl matrix, Chromium sweep, CSP-enforcement proof on a non-root route) lives on the card.
+
+---
+
 # DECISION NOTE — 2026-09-16 · Tadbuy capability claims made true (t_913bf909, Nova)
 
 **Context:** Tadbuy is a demo-mode preview on a static Cloudflare Pages host with no backend (t_1c9c0217 / t_a6f44865: "cut the API-shaped UI"). Four capability claims still read as present-tense working features, one of them contradicting the site's own demo banner. This card makes every page agree with `/beta`'s "No backend API is deployed for this build" line and the demo-mode banner. Decision per claim is grounded in family honesty patterns: "(planned)" / "(roadmap)" phrasing, or removal — never an invented status.
