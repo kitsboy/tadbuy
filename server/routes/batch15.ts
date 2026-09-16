@@ -12,6 +12,12 @@ export function registerBatch15Routes(app: Express) {
     });
   });
 
+  // NOTE (2026-09-16): the client no longer reads this route. Demo state is pinned
+  // at build time by VITE_DEMO_PAYMENTS (src/components/payments/DemoModeBadge.tsx),
+  // because a flag derived from an HTTP response meant the money UI's "demo" badge
+  // could silently disappear. `demoPayments` below is NOT that condition (the honest
+  // one is a wallet ledger + spend limits, per requireLnPayoutsEnabled) — do not
+  // re-wire the client to it.
   app.get('/api/feature-flags', (_req, res) => {
     res.json({
       lightningLive: !!process.env.UMBREL_LND_SOCKET,
