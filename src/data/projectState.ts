@@ -7,9 +7,9 @@
  * a reader cannot check.
  */
 export const PROJECT_STATE = {
-  version: 'v5.0.216',
+  version: 'v5.0.217',
   phase: 'BETA' as const,
-  lastSynced: '2026-09-16',
+  lastSynced: '2026-09-17',
   liveUrl: 'https://tadbuy.giveabit.io',
   repo: 'https://github.com/kitsboy/tadbuy',
 
