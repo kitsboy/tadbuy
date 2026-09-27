@@ -20,7 +20,7 @@ export function validateWizardStep(step: number, data: WizardStepData): WizardVa
 
   if (step === 1) {
     if (!data.selectedPlatforms.length) {
-      errors.push('Select at least one execution platform');
+      errors.push('Select at least one platform concept');
     }
     if (!data.btcAmount || data.btcAmount < minBudget) {
       errors.push(`Minimum budget is ${minBudget} BTC`);

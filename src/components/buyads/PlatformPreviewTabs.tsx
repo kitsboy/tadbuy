@@ -25,8 +25,8 @@ export function PlatformPreviewTabs({ platforms, variants, adImage }: PlatformPr
   if (!platforms.length) {
     return (
       <Card className="glass-panel">
-        <CardTitle>Ad preview</CardTitle>
-        <p className="text-xs text-muted mt-2">Select at least one platform to preview your ad.</p>
+        <CardTitle>Creative mockup</CardTitle>
+        <p className="text-xs text-muted mt-2">Select a platform concept to view a local creative mockup.</p>
       </Card>
     );
   }
@@ -36,7 +36,8 @@ export function PlatformPreviewTabs({ platforms, variants, adImage }: PlatformPr
 
   return (
     <Card className="glass-panel">
-      <CardTitle className="mb-3">Ad preview by platform</CardTitle>
+      <CardTitle className="mb-1">Creative mockup · {active.name}</CardTitle>
+      <p className="mb-3 text-[10px] text-muted">Illustrative layout only · not formatted for or delivered to the selected platform.</p>
       <div className="flex flex-wrap gap-1.5 mb-4 border-b border-border pb-3">
         {platforms.map(p => (
           <button
@@ -66,18 +67,18 @@ export function PlatformPreviewTabs({ platforms, variants, adImage }: PlatformPr
               style={{ backgroundColor: `hsl(${v.bgHue}, 40%, ${v.bgLightness}%)`, color: v.textColor }}
             >
               <div className="absolute top-2 right-2 bg-black/10 rounded text-[9px] px-1.5 py-0.5 font-bold tracking-wider uppercase opacity-70">
-                Sponsored
+                Sponsored · mockup
               </div>
               <div className="text-[10px] mb-2 flex items-center gap-1.5 opacity-80">
                 <span className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4">{active.icon}</span>
-                <strong>giveabit.io</strong>
-                <span className="opacity-70">@give_bit · {active.name}</span>
+                <strong>Sample advertiser</strong>
+                <span className="opacity-70">Preview · {active.name}</span>
               </div>
               <div className="text-[15px] font-bold mb-1 leading-tight">{v.headline || 'Your Headline Here'}</div>
               <div className="text-[13px] leading-relaxed opacity-90">{v.description || 'Your description will appear here.'}</div>
               {adImage && (
                 <div className="mt-3 rounded-lg overflow-hidden border border-black/10">
-                  <img src={adImage} alt="Ad Media" className="w-full h-auto object-cover max-h-[200px]" />
+                  <img src={adImage} alt="Local creative mockup" className="w-full h-auto object-cover max-h-[200px]" />
                 </div>
               )}
               {v.hashtags.length > 0 && (

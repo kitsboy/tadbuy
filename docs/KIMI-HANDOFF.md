@@ -1,4 +1,103 @@
+# Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-26
+
+## M3 Session update — 2026-09-26
+
+**Hi Kimi —** added the six top-priority questions and detailed follow-up requests below for your operational context. No need to recreate answers that already exist: links/evidence plus `confirmed`, `unknown`, or `decision needed` are ideal. There is no external message or VPS action from M3; this is the shared repository handoff.
+
+**M3 progress:** Marketplace samples now avoid invented audience counts and distinguish local preview requests from durable vendor requests. Buy Ads and Wallet/Bitcoin Protocol UI distinguish planning/readiness from live payments, delivery, balances, invoices, settlement, or proof. Nostr note publishing remains an explicit optional external publication action, separate from paid campaign launch. Local Marketplace requests are no longer advanceable as vendor-accepted/published/verified workflow records.
+
+**Checks:** `git diff --check` ✅; `npm run check:routes` ✅ (38/38). `npm run lint` blocked (`tsc: command not found`) and focused Playwright E2E blocked (`playwright: command not found`); dependencies were not installed. No build, runtime/browser verification, VPS/database/wallet/deploy, secrets, or provider changes. Commit prepared locally; push deliberately deferred because the pre-push hook invokes an unverified version-bump script and nested push. Kimi's operational answers remain pending; please add them below when convenient.
+
+---
+
+## Session — 2026-09-26
+
+**Done:**
+- Made Marketplace inventory, budgets, audience, local preview requests, and trust-flow concepts explicit examples rather than live vendor offers, reach figures, or verified records.
+- Made Buy Ads budget, audience, template, creative, payment, and checkout states explicitly local/planning-only; retained the optional real NIP-07 Nostr note as an external publishing action, not campaign activation.
+- Replaced Wallet and Bitcoin Protocol fabricated balances/invoices/escrow-like outputs with rail readiness and live public fee reference only; no fallback fee rates.
+- Added focused E2E assertions for Marketplace local sample semantics and Buy Ads no-payment preview semantics.
+- Left the six priority questions and specs consolidated at the top of this handoff for Kimi/HERMES; no direct message or ops change was made.
+
+**Decisions:**
+- No payment, payout, escrow, campaign activation, or audience/delivery claim is presented as operational without confirmed backend and operator gates.
+- Local sample placement requests remain display-only and cannot be advanced as vendor acceptance, publication, or proof review.
+- `git diff --check` and `npm run check:routes` pass (38/38). `npm run lint` could not run because `tsc` is absent; focused Playwright could not run because `playwright` is absent. No dependency installation, build, browser verification, or deploy.
+- Push deferred: the repository pre-push hook invokes an unverified version-bump script and performs a nested push. No external push was attempted.
+
+**Git State:**
+- Base SHA: `acaf4a7cc31a1eb26638e6e73bf21e57de4ca5cb` (`origin/main` at session start).
+- Unpushed: see local-only M3 commit; push is deliberately deferred pending verified checks and review of the pre-push hook.
+
+---
+
+
+**Hi Kimi —** thank you for carrying the VPS/HERMES operations and the wider Give A Bit context. I’ve pulled the latest Tadbuy `main` and reviewed its code/docs before touching these UI surfaces. You likely have the freshest operational picture; please correct anything stale below rather than re-deriving it. I’m keeping M3 changes to code and this handoff—**no VPS, database, wallet, deployment, or secret changes are requested or made.**
+
+Please reply in this file beneath this section when convenient. For each item, mark **confirmed**, **unknown**, or **decision needed**, include the date/source of evidence, and name the owner/next action where helpful. If something is blocked, a short “blocked by X” is enough. That lets M3 work from one shared source without repeated status pings or assumptions.
+
+## First six questions — highest priority
+
+1. **Product/live boundary:** What is Tadbuy’s current agreed launch shape: public demo, private pilot, or transacting product? Which exact user journeys and claims are approved as live today, and which must remain preview/staged?
+2. **Bitcoin payment path:** What receive/send rails are actually operational for Tadbuy now (Lightning Address/LNURL, Breez/Spark, LND, on-chain, Fedimint)? For each, what is the verified origin/provider, custodial model, settlement signal, limits, fees, and owner? Please distinguish “family has a receive address” from “Tadbuy can verify payment and activate a campaign.”
+3. **Backend reality:** Is there now an approved, reachable Tadbuy API and database? Please give the canonical origin, hosting/runtime, data plane/schema, auth mechanism, env-name list (names only), uptime/health source, and the most recent end-to-end verification date. Confirm explicitly whether the retired `api.giveabit.io` remains retired.
+4. **Family payment-core spec:** Is `src/lib/family-payment-core.mjs` still the intended shared contract? Please point to the canonical source/version and sibling adopters; clarify intent/idempotency/receipt/webhook fields, reference-code rules, per-service account separation, and what must never be shared (wallets, UTXOs, keys, liabilities). Which behaviours are only fixture/demo today?
+5. **Give A Bit Mint / Fedimint:** What is the actual mint/federation status, supported Fedi and Guardian versions, invite format, guardians/quorum, recovery/backup and availability plan, and who is authorized to issue invites? Is there a test federation? Please mark anything private and do not paste invite codes, secrets, macaroons, or keys here.
+6. **Permission and readiness:** What may M3 implement immediately without an ops/product approval, and what needs Cam/Kimi/Lenny or another named owner to decide first? In particular: do not enable payouts, escrow, real campaign activation, public vendor onboarding, or provider API automation unless you confirm the gate and evidence.
+
+## Specifications that would unblock safe implementation
+
+### Money, records, and operations
+
+7. **Ledger:** Is there a current double-entry ledger design? If yes, link the canonical schema/spec and explain balance ownership, pending/settled/reversed states, idempotency scope, reconciliation and audit trail. If not, who is designing it and what invariants should M3 preserve?
+8. **Payment verification:** What signed webhook/status callback or node query is authoritative for each rail? What are confirmation/finality rules, replay protection, invoice expiry, retry handling, refunds, chargebacks/disputes, and the safe failure mode?
+9. **Wallet custody and limits:** Which wallets are service-owned versus user-controlled? Who controls signing keys, how are they backed up/rotated, what are per-tx/daily limits, and is any outbound payment currently permitted? Please state “none” where appropriate.
+10. **API security:** What auth is canonical now—NIP-98, Supabase Auth, Firebase token verification, or another choice? How are service-role credentials isolated, CORS/CSRF handled, rate limits set, and production secrets rotated? Please share config names/specs, never values.
+11. **Database and backups:** Is `supabase-vendor-marketplace.sql` approved/applied? Which project/environment, migration owner, RLS review, backup schedule, restore drill, retention/deletion policy, and rollback plan are current? The repository’s older Supabase notes conflict, so please identify the newer source of truth.
+12. **Availability and incidents:** What is the current THOR service map and capacity headroom relevant to Tadbuy? Which uptime/error/DB/disk/backup alerts are live, where are runbooks, who is on point, and what should the UI say during an outage?
+
+### Vendors, identity, and distribution
+
+13. **Canonical identity list:** What Give A Bit/Tadbuy NIP-05 domains, names, npubs, and relay set are approved? Which values has the NIP-5 agent actually resolved, on what date, and which still need human review? Please provide public identifiers only.
+14. **Identity/approval policy:** Who approves a vendor profile and each inventory listing? Is NIP-05 resolution evidence only, or sufficient for any specific approval step? What is the suspension, appeal, and escalation path?
+15. **Pilot supply:** Which first vendors, communities, creators, geographies/languages, and properties are confirmed, with explicit consent and control evidence? Please distinguish “prospect,” “contacted,” “consented,” and “approved”; do not name a community/moderator as committed unless confirmed.
+16. **Commercial rules:** What are the approved sponsorship disclosure words, prohibited categories/creative, vendor acceptance terms, cancellation window, refunds, dispute handling, proof review SLA, and evidence retention? Can money move before proof review? The code currently assumes no real movement/payout before a real ledger and operator policy.
+17. **Delivery proof:** What evidence is acceptable by channel (Nostr event/relay receipt, website/newsletter URL, podcast episode/timestamp, screenshot), who reviews it, and what does “verified” mean? Please separate proof of publication from impressions, reach, click, conversion, and payment.
+18. **Provider access:** Which channel connections are actually authorized and testable (NIP-07/Nostr, Reddit, Meta, YouTube, etc.)? For each, identify the account owner, permission scope, sandbox, publishing action and measurement source. If there is no verified integration, should its UI remain “vendor-assisted” or “roadmap”?
+
+### Family coordination and collaboration
+
+19. **Shared service map:** What is the authoritative current family-of-services list (domains/repos/owners/purpose/status), and which products share identity, payment services, proof/metrics, support, or UI components? Please flag any intended separation boundaries.
+20. **Current progress/specs:** What recent THOR/HERMES work has landed that is not reflected in Tadbuy’s Git handoff—especially wallet rails, Give A Bit Mint, API status, metrics/HQ, account/auth, or family payment-core? Link commit/task/runbook and date so I can reconcile code without asking you to repeat it.
+21. **Ownership map:** Please give a non-overlapping assignment for Kimi/HERMES ops, M3 code, Otto/Grok Bot and sub-agents, NIP-5 agent, Cam, Lenny, and any vendors. For each, name the deliverable and handoff path (this file, HQ, a task card, or repo docs); mark anything unassigned rather than guessing.
+22. **Comms cadence:** Is this handoff format useful for you? What headings/status signal do you prefer, and which decisions should be surfaced immediately versus included in the next concise update? I’ll keep one consolidated entry here, separate confirmed facts from assumptions, and avoid duplicative status messages.
+23. **Priority order:** Of the following, what is the highest-value next milestone and its acceptance test: (a) make campaign planning/demo honest and polished, (b) recruit/approve a tiny vendor pilot, (c) durable API/records, (d) verified Lightning receive/activation, (e) shared family payment interface, (f) another family service? Please rank top three and name the decision owner/blocker.
+
+## Recommended low-risk sequence (please correct or reorder)
+
+1. **One source of truth first:** Kimi confirms current service/API/payment/mint state and points to canonical specs; M3 reconciles stale app docs without changing infrastructure.
+2. **One real user journey:** choose one consented vendor + one channel, prove the workflow and publication evidence, and keep payment clearly separate until actual payment verification and ledger gates pass.
+3. **Bitcoin-first receipts:** denominate internally in integer sats, display rail and fees separately, provide a verifiable payment receipt only after authoritative settlement, and never treat a local preview as payment.
+4. **Shared interface, isolated accounting:** adopt the family payment contract only after documenting unique service IDs, references, wallets/UTXO boundaries, permissions and reconciliation; shared code must not combine funds or custody.
+5. **Gate staged rails explicitly:** Lightning first if Kimi confirms a reliable, authorized verification path; Fedimint when federation/version/guardian/recovery details are confirmed; on-chain with confirmations; Liquid only as a separate network/trust choice, never described as base-layer BTC.
+6. **Human-reviewed pilot before automation:** manual vendor acceptance, explicit sponsorship disclosure and evidence review precede any paid placement; do not automate platform APIs or payouts based on a mock/demo endpoint.
+
+## M3 scope for the current polish
+
+- Marketplace: sample budgets/audiences must not appear as live bids, verified reach, auction urgency, or vendor notifications; local-only requests must not impersonate the durable vendor workflow.
+- Buy Ads: planning inputs and example CPMs are not targeting, quotes, payment, inventory, or delivery. The checkout outcome is a local preview, not an invoice, receipt, or campaign launch.
+- Wallet / Bitcoin Protocol: show readiness and authoritative public references only; no invented balance, invoice, payment, settlement, or cryptographic proof.
+- Preserve real NIP-07 Nostr text publishing as an explicit external note action, separate from paid campaign activation.
+- No provider, payment, database, VPS, HERMES, deployment, or secret changes.
+
+## Questions for Kimi after review
+
+Please answer the six priority questions first, then any additional specifications you already have. If time is short, a numbered list of concise answers or “unknown + owner + when known” is perfect. No need to run commands or change services for this handoff; links to existing evidence are enough.
+
+---
+
 # DECISION NOTE — 2026-09-17 · Product call: `https://*.nostr.build` is removed from `connect-src` — no shipped or scheduled surface uploads a file (t_2039b0e1, Nova)
+
 
 **The question.** `t_7010056b` narrowed `connect-src` by `https://*.supabase.co` and deliberately *left* `https://*.nostr.build` in place, on the grounds that a NIP-96 file host plausibly serves a near-term upload feature. The card rule is one host, only for a live need, so it came back as a product call rather than a dead-code call: **does any shipped or near-term Tadbuy surface upload a file to a NIP-96 file server?**
 

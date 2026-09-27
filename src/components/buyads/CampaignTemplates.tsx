@@ -7,7 +7,7 @@ export interface CampaignTemplate {
   id: string;
   name: string;
   description: string;
-  icon: 'awareness' | 'sales' | 'retargeting';
+  icon: 'awareness' | 'sales' | 'consideration';
   platforms: string[];
   budgetSats: number;
   headline: string;
@@ -18,44 +18,44 @@ export interface CampaignTemplate {
 const ICONS = {
   awareness: Megaphone,
   sales: ShoppingCart,
-  retargeting: RotateCcw,
+  consideration: RotateCcw,
 } as const;
 
-// Static demo templates — the platform has no /api/campaigns/templates endpoint on
-// the static host, so this widget renders curated starters and never makes a request.
+// Static local example copy only; applying a template creates no offer, audience,
+// campaign, discount, tracking, payment, or provider-side delivery.
 const TEMPLATES: CampaignTemplate[] = [
   {
     id: 'awareness',
     name: 'Brand Awareness',
-    description: 'Maximize reach across social & Nostr',
+    description: 'Example copy for an awareness concept · no reach estimate',
     icon: 'awareness',
     platforms: ['twitter', 'nostr', 'instagram'],
     budgetSats: 500_000,
     headline: 'Stack sats, not surveillance',
-    copy: 'Reach privacy-conscious audiences. Pay in Lightning.',
+    copy: 'A sample message for a Bitcoin-native campaign concept. No audience or payment is connected.',
     hashtags: ['#bitcoin', '#nostr'],
   },
   {
     id: 'sales',
     name: 'Direct Sales',
-    description: 'Conversion-focused with urgency',
+    description: 'Example offer copy · no active discount or conversion goal',
     icon: 'sales',
     platforms: ['facebook', 'tiktok', 'reddit'],
     budgetSats: 750_000,
-    headline: 'Get 20% off — pay with Bitcoin',
-    copy: 'Limited-time offer. Lightning checkout in seconds.',
+    headline: 'Explore a Bitcoin-native offer',
+    copy: 'A sample promotional draft. No offer, discount, deadline, or Lightning checkout is active.',
     hashtags: ['#sats', '#deal'],
   },
   {
-    id: 'retargeting',
-    name: 'Retargeting',
-    description: 'Re-engage visitors who bounced',
-    icon: 'retargeting',
+    id: 'follow_up',
+    name: 'Follow-up concept',
+    description: 'Example follow-up message · no visitor tracking',
+    icon: 'consideration',
     platforms: ['twitter', 'facebook', 'nostr'],
     budgetSats: 300_000,
-    headline: 'Still thinking about it?',
-    copy: 'Come back and complete your purchase with sats.',
-    hashtags: ['#retarget'],
+    headline: 'Discover the Bitcoin-native option',
+    copy: 'An example follow-up message for an audience you reach through your own channels. This preview does not track visitors or connect to a purchase flow.',
+    hashtags: ['#bitcoin'],
   },
 ];
 
@@ -70,10 +70,10 @@ export function CampaignTemplates({ onApply, selectedId }: CampaignTemplatesProp
   return (
     <Card className="glass-panel mb-4">
       <div className="flex items-center justify-between mb-3">
-        <CardTitle className="mb-0">Campaign templates</CardTitle>
-        <Badge variant="accent">Quick start</Badge>
+        <CardTitle className="mb-0">Example campaign drafts</CardTitle>
+        <Badge variant="outline">Local examples</Badge>
       </div>
-      <p className="text-xs text-muted mb-3">Pick a goal — we&apos;ll pre-fill platforms, budget, and copy.</p>
+      <p className="text-xs text-muted mb-3">Choose a starting point for this browser-only draft. Platform selections and example budgets are not live inventory, offers, or quotes.</p>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         {templates.map(t => {
           const Icon = ICONS[t.icon] ?? Megaphone;

@@ -115,7 +115,7 @@ export function DistributionPlan({
               {isNostr && selected && (
                 <div className="mt-3 pt-3 border-t border-accent/20">
                   <div className="flex items-center gap-1.5 text-[10px] text-accent font-bold">
-                    <Users className="w-3 h-3" /> Browser signer publishes the approved note
+                    <Users className="w-3 h-3" /> Optional external action · public Nostr note
                   </div>
                 </div>
               )}
@@ -128,10 +128,9 @@ export function DistributionPlan({
         <div className="mt-4 rounded-2xl border border-purple/25 bg-purple/5 p-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div className="min-w-0">
-              <div className="text-xs font-extrabold text-purple uppercase tracking-wider">Nostr launch action</div>
+              <div className="text-xs font-extrabold text-purple uppercase tracking-wider">External Nostr note · separate from campaign launch</div>
               <p className="text-[11px] text-muted mt-1 leading-relaxed">
-                Sign the campaign note with a NIP-07 browser extension and publish it to Tadbuy&apos;s relay set.
-                No private key enters Tadbuy.
+                This signs and publishes a public text note to the configured Nostr relays using your NIP-07 extension. It does not create a paid ad, reserve inventory, or activate this campaign. No private key enters Tadbuy.
               </p>
               {nostrPublished && (
                 <p className="text-[10px] text-green font-mono mt-2 break-all">

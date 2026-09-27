@@ -103,8 +103,8 @@ function RequestCard({ request, onTransition }: { request: PlacementRequest; onT
   const [busy, setBusy] = useState(false);
   const durableVendor = Boolean(request.durable && user?.uid === request.vendorId);
   const durableAdvertiser = Boolean(request.durable && user?.uid === request.advertiserId);
-  const canActAsVendor = !request.durable || durableVendor;
-  const canActAsAdvertiser = !request.durable || durableAdvertiser;
+  const canActAsVendor = Boolean(request.durable && durableVendor);
+  const canActAsAdvertiser = Boolean(request.durable && durableAdvertiser);
   const canAccept = canActAsVendor && request.status === 'offered';
   const canPublish = canActAsVendor && request.status === 'accepted';
   const canSubmitProof = canActAsVendor && request.status === 'published';
@@ -125,7 +125,11 @@ function RequestCard({ request, onTransition }: { request: PlacementRequest; onT
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
         <div className="min-w-0 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant={statusVariant(request.status)} dot>{PLACEMENT_STATUS_LABELS[request.status]}</Badge>
+            {request.durable ? (
+              <Badge variant={statusVariant(request.status)} dot>{PLACEMENT_STATUS_LABELS[request.status]}</Badge>
+            ) : (
+              <Badge variant="outline">Local sample · simulation only</Badge>
+            )}
             <span className="text-[10px] text-muted font-mono">{request.id}</span>
             {request.durable && <Badge variant="success">Durable</Badge>}
           </div>
@@ -136,16 +140,22 @@ function RequestCard({ request, onTransition }: { request: PlacementRequest; onT
         <div className="shrink-0 lg:text-right">
           <div className="text-[10px] uppercase tracking-widest text-muted">Proposed budget</div>
           <div className="text-lg font-extrabold text-accent font-mono">{request.budgetSats.toLocaleString()} sats</div>
-          <div className="text-[10px] text-muted">Payment remains staged</div>
+          <div className="text-[10px] text-muted">{request.durable ? 'Payment remains staged' : 'Example budget · unpaid'}</div>
         </div>
       </div>
 
       <div className="mt-4 rounded-xl border border-border bg-black/10 p-3 space-y-2">
-        <StatusTimeline status={request.status} />
-        <p className="text-[10px] text-muted">{PLACEMENT_STATUS_HELP[request.status]}</p>
+        {request.durable ? (
+          <>
+            <StatusTimeline status={request.status} />
+            <p className="text-[10px] text-muted">{PLACEMENT_STATUS_HELP[request.status]}</p>
+          </>
+        ) : (
+          <p className="text-[10px] text-muted">Saved on this device for preview only. No vendor response, delivery state, or evidence record exists.</p>
+        )}
       </div>
 
-      {request.proof && (
+      {request.durable && request.proof && (
         <div className="mt-3 rounded-xl border border-blue/25 bg-blue/5 p-3 text-[11px] space-y-1">
           <div className="flex items-center gap-2 text-blue font-bold"><CheckCircle2 className="w-3.5 h-3.5" /> Submitted evidence</div>
           <div className="break-all"><span className="text-muted">Reference:</span> {request.proof.url}</div>
@@ -187,10 +197,10 @@ export function PlacementRequestInbox() {
             {durable && <Badge variant="success">Durable</Badge>}
           </div>
           <p className="text-xs text-muted mt-1 leading-relaxed max-w-2xl">
-            Review vendor-assisted requests and record the delivery trail. {durable ? 'These records are loaded from authenticated storage.' : 'These browser-local pilot records are not connected to payment or automatic Reddit publishing.'}
+            Review vendor-assisted requests and record the delivery trail. {durable ? 'These records are loaded from authenticated storage.' : 'Local samples are display-only simulations; they are not vendor requests or delivery records. Payment and automatic Reddit publishing are not connected.'}
           </p>
         </div>
-        <div className="flex items-center gap-1.5 text-[10px] text-muted shrink-0"><Clock3 className="w-3.5 h-3.5" /> {durableLoading ? 'Loading…' : `${active.length} active`}</div>
+        <div className="flex items-center gap-1.5 text-[10px] text-muted shrink-0"><Clock3 className="w-3.5 h-3.5" /> {durableLoading ? 'Loading…' : `${active.filter(request => request.durable).length} durable active`}</div>
       </div>
 
       <Alert variant="warning" className="mb-4">
@@ -199,7 +209,7 @@ export function PlacementRequestInbox() {
 
       {requests.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-5 text-center text-xs text-muted">
-          Placement requests from advertisers will appear here. Start with a real vendor listing and a clear proof contract.
+          Durable requests from authenticated advertisers appear here. Local sample requests are not routed to vendors.
         </div>
       ) : (
         <div className="space-y-3">
@@ -207,7 +217,7 @@ export function PlacementRequestInbox() {
         </div>
       )}
 
-      <div className="mt-4 text-[10px] text-muted flex items-start gap-1.5"><Zap className="w-3 h-3 text-lightning mt-0.5 shrink-0" /> Next operational step: move these records to durable backend storage before a live pilot or settlement.</div>
+      <div className="mt-4 text-[10px] text-muted flex items-start gap-1.5"><Zap className="w-3 h-3 text-lightning mt-0.5 shrink-0" /> {durable ? 'Payment and payout authorization remain disabled until settlement controls are approved.' : 'Durable backend storage and operator approval are required before a live vendor pilot or settlement.'}</div>
     </Card>
   );
 }

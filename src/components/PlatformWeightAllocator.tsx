@@ -44,7 +44,7 @@ export function PlatformWeightAllocator({
               mode === m ? 'border-accent bg-accent/10 text-accent' : 'border-border text-muted hover:border-muted',
             )}
           >
-            {m === 'even' ? 'Even split' : m === 'weighted' ? 'Custom %' : 'PPQ optimized'}
+            {m === 'even' ? 'Even split' : m === 'weighted' ? 'Custom %' : 'CPM-weighted example'}
           </button>
         ))}
       </div>
@@ -73,21 +73,21 @@ export function PlatformWeightAllocator({
 
       {mode === 'ppq' && (
         <p className="text-[10px] text-muted">
-          PPQ shifts more budget to lower-CPM / higher-efficiency platforms automatically.
+          Illustrative allocation weighted by seeded CPM assumptions only; no PPQ.AI, audience data, or automatic rebalancing is connected.
         </p>
       )}
 
       {allocations.length > 0 && (
         <div className="rounded-xl border border-border bg-surface/50 p-3 space-y-2">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-muted">Allocation preview</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-muted">Example allocation · not an order</div>
           {allocations.map(a => {
             const p = platforms.find(x => x.id === a.platformId);
-            const sats = Math.round((a.budgetUsd / budgetUsd) * budgetSats) || 0;
+            const sats = budgetUsd > 0 ? Math.round((a.budgetUsd / budgetUsd) * budgetSats) : 0;
             return (
               <div key={a.platformId} className="flex justify-between text-[11px]">
                 <span className="text-text font-semibold">{p?.name ?? a.platformId}</span>
                 <span className="text-muted font-mono">
-                  {a.weightPct.toFixed(0)}% · {formatSats(sats)} · ~{a.impressions.toLocaleString()} imp
+                  {a.weightPct.toFixed(0)}% · {formatSats(sats)} sats
                 </span>
               </div>
             );

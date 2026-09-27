@@ -3,17 +3,10 @@ import { test, expect } from '@playwright/test';
 /**
  * The Buy Ads fee lines must never render a fee we did not measure.
  *
- * Regression guard for: `BuyAds.tsx` initialised its `mempoolFees` state to a
- * hardcoded `{ fastestFee: 5, halfHourFee: 4, hourFee: 3 }` and assigned any
- * JSON body straight from the fetch, so the payment step's Network Fee card
- * rendered `~0.00000700 ₿ / Estimated (5 sat/vB)` with mempool.space blocked,
- * and `~NaN ₿ / Estimated (undefined sat/vB)` against a reshaped (404 JSON)
- * response — an invented number shown as a measurement. `FeeEstimator` (the
- * on-chain rate picker on the "Pay with" step) carried its own private copy of
- * the same hardcoded `{ 5, 4, 3, 2 }` and its own fetch, so selecting Bitcoin
- * re-introduced the placeholder. All of them now read the one live source
- * (`useMempoolFees`), which holds `null` until a complete, positive snapshot is
- * accepted, and render an explicit unavailable state otherwise.
+ * Regression guard for the current planning preview: public fee rates stay
+ * unavailable when mempool.space is blocked, and no payment picker or checkout
+ * presents an unmeasured fee as a quote. Fee data is informational only; this
+ * build cannot create an invoice or payment request.
  *
  * Only the blocked-host half is asserted here: it needs no egress, so it is
  * deterministic in CI. The reachable half (the rendered value must equal
@@ -55,25 +48,17 @@ test.describe('Buy Ads fee lines are measured or unavailable — never a placeho
     expect(body).not.toMatch(/₿ est\./);
   });
 
-  test('the on-chain rate picker shows no invented sat/vB when the fee host is blocked', async ({ page }) => {
+  test('local preview confirmation makes no payment request and shows no fabricated fee quote', async ({ page }) => {
     await openBuyAdsWithFeeHostBlocked(page);
+    await page.getByRole('button', { name: 'Review local preview' }).click();
 
-    // "Pay with" step → Bitcoin (on-chain) renders FeeEstimator.
-    await page.getByRole('button', { name: /Bitcoin/ }).first().click();
-
-    await expect
-      .poll(
-        async () => (await page.evaluate(() => document.body.innerText)).includes(
-          'No estimate is shown for a rate we have not measured'
-        ),
-        { timeout: 30_000, intervals: [1_000] }
-      )
-      .toBe(true);
+    await expect(page.getByText('This build cannot accept payment')).toBeVisible();
+    await expect(page.getByText(/No invoice, payment QR, on-chain request/)).toBeVisible();
+    await expect(page.getByText(/Preview, not a payment authorization/)).toBeVisible();
 
     const body = await page.evaluate(() => document.body.innerText);
     expect(body).not.toMatch(/sat\/vB/);
     expect(body).not.toMatch(/Est\. fee for/);
-    // The old hardcoded placeholder rates must not appear anywhere.
     expect(body).not.toMatch(/Turbo 5|Fast 4|Std 3|Eco 2/);
   });
 });

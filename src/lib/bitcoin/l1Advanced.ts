@@ -116,29 +116,32 @@ export function constructPsbtV2(
 }
 
 /**
- * Fetches dynamic mempool fee estimates (with fallback values).
+ * Fetches public mempool fee estimates. Rejects unavailable or malformed data;
+ * callers must render an unavailable state rather than inventing a fallback.
  */
 export async function fetchMempoolFeeEstimates(): Promise<MempoolFeeEstimates> {
-  try {
-    const res = await fetch('https://mempool.space/api/v1/fees/recommended', { cache: 'no-store' });
-    if (res.ok) {
-      const data = await res.json();
-      return {
-        fastestFee: data.fastestFee || 18,
-        halfHourFee: data.halfHourFee || 12,
-        hourFee: data.hourFee || 8,
-        minimumFee: data.minimumFee || 3,
-        updatedAt: new Date().toISOString(),
-      };
-    }
-  } catch {
-    // Graceful fallback if offline
+  const res = await fetch('https://mempool.space/api/v1/fees/recommended', { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Public mempool fee reference unavailable (HTTP ${res.status})`);
+
+  const data: unknown = await res.json();
+  if (!data || typeof data !== 'object') {
+    throw new Error('Public mempool fee reference returned an invalid response');
   }
+
+  const fees = data as Record<string, unknown>;
+  const fastestFee = Number(fees.fastestFee);
+  const halfHourFee = Number(fees.halfHourFee);
+  const hourFee = Number(fees.hourFee);
+  const minimumFee = Number(fees.minimumFee);
+  if (![fastestFee, halfHourFee, hourFee, minimumFee].every(value => Number.isFinite(value) && value > 0)) {
+    throw new Error('Public mempool fee reference returned incomplete fee data');
+  }
+
   return {
-    fastestFee: 15,
-    halfHourFee: 10,
-    hourFee: 6,
-    minimumFee: 2,
+    fastestFee,
+    halfHourFee,
+    hourFee,
+    minimumFee,
     updatedAt: new Date().toISOString(),
   };
 }

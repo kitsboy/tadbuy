@@ -16,14 +16,16 @@ export function PlacementRequestModal({ slot, onClose, onCreate }: PlacementRequ
   const [message, setMessage] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const sample = !slot.durable;
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     const budget = Number(budgetSats);
-    if (!Number.isFinite(budget) || budget < slot.minBidSats) {
-      setError(`Enter at least ${slot.minBidSats.toLocaleString()} sats.`);
+    if (!Number.isSafeInteger(budget) || budget < slot.minBidSats) {
+      setError(`Enter a whole-sat amount of at least ${slot.minBidSats.toLocaleString()} sats.`);
       return;
     }
+
     setSaving(true);
     try {
       await onCreate({ advertiserLabel, budgetSats: budget, message });
@@ -36,44 +38,84 @@ export function PlacementRequestModal({ slot, onClose, onCreate }: PlacementRequ
   };
 
   return (
-    <Modal isOpen onClose={onClose} size="lg" title="Request this community placement" description="Send a vendor-assisted placement request. No payment or publication happens at this step.">
-      <form onSubmit={submit} className="p-6 pt-4 space-y-4">
+    <Modal
+      isOpen
+      onClose={onClose}
+      size="lg"
+      title={sample ? 'Preview a placement request' : 'Request this community placement'}
+      description={sample ? 'Local-only example · no vendor is contacted and no sats move.' : 'Send a vendor-assisted request. No payment or publication happens at this step.'}
+    >
+      <form onSubmit={submit} className="space-y-4 p-6 pt-4">
+        {sample && (
+          <div className="rounded-xl border border-blue/25 bg-blue/5 p-3 text-[11px] leading-relaxed text-muted">
+            <strong className="text-blue">Sample inventory · local preview.</strong> Publisher, audience, and budget details are illustrative. Saving this request does not contact a vendor, reserve inventory, or initiate payment.
+          </div>
+        )}
+
         <div className="rounded-xl border border-accent/25 bg-accent/5 p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <div className="text-sm font-extrabold truncate">{slot.name}</div>
-              <div className="text-xs text-muted mt-1">{slot.publisher} · {slot.format}</div>
+              <div className="truncate text-sm font-extrabold">{slot.name}</div>
+              <div className="mt-1 text-xs text-muted">{slot.publisher} · {slot.format}</div>
             </div>
-            <span className="shrink-0 text-xs font-mono font-bold text-accent">{slot.currentBidSats.toLocaleString()} sats</span>
+            <span className="shrink-0 text-xs font-mono font-bold text-accent">
+              {slot.currentBidSats.toLocaleString()} {sample ? 'example sats' : 'sats'}
+            </span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3 text-[10px] text-muted">
-            <span className="flex items-center gap-1.5"><Users className="w-3 h-3" /> {slot.audience}</span>
-            <span className="flex items-center gap-1.5"><Zap className="w-3 h-3 text-lightning" /> {slot.platformType || slot.category}</span>
-            <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3 text-green" /> Proof required</span>
+          <div className="mt-3 grid grid-cols-1 gap-2 text-[10px] text-muted sm:grid-cols-3">
+            <span className="flex items-center gap-1.5"><Users className="h-3 w-3" /> {sample ? 'Example' : 'Listed'}: {slot.audience}</span>
+            <span className="flex items-center gap-1.5"><Zap className="h-3 w-3 text-lightning" /> {slot.platformType || slot.category}</span>
+            <span className="flex items-center gap-1.5"><ShieldCheck className="h-3 w-3 text-green" /> Proof required</span>
           </div>
         </div>
 
         <div>
           <Label htmlFor="placement-advertiser">Advertiser or project name</Label>
-          <Input id="placement-advertiser" value={advertiserLabel} onChange={event => setAdvertiserLabel(event.target.value)} placeholder="e.g. Give A Bit" maxLength={80} />
+          <Input
+            id="placement-advertiser"
+            value={advertiserLabel}
+            onChange={event => setAdvertiserLabel(event.target.value)}
+            placeholder="e.g. Give A Bit"
+            maxLength={80}
+          />
         </div>
         <div>
-          <Label htmlFor="placement-budget">Proposed budget (sats)</Label>
-          <Input id="placement-budget" type="number" min={slot.minBidSats} value={budgetSats} onChange={event => { setBudgetSats(event.target.value); setError(null); }} />
-          {error && <p className="text-[11px] text-red mt-1.5">{error}</p>}
+          <Label htmlFor="placement-budget">{sample ? 'Example budget (sats)' : 'Proposed budget (sats)'}</Label>
+          <Input
+            id="placement-budget"
+            type="number"
+            min={slot.minBidSats}
+            max={Number.MAX_SAFE_INTEGER}
+            step={1}
+            value={budgetSats}
+            onChange={event => { setBudgetSats(event.target.value); setError(null); }}
+          />
+          {error && <p role="alert" className="mt-1.5 text-[11px] text-red">{error}</p>}
         </div>
         <div>
-          <Label htmlFor="placement-message">Message to vendor <span className="normal-case font-normal">— optional</span></Label>
-          <Textarea id="placement-message" value={message} onChange={event => setMessage(event.target.value)} placeholder="Share timing, creative context, or questions for the publisher…" rows={3} maxLength={500} />
+          <Label htmlFor="placement-message">{sample ? 'Example message · not sent' : 'Message to vendor'} <span className="normal-case font-normal">— optional</span></Label>
+          <Textarea
+            id="placement-message"
+            value={message}
+            onChange={event => setMessage(event.target.value)}
+            placeholder={sample ? 'Example context for this local preview…' : 'Share timing, creative context, or questions for the publisher…'}
+            rows={3}
+            maxLength={500}
+          />
         </div>
 
-        <div className="rounded-xl border border-border bg-surface/60 p-3 text-[11px] text-muted leading-relaxed flex gap-2">
-          <MessageSquare className="w-4 h-4 shrink-0 text-blue mt-0.5" />
-          The vendor controls the community account or property. They must accept before publishing, disclose sponsorship, and submit delivery proof afterward.
+        <div className="flex gap-2 rounded-xl border border-border bg-surface/60 p-3 text-[11px] leading-relaxed text-muted">
+          <MessageSquare className="mt-0.5 h-4 w-4 shrink-0 text-blue" />
+          {sample
+            ? 'In a real placement, the vendor would control the property, accept before publishing, disclose sponsorship, and submit delivery proof. This sample does none of those things.'
+            : 'The vendor controls the community account or property. They must accept before publishing, disclose sponsorship, and submit delivery proof afterward.'}
         </div>
-        <div className="flex flex-col-reverse sm:flex-row gap-3 pt-1">
+
+        <div className="flex flex-col-reverse gap-3 pt-1 sm:flex-row">
           <Button type="button" variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>Cancel</Button>
-          <Button type="submit" className="flex-1" disabled={saving}>{saving ? 'Saving request…' : 'Send placement request'}</Button>
+          <Button type="submit" className="flex-1" disabled={saving}>
+            {saving ? (sample ? 'Saving preview…' : 'Sending request…') : sample ? 'Save local preview' : 'Send placement request'}
+          </Button>
         </div>
       </form>
     </Modal>

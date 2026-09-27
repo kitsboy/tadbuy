@@ -17,10 +17,8 @@ export interface MarketplaceSlot {
   audience: string;
   geo: string[];
   minBidSats: number;
+  /** Illustrative example budget for seeded previews; not a real bid. */
   currentBidSats: number;
-  impressionsPerDay: number;
-  ctr: number;
-  status: 'available' | 'hot';
   tags: string[];
   platformType?: string;
   /** Set for records loaded from the durable vendor marketplace. */
@@ -28,7 +26,6 @@ export interface MarketplaceSlot {
   vendorId?: string;
   inventoryId?: string;
 
-  auctionEndsAt?: string;
 }
 
 export const FEATURED_SLOT_IDS = [
@@ -36,11 +33,6 @@ export const FEATURED_SLOT_IDS = [
   'slot_podcast_midroll',
   'slot_community_banner',
 ] as const;
-
-/** Default auction window for hot slots (2 hours from seed time) */
-function hotAuctionEnd(): string {
-  return new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
-}
 
 export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
   {
@@ -50,13 +42,10 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     placement: 'Above the fold',
     format: '728×90 Leaderboard',
     category: 'Bitcoin & Crypto',
-    audience: '2.4M monthly visitors',
+    audience: 'Example audience description · no verified visitor count',
     geo: ['US', 'EU', 'APAC'],
     minBidSats: 5000,
     currentBidSats: 18500,
-    impressionsPerDay: 45000,
-    ctr: 2.1,
-    status: 'available',
     tags: ['bitcoin', 'finance', 'tech'],
     platformType: 'Blogs',
   },
@@ -67,13 +56,10 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     placement: 'Article sidebar',
     format: '300×250 Rectangle',
     category: 'Social / Nostr',
-    audience: '890K monthly visitors',
+    audience: 'Example audience description · no verified visitor count',
     geo: ['Global'],
     minBidSats: 2000,
     currentBidSats: 7200,
-    impressionsPerDay: 18000,
-    ctr: 1.8,
-    status: 'available',
     tags: ['nostr', 'social', 'decentralized'],
     platformType: 'Nostr',
   },
@@ -84,16 +70,12 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     placement: 'Top of feed',
     format: '970×250 Billboard',
     category: 'Bitcoin Community',
-    audience: '320K monthly visitors',
+    audience: 'Example audience description · no verified visitor count',
     geo: ['US', 'EU'],
     minBidSats: 8000,
     currentBidSats: 22000,
-    impressionsPerDay: 12000,
-    ctr: 3.2,
-    status: 'hot',
     tags: ['bitcoin', 'community', 'news'],
     platformType: 'Blogs',
-    auctionEndsAt: hotAuctionEnd(),
   },
   {
     id: 'slot_lightning_sidebar',
@@ -102,13 +84,10 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     placement: 'Dashboard sidebar',
     format: '300×600 Half Page',
     category: 'Lightning / Finance',
-    audience: '145K monthly visitors',
+    audience: 'Example audience description · no verified visitor count',
     geo: ['Global'],
     minBidSats: 3500,
     currentBidSats: 9800,
-    impressionsPerDay: 8500,
-    ctr: 2.7,
-    status: 'available',
     tags: ['lightning', 'trading', 'finance'],
     platformType: 'Newsletters',
   },
@@ -119,13 +98,10 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     placement: 'Documentation footer',
     format: '728×90 Leaderboard',
     category: 'Bitcoin Tools',
-    audience: '280K monthly visitors',
+    audience: 'Example audience description · no verified visitor count',
     geo: ['Global'],
     minBidSats: 1500,
     currentBidSats: 4100,
-    impressionsPerDay: 6200,
-    ctr: 1.4,
-    status: 'available',
     tags: ['payments', 'open-source', 'tools'],
     platformType: 'Blogs',
   },
@@ -136,13 +112,10 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     placement: 'Social feed',
     format: 'Native Feed Post',
     category: 'Social / Nostr',
-    audience: '210K monthly visitors',
+    audience: 'Example audience description · no verified visitor count',
     geo: ['Global'],
     minBidSats: 4000,
     currentBidSats: 11200,
-    impressionsPerDay: 15000,
-    ctr: 2.9,
-    status: 'available',
     tags: ['nostr', 'native', 'social'],
     platformType: 'Nostr',
   },
@@ -153,16 +126,12 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     placement: 'Mid-roll',
     format: '60s Audio Ad',
     category: 'Bitcoin Community',
-    audience: '95K listeners/episode',
+    audience: 'Example listener profile · no verified audience count',
     geo: ['US', 'EU'],
     minBidSats: 6000,
     currentBidSats: 14500,
-    impressionsPerDay: 9500,
-    ctr: 3.8,
-    status: 'hot',
     tags: ['podcast', 'bitcoin', 'audio'],
     platformType: 'Podcasts',
-    auctionEndsAt: hotAuctionEnd(),
   },
   {
     id: 'slot_youtube_preroll',
@@ -171,16 +140,12 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     placement: 'YouTube pre-roll',
     format: '15s Video Ad',
     category: 'Bitcoin & Crypto',
-    audience: '180K subscribers',
+    audience: 'Example channel profile · no verified subscriber count',
     geo: ['US', 'CA', 'EU'],
     minBidSats: 7500,
     currentBidSats: 16800,
-    impressionsPerDay: 22000,
-    ctr: 4.1,
-    status: 'hot',
     tags: ['youtube', 'bitcoin', 'education'],
     platformType: 'YouTube',
-    auctionEndsAt: hotAuctionEnd(),
   },
   {
     id: 'slot_newsletter_sponsor',
@@ -189,13 +154,10 @@ export const MARKETPLACE_SLOTS: MarketplaceSlot[] = [
     placement: 'Newsletter top sponsor',
     format: 'Sponsored Section',
     category: 'Bitcoin & Crypto',
-    audience: '42K subscribers',
+    audience: 'Example newsletter profile · no verified subscriber count',
     geo: ['US'],
     minBidSats: 3000,
     currentBidSats: 8900,
-    impressionsPerDay: 7000,
-    ctr: 5.2,
-    status: 'available',
     tags: ['newsletter', 'bitcoin', 'finance'],
     platformType: 'Newsletters',
   },

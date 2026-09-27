@@ -13,7 +13,7 @@ import { CampaignTemplates, type CampaignTemplate } from './CampaignTemplates';
 import { validateWizardStep } from './StepValidation';
 import { useNamedDrafts } from '@/hooks/useNamedDrafts';
 
-const STEPS = ['Budget', 'Distribution', 'Targeting', 'Creative', 'Payment'] as const;
+const STEPS = ['Budget', 'Distribution', 'Targeting', 'Creative', 'Preview'] as const;
 
 interface FullControlWizardProps {
   currentStep: number;
@@ -248,14 +248,12 @@ export function FullControlWizard(props: FullControlWizardProps) {
           campaignName={props.campaignName}
           selectedPlatformsData={props.selectedPlatformsData}
           onDeploy={props.onLaunch}
-          paymentMethod={props.paymentMethod}
           symbol={props.symbol}
-          rate={props.rate}
           projectId={props.projectId}
           targeting={props.targeting}
           mode="complex"
           variants={props.variants}
-          ppqAutoRebalance={true}
+          deployLabel="Review local campaign preview"
         />
       )}
 

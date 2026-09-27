@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { SafeLink } from './SafeLink';
 
 interface TermsAcceptanceProps {
   accepted: boolean;
   onChange: (accepted: boolean) => void;
   className?: string;
+  paymentPreview?: boolean;
 }
 
-export function TermsAcceptance({ accepted, onChange, className }: TermsAcceptanceProps) {
+export function TermsAcceptance({ accepted, onChange, className, paymentPreview = false }: TermsAcceptanceProps) {
   return (
     <label
       className={cn(
@@ -20,20 +20,22 @@ export function TermsAcceptance({ accepted, onChange, className }: TermsAcceptan
       <input
         type="checkbox"
         checked={accepted}
-        onChange={e => onChange(e.target.checked)}
+        onChange={event => onChange(event.target.checked)}
         className="mt-0.5 w-4 h-4 accent-accent rounded border-border flex-shrink-0"
         aria-describedby="terms-desc"
       />
       <span id="terms-desc" className="text-xs text-muted leading-relaxed">
-          I agree to the{' '}
-          <Link to="/terms" className="text-accent font-semibold hover:underline">
-            Terms of Service
-          </Link>
+        I agree to the{' '}
+        <Link to="/terms" className="text-accent font-semibold hover:underline">
+          Terms of Service
+        </Link>
         ,{' '}
-          <Link to="/privacy" className="text-accent font-semibold hover:underline">
-            Privacy Policy
-          </Link>
-        , and understand that Bitcoin payments are final and non-reversible.
+        <Link to="/privacy" className="text-accent font-semibold hover:underline">
+          Privacy Policy
+        </Link>
+        {paymentPreview
+          ? ', and understand that this is a local preview only: no payment authorization or Bitcoin transaction will occur.'
+          : ', and understand that Bitcoin payments are final and non-reversible.'}
       </span>
     </label>
   );

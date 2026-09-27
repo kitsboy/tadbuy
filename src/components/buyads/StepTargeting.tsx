@@ -76,8 +76,8 @@ export default function StepTargeting({
     <Card className="glass-panel">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
         <div className="flex items-center gap-2">
-          <CardTitle className="mb-0">Target demographics</CardTitle>
-          <InfoTooltip content="Define who should see your ads. Narrow targeting can improve conversion rates." />
+          <CardTitle className="mb-0">Audience planning inputs</CardTitle>
+          <InfoTooltip content="Record planning preferences only. No audience segment or targeting activation is connected in this preview." />
         </div>
         <Link
           to="/geo"
@@ -88,15 +88,15 @@ export default function StepTargeting({
         </Link>
       </div>
 
-      <Alert variant="info" title="Cookieless targeting" className="mb-5">
-        Tadbuy uses contextual and interest-based segments — no third-party tracking pixels. Your audience data stays sovereign.
+      <Alert variant="info" title="Draft inputs only · no audience targeting" className="mb-5">
+        These selections stay in your local campaign draft. No tracking pixel, audience segment, provider-side targeting, or campaign activation is connected.
       </Alert>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <FormGroup className="mb-0">
           <div className="flex items-center gap-2 mb-1.5">
-            <Label className="mb-0">Audience interest</Label>
-            <InfoTooltip content="Target users based on their hobbies, topics they follow, and content they consume." />
+            <Label className="mb-0">Example interest</Label>
+            <InfoTooltip content="Choose a planning label; it is not matched to users or applied to an active campaign." />
           </div>
           <Select value={targeting.interests} onChange={e => setTargeting({ ...targeting, interests: e.target.value })}>
             <option>Bitcoin & Crypto</option>
@@ -115,8 +115,8 @@ export default function StepTargeting({
         </FormGroup>
         <FormGroup className="mb-0">
           <div className="flex items-center gap-2 mb-1.5">
-            <Label className="mb-0">Age range</Label>
-            <InfoTooltip content="Specify the age group of the users you want to reach." />
+            <Label className="mb-0">Age range · draft note</Label>
+            <InfoTooltip content="Draft preference only; no age-based targeting is applied." />
           </div>
           <div className="flex gap-3">
             <Input
@@ -140,13 +140,13 @@ export default function StepTargeting({
 
         <FormGroup className="mb-0 sm:col-span-2">
           <Alert variant="warning" className="mb-4">
-            Selecting &quot;Global&quot; clears other countries. Narrow geo targeting typically improves CTR by 15–25%.
+            Selecting &quot;Global&quot; clears other countries. Geographic choices are local planning notes; no delivery or performance estimate is available.
           </Alert>
           <div className="flex items-center justify-between gap-2 mb-2">
             <div className="flex items-center gap-2">
               <Globe className="w-4 h-4 text-accent shrink-0" />
-              <Label className="mb-0">Target countries</Label>
-              <InfoTooltip content="Select the geographic locations where your ads should be displayed." />
+              <Label className="mb-0">Example locations</Label>
+              <InfoTooltip content="Record example locations for discussion; no provider receives or applies these selections." />
             </div>
             <span className="text-[10px] font-mono text-muted">
               {selectedCountries.includes('Global')
@@ -183,7 +183,7 @@ export default function StepTargeting({
           </div>
 
           {/* Quick-pick P1 markets */}
-          <p className="text-[10px] font-mono text-muted mb-2 uppercase tracking-wide">Quick pick · high priority</p>
+          <p className="text-[10px] font-mono text-muted mb-2 uppercase tracking-wide">Quick pick · example markets</p>
           <div className="flex flex-wrap gap-2 mb-3">
             <button
               type="button"
@@ -245,8 +245,8 @@ export default function StepTargeting({
 
         <FormGroup className="mb-0 sm:col-span-2">
           <div className="flex items-center gap-2 mb-1.5">
-            <Label className="mb-0">Target languages</Label>
-            <InfoTooltip content="Reach users who speak specific languages." />
+            <Label className="mb-0">Example languages</Label>
+            <InfoTooltip content="Draft language preferences only; no audience is matched or reached." />
           </div>
           <div className="flex flex-wrap gap-2 mb-2">
             {selectedLanguages.map(l => (
@@ -285,7 +285,7 @@ export default function StepTargeting({
         </FormGroup>
 
         <FormGroup className="mb-0">
-          <Label>Sex</Label>
+          <Label>Sex · draft note</Label>
           <Select
             className="min-h-[44px]"
             value={targeting.sex}
@@ -297,12 +297,13 @@ export default function StepTargeting({
           </Select>
         </FormGroup>
         <FormGroup className="mb-0">
-          <Label>Education level</Label>
+          <Label>Education · draft note</Label>
           <Select
             className="min-h-[44px]"
             value={targeting.education}
             onChange={e => setTargeting({ ...targeting, education: e.target.value })}
           >
+            <option value="All Education Levels">Example · all levels</option>
             <option>All Education Levels</option>
             <option>High School</option>
             <option>Some College</option>
@@ -312,12 +313,13 @@ export default function StepTargeting({
           </Select>
         </FormGroup>
         <FormGroup className="mb-0">
-          <Label>Income bracket</Label>
+          <Label>Income · draft note</Label>
           <Select
             className="min-h-[44px]"
             value={targeting.income}
             onChange={e => setTargeting({ ...targeting, income: e.target.value })}
           >
+            <option value="All Incomes">Example · all incomes</option>
             <option>All Incomes</option>
             <option>Top 10%</option>
             <option>Top 25%</option>
@@ -326,12 +328,13 @@ export default function StepTargeting({
           </Select>
         </FormGroup>
         <FormGroup className="mb-0">
-          <Label>Behaviors</Label>
+          <Label>Behaviors · draft note</Label>
           <Select
             className="min-h-[44px]"
             value={targeting.behaviors}
             onChange={e => setTargeting({ ...targeting, behaviors: e.target.value })}
           >
+            <option value="All Behaviors">Example · all behaviors</option>
             <option>All Behaviors</option>
             <option>Crypto Traders</option>
             <option>Frequent Buyers</option>
@@ -343,12 +346,13 @@ export default function StepTargeting({
           </Select>
         </FormGroup>
         <FormGroup className="mb-0 sm:col-span-2">
-          <Label>Job industries</Label>
+          <Label>Industries · draft note</Label>
           <Select
             className="min-h-[44px]"
             value={targeting.industries}
             onChange={e => setTargeting({ ...targeting, industries: e.target.value })}
           >
+            <option value="All Industries">Example · all industries</option>
             <option>All Industries</option>
             <option>Technology & IT</option>
             <option>Finance & Banking</option>

@@ -95,14 +95,14 @@ export default function StepCreative({
       <Card className="glass-panel">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <CardTitle className="mb-0">4. Ad copy & Media</CardTitle>
-            <InfoTooltip content="Craft your message. PPQ.AI will automatically format this for each selected platform." />
+            <CardTitle className="mb-0">4. Creative draft & media</CardTitle>
+            <InfoTooltip content="Edit a local creative draft. No AI service, automatic formatting, upload, or publication is connected in this preview." />
           </div>
           <div className="flex items-center gap-2">
             {isAiGenerating ? (
-              <Badge variant="info" dot>AI Generating</Badge>
+              <Badge variant="info" dot>Preparing example…</Badge>
             ) : (
-              <Badge variant="accent">PPQ.AI Ready</Badge>
+              <Badge variant="accent">Local draft</Badge>
             )}
             <Button
               size="sm"
@@ -112,29 +112,29 @@ export default function StepCreative({
               className="text-[10px] h-7 gap-1.5"
             >
               <Bot className={cn("w-3 h-3", isAiGenerating && "animate-spin")} />
-              {isAiGenerating ? "Thinking..." : "AI Suggest"}
+              {isAiGenerating ? "Preparing…" : "Local copy example"}
             </Button>
           </div>
         </div>
         <div className="bg-blue/5 border border-blue/20 rounded-lg p-3.5 mb-5 flex items-start gap-3">
           <Bot className="w-5 h-5 text-blue shrink-0 mt-0.5" />
           <div>
-            <div className="text-[12px] font-bold text-blue mb-1">Powered by PPQ.AI</div>
+            <div className="text-[12px] font-bold text-blue mb-1">Local creative preview</div>
             <div className="text-[11px] text-muted leading-relaxed">
-              Create one approved creative, then coordinate it with the vendors who control each channel. PPQ.AI can help adapt copy; it does not replace provider permissions or vendor approval.
+              The copy button uses a fixed example in this browser. No PPQ.AI request, automatic platform formatting, media upload, vendor approval, or publication occurs here.
             </div>
           </div>
         </div>
         <FormGroup>
-          <Label>Headline</Label>
+          <Label>Headline · draft</Label>
           <Input value={headline} onChange={e => setHeadline(e.target.value)} maxLength={70} />
         </FormGroup>
         <FormGroup>
-          <Label>Description</Label>
+          <Label>Description · draft</Label>
           <Textarea value={description} onChange={e => setDescription(e.target.value)} rows={2} />
         </FormGroup>
         <FormGroup>
-          <Label>Destination URL</Label>
+          <Label>Destination URL · draft</Label>
           <Input type="url" value={url} onChange={e => setUrl(e.target.value)} />
         </FormGroup>
         <UtmBuilder
@@ -215,14 +215,14 @@ export default function StepCreative({
           </FormGroup>
         </div>
         <FormGroup>
-          <Label>Media (Optional) <span className="text-accent font-normal text-[10px] ml-2 bg-accent/10 px-2 py-0.5 rounded">Ad Space: 1200 x 628 px</span></Label>
+          <Label>Media · local preview only (optional) <span className="text-accent font-normal text-[10px] ml-2 bg-accent/10 px-2 py-0.5 rounded">Suggested canvas: 1200 × 628 px</span></Label>
           <FileInput
-            hint={adImage ? "Image uploaded ✓" : "Max size: 5MB • Recommended: 1200 x 628 px"}
+            hint={adImage ? "Image preview loaded · not uploaded or saved" : "Image stays in this browser preview; it is not uploaded or saved."}
             onChange={handleImageUpload}
           />
           {adImage && (
             <div className="mt-2 relative inline-block">
-              <img src={adImage} alt="Preview" className="w-32 h-20 object-cover rounded-lg border border-border" />
+              <img src={adImage} alt="Local media preview" className="w-32 h-20 object-cover rounded-lg border border-border" />
               <button
                 onClick={() => setAdImage(null)}
                 className="absolute -top-2 -right-2 bg-red text-white rounded-full p-1 shadow-lg hover:bg-red/80 transition-colors"
@@ -233,7 +233,7 @@ export default function StepCreative({
           )}
         </FormGroup>
         <FormGroup>
-          <Label>Hashtags & Mentions (Max 3)</Label>
+          <Label>Example hashtags & mentions (max 3)</Label>
           <div className="flex flex-wrap gap-2 mb-2">
             {hashtags.map(tag => (
               <span key={tag} className="bg-accent/20 text-accent px-2 py-1 rounded-md text-xs flex items-center gap-1">
@@ -249,7 +249,7 @@ export default function StepCreative({
               <Input
                 value={hashtagInput}
                 onChange={e => setHashtagInput(e.target.value)}
-                placeholder="Type # or @ to see trending..."
+                placeholder="Type # or @ to filter example suggestions…"
                 onKeyDown={e => {
                   if (e.key === 'Enter' && hashtagInput) {
                     e.preventDefault();
@@ -279,6 +279,9 @@ export default function StepCreative({
         </FormGroup>
       </Card>
 
+      <div className="rounded-xl border border-blue/20 bg-blue/5 px-3 py-2 text-[11px] text-muted">
+        Creative mockup only · shown locally · not published or delivered.
+      </div>
       <PlatformPreviewTabs
         platforms={selectedPlatformsData}
         variants={variants}
