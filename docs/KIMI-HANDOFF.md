@@ -6,9 +6,29 @@
 
 **M3 progress:** Marketplace samples now avoid invented audience counts and distinguish local preview requests from durable vendor requests. Buy Ads and Wallet/Bitcoin Protocol UI distinguish planning/readiness from live payments, delivery, balances, invoices, settlement, or proof. Nostr note publishing remains an explicit optional external publication action, separate from paid campaign launch. Local Marketplace requests are no longer advanceable as vendor-accepted/published/verified workflow records.
 
-**Checks:** `git diff --check` ✅; `npm run check:routes` ✅ (38/38). `npm run lint` blocked (`tsc: command not found`) and focused Playwright E2E blocked (`playwright: command not found`); dependencies were not installed. No build, runtime/browser verification, VPS/database/wallet/deploy, secrets, or provider changes. Commit prepared locally; push deliberately deferred because the pre-push hook invokes an unverified version-bump script and nested push. Kimi's operational answers remain pending; please add them below when convenient.
+**Checks:** `git diff --check` ✅; `npm run check:routes` ✅ (38/38). `npm run lint` blocked (`tsc: command not found`) and focused Playwright E2E blocked (`playwright: command not found`); dependencies were not installed. No build, runtime/browser verification, VPS/database/wallet/deploy, secrets, or provider changes. The pre-push hook and its version-sync side effects have been reviewed; see the follow-up session note below. Kimi's operational answers remain pending; please add them below when convenient.
+
+### Repository evidence reconciled (not Kimi confirmation)
+- `docs/BETA.md` labels the API as UI-cut/deferred, real payments as demo mode, Fedimint as staged, and Umbrel Lightning as not ready. This is checked-in status text, not a fresh service probe.
+- `docs/M4-SERVER-REF.md` marks the old `api.giveabit.io` M4 tunnel retired (2026-09-13) and integrations staged. `docs/BACKEND-SCOPE.md` is explicitly a plan; its zero-endpoint/DNS/database measurements are dated 2026-09-13. No newer repo evidence verifies an API/database origin or live reachability, so the current operational state still needs Kimi/THOR confirmation.
+- `src/lib/family-payment-core.mjs` explicitly describes a fake, in-memory demo plug that never calls a payment node; its comment names Katoa as the canonical copy. Tadbuy wraps it with `createFakePlug('tadbuy')`. This does not establish a live payment rail, settlement contract, or current sibling-adopter list.
+- No `Kimi Response` section is present in the handoff. The six priority answers and the requested ledger, verification, custody, auth, database, identity, pilot, and policy details remain unknown/decision-needed; historical setup notes are not being treated as current answers.
 
 ---
+
+## Session — 2026-09-26 — repository evidence and push-safety review
+
+**Done:**
+- Reconciled the current checked-in Beta/M4/backend/payment-plug evidence above while distinguishing dated measurements and plans from live operational verification.
+- Reviewed `.githooks/pre-push`, `scripts/bump-version.ts`, and `scripts/sync-version.ts`: the default hook bumps package version, syncs `projectState.ts` and `public/sw.js`, commits selected version files, nested-pushes, then aborts the outer push. The hook's documented `SKIP_VERSION_BUMP=1` bypass avoids those side effects.
+- Preserved the pending `LATEST-UPDATE.md` update; no dependency installation or external ops action.
+
+**Git State at review:**
+- `origin/main`: `acaf4a7`; local UI honesty commit: `a22ec55`.
+- This is a review-time snapshot; consult the current Git history and remote state for the final sync result.
+
+---
+
 
 ## Session — 2026-09-26
 
@@ -23,11 +43,11 @@
 - No payment, payout, escrow, campaign activation, or audience/delivery claim is presented as operational without confirmed backend and operator gates.
 - Local sample placement requests remain display-only and cannot be advanced as vendor acceptance, publication, or proof review.
 - `git diff --check` and `npm run check:routes` pass (38/38). `npm run lint` could not run because `tsc` is absent; focused Playwright could not run because `playwright` is absent. No dependency installation, build, browser verification, or deploy.
-- Push deferred: the repository pre-push hook invokes an unverified version-bump script and performs a nested push. No external push was attempted.
+- The pre-push hook has been inspected; any push must avoid its default nested-push/version-bump behavior. No external push occurred during the original implementation session.
 
-**Git State:**
+**Git State at implementation commit:**
 - Base SHA: `acaf4a7cc31a1eb26638e6e73bf21e57de4ca5cb` (`origin/main` at session start).
-- Unpushed: see local-only M3 commit; push is deliberately deferred pending verified checks and review of the pre-push hook.
+- Local implementation commit: `a22ec55`; follow-up repository-evidence handoff described in the session entry above.
 
 ---
 
