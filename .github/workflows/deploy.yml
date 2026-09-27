@@ -21,7 +21,7 @@ on:
 
 jobs:
   build_and_verify:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
@@ -77,7 +77,7 @@ jobs:
   # Manual fallback only — cannot race the git integration because it never runs on push.
   break_glass_deploy:
     if: github.event_name == 'workflow_dispatch' && inputs.mode == 'break-glass-deploy'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     env:
