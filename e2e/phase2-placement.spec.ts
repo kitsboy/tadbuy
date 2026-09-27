@@ -10,7 +10,7 @@ test.describe('Marketplace sample placement preview', () => {
 
     await expect(page.getByRole('heading', { name: 'Preview a placement request' })).toBeVisible();
     await page.getByLabel('Advertiser or project name').fill('Example advertiser');
-    await page.getByLabel('Message to vendor').fill('This is a local sample only.');
+    await page.getByLabel('Example message · not sent').fill('This is a local sample only.');
     await page.getByRole('button', { name: 'Save local preview' }).click();
 
     await expect(page.getByText('Sample request saved locally — no vendor was notified and no payment was made.')).toBeVisible();
