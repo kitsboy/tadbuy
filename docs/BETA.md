@@ -1,6 +1,6 @@
 # Tadbuy — BETA Status
 
-**Auto-generated:** 2026-09-16 · **Version:** v5.0.215
+**Auto-generated:** 2026-09-27 · **Version:** v5.0.217
 
 ## Phase: BETA
 

@@ -1,7 +1,7 @@
 {
   "name": "react-example",
   "private": true,
-  "version": "5.0.217",
+  "version": "5.0.221",
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
@@ -16,6 +16,7 @@
     "postbuild": "node scripts/verify-dist.mjs",
     "check:prod-cache": "node scripts/check-origin-cache.mjs",
     "check:routes": "node scripts/check-routes.mjs",
+    "test:payment-core": "node --test test-payment-core.mjs",
     "check:bundle": "node scripts/report-bundle.mjs",
     "audit:dependencies": "npm audit --audit-level=high",
     "preview": "vite preview",

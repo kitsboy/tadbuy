@@ -9,3 +9,11 @@ export { Spinner } from './Spinner';
 export { EmptyState } from './EmptyState';
 export { StatCard } from './StatCard';
 export { Divider } from './Divider';
+
+// Legacy form kit (moved from the colliding src/components/ui.tsx to
+// src/components/ui-legacy.tsx so that "@" /components/ui" resolves to this
+// directory barrel and can export both generations of components).
+export {
+  Card, CardTitle, Button, Input, Textarea, Select, Label,
+  FileInput, FormGroup, Modal, InfoTooltip,
+} from '../ui-legacy';
