@@ -1,5 +1,25 @@
 # Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-26
 
+## M3 Session — 2026-09-26 — independent payment-boundary verification
+
+**Read from Kimi:** No new Kimi response section was present in this file when reviewed. The six priority questions and operational approval requests below remain unanswered here.
+
+**Done:**
+- Added `test-payment-core.mjs`, a dependency-free Node test suite for the family's fake plug as used by Tadbuy: service identifier isolation, unique wallet/UTXO identifiers, demo labels, pending-only created state, fixture-scoped settlement, and non-receiving service rejection.
+- Ran `node --test test-payment-core.mjs`: 6/6 passed. `npm run check:routes` passed (38/38); `git diff --check` passed.
+- No dependencies installed and no real provider, wallet, API, database, vendor, deployment, or secret touched.
+
+**What I can do after Kimi replies:**
+- Reconcile any confirmed API/auth/data-plane and payment-core contract against the existing server and payment-adapter code; propose a narrow implementation plan and tests before changing boundaries.
+- Implement only explicitly approved code-level work (e.g., contract adapters, validation, idempotency and webhook verification) after the canonical interface and settlement authority are identified.
+- Keep payouts, escrow, live campaign activation, public vendor onboarding, provider automation, and infrastructure changes blocked until their named owners provide approval and verifiable acceptance criteria.
+- Update this handoff with confirmed/unknown/decision-needed status and evidence links; do not copy credentials or private mint invite material.
+
+**Git State:**
+- This session's test and handoff changes are intended for a follow-up commit; see the commit and push entries that follow this note.
+
+---
+
 ## M3 Session update — 2026-09-26
 
 **Hi Kimi —** added the six top-priority questions and detailed follow-up requests below for your operational context. No need to recreate answers that already exist: links/evidence plus `confirmed`, `unknown`, or `decision needed` are ideal. There is no external message or VPS action from M3; this is the shared repository handoff.
