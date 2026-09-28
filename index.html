@@ -87,10 +87,10 @@
   </head>
   <body>
     <div id="root"></div>
-    <div id="boot-fallback" hidden style="position:fixed;inset:0;z-index:99999;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:#18181b;color:#fff;font-family:Inter,system-ui,sans-serif;">
+    <div id="boot-fallback" hidden role="alert" style="position:fixed;inset:0;z-index:99999;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:#18181b;color:#fff;font-family:Inter,system-ui,sans-serif;">
       <div style="max-width:24rem;text-align:center;">
         <p style="font-size:1.25rem;font-weight:800;margin:0 0 .5rem;">Tadbuy failed to load</p>
-        <p style="font-size:.875rem;color:#a1a1aa;line-height:1.5;margin:0 0 1.25rem;">The app bundle did not load. This is usually a stale cache after a deploy — try a hard refresh or clear site data.</p>
+        <p style="font-size:.875rem;color:#a1a1aa;line-height:1.5;margin:0 0 1.25rem;">The app did not finish loading. This is usually a stale cache after a deploy — try a hard refresh or clear site data.</p>
         <button type="button" onclick="clearCacheAndReload()" style="background:#f472b6;color:#000;font-weight:700;border:none;border-radius:.75rem;padding:.625rem 1.25rem;cursor:pointer;">Reload</button>
       </div>
     </div>
@@ -111,25 +111,60 @@
         }, 300);
       }
       (function () {
+        var el = document.getElementById('boot-fallback');
+        // A hard failure (bundle or lazy chunk 404) is never auto-dismissed:
+        // reloading/clearing cache is the only fix, so the notice must stay.
+        var hardFailed = false;
         var shown = false;
-        function showFallback() {
-          if (shown) return;
-          var root = document.getElementById('root');
-          if (root && root.childElementCount > 0) return;
+
+        function show() {
+          if (!el || shown) return;
           shown = true;
-          var el = document.getElementById('boot-fallback');
-          if (el) el.hidden = false;
+          el.hidden = false;
         }
+
+        function hide() {
+          if (!el || !shown) return;
+          shown = false;
+          el.hidden = true;
+        }
+
+        // 'pending' — the app has not mounted yet.
+        // 'stuck'   — a route is still on <PageLoader /> (see src/App.tsx); the
+        //             Suspense boundary never committed, so waiting is pointless.
+        // 'rendered' — the app painted real content.
+        function bootState() {
+          var root = document.getElementById('root');
+          if (!root || root.childElementCount === 0) return 'pending';
+          return root.querySelector('[data-page-loader]') ? 'stuck' : 'rendered';
+        }
+
         window.addEventListener('error', function (e) {
           if (e.target && e.target.tagName === 'SCRIPT') {
             var src = e.target.src || '';
             if (src.indexOf('/src/') !== -1 || src.indexOf('/assets/') !== -1) {
-              showFallback();
+              hardFailed = true;
+              show();
             }
           }
         }, true);
+
+        // Only diagnose after the app has had a fair chance to boot, then keep
+        // watching so a page that recovers late is not left covered by a notice
+        // claiming it failed.
         setTimeout(function () {
-          showFallback();
+          var timer = setInterval(function () {
+            if (hardFailed) {
+              clearInterval(timer);
+              return;
+            }
+            if (bootState() === 'rendered') {
+              clearInterval(timer);
+              hide();
+              return;
+            }
+            show();
+          }, 1000);
         }, 12000);
       })();
     </script>

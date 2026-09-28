@@ -65,7 +65,9 @@ const Cookies          = lazy(() => import('./pages/legal/Cookies'));
 // ── Page loader spinner ───────────────────────────────────────────────────────
 function PageLoader() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3" role="status" aria-live="polite">
+    // data-page-loader is read by the boot guard in index.html: it is how a
+    // stalled route render is told apart from one that has committed content.
+    <div data-page-loader className="flex flex-col items-center justify-center min-h-[60vh] gap-3" role="status" aria-live="polite">
       <Spinner size="md" />
       <p className="text-xs text-muted font-semibold">Loading page…</p>
     </div>

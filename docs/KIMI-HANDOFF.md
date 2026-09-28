@@ -1,5 +1,34 @@
 # Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-27
 
+## Session — 2026-09-28 — live route stall investigated; boot recovery shipped (no push)
+
+**Done:**
+- Re-ran the live route sweep against `tadbuy.giveabit.io` and found the previous one-shot method was **reporting false positives**: run A flagged 19 routes "stuck", run B (fresh browser profile) flagged 11, a **different** subset each time. `/` renders in 2.8s when loaded in isolation. There is no per-route breakage list to action.
+- Characterised the real defect: an **intermittent Suspense stall**. For a hung load, `readyState=complete`, **all requests finished (0 unfinished), no console errors, no exceptions, no failed requests** (only our deliberately CSP-blocked Cloudflare beacon), route chunk served **200** — yet the app never leaves `<PageLoader />`. Measured 13 stalls in 68 loads (19%) spread across 13 routes; **0 routes fail consistently**.
+- Ruled out, with evidence: per-route breakage, prerender/serving split (all 34 static routes share one identical 8,298-byte SPA shell), missing/404 chunks, JS errors, **background-tab throttling / `document.hidden`** (tabs were `visible`, and activating the tab does not recover), and wire-level stalls. Service-worker bypass looked favourable (0/6 vs 1/6 hangs) but ran on an already-warm profile, so it is **confounded — not a conclusion**.
+- **Fixed a real, definite bug found while tracing it:** the `index.html` boot guard only fired when `#root` had *zero* children, so a page stuck on `<PageLoader />` never surfaced the "failed to load" recovery UI at all — an infinite spinner with no way out for the user. The guard now detects the stuck-loader state via `[data-page-loader]` (set by `PageLoader` in `src/App.tsx`), shows the existing notice with its Reload/clear-cache action, **auto-hides if the page recovers late**, and still pins the notice permanently on a genuine bundle/lazy-chunk error. This is a **recovery path, not a root-cause fix**.
+- Replaced ten ad-hoc `.tmp-*.mjs` probes with two maintained, dependency-free checks plus a shared CDP helper (`scripts/lib/cdp.mjs`): `scripts/check-boot-fallback.mjs` (drives the real `index.html` through 4 scenarios) and `scripts/check-live-routes.mjs` (routes read from `src/App.tsx`, reports hang *rate*, fails only if a route never renders).
+
+**Unknown / still open (needs a local repro, not guessing):** the root cause of the stall is **not identified**. Confirming it needs a repeat-load harness against a built `dist/`. `node_modules` is **absent in this checkout**, so `tsc`, `vite build` and Playwright **could not be run** and no dependencies were installed.
+
+**Verified:**
+- `npm run check:boot-fallback` — 4/4 scenarios pass; **mutation-tested** (disabling the loader detection makes it fail with exit 1, so the check has teeth).
+- `npm run check:live-routes --repeats 2` — 68 loads, 13 stuck (19%), 0 routes never rendered.
+- Earlier evidence: isolated `/` boot curve (renders at ~2.8s), per-request traces, `readyState`/unfinished-request accounting on whole 8-round and 6-round repeats.
+- Not run: typecheck, build, E2E, dependency audit — blocked by the missing `node_modules`, not skipped by choice.
+
+**Decisions:**
+- Treat the sweep's route list as an artifact; do not "fix" 19 routes that are not broken.
+- Ship the boot recovery now (user-facing, low risk, no backend/payment/ops surface) and leave the stall's root cause open rather than claiming a cause not reproduced.
+- Not part of CI: both new checks need a local Chrome and hit a live deployment (the route check) or bind a port (the boot check).
+
+**Git State:**
+- Commit: this session's commit on `main` (see `git log -1`).
+- **Not pushed.** Pushing is a production deploy here, and `.githooks/pre-push` additionally bumps the patch version, auto-commits `package.json`/`projectState.ts`, then performs a *nested* push and aborts the outer one. That call is left to Cam/Kimi — the exact command is in the session summary.
+- No backend, payment, wallet, secret, provider, database or deployment surface was touched.
+
+---
+
 ## M3 Session — 2026-09-26 — non-live go-live readiness preparation
 
 **Upstream sync:** Integrated Kimi's 2026-09-27 response and the eight intervening upstream commits into the local branch with a normal merge. This retains her answer and the upstream Tabs/Playwright/CI fixes; no force push or overwrite used.
