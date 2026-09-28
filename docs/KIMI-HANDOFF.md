@@ -1,6 +1,43 @@
 # Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-27
 
+## Session — 2026-09-28 (later) — stall narrowed to a production-only React retry wake-up; LOCAL REPRO FAILED; visibility theory disproved
+
+**Correction first.** The entry below reported "13 stalls in 68 loads (19%)" and a stall with "no recovery". Both figures came from my own harness and both were **wrong about the user-visible impact**. The measurements below supersede them.
+
+**What actually happens — root cause.** The stalled page's React fiber root shows work pending on a **retry lane** (`pendingLanes`/`callbackPriority` = `4194304` or `33554432`, i.e. bits 22/25 of React 19's retry pool `62914560` — confirmed against the installed `react-dom`), with `suspendedLanes: 0`, `pingedLanes: 0` and a live `callbackNode`. So React *did* schedule the Suspense retry and it simply never executes. On the same page the route chunk imports in **0-3 ms**, and the host loop is healthy: `messageChannel: 0ms`, `setTimeout(0): 0ms`. (The `requestAnimationFrame: NEVER` reading in the first draft of this entry came from *hidden* tabs and does not hold for stalled foreground tabs — see below.) The boundary is therefore not waiting on the network, the cache, React Router, a rejected import, or a missing module: it is waiting on a scheduled callback that never runs.
+
+**Visibility is NOT the trigger — disproved.** Using a fresh browser profile per load, a single tab, `Page.bringToFront`, then navigate: production stalled **4 of 12 cold loads (33%)** while `document.visibilityState: visible`, `requestAnimationFrame: 2-15 ms` (healthy) and `MessageChannel: 0 ms`. On those stalls the bytes are identical to the hidden-tab stalls — retry lanes pending (`16777216` = bit 24, and `37748736` = bits 24+25 of the `62914560` pool), `callbackNode` set, `suspendedLanes`/`pingedLanes` 0 — and the last route chunk still imports in **0 ms**. So the stall reproduces with a foreground tab and a working frame clock; the earlier "hidden tabs / dead rAF" correlation was an artifact of loading several tabs at once.
+
+**The local repro FAILED, and that is the headline result of this session.** I built the real bundle here (`npm ci` — 647 packages — then `npm run build` → 69 chunks, `verify-dist` OK) and served `dist/` with `vite preview`, loading with a **fresh Chrome profile per load** so every route chunk is genuinely cold:
+
+| Target | Cold loads (fresh profile each) | Stalled |
+|---|---|---|
+| production `tadbuy.giveabit.io` | 12 | **4 (33%)** |
+| local `dist` | 12 | **0** |
+| local `dist` + 300 ms emulated latency | 12 | **0** |
+| production, 34-route sweep, foregrounded | 34 | 11 (32%) |
+
+So the stall is **not reproducible against a locally built dist**, cold or latency-emulated. Untested candidates, in the order I would try them next: (1) the deployed bundle is not byte-identical to a local build — the prebuild regenerates `projectState.lastSynced` and other date fields, which moved chunk hashes (`GeoTargeting-BWtCTmO9` deployed vs `GeoTargeting-BHkxVJSg` local); (2) Cloudflare's injected scripts (`/cdn-cgi/challenge-platform/...`) and the enforced `public/_headers` CSP, neither of which `vite preview` applies; (3) HTTP/2 request ordering and bursty CDN latency versus local uniform delivery.
+
+**Impact: not permanent, but not reliably self-healing either.** In the cold-load runs, re-focusing did **not** clear the stall (`stuck=true` after `Page.bringToFront` + 2 s, 4/4 stalls). One earlier stall did clear on a dispatched `visibilitychange` — that is the app's own handler in `src/App.tsx` (`onVisibility -> fetchRates() -> setRates()`), and it is consistent with the lane evidence that **any** state update flushes the pending retry. The app also refreshes prices every 30 s, which is itself such an update, so a visible tab plausibly clears within ~30 s — **but I did not confirm that** (stalled pages were closed before 30 s). Practical read for Cam/Kimi: a first-time visitor has roughly a **1-in-3 chance of landing on a spinner**, and I cannot yet say when it clears. It is still **not** an app-data, wallet, backend, payment or deployment fault.
+
+**Evidence inventory (this session):** 8 fiber-root lane dumps across stalled pages (retry lanes, `callbackNode` set, `suspended`/`pinged` 0); chunk `import()` on stalled pages (0 ms, 6 captures); host probes (`MessageChannel`/`setTimeout`/rAF); re-focus and `visibilitychange` nudges; the cold-load A/B table above; `npm ci` + `npm run build` + `vite preview`.
+
+**Verified in this session:** `npm ci` (647 packages) then `npm run lint` (typecheck clean) and `npm run build` (69 chunks, `verify-dist` OK) — so the earlier "could not build" caveat is now closed. `node_modules` is installed in this checkout and is gitignored.
+
+**Not yet done / open:** the reason the scheduled Scheduler callback never executes is **not** traced into React internals, and because the repro is production-only I cannot test a fix here. Also unconfirmed: whether the 30 s price refresh clears a visible-tab stall (needs a ≥35 s watch).
+
+**Highest-value next step (deliberately NOT shipped — it cannot be verified while the repro is production-only):** preload the initial route's chunk before `createRoot(...).render(...)`, so the Suspense boundary never suspends on a cold load. If the mechanism is "retry scheduled, callback never delivered", removing the suspension removes the failure — and a fresh-visit cold load is exactly when the 33% rate applies. Cheaper fallback: a stall watchdog that forces one benign state update if `[data-page-loader]` is still present after ~2 s, since every observed recovery was triggered by a state update. Flagged as a decision for Cam/Kimi rather than a silent workaround in the app.
+
+**New finding, unrelated:** `scripts/sync-docs.ts` **regenerates `LATEST-UPDATE.md`**, overwriting the hand-written status text the session protocol asks for (it replaced this session's brief with `Brief: v5.0.221 — docs sync from projectState` during `npm run build`). The durable record has to live here in the handoff, not there. Separately, the build synced a **stale `public/sw.js` cache name** `tadbuy-v5.0.218` up to `v5.0.221`.
+
+**Git State:** correction committed on `main`; still **not pushed** (pushing is a production deploy, and `.githooks/pre-push` bumps the version and nested-pushes).
+
+---
+
 ## Session — 2026-09-28 — live route stall investigated; boot recovery shipped (no push)
+
+> **Superseded on impact:** the "19%" figure below came from a 6 s deadline in the tool at the time, and the "no recovery" claim was measured too briefly. See the entry above for the corrected numbers and the production-only nature of the stall. The boot-guard change itself stands, and the stall is more severe than this entry assumed: it does not clear reliably on focus.
 
 **Done:**
 - Re-ran the live route sweep against `tadbuy.giveabit.io` and found the previous one-shot method was **reporting false positives**: run A flagged 19 routes "stuck", run B (fresh browser profile) flagged 11, a **different** subset each time. `/` renders in 2.8s when loaded in isolation. There is no per-route breakage list to action.
