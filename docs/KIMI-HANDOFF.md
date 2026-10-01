@@ -1,6 +1,26 @@
 # Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-27
 
-## Session — 2026-10-01 (latest) — illustration kit made theme-aware (dark/light/high-contrast verified by matrix)
+## Session — 2026-10-01 (latest) — art color audit: accents are now theme-aware too, plus a maintained `check:art-themes` gate
+
+**What this batch did.** Audited every color in the illustration kit against every theme, and turned the throwaway probe from the previous session into a maintained check (`scripts/check-art-themes.mjs`, `npm run check:art-themes`, self-serves `dist/`, needs only local Chrome). Result: **all four combos pass** (dark/light × normal/high contrast, 6 scenes = 24 cells, 0 failures).
+
+**Two real color fixes** (the previous session had deliberately left accents constant across themes — that turned out to be wrong for light):
+- **Yellow had to go 700-level, not 600-level.** `#facc15` measures dL 15 on near-white but only **1.47:1**, and coins/bolts draw it at op 0.55–0.85, which drops it under both bars. Light now uses `#a16207` (dL 28 / 2.18:1 at op 0.55, still 3.6:1 against the dark ink plates it also sits on); light+high uses `#854d0e`. `YELLOW`/`GREEN` were hardcoded hexes and are now on `--art-yellow` / `--art-green`.
+- **New `--art-coin-rim` token.** Coins go dark-on-light in the light theme, so a fixed `#854d0e` rim measured only **1.39:1** on `#a16207` and the coin detail vanished. The rim flips: `#854d0e` (dark) → `#fde68a` (light) → `#fef3c7` (light+high).
+
+**Harness bug worth remembering (it faked 9 of the failures).** `anyToRgb`'s Oklab → sRGB conversion was wrong, so light mode's near-white `oklch(0.967 …)` body background decoded as a **mid-gray (~#8a8a8a)** — every light accent then measured "invisible" against a background that isn't there. The pastels were fine all along; the audit's first conclusion was an artifact. Correct matrix now.
+
+**Exemptions, and why they are principled rather than convenient.** `data-art-ink` marks (white bolt on the gradient screen, globe meridian/equator strokes) and `data-art-coin` rims are measured against **their own plate**, not the page — judging ink-on-color against the page background is meaningless. Plus the pre-existing opacity ≤ 0.15 soft-glow exemption and the small-ink-dot heuristic. Coin rims get their own explicit `>= 1.8:1` check against the coin fill so the exemption can't hide a real regression.
+
+**Gate:** `npm run lint` clean · build 70 chunks, dist verified · `check:routes` 38/38 · `check:art-themes` 24 cells / 0 failures. Not in CI (needs Chrome), same convention as the sibling `check:boot-fallback` / `check:live-routes`.
+
+**Still open:** the production stall root cause is un-reproduced locally; `/metrics` + `/pitch` chunk-size correlation is a lead, not a conclusion (n=4).
+
+**Git State:** SHA `git log -1 --format=%H` at commit time; unpushed list in the commit below.
+
+---
+
+## Session — 2026-10-01 — illustration kit made theme-aware (dark/light/high-contrast verified by matrix)
 
 **Gap fixed.** The morning's illustration kit hardcoded dark zinc surfaces (`#202024`, `#18181b`, `#e4e4e7` stars), so the art rendered as dark blobs on the light theme. Cam picked this as the next upgrade from the four offered.
 

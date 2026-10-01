@@ -1,5 +1,7 @@
 # tadbuy — Last Updated 2026-10-01 by Grok
 
-Brief: v5.0.223 — illustrations made theme-aware via --art-* vars (dark/light/high-contrast verified by 24-cell matrix). Also today: stall watchdog shipped + production-verified (4/4 stalls recovered), illustration kit shipped.
-Commit: see git log (sync-docs overwrites this file on build)
-Docs synced: 2026-10-01
+Brief: art color audit — accents theme-aware (yellow deepened 700-level, new coin-rim token) + maintained `check:art-themes` gate, 24 cells green
+Commit: see `git log -1` (durable record: `docs/KIMI-HANDOFF.md` top entry)
+
+NOTE: `scripts/sync-docs.ts` overwrites this file on every build (it becomes
+"docs sync from projectState"). The durable record is `docs/KIMI-HANDOFF.md`.

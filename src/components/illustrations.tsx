@@ -4,9 +4,10 @@
  * Design rules for these scenes:
  * - Pure inline SVG: zero network requests, no CSP connect-src/img-src impact,
  *   no service-worker precache weight, crisp at any density.
- * - Jewel accents (pink/fuchsia/purple/lightning/blue/green) are the brand and
- *   are identical in every theme — they carry their own contrast on both the
- *   dark and light backgrounds.
+ * - Jewel accents are the brand. Pink/fuchsia/purple/blue/yellow read from --art-*
+ *   variables: pastel values on dark, deeper 600-level shades on light (the
+ *   pastels wash out against near-white). Yellow and green measure well on
+ *   both backgrounds and stay constant.
  * - Structural colors (surfaces, strokes, star dots) come from the --art-*
  *   CSS variables defined in src/index.css, with dark defaults plus
  *   [data-theme="light"] and [data-contrast="high"] overrides, so one kit
@@ -24,21 +25,24 @@ import { cn } from '@/lib/utils';
 
 type ArtProps = { className?: string };
 
-const PINK = '#f472b6';
-const FUCHSIA = '#e879f9';
-const PURPLE = '#c084fc';
-const YELLOW = '#facc15';
-const BLUE = '#38bdf8';
-const GREEN = '#4ade80';
+const PINK = 'var(--art-pink)';
+const FUCHSIA = 'var(--art-fuchsia)';
+const PURPLE = 'var(--art-purple)';
+const YELLOW = 'var(--art-yellow)';
+const BLUE = 'var(--art-blue)';
+const GREEN = 'var(--art-green)';
 const SURFACE = 'var(--art-scene)';
 const CARD = 'var(--art-card)';
 const STROKE = 'var(--art-stroke)';
 const STROKE_SOFT = 'var(--art-stroke-soft)';
 const STAR = 'var(--art-star)';
+/** Ink rim inside a sat coin — flips with the theme (see index.css). */
+const COIN_RIM = 'var(--art-coin-rim)';
 
-function ArtScene({ className, children }: { className?: string; children: ReactNode }) {
+function ArtScene({ name, className, children }: { name: string; className?: string; children: ReactNode }) {
   return (
     <svg
+      data-art-scene={name}
       viewBox="0 0 240 120"
       aria-hidden="true"
       focusable="false"
@@ -62,7 +66,7 @@ function Sparkle({ x, y, r = 4, fill = PINK, opacity = 0.9 }: { x: number; y: nu
 /** Billboard with a bolt on screen + stacked sats — marketplace / listings. */
 export function ArtMarketplaceScene({ className }: ArtProps) {
   return (
-    <ArtScene className={className}>
+    <ArtScene name="marketplace" className={className}>
       <defs>
         <linearGradient id="tadArtMktScreen" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor={PINK} />
@@ -74,17 +78,23 @@ export function ArtMarketplaceScene({ className }: ArtProps) {
       <rect x="36" y="14" width="168" height="68" rx="14" fill={SURFACE} stroke={STROKE} strokeWidth="1.5" />
       <rect x="50" y="26" width="94" height="44" rx="8" fill="url(#tadArtMktScreen)" opacity="0.9" />
       {/* bolt on the screen */}
-      <path d="M103 32 L88 52 h9 L93 64 L112 43 h-9 L107 32 Z" fill="#fff" opacity="0.95" />
-      {/* caption bars under the screen */}
+      {/* Bolt on the screen: white ink on the gradient plate below, so it is
+          judged against that plate, never against the page background. */}
+      <path data-art-ink d="M103 32 L88 52 h9 L93 64 L112 43 h-9 L107 32 Z" fill="#fff" opacity="0.95" />
+      {/* caption bars under the screen — fade suggests text lines; the
+          faintest uses the soft stroke so it still resolves on dark */}
       <rect x="152" y="28" width="42" height="6" rx="3" fill={STROKE} />
       <rect x="152" y="40" width="30" height="6" rx="3" fill={STROKE} opacity="0.7" />
-      <rect x="152" y="52" width="36" height="6" rx="3" fill={STROKE} opacity="0.5" />
-      {/* sat coins */}
-      <circle cx="178" cy="86" r="10" fill={YELLOW} stroke="#854d0e" strokeWidth="1.5" />
-      <circle cx="194" cy="76" r="10" fill={YELLOW} stroke="#854d0e" strokeWidth="1.5" />
-      <circle cx="187" cy="96" r="10" fill={YELLOW} stroke="#854d0e" strokeWidth="1.5" />
-      <circle cx="194" cy="76" r="5" fill="none" stroke="#854d0e" strokeWidth="1.2" />
-      <circle cx="178" cy="86" r="5" fill="none" stroke="#854d0e" strokeWidth="1.2" />
+      <rect x="152" y="52" width="36" height="6" rx="3" fill={STROKE_SOFT} opacity="0.5" />
+      {/* sat coins — rims are ink on the coin fill, hence the data-art-coin
+          wrapper the contrast check uses instead of the page background */}
+      <g data-art-coin>
+        <circle cx="178" cy="86" r="10" fill={YELLOW} stroke={COIN_RIM} strokeWidth="1.5" />
+        <circle cx="194" cy="76" r="10" fill={YELLOW} stroke={COIN_RIM} strokeWidth="1.5" />
+        <circle cx="187" cy="96" r="10" fill={YELLOW} stroke={COIN_RIM} strokeWidth="1.5" />
+        <circle cx="194" cy="76" r="5" fill="none" stroke={COIN_RIM} strokeWidth="1.2" />
+        <circle cx="178" cy="86" r="5" fill="none" stroke={COIN_RIM} strokeWidth="1.2" />
+      </g>
       {/* legs + sparkle */}
       <path d="M70 82 L62 100 M170 82 L178 100" stroke={STROKE_SOFT} strokeWidth="3" strokeLinecap="round" />
       <Sparkle x={216} y={24} r={5} fill={FUCHSIA} />
@@ -96,7 +106,7 @@ export function ArtMarketplaceScene({ className }: ArtProps) {
 /** Node → bolt hub → node with a dotted route — payments / settlement / rails. */
 export function ArtLightningFlow({ className }: ArtProps) {
   return (
-    <ArtScene className={className}>
+    <ArtScene name="lightning-flow" className={className}>
       <defs>
         <linearGradient id="tadArtFlowRoute" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor={PINK} />
@@ -134,7 +144,7 @@ export function ArtLightningFlow({ className }: ArtProps) {
 /** Mini dashboard with rising trend + bullseye — campaigns / analytics. */
 export function ArtCampaignScene({ className }: ArtProps) {
   return (
-    <ArtScene className={className}>
+    <ArtScene name="campaign" className={className}>
       <ellipse cx="120" cy="102" rx="84" ry="12" fill={PURPLE} opacity="0.1" />
       {/* dashboard card */}
       <rect x="28" y="16" width="118" height="86" rx="12" fill={CARD} stroke={STROKE} strokeWidth="1.5" />
@@ -162,7 +172,7 @@ export function ArtCampaignScene({ className }: ArtProps) {
 /** Drafting sheet with node graph + pencil — docs / plans / architecture. */
 export function ArtBlueprint({ className }: ArtProps) {
   return (
-    <ArtScene className={className}>
+    <ArtScene name="blueprint" className={className}>
       <ellipse cx="120" cy="102" rx="82" ry="12" fill={BLUE} opacity="0.1" />
       {/* sheet with folded corner */}
       <path d="M56 14 h112 a10 10 0 0 1 10 10 v72 a10 10 0 0 1 -10 10 H66 a10 10 0 0 1 -10 -10 Z" fill={CARD} stroke={STROKE} strokeWidth="1.5" />
@@ -190,7 +200,7 @@ export function ArtBlueprint({ className }: ArtProps) {
 /** Rocket climbing a dotted sat trail — launches / growth / celebration. */
 export function ArtRocket({ className }: ArtProps) {
   return (
-    <ArtScene className={className}>
+    <ArtScene name="rocket" className={className}>
       <defs>
         <linearGradient id="tadArtRocketTrail" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor={PURPLE} />
@@ -229,7 +239,7 @@ export function ArtRocket({ className }: ArtProps) {
 /** Globe with meridians, zap badge and orbit — global reach / network. */
 export function ArtGlobeZap({ className }: ArtProps) {
   return (
-    <ArtScene className={className}>
+    <ArtScene name="globe-zap" className={className}>
       <defs>
         <linearGradient id="tadArtGlobeFill" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor={BLUE} stopOpacity="0.85" />
@@ -243,8 +253,9 @@ export function ArtGlobeZap({ className }: ArtProps) {
       <circle cx="62" cy="84" r="3" fill={BLUE} />
       {/* globe */}
       <circle cx="110" cy="62" r="34" fill="url(#tadArtGlobeFill)" stroke={BLUE} strokeWidth="2" />
-      <ellipse cx="110" cy="62" rx="14" ry="34" fill="none" stroke="#fff" strokeWidth="1.4" opacity="0.35" />
-      <path d="M80 52 Q110 42 140 52 M80 72 Q110 82 140 72" fill="none" stroke="#fff" strokeWidth="1.4" opacity="0.3" />
+      {/* Meridians + equator: white ink on the globe's gradient fill. */}
+      <ellipse data-art-ink cx="110" cy="62" rx="14" ry="34" fill="none" stroke="#fff" strokeWidth="1.4" opacity="0.35" />
+      <path data-art-ink d="M80 52 Q110 42 140 52 M80 72 Q110 82 140 72" fill="none" stroke="#fff" strokeWidth="1.4" opacity="0.3" />
       {/* pins */}
       <circle cx="96" cy="50" r="3" fill={PINK} stroke="#18181b" strokeWidth="1" />
       <circle cx="122" cy="74" r="3" fill={GREEN} stroke="#18181b" strokeWidth="1" />

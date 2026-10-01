@@ -17,6 +17,7 @@
     "check:prod-cache": "node scripts/check-origin-cache.mjs",
     "check:routes": "node scripts/check-routes.mjs",
     "check:boot-fallback": "node scripts/check-boot-fallback.mjs",
+    "check:art-themes": "node scripts/check-art-themes.mjs",
     "check:live-routes": "node scripts/check-live-routes.mjs",
     "test:payment-core": "node --test test-payment-core.mjs",
     "check:bundle": "node scripts/report-bundle.mjs",

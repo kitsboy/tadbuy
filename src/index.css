@@ -46,14 +46,39 @@
   --art-stroke: #3f3f46;     /* outlines, caption bars, axes */
   --art-stroke-soft: #52525b;/* legs, graph wires, subtle outlines */
   --art-star: #e4e4e7;       /* tiny star dots — light on dark, dark on light */
+  /* Jewel accents, dark-theme pastels (same values as before theming). */
+  --art-pink: #f472b6;
+  --art-fuchsia: #e879f9;
+  --art-purple: #c084fc;
+  --art-blue: #38bdf8;
+  --art-green: #4ade80;
+  --art-yellow: #facc15;
+  --art-coin-rim: #854d0e;    /* dark ink rim inside a sat coin (dark theme) */
 }
 
 [data-theme="light"] {
   --art-scene: #e4e4e7;
   --art-card: #fafafa;
-  --art-stroke: #71717a;
-  --art-stroke-soft: #a1a1aa;
+  /* One step darker than the dark theme's pair so shapes survive alpha
+     compositing at reduced opacities on the light background. */
+  --art-stroke: #52525b;
+  --art-stroke-soft: #71717a;
   --art-star: #52525b;
+  /* Accents keep the same hues but deepen to 600-level shades: the pastels
+     wash out against near-white (deltaL 3–11); these measure >= 25. */
+  --art-pink: #db2777;
+  --art-fuchsia: #c026d3;
+  --art-purple: #9333ea;
+  --art-blue: #0284c7;
+  /* Yellow is the one accent that had to go 700-level, not 600: #facc15
+     measures deltaL 15 on near-white but only 1.47:1, and its coin/bolt
+     shapes are drawn at op 0.55–0.85, which drops it under both bars.
+     #a16207 holds deltaL 28 / 2.18:1 at op 0.55 and still keeps 3.6:1
+     against the dark ink plates it also sits on. */
+  --art-yellow: #a16207;
+  /* Coins go dark-on-light here, so their rim ink has to flip with them:
+     #854d0e on #a16207 is only 1.39:1 and the coin detail disappears. */
+  --art-coin-rim: #fde68a;
 }
 
 /* High contrast: push outlines one step further from the background.
@@ -67,6 +92,8 @@
   --art-stroke: #3f3f46;
   --art-stroke-soft: #52525b;
   --art-star: #27272a;
+  --art-yellow: #854d0e;
+  --art-coin-rim: #fef3c7;
 }
 
 @layer base {
