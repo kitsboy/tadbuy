@@ -16,8 +16,8 @@
 - No backend, payment, wallet, provider, database, secret, or deployment surface touched; nothing in this batch requires a Cam/Kimi gate.
 
 **Git State:**
-- Batch commit: `d5c0b95` on `main`, followed by the hook's auto-bump commit (see `git log -2`).
-- Pushed to `origin/main` at the end of this session (pre-push hook path).
+- Batch commit: `d5c0b95` on `main`; handoff commit `985ae8f`; hook auto-bump `188bd52` (v5.0.223); follow-up `5ace458` committing the service-worker cache name the hook rewrites but does not stage (leftover cleaned via the documented `SKIP_VERSION_BUMP=1` push path).
+- All of it verified on `origin/main` (`git log origin/main..HEAD` empty; working tree clean). Pushing works, but with a gotcha worth knowing: `origin` has **two push URLs** (SSH first, then HTTPS). The SSH push succeeds and then the HTTPS attempt fails with `could not read Username` — so the pre-push hook prints "❌ Version bump push failed" and exits 128 **on every successful push**. Remote state is the truth; suggest removing the HTTPS pushurl (`git remote set-url --push origin git@github.com:kitsboy/tadbuy.git`) to silence it.
 
 ---
 
