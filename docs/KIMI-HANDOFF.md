@@ -1,5 +1,26 @@
 # Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-27
 
+## Session — 2026-10-01 — decorative illustration kit shipped (batch completed, committed and pushed)
+
+**Done:**
+- Completed and shipped the pending UI batch found uncommitted in the tree: a new inline-SVG illustration kit (`src/components/illustrations.tsx`, six scenes: marketplace, lightning-flow, campaign, blueprint, rocket, globe-zap) plus an `art` prop on `PageShell` (wide screens) and `EmptyState` (behind the icon), wired into 27 pages. Purely decorative — every instance is `aria-hidden` + `pointer-events-none`, hidden below `sm` for PageShell art, and carries **no copy, claims, or behavior changes** (no reach figures, no payment/balance implications; consistent with the demo-only boundary).
+- Kit design rules (in-file): pure inline SVG so there is zero CSP `connect-src`/`img-src` impact and no service-worker precache weight; jewel palette over zinc so it holds on both themes; per-scene gradient id prefixes.
+- **Visual sanity check, headless Chrome over `vite preview` of the built dist** (one-off probe built on `scripts/lib/cdp.mjs`, deleted after the run): 7 routes (`/`, `/marketplace`, `/wallet`, `/metrics`, `/docs`, `/pitch`, `*` 404) × desktop 1280 + mobile 390 — every route booted, art rendered 192×96 on desktop and correctly display-none on mobile, **0 px horizontal overflow, 0 console errors/uncaught exceptions**; screenshots captured to `/tmp/tadbuy-art-{home,wallet,404}.png`.
+- Correction to my own harness, in this file's tradition: the **first** art-check run reported all 14 loads HUNG with zero errors — invalid, because the `vite preview` process had died when its shell session ended, so the probe was loading a dead port (dead-server error pages have no `<main>`, which mimics the stall signature). Re-run in a single shell that keeps the server alive is the valid result above. Local repro of the production stall still stands as failed.
+- Routine verification: `tsc --noEmit` clean; `check:routes` 38/38; `npm run build` → 70 chunks, `verify-dist` OK.
+- Also reconciled a stale handoff claim: the 2026-09-28 "still not pushed" entry — the correction commit and the pre-push version bump `b0668d7` (v5.0.222) were in fact already on `origin/main` when this session started; `git log origin/main..HEAD` was empty.
+
+**Decisions:**
+- Art is decoration only and deliberately carries no semantics — no invented metrics, no urgency patterns, no implied live inventory — per the UI-honesty scope Kimi confirmed 2026-09-27.
+- Batch committed (`d5c0b95`) and pushed after visual verification. The pre-push hook bumps the version (v5.0.222 → v5.0.223), auto-commits the version files, and performs the real nested push; the outer push then aborts by design.
+- No backend, payment, wallet, provider, database, secret, or deployment surface touched; nothing in this batch requires a Cam/Kimi gate.
+
+**Git State:**
+- Batch commit: `d5c0b95` on `main`, followed by the hook's auto-bump commit (see `git log -2`).
+- Pushed to `origin/main` at the end of this session (pre-push hook path).
+
+---
+
 ## Session — 2026-09-28 (later) — stall narrowed to a production-only React retry wake-up; LOCAL REPRO FAILED; visibility theory disproved
 
 **Correction first.** The entry below reported "13 stalls in 68 loads (19%)" and a stall with "no recovery". Both figures came from my own harness and both were **wrong about the user-visible impact**. The measurements below supersede them.
