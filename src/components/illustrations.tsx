@@ -4,9 +4,16 @@
  * Design rules for these scenes:
  * - Pure inline SVG: zero network requests, no CSP connect-src/img-src impact,
  *   no service-worker precache weight, crisp at any density.
- * - Jewel palette only (accent pink #f472b6, fuchsia #e879f9, purple #c084fc,
- *   lightning #facc15, blue #38bdf8, green #4ade80) over zinc surfaces so they
- *   sit consistently on both the dark and light theme cards.
+ * - Jewel accents (pink/fuchsia/purple/lightning/blue/green) are the brand and
+ *   are identical in every theme — they carry their own contrast on both the
+ *   dark and light backgrounds.
+ * - Structural colors (surfaces, strokes, star dots) come from the --art-*
+ *   CSS variables defined in src/index.css, with dark defaults plus
+ *   [data-theme="light"] and [data-contrast="high"] overrides, so one kit
+ *   holds on dark, light and high-contrast themes.
+ * - Hardcoded on purpose: dark ink details inside bright shapes (#18181b
+ *   badge/window fills, pencil-tip dot), amber coin rims (#854d0e), and white
+ *   marks on colored fills — dark ink and white-on-color work on light too.
  * - Decorative: every scene renders with aria-hidden and pointer-events-none
  *   by its wrapper; sizing is controlled by the consumer via className.
  * - Gradient ids are prefixed per scene; the same scene twice on one page is
@@ -23,10 +30,11 @@ const PURPLE = '#c084fc';
 const YELLOW = '#facc15';
 const BLUE = '#38bdf8';
 const GREEN = '#4ade80';
-const SURFACE = '#27272a';
-const CARD = '#202024';
-const STROKE = '#3f3f46';
-const STROKE_SOFT = '#52525b';
+const SURFACE = 'var(--art-scene)';
+const CARD = 'var(--art-card)';
+const STROKE = 'var(--art-stroke)';
+const STROKE_SOFT = 'var(--art-stroke-soft)';
+const STAR = 'var(--art-star)';
 
 function ArtScene({ className, children }: { className?: string; children: ReactNode }) {
   return (
@@ -191,9 +199,9 @@ export function ArtRocket({ className }: ArtProps) {
       </defs>
       <ellipse cx="120" cy="104" rx="80" ry="11" fill={PINK} opacity="0.12" />
       {/* stars */}
-      <circle cx="30" cy="26" r="1.8" fill="#e4e4e7" opacity="0.7" />
-      <circle cx="206" cy="96" r="1.8" fill="#e4e4e7" opacity="0.6" />
-      <circle cx="182" cy="20" r="1.5" fill="#e4e4e7" opacity="0.5" />
+      <circle cx="30" cy="26" r="1.8" fill={STAR} opacity="0.7" />
+      <circle cx="206" cy="96" r="1.8" fill={STAR} opacity="0.6" />
+      <circle cx="182" cy="20" r="1.5" fill={STAR} opacity="0.5" />
       <Sparkle x={48} y={52} r={3.5} fill={BLUE} opacity={0.8} />
       <Sparkle x={204} y={52} r={4} fill={FUCHSIA} opacity={0.85} />
       {/* dotted trail with sats */}
@@ -205,7 +213,9 @@ export function ArtRocket({ className }: ArtProps) {
       {/* rocket, tilted up-right */}
       <g transform="rotate(40 150 50)">
         <path d="M138 34 Q150 12 162 34 Z" fill={PINK} />
-        <rect x="138" y="32" width="24" height="46" rx="12" fill="#e4e4e7" stroke={STROKE_SOFT} strokeWidth="1.5" />
+        {/* fuselage uses the star token: the "pops from background" color in
+            whichever theme is active (zinc-200 on dark, zinc-600 on light) */}
+        <rect x="138" y="32" width="24" height="46" rx="12" fill={STAR} stroke={STROKE_SOFT} strokeWidth="1.5" />
         <circle cx="150" cy="46" r="6" fill="#18181b" stroke={FUCHSIA} strokeWidth="2" />
         <path d="M138 58 L124 76 L138 72 Z" fill={PURPLE} />
         <path d="M162 58 L176 76 L162 72 Z" fill={PURPLE} />

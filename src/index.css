@@ -32,6 +32,43 @@
   --radius: 16px;
 }
 
+/* ── Illustration kit theme variables ──────────────────────────────────
+   The SVG scenes (src/components/illustrations.tsx) draw their structural
+   colors — surfaces, strokes, star dots — from these vars, so one kit holds
+   on dark, light and high-contrast themes. Jewel accents stay identical in
+   every theme on purpose: they are the brand, and they carry their own
+   contrast on both backgrounds. Ink details inside bright shapes (#18181b
+   badge/window fills, amber coin rims, white marks on colored fills) are
+   hardcoded in the kit — dark ink and white-on-color work on light bg too. */
+:root {
+  --art-scene: #27272a;      /* big foreground shapes (billboard, hub) */
+  --art-card: #202024;       /* card-like shapes (nodes, dashboard, sheet) */
+  --art-stroke: #3f3f46;     /* outlines, caption bars, axes */
+  --art-stroke-soft: #52525b;/* legs, graph wires, subtle outlines */
+  --art-star: #e4e4e7;       /* tiny star dots — light on dark, dark on light */
+}
+
+[data-theme="light"] {
+  --art-scene: #e4e4e7;
+  --art-card: #fafafa;
+  --art-stroke: #71717a;
+  --art-stroke-soft: #a1a1aa;
+  --art-star: #52525b;
+}
+
+/* High contrast: push outlines one step further from the background.
+   (body also gets contrast-125, which sharpens the whole scene including SVG.) */
+[data-contrast="high"] {
+  --art-stroke: #71717a;
+  --art-stroke-soft: #8f8f98;
+}
+
+[data-theme="light"][data-contrast="high"] {
+  --art-stroke: #3f3f46;
+  --art-stroke-soft: #52525b;
+  --art-star: #27272a;
+}
+
 @layer base {
   body {
     @apply bg-bg text-text font-sans antialiased min-h-screen selection:bg-accent/30 selection:text-accent;

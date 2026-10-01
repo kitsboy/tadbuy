@@ -1,6 +1,18 @@
 # Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-27
 
-## Session — 2026-10-01 (latest) — PRODUCTION EVIDENCE: watchdog recovers real stalls; stalled routes are chunk-heavy; unknown-path 404s are served fine
+## Session — 2026-10-01 (latest) — illustration kit made theme-aware (dark/light/high-contrast verified by matrix)
+
+**Gap fixed.** The morning's illustration kit hardcoded dark zinc surfaces (`#202024`, `#18181b`, `#e4e4e7` stars), so the art rendered as dark blobs on the light theme. Cam picked this as the next upgrade from the four offered.
+
+**Approach — own variables, not the theme tokens:** the app's light mode is override-based (`[data-theme="light"]` re-skins specific utilities; the `--color-*` tokens never swap), so the kit now reads new `--art-scene/--art-card/--art-stroke/--art-stroke-soft/--art-star` variables defined in `src/index.css` with dark defaults plus light and high-contrast overrides. Structural colors (surfaces, strokes, star dots, rocket fuselage) reference them; **jewel accents are identical in every theme on purpose** — they are the brand and carry their own contrast on both backgrounds. Ink details inside bright shapes (dark badge/window fills, amber coin rims, white marks on color) stay hardcoded: dark ink and white-on-color work on light too. Two shape-level judgment calls: the rocket fuselage moved to the star token (it needs the "pops from background" color per theme), and the high-contrast overrides push strokes one step further out (body `contrast-125` does the rest).
+
+**Verified by a 24-cell matrix** (3 routes: `/`, `/wallet`, 404 × dark/light × normal/high contrast, headless Chrome over `vite preview` of the built dist): art visible and `pointer-events:none` everywhere, structural fills resolve to the **active** theme's tokens, 0px overflow, 0 console errors/uncaught exceptions; screenshots per cell to `/tmp/art-*.png`. tsc clean; build 70 chunks. First matrix run had 12 failures — all four classes were probe bugs (rgb spacing, a race with ThemeProvider's mount effect re-setting `data-theme`, checking scene-token fills on the surface-less rocket scene, and `/`'s `lg:` art gate at the default 800px viewport), fixed in the probe, not the app; final run all green. Probe deleted after the run per convention.
+
+**Git State:** theme fix commit on `main` this session (see `git log -2`), pushed via the documented path.
+
+---
+
+## Session — 2026-10-01 (earlier) — PRODUCTION EVIDENCE: watchdog recovers real stalls; stalled routes are chunk-heavy; unknown-path 404s are served fine
 
 **The experiment:** 15 fresh-profile cold loads (8 routes × 2 rounds, foregrounded, single tab — the established methodology) against `https://tadbuy.giveabit.io` after the watchdog deploy, watching each load to 45s with a 500ms poll of: main content, the watchdog pill, the boot-fallback overlay, visibility, and `[stall-watchdog]` console tags.
 
