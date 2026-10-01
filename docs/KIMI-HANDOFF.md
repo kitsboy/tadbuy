@@ -1,5 +1,28 @@
 # Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-27
 
+## Session — 2026-10-01 (latest) — PRODUCTION EVIDENCE: watchdog recovers real stalls; stalled routes are chunk-heavy; unknown-path 404s are served fine
+
+**The experiment:** 15 fresh-profile cold loads (8 routes × 2 rounds, foregrounded, single tab — the established methodology) against `https://tadbuy.giveabit.io` after the watchdog deploy, watching each load to 45s with a 500ms poll of: main content, the watchdog pill, the boot-fallback overlay, visibility, and `[stall-watchdog]` console tags.
+
+**Result: 9 healthy, 4 real stalls — and every stall recovered.** First observed end-to-end recoveries of the production stall:
+
+| Route | Outcome | Pill at | Content at |
+|---|---|---|---|
+| /metrics | stalled→recovered | 7.9s | 32.2s |
+| /pitch | stalled→recovered | 14.5s | 38.7s |
+| /metrics (round 2) | stalled→recovered | 8.3s | 32.5s |
+| /pitch (round 2) | stalled→recovered | 16.3s | 40.5s |
+
+- **Reproducibility hint for the root-cause hunt:** `/metrics` and `/pitch` stalled in **both** rounds — every other route was clean in both. Those two import the heaviest third-party chunks (jspdf/autotable for /metrics; the largest page chunk for /pitch), so the stall correlates with heavy route chunks in this sample. Kimi's lane evidence (retry scheduled, callback never runs) plus this pattern suggests testing chunk size / count on the initial cold-load path.
+- **The previously open question is now answered:** a visible-tab stall **does clear** — but at ~24s after the pill, far beyond the assumed ~30s-refresh timing, so the dominant recovery path was most plausibly the watchdog's nudges (or a nudge plus a delayed retry), not the refresh.
+- **No false positives:** none of the 9 healthy loads showed the pill or any `[stall-watchdog]` tag, including two slow-but-clean boots (11.3s and 3.9s). The watchdog stayed silent until a real stall.
+- **Not a bug — measurement artifact explained:** round 1's `/nope-404` looked "stuck with no signals"; 4 follow-up loads plus a curl check show unknown paths get a **prerendered static 404** from Cloudflare (200-shell SPA fallback is not what serves them; the response is a standalone 404 page with no `#root`/`boot-fallback` DOM). My probe required a `<main>` to judge, so it misread a correctly-served 404. The in-app `*` route still handles client-side navigation to unknown paths. Harness corrected; app fine.
+- Sample-size honesty: 4 stalls is a small n; the per-route pattern (same 2 routes, both rounds) is a lead, not a conclusion.
+
+**Git State:** probe script deleted after the run (one-off, by convention); results committed here only. No code changes this entry.
+
+---
+
 ## Session — 2026-10-01 (later) — stall watchdog shipped as an explicit Cam decision
 
 **Done:**
