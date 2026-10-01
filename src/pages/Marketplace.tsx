@@ -19,6 +19,7 @@ import { PageShell } from '@/components/PageShell';
 import { PlacementRequestModal } from '@/components/marketplace/PlacementRequestModal';
 import { usePlacementRequests } from '@/hooks/usePlacementRequests';
 import { TrustProofMoments } from '@/components/trust/TrustProofMoments';
+import { ArtMarketplaceScene } from '@/components/illustrations';
 
 const PLATFORM_TABS = ["All", ...MARKETPLACE_PLATFORM_TYPES] as const;
 type PlatformTab = typeof PLATFORM_TABS[number];
@@ -395,6 +396,7 @@ export default function Marketplace() {
         breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Marketplace' }]}
         showDemoBadge
         maxWidth="max-w-[1440px]"
+        art={<ArtMarketplaceScene className="opacity-90" />}
       >
         <div className="mb-2 flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <div className="flex w-full gap-2 md:ml-auto md:w-auto">
@@ -502,7 +504,7 @@ export default function Marketplace() {
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">{Array.from({ length: 6 }).map((_, index) => <div key={index}><SkeletonCard /></div>)}</div>
               ) : filtered.length === 0 ? (
                 <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <EmptyState icon={PackageSearch} title="No sample listings match your filters" description="Try adjusting your platform, category, or example budget filters." action={clearFilters} actionLabel="Reset all filters" />
+                  <EmptyState icon={PackageSearch} title="No sample listings match your filters" description="Try adjusting your platform, category, or example budget filters." action={clearFilters} actionLabel="Reset all filters" art={<ArtMarketplaceScene className="h-24" />} />
                 </motion.div>
               ) : (
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">

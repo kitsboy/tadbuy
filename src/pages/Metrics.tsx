@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { ArtCampaignScene } from "@/components/illustrations";
 
 // Static demo figures — the platform has no analytics backend on the static host,
 // so this page renders representative numbers and never makes a request.
@@ -70,6 +71,9 @@ export default function Metrics() {
           <p className="text-sm text-muted mt-1">
             All currencies · All platforms · Sample figures
           </p>
+        </div>
+        <div aria-hidden className="pointer-events-none hidden shrink-0 select-none items-center lg:flex">
+          <ArtCampaignScene className="opacity-90" />
         </div>
         <div className="flex gap-2">
           <Button variant="secondary" onClick={downloadPDF} className="flex items-center gap-2"><Download className="w-4 h-4" /> PDF</Button>

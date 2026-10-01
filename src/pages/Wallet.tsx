@@ -8,6 +8,7 @@ import { BitcoinProtocolSuite } from "@/components/widgets/BitcoinProtocolSuite"
 import { FedimintPanel } from "@/components/payments/FedimintPanel";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { PageShell } from '@/components/PageShell';
+import { ArtLightningFlow } from '@/components/illustrations';
 import { SafeLink } from '@/components/SafeLink';
 
 const readiness = [
@@ -44,6 +45,7 @@ export default function Wallet() {
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Wallet' }]}
       showDemoBadge
       maxWidth="max-w-5xl"
+      art={<ArtLightningFlow className="opacity-90" />}
     >
       <Alert variant="warning" title="No Tadbuy wallet is connected">
         No balance, invoice, deposit, withdrawal, campaign payment, or settlement can be created or verified here. Do not send funds to this preview expecting a Tadbuy credit.

@@ -14,6 +14,7 @@ import { usePageTitle } from "@/hooks/usePageTitle";
 import { PlacementRequestInbox } from "@/components/publisher/PlacementRequestInbox";
 import { VendorProfileCard } from "@/components/publisher/VendorProfileCard";
 import { VendorInventoryManager } from "@/components/publisher/VendorInventoryManager";
+import { ArtMarketplaceScene } from "@/components/illustrations";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const EARNINGS_TREND = [
@@ -130,9 +131,14 @@ export default function PublisherPortal() {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
 
-      <div>
-        <h1 className="text-2xl font-extrabold tracking-tight">Publisher Portal</h1>
-        <p className="text-sm text-muted mt-1">Manage your ad slots and track earnings in real time.</p>
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+        <div>
+          <h1 className="text-2xl font-extrabold tracking-tight">Publisher Portal</h1>
+          <p className="text-sm text-muted mt-1">Manage your ad slots and track earnings in real time.</p>
+        </div>
+        <div aria-hidden className="pointer-events-none hidden shrink-0 select-none items-center lg:flex">
+          <ArtMarketplaceScene className="opacity-90" />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

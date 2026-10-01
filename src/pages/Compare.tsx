@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/Badge';
 import { PageShell } from '@/components/PageShell';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { AD_PLATFORMS } from '@/data/platforms';
+import { ArtCampaignScene } from '@/components/illustrations';
 
 const ROWS = [
   { feature: 'Payment currency', tadbuy: 'Bitcoin / sats only', traditional: 'USD, credit cards, invoicing' },
@@ -37,6 +38,7 @@ export default function Compare() {
       badge={<Badge variant="accent" className="gap-1.5"><Scale className="w-3.5 h-3.5" /> Comparison</Badge>}
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Compare' }]}
       maxWidth="max-w-5xl"
+      art={<ArtCampaignScene className="opacity-90" />}
     >
       <Card className="overflow-x-auto p-0">
         <table className="w-full min-w-[560px] text-left">

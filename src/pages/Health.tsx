@@ -3,6 +3,7 @@ import { CheckCircle2, Info, Loader2, XCircle } from 'lucide-react';
 import { Card, CardTitle } from '@/components/ui';
 import { Badge } from '@/components/ui/Badge';
 import { PageShell } from '@/components/PageShell';
+import { ArtBlueprint } from '@/components/illustrations';
 import { APP_VERSION } from '@/constants';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { getApiBase } from '@/lib/apiBase';
@@ -38,6 +39,7 @@ export default function Health() {
       description="What this page checks — and what a static site cannot check."
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Health' }]}
       maxWidth="max-w-lg"
+      art={<ArtBlueprint className="opacity-80 -mr-2" />}
     >
       <Card className="glass-panel">
         <CardTitle>Deployment</CardTitle>

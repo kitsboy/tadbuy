@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/Badge';
 import { PageShell } from '@/components/PageShell';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { AD_PLATFORMS } from '@/data/platforms';
+import { ArtCampaignScene } from '@/components/illustrations';
 
 function platformGuideHref(label: string): string | null {
   const key = label.toLowerCase();
@@ -83,6 +84,7 @@ export default function CaseStudies() {
       description="Illustrative walkthroughs of how a campaign is meant to work once the backend is connected. Sample figures — not reported results."
       badge={<Badge variant="outline" className="gap-1.5"><TrendingUp className="w-3.5 h-3.5" /> Illustrative</Badge>}
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Case Studies' }]}
+      art={<ArtCampaignScene className="opacity-90" />}
     >
 
       {/* Truth label (t_913bf909). No campaign has ever run on Tadbuy: there is no

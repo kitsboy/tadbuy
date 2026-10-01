@@ -1,6 +1,6 @@
 # Tadbuy — Executive Summary
 
-**Auto-generated:** 2026-09-27 · **Version:** v5.0.217
+**Auto-generated:** 2026-10-01 · **Version:** v5.0.222
 
 ## Mission
 Build a sovereign advertising marketplace where advertisers buy transparent placements, independent publishers earn in sats, and campaign delivery is verifiable.

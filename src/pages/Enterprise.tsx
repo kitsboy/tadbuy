@@ -3,6 +3,7 @@ import { Activity, Map, Gift, Leaf, Bot } from 'lucide-react';
 import { Card, CardTitle, Input } from '@/components/ui';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { PageShell } from '@/components/PageShell';
+import { ArtRocket } from '@/components/illustrations';
 import { Link } from 'react-router-dom';
 
 // Labelled demo state — the platform has no status/roadmap/AI backend on the static
@@ -27,6 +28,7 @@ export default function Enterprise() {
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Enterprise' }]}
       maxWidth="max-w-5xl"
       showDemoBadge
+      art={<ArtRocket className="opacity-90" />}
     >
       <Card className="glass-panel border-green/20">
         <CardTitle className="flex items-center gap-2">

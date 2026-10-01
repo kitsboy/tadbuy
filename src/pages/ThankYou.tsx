@@ -3,6 +3,7 @@ import { usePageMeta } from '@/hooks/usePageMeta';
 import { CheckCircle2, Zap, ShieldCheck, ArrowRight, BookOpen, Store } from "lucide-react";
 import { Button } from "@/components/ui";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ArtRocket } from "@/components/illustrations";
 
 export default function ThankYou() {
   usePageMeta('Thank you — Tadbuy', 'Your Tadbuy inquiry is received. Real people review campaigns that settle in Bitcoin and Lightning — no middleman, no KYC gate.');
@@ -13,6 +14,7 @@ export default function ThankYou() {
         title="Thank you."
         description="Your Tadbuy request is in. Here is what happens next — and how your ads settle, honestly."
         className="max-w-xl"
+        art={<ArtRocket className="h-24" />}
       >
         <div className="text-left w-full max-w-md mx-auto space-y-4 mb-6">
           <div className="rounded-2xl border border-border bg-card p-5">

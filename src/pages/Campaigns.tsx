@@ -1,6 +1,7 @@
 import { useState, useMemo, type ElementType } from "react";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { PageShell } from '@/components/PageShell';
+import { ArtCampaignScene } from '@/components/illustrations';
 import { motion, AnimatePresence } from "motion/react";
 import { Card, Button, Modal, CardTitle, FormGroup, Label, Select, InfoTooltip } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -150,6 +151,7 @@ export default function Campaigns() {
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Campaigns' }]}
       showDemoBadge
       maxWidth="max-w-[1440px]"
+      art={<ArtCampaignScene className="opacity-90" />}
       actions={
         <>
           <Button variant="secondary" onClick={() => setShowExportModal(true)} disabled={selectedIds.length === 0} className="flex items-center gap-2">

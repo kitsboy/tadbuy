@@ -8,6 +8,7 @@ import { PlatformBreakdown } from '@/components/widgets/PlatformBreakdown';
 import { RevenueForecast } from '@/components/widgets/RevenueForecast';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { PageShell } from '@/components/PageShell';
+import { ArtCampaignScene } from '@/components/illustrations';
 
 // Labelled demo sample — the platform has no analytics/AI backend on the static host,
 // so these surfaces render representative figures and never make a request.
@@ -32,6 +33,7 @@ export default function Intelligence() {
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Intelligence' }]}
       showDemoBadge
       maxWidth="max-w-5xl"
+      art={<ArtCampaignScene className="opacity-90" />}
     >
 
       <Tabs defaultValue="funnel">

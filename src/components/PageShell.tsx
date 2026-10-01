@@ -20,6 +20,8 @@ type PageShellProps = {
   showDemoBadge?: boolean;
   maxWidth?: 'max-w-lg' | 'max-w-2xl' | 'max-w-3xl' | 'max-w-4xl' | 'max-w-5xl' | 'max-w-6xl' | 'max-w-[1440px]';
   actions?: ReactNode;
+  /** Optional decorative illustration shown beside the title on wide screens. */
+  art?: ReactNode;
   faq?: { question: string; answer: string }[];
   canonicalPath?: string; // for "Copy link" action
 };
@@ -33,6 +35,7 @@ export function PageShell({
   showDemoBadge = false,
   maxWidth = 'max-w-4xl',
   actions,
+  art,
   faq,
   canonicalPath,
 }: PageShellProps) {
@@ -79,7 +82,7 @@ export function PageShell({
       )}
 
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div className="space-y-2">
+        <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             {badge}
             {showDemoBadge && <DemoModeBadge />}
@@ -87,6 +90,10 @@ export function PageShell({
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-text">{title}</h1>
           {description && <p className="text-sm text-muted max-w-2xl leading-relaxed">{description}</p>}
         </div>
+
+        {art && (
+          <div aria-hidden className="pointer-events-none hidden shrink-0 select-none sm:block">{art}</div>
+        )}
 
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           {canonicalPath && (

@@ -11,6 +11,7 @@ export function EmptyState({
   actionLabel,
   children,
   className,
+  art,
 }: {
   icon: LucideIcon;
   title: string;
@@ -19,6 +20,8 @@ export function EmptyState({
   actionLabel?: string;
   children?: ReactNode;
   className?: string;
+  /** Optional decorative illustration rendered behind the icon/title. */
+  art?: ReactNode;
 }) {
   return (
     <div
@@ -36,6 +39,11 @@ export function EmptyState({
             'radial-gradient(circle at 50% 25%, rgba(244,114,182,0.10), transparent 60%)',
         }}
       />
+      {art && (
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-6 flex justify-center opacity-40">
+          {art}
+        </div>
+      )}
       <div className="relative">
         <div className="relative mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-zinc-950 shadow-lg">
           <span className="absolute inset-0 -z-10 rounded-2xl bg-accent/20 blur-xl" />

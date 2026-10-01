@@ -2,6 +2,7 @@ import { usePageMeta } from "@/hooks/usePageMeta";
 import { QrCode, RefreshCw, ShieldCheck, ExternalLink, Zap } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui";
 import { PageShell } from '@/components/PageShell';
+import { ArtLightningFlow } from '@/components/illustrations';
 import { SafeLink } from '@/components/SafeLink';
 
 export default function Bolt12Info() {
@@ -12,6 +13,7 @@ export default function Bolt12Info() {
       description="Next-generation Lightning standard for seamless, private, and reusable Bitcoin payments."
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'BOLT 12' }]}
       maxWidth="max-w-4xl"
+      art={<ArtLightningFlow className="opacity-90" />}
     >
 
       <div className="bg-purple/10 border border-purple/20 rounded-2xl p-8 mb-12 relative overflow-hidden">

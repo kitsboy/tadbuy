@@ -3,6 +3,7 @@ import { usePageMeta } from '@/hooks/usePageMeta';
 import { FileQuestion, Home, Search, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ArtRocket } from "@/components/illustrations";
 
 export default function NotFound() {
   usePageMeta('Page Not Found', 'This route does not exist on Tadbuy.');
@@ -13,6 +14,7 @@ export default function NotFound() {
         title="Page Not Found"
         description="This route doesn't exist on the network. It may have been moved, deleted, or you may have followed a broken link."
         className="max-w-lg"
+        art={<ArtRocket className="h-24" />}
       >
         <div className="font-mono text-[11px] text-muted bg-surface border border-border px-4 py-2 rounded-full mb-6 flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-red animate-pulse" />

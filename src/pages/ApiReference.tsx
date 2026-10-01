@@ -6,6 +6,7 @@ import { Card, CardTitle } from "@/components/ui";
 import { Tabs, TabsList, TabsTrigger, TabsContent, Badge } from "@/components/ui/index";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { PageShell } from '@/components/PageShell';
+import { ArtBlueprint } from '@/components/illustrations';
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { ApiExplorer } from "@/components/ApiExplorer";
 import { SafeLink } from "@/components/SafeLink";
@@ -72,6 +73,7 @@ export default function ApiReference() {
       description="The planned developer surface — campaigns, metrics, settlements, and agent tools. Nothing here is callable in this build."
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'API' }]}
       maxWidth="max-w-4xl"
+      art={<ArtBlueprint className="opacity-90" />}
     >
       <Card className="glass-panel p-5 border-border mb-6">
         <p className="text-sm text-muted leading-relaxed">

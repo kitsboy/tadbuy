@@ -3,6 +3,7 @@ import { BookOpen, Zap, Shield, Network, ExternalLink, ArrowRight, Store } from 
 import { Card, CardTitle } from "@/components/ui";
 import { Link } from "react-router-dom";
 import { PageShell } from '@/components/PageShell';
+import { ArtBlueprint } from '@/components/illustrations';
 import { SafeLink } from '@/components/SafeLink';
 
 export default function Documentation() {
@@ -13,6 +14,7 @@ export default function Documentation() {
       description="Learn how advertisers and independent vendors coordinate transparent Bitcoin-native campaign placements."
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Docs' }]}
       maxWidth="max-w-4xl"
+      art={<ArtBlueprint className="opacity-90" />}
     >
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

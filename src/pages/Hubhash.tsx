@@ -4,6 +4,7 @@ import { Card, CardTitle, Button } from '@/components/ui';
 import { Badge } from '@/components/ui/Badge';
 import { cn, formatSats } from '@/lib/utils';
 import { PageShell, StatusPill } from '@/components/PageShell';
+import { ArtLightningFlow } from '@/components/illustrations';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { HUBHASH_CAMPAIGNS, type HubhashCampaign } from '@/data/hubhashCampaigns';
 import { FeeBreakdown } from '@/components/FeeBreakdown';
@@ -30,6 +31,7 @@ export default function Hubhash() {
       actions={
         <Link to="/"><Button size="sm">Create campaign</Button></Link>
       }
+      art={<ArtLightningFlow className="opacity-90" />}
       faq={[
         { question: 'What happens if the goal is not met?', answer: 'Contributions are returned to original Lightning pubkeys when the funding window closes without hitting threshold.' },
         { question: 'How do I pay?', answer: 'Lightning, on-chain Bitcoin, or Fedimint ecash — same rails as Buy Ads checkout.' },

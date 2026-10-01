@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { BrainCircuit, Lock, Zap, ExternalLink, Activity } from 'lucide-react';
 import { Card } from '@/components/ui';
 import { PageShell } from '@/components/PageShell';
+import { ArtCampaignScene } from '@/components/illustrations';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { AD_PLATFORMS } from '@/data/platforms';
 import { SafeLink } from '@/components/SafeLink';
@@ -15,6 +16,7 @@ export default function PpqGuide() {
       description="Privacy-Preserving Quantization optimizes delivery and budget allocation without surveillance tracking."
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'PPQ.AI' }]}
       maxWidth="max-w-4xl"
+      art={<ArtCampaignScene className="opacity-90" />}
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="glass-panel p-6 text-center flex flex-col items-center">

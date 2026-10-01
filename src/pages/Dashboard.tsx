@@ -8,6 +8,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { BITCOIN_ADDRESS } from "@/constants";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { PageShell } from '@/components/PageShell';
+import { ArtCampaignScene } from '@/components/illustrations';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface TrendPoint { name: string; impressions: number; clicks: number; }
@@ -129,6 +130,7 @@ export default function Dashboard() {
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Dashboard' }]}
       showDemoBadge={!isLive}
       maxWidth="max-w-[1440px]"
+      art={<ArtCampaignScene className="opacity-90" />}
     >
       <div className="flex items-center justify-end mb-4">
         <Button size="sm" variant="secondary" className="gap-2" onClick={() => addToast("Sample data — no metrics backend in this preview build", "info")}>

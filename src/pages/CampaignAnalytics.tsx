@@ -8,6 +8,7 @@ import { motion } from "motion/react";
 import { Card, CardTitle } from "@/components/ui";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from "recharts";
 import { LiveImpressionTicker } from '@/components/widgets/LiveImpressionTicker';
+import { ArtCampaignScene } from '@/components/illustrations';
 import { Download, Loader2 } from 'lucide-react';
 
 interface CampaignAnalyticsData {
@@ -80,6 +81,9 @@ export default function CampaignAnalytics() {
           ) : (
             <p className="text-xs text-muted mt-1">Add ?campaign=id to the URL for campaign-specific metrics</p>
           )}
+        </div>
+        <div aria-hidden className="pointer-events-none hidden shrink-0 select-none items-center lg:flex">
+          <ArtCampaignScene className="opacity-90" />
         </div>
         <div className="flex gap-2">
           {campaignId && (

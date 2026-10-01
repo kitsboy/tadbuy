@@ -9,6 +9,7 @@ import { usePageMeta } from '@/hooks/usePageMeta';
 import { PROJECT_STATE } from '@/data/projectState';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { SafeLink } from '@/components/SafeLink';
+import { ArtRocket } from '@/components/illustrations';
 
 export default function Pitch() {
   usePageMeta('Investor Pitch', 'Tadbuy — a Bitcoin-native advertising marketplace connecting advertisers with independent distributors and transparent delivery proof.');
@@ -46,6 +47,9 @@ export default function Pitch() {
           <p className="text-[10px] text-muted mt-6 font-mono">
             {PROJECT_STATE.version} · {PROJECT_STATE.liveUrl} · by giveabit.io
           </p>
+          <div aria-hidden className="pointer-events-none mx-auto mt-8 hidden w-fit select-none md:block">
+            <ArtRocket className="opacity-90" />
+          </div>
         </div>
       </section>
 

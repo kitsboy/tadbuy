@@ -11,6 +11,7 @@ import { EcosystemLinks } from '@/components/EcosystemLinks';
 import { GIVEABIT_ECOSYSTEM } from '@/data/ecosystemConfig';
 import { PROJECT_STATE } from '@/data/projectState';
 import { SafeLink } from '@/components/SafeLink';
+import { ArtBlueprint } from '@/components/illustrations';
 
 export default function Beta() {
   usePageMeta('BETA Status', 'What works now, what still needs a backend server, and the consumer payment workflow for Tadbuy.');
@@ -25,6 +26,7 @@ export default function Beta() {
       badge={<Badge variant="accent" className="gap-1.5"><FlaskConical className="w-3.5 h-3.5" /> BETA · {PROJECT_STATE.version}</Badge>}
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'BETA' }]}
       showDemoBadge
+      art={<ArtBlueprint className="opacity-90" />}
     >
 
       <Card>

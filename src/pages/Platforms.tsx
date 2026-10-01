@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { LayoutGrid, ArrowRight, Bitcoin } from 'lucide-react';
 import { Card, Button } from '@/components/ui';
 import { PageShell, StatusPill } from '@/components/PageShell';
+import { ArtGlobeZap } from '@/components/illustrations';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { AD_PLATFORMS } from '@/data/platforms';
 import { FeeBreakdown } from '@/components/FeeBreakdown';
@@ -20,6 +21,7 @@ export default function Platforms() {
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Platforms' }]}
       showDemoBadge
       maxWidth="max-w-5xl"
+      art={<ArtGlobeZap className="opacity-90" />}
       faq={[
         { question: 'How do I pay for ads?', answer: 'Pay in Bitcoin via Lightning, on-chain, or Fedimint ecash. Tadbuy applies a transparent 15% platform fee.' },
         { question: 'How do publishers get paid?', answer: 'Direct inventory publishers receive Lightning sats when thresholds are met. Platform-owned inventory follows each network billing rules with Bitcoin funding via Tadbuy.' },

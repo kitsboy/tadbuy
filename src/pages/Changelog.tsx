@@ -5,6 +5,7 @@ import { Card, CardTitle } from '@/components/ui';
 import { Badge } from '@/components/ui/Badge';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { PageShell } from '@/components/PageShell';
+import { ArtRocket } from '@/components/illustrations';
 import { PROJECT_STATE } from '@/data/projectState';
 
 function parseChangelogSections(markdown: string): { version: string; body: string }[] {
@@ -57,6 +58,7 @@ export default function Changelog() {
       badge={<Badge variant="accent" className="gap-1.5"><ScrollText className="w-3.5 h-3.5" /> Release Notes</Badge>}
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Changelog' }]}
       maxWidth="max-w-3xl"
+      art={<ArtRocket className="opacity-90" />}
     >
 
       {loading ? (

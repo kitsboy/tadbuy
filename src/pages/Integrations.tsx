@@ -1,6 +1,7 @@
 import { Plug, Code, Webhook, ShoppingBag, Globe, Users, ShieldCheck } from 'lucide-react';
 import { Card, Button } from '@/components/ui';
 import { PageShell, StatusPill } from '@/components/PageShell';
+import { ArtBlueprint } from '@/components/illustrations';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { ApiExplorer } from '@/components/ApiExplorer';
 import { BitcoinProtocolSuite } from '@/components/widgets/BitcoinProtocolSuite';
@@ -29,6 +30,7 @@ export default function Integrations() {
       actions={
         <Link to="/beta" className="text-xs text-accent hover:underline font-semibold">API status →</Link>
       }
+      art={<ArtBlueprint className="opacity-90" />}
     >
       <div className="grid md:grid-cols-2 gap-4">
         {INTEGRATIONS.map(int => (

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/index";
 import { BITCOIN_ADDRESS } from "@/constants";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { PageShell } from '@/components/PageShell';
+import { ArtLightningFlow } from '@/components/illustrations';
 import { FeeBreakdown } from '@/components/FeeBreakdown';
 import { Activity, Clock, CheckCircle2, AlertCircle } from "lucide-react";
 
@@ -73,6 +74,7 @@ export default function Settlements() {
       description="On-chain payments and Lightning payouts for your address."
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Settlements' }]}
       showDemoBadge
+      art={<ArtLightningFlow className="opacity-90" />}
       actions={
         <div className="flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border font-mono text-muted border-border">
           <Activity className="w-3 h-3" />

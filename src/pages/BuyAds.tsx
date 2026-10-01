@@ -22,6 +22,7 @@ import { Alert } from "@/components/ui/Alert";
 import { FedimintPanel } from "@/components/payments/FedimintPanel";
 import { MempoolFeeTip } from "@/components/MempoolFeeTip";
 import { CurrencyDisplay } from "@/components/widgets/CurrencyDisplay";
+import { ArtMarketplaceScene } from "@/components/illustrations";
 
 interface AdVariant {
   id: string;
@@ -324,6 +325,9 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
           <h2 className="text-2xl font-extrabold tracking-tight md:text-3xl">Campaign planning preview</h2>
           <p className="mb-3 mt-1 text-sm text-muted sm:text-base">Plan a campaign concept, creative, and distribution path. No payment, vendor order, or publication is created here.</p>
           <CurrencyDisplay sats={Math.round(btcAmount * 100_000_000)} btcRate={rate} fiatSymbol={symbol} />
+        </div>
+        <div aria-hidden className="pointer-events-none hidden shrink-0 select-none items-center lg:flex">
+          <ArtMarketplaceScene className="opacity-90" />
         </div>
         <div className="flex w-full items-center rounded-xl border border-border bg-surface p-1 md:w-auto">
           <button type="button" onClick={() => setMode('simple')} className={cn("min-h-[44px] flex-1 rounded-lg px-4 py-2.5 text-sm font-bold transition-all md:flex-none", mode === 'simple' ? "bg-accent text-black shadow-md" : "text-muted hover:text-text")}>Quick Launch</button>

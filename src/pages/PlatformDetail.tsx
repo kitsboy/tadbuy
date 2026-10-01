@@ -2,6 +2,7 @@ import { Link, useParams, Navigate } from 'react-router-dom';
 import { Bitcoin, Wallet, TrendingUp } from 'lucide-react';
 import { Card, CardTitle, Button } from '@/components/ui';
 import { PageShell, StatusPill } from '@/components/PageShell';
+import { ArtGlobeZap } from '@/components/illustrations';
 import { FeeBreakdown } from '@/components/FeeBreakdown';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { getPlatformById, usdToMinSats, PLATFORM_FEE_RATE } from '@/data/platforms';
@@ -41,6 +42,7 @@ export default function PlatformDetail() {
           <Button className="gap-2 text-xs"><TrendingUp className="w-4 h-4" /> Buy on {platform.name}</Button>
         </Link>
       }
+      art={<ArtGlobeZap className="opacity-90" />}
       faq={[
         { question: `What is the minimum spend on ${platform.name}?`, answer: `Approximately $${platform.minSpendUsd} USD equivalent in sats.` },
         { question: `How does ${platform.name} billing work?`, answer: platform.budgetingNotes },
