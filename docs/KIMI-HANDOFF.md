@@ -1,5 +1,23 @@
 # Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-27
 
+## Session — 2026-10-01 (later) — stall watchdog shipped as an explicit Cam decision
+
+**Done:**
+- Cam was offered four UI upgrades and picked the **stall watchdog** — the "cheaper fallback" named in the 2026-09-28 entry, which was flagged as a Cam/Kimi decision rather than a silent workaround. That decision is now made and recorded here; the root-cause candidate (preloading the initial route chunk before `createRoot().render()`) remains open and unshipped.
+- Shipped `src/components/StallWatchdog.tsx`, mounted once in `App.tsx` after `<main>`: while `[data-page-loader]` is present (the stuck-loader state defined by the boot guard), it forces benign state updates at 2s/4s/8s — every observed production recovery was triggered by a state update — and at 6s shows a small fixed "Still loading? Reload" pill so a stalled user is never silently spinning. On recovery it logs once with a `[stall-watchdog]` console tag for correlation with Kimi's evidence. The 12s boot-guard overlay stays as the last-resort tier; the watchdog does not touch DOM, only state.
+- Verification: `tsc --noEmit` clean; `check:routes` 38/38; build 70 chunks; `check:boot-fallback` **4/4** (the boot guard is unaffected). Plus a one-off CDP probe (deleted after the run): a tiny local server served the built `dist/` but **held the route-chunk request open forever**, so the import promise never settles and Suspense stays up — the closest honest simulation of the stuck-loader state. Result: controls `/` and `/wallet` booted, sat past all watchdog timers with **no pill and no console activity** (no false positives); stalled `/metrics` stayed on the loader and showed the pill at 6s with both `[stall-watchdog]` log lines.
+- Honest limitation, recorded rather than glossed: this probe verifies the watchdog's **user-visible contract**, not the production mechanism — the local repro of the real stall still failed, and a hanging request is not the same failure mode as a scheduled-but-never-run retry callback. A first attempt that CDP-blocked the chunk was discarded (block never held past SW/cache, and a blocked import eventually *errors*, which is a different scenario).
+- `scripts/sync-docs.ts` again overwrote the hand-written `LATEST-UPDATE.md` brief with `Commit: sync` during the build — same finding as 2026-09-28; the durable record lives in this file.
+
+**Decisions:**
+- Ship the recovery path now (Cam, 2026-10-01); keep it strictly additive to the boot guard; keep the root-cause work (chunk preload) open for a session that can verify against production.
+- No backend, payment, wallet, provider, database, secret, or deployment surface touched.
+
+**Git State:**
+- Watchdog commit on `main` this session (see `git log -2`); pushed via the documented `SKIP_VERSION_BUMP=1` path — note the SSH-success/HTTPS-error push-URL quirk recorded earlier today still applies ("fatal: could not read Username" after a successful `main -> main` line is cosmetic).
+
+---
+
 ## Session — 2026-10-01 — decorative illustration kit shipped (batch completed, committed and pushed)
 
 **Done:**

@@ -19,6 +19,7 @@ import { BetaBanner } from './components/BetaBanner';
 import { OfflineBanner } from './components/OfflineBanner';
 import { Spinner } from './components/ui/Spinner';
 import { RouteErrorBoundary } from './components/RouteErrorBoundary';
+import { StallWatchdog } from './components/StallWatchdog';
 import { CURRENCY_SYMBOLS } from './constants';
 import { AccountPreviewBanner } from './components/AccountPreviewBanner';
 
@@ -152,6 +153,10 @@ function MainContent({ currency, setCurrency, rates }: { currency: string; setCu
           <RoutedPages currency={currency} rates={rates} />
         </Suspense>
       </main>
+      {/* Recovery path for the production-only Suspense stall (see component
+          docs and docs/KIMI-HANDOFF.md): nudges while <PageLoader /> is up and
+          surfaces a reload hint — inert on a healthy page. */}
+      <StallWatchdog />
       {!isEmbed && <Footer />}
     </div>
   );

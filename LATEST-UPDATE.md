@@ -1,5 +1,5 @@
 # tadbuy — Last Updated 2026-10-01 by Grok
 
-Brief: v5.0.222 — illustration kit shipped: 6 SVG scenes wired into 27 pages via PageShell/EmptyState art prop (decorative only); verified via build + headless-Chrome art check
-Commit: d5c0b95
+Brief: v5.0.223 — stall watchdog shipped (Cam decision): benign state updates while Suspense loader is stuck at 2s/4s/8s, "Still loading? Reload" hint at 6s; verified incl. hang-server stall probe. Earlier: illustration kit shipped.
+Commit: see git log (sync-docs overwrites this file on build)
 Docs synced: 2026-10-01
