@@ -2,6 +2,45 @@
 
 All notable changes to Tadbuy are documented here.
 
+## [5.0.224] — 2026-10-01
+
+### Added
+- **Stall watchdog** (`src/components/StallWatchdog.tsx`): while the Suspense page loader is
+  present it nudges React state at 2s/4s/8s, surfaces a "Still loading? Reload" pill at 6s, and
+  tags `[stall-watchdog]` console lines. Production verification recovered **4 of 4** observed
+  stalls with **zero** false positives across 15 fresh-profile cold loads.
+- **Load-failure notice in the boot guard** (`index.html`): `[data-page-loader]` past the grace
+  period now shows an overlay with Reload / clear-cache instead of an indefinite spinner.
+- **Maintained art theme gate** (`npm run check:art-themes`): self-serves `dist/`, loads one route
+  per scene per theme combo, composites per-shape alpha, and checks each shape against the
+  background it actually sits on. 6 scenes × 4 combos = 24 cells, all green.
+- **`--art-coin-rim` token**: sat-coin rim ink now flips with the theme.
+
+### Changed
+- **Decorative SVG illustration kit** (`src/components/illustrations.tsx`): 6 inline-SVG scenes,
+  wired via a new optional `art` prop on `PageShell` and `EmptyState` across 22 pages. All
+  `aria-hidden` + `pointer-events-none`, hidden below `sm`/`lg`.
+- **Art is fully theme-aware.** Structural colors *and* jewel accents read `--art-*` variables with
+  dark defaults plus light and high-contrast overrides. Light mode deepens the accents to
+  600-level shades — except yellow, which needed 700-level (`#facc15` is only 1.47:1 on
+  near-white, and coins draw it at op 0.55–0.85).
+- Docs swept: CHANGELOG caught up, `docs/IMPROVEMENT-ROADMAP.md` gained a UI/UX workstream,
+  `docs/WORK-IN-PROGRESS.md` version stamp corrected, and a new top entry in
+  `docs/KIMI-HANDOFF.md` carrying **five UI proposals** for Kimi/HERMES.
+
+### Fixed
+- Art color audit: the `check:art-themes` Oklab → sRGB conversion decoded light mode's near-white
+  `oklch(0.967 …)` background as mid-gray, which had faked nine contrast failures. Ink-on-plate
+  marks (white bolt on the gradient screen, globe meridians, coin rims) are now measured against
+  their own plate instead of the page.
+
+### Known issues
+- The production stall **root cause remains un-reproduced**; `/metrics` and `/pitch` are the only
+  routes that stalled in both verification rounds and also the two heaviest chunks
+  (`jspdf`/`autotable`). The watchdog is the mitigation, not the fix.
+
+---
+
 ## [5.0.161] — 2026-09-13
 
 ### Changed

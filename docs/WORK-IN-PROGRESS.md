@@ -86,6 +86,12 @@
 
 ---
 
-**Last Updated:** 2026-09-01
-**Current Version:** v5.0.149
+**Last Updated:** 2026-10-01
+**Current Version:** v5.0.224
 **Saved By:** Grok (M3)
+
+> Also parked (UI, from the 2026-10-01 art audit): five UI proposals are tracked as the
+> **UI/UX workstream** in [IMPROVEMENT-ROADMAP.md](./IMPROVEMENT-ROADMAP.md) — PageShell on the
+> remaining 11 pages, a persistent demo banner, real light-theme tokens, illustration coverage, and
+> slimming `/metrics` + `/pitch`. Nothing in that list requires deployment, so it is not gated on
+> the infrastructure approvals above.

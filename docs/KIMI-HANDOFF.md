@@ -1,6 +1,52 @@
 # Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-27
 
-## Session — 2026-10-01 (latest) — art color audit: accents are now theme-aware too, plus a maintained `check:art-themes` gate
+## Session — 2026-10-01 (latest) — docs sync + **five UI proposals for Kimi/HERMES (or any LLM) to pick up**
+
+**State of the art batch:** complete, committed, and pushed (`e16f254`). `npm run check:art-themes` is a maintained gate: 6 scenes × 4 theme combos = 24 cells, 0 failures. Full detail in the entry below.
+
+**Docs swept this session** (Cam asked for all docs/handoffs to be current):
+- `docs/KIMI-HANDOFF.md` — this entry.
+- `CHANGELOG.md` — new entries for the illustration kit, theme-aware art, art color audit, stall watchdog, and boot fallback (it was 8 releases behind at 5.0.161).
+- `docs/IMPROVEMENT-ROADMAP.md` — new **UI/UX workstream** section carrying the five proposals below so they sit next to the product roadmap rather than only in a handoff.
+- `docs/WORK-IN-PROGRESS.md` — version stamp corrected (was stuck at v5.0.149 from 2026-09-01).
+- `LATEST-UPDATE.md` — refreshed, with a standing note that `scripts/sync-docs.ts` clobbers it on every build and that `docs/KIMI-HANDOFF.md` is the durable record.
+- `src/index.css` — fixed a comment that still claimed the jewel accents were identical in every theme (that stopped being true in this batch).
+
+### Five major UI suggestions — proposed to Cam, open for pick-up
+
+Each is scoped as a self-contained batch an LLM can execute without a Cam gate (no backend, payments, providers, secrets, or deploy surface). Ordered roughly by value-per-effort. **None are started** — this is a menu, not a plan.
+
+**1. PageShell everywhere (11 of 31 pages still bypass it).**
+`PageShell` gives breadcrumbs, consistent H1 scale, copy-link, optional FAQ JSON-LD, `BreadcrumbList` JSON-LD, demo badge, and the illustration slot. Eleven pages hand-roll their own header instead: `BuyAds`, `CampaignAnalytics`, `DebugLightning`, `GeoTargeting`, `Metrics`, `NotFound`, `Pitch`, `Profile`, `ProfileSettings`, `PublisherPortal`, `ThankYou`. `/` and `/metrics` are the two that matter most — `/metrics` already stalls most often in production, and it is also one of the heaviest chunks. Highest-leverage single UI change: one visual system, and JSON-LD coverage stops depending on whoever remembered to hand it.
+*Risk:* low. Mostly mechanical; some pages will need their `maxWidth`/breadcrumb choices made deliberately.
+
+**2. A persistent demo/staging banner — trust, not decoration.**
+The repo is strictly demo-only (no live payments), and `DemoModeBadge` / `AccountPreviewBanner` exist but are per-page and easy to miss. One non-dismissible-once-understood banner (session-dismissable, `role="status"`, never covering content — the roadmap's own rule) stating "demo data, no live payments" would make the demo posture unmissable on `/`, `/campaigns`, `/wallet`, `/settlements`, `/analytics`, `/dashboard`. This is the single highest-trust-per-line change available, and it protects against the worst failure mode for a payments-shaped product.
+*Risk:* low, but it is a visible product statement — needs Cam's sign-off on wording, not on implementation.
+
+**3. Light theme as real tokens, not scattered overrides.**
+`src/index.css` has 8 separate `[data-theme="light"]` blocks and the `--color-*` tokens in `@theme` never swap — light mode works only because specific utilities are re-skinned. That is why the art audit was necessary in the first place, and it is why any new component silently risks being dark-only. Consolidate to semantic tokens (`--surface-1/2`, `--text-primary/secondary`, `--border`) that swap in one place, with the art variables kept as the proven special case.
+*Risk:* medium — this is a visual regression surface across every page. Needs the art check plus a broader contrast sweep to stay honest, and probably one theme at a time.
+
+**4. Illustration coverage: 22 pages have art, 27-page batch left gaps; extend and rebalance.**
+The kit has 6 scenes for 31 pages, and the `sm:`/`lg:` gates hide art entirely on mobile (by design). Two concrete gaps: pages that reached `EmptyState` art but not header art, and `/` + the highest-traffic marketing pages which carry no scene. Also worth a pass on whether one scene per *section* (not just per page header) would help the long-form pages (`/docs`, `/pitch`, `/enterprise`) read less like walls of text.
+*Risk:* low. Verify with `check:art-themes`; the harness already covers all six scenes and both mobile/desktop gates.
+
+**5. Fix the two heaviest routes before adding features.**
+`/metrics` and `/pitch` are the only two routes that stalled in **both** production verification rounds, and they are also the two heaviest chunks (`jspdf`/`autotable` on `/metrics`). Root cause is still unconfirmed (see below), but the correlation is consistent enough to act on: lazy-load the PDF export behind an explicit user action, and confirm the initial route chunk is preloaded. Pair with the existing `StallWatchdog` as the safety net.
+*Risk:* medium — touches the export path, which people use. Needs manual verification that export still works.
+
+### Open threads for Kimi/HERMES
+- **Production stall root cause is still un-reproduced.** React schedules a Suspense retry (retry lanes pending, `callbackNode` set) but the callback never runs; local repro against the built `dist` fails. `StallWatchdog` shipped as the mitigation (recovered 4/4 observed stalls) and **the root cause candidate — preload the initial route chunk — is untested**. Suggestion 5 is the cheap experiment.
+- **Unknown-path 404s bypass the SPA** (Cloudflare serves a prerendered static 404), which makes naive route probes report false "stuck" results. Worth encoding in any future route/CI check.
+- **`origin` has two push URLs** (SSH then HTTPS): SSH push always succeeds, then the HTTPS fallback errors with `could not read Username`, and the pre-push hook prints `❌ Version bump push failed` and exits 128 *on successful pushes*. `git remote set-url --push origin git@github.com:kitsboy/tadbuy.git` would remove the false alarm — **not yet done, needs Cam's OK.**
+- The pre-push hook rewrites the `public/sw.js` cache name but does not stage it, leaving a dirty file after every push; commit it separately.
+
+**Git State:** SHA `git log -1 --format=%H` at commit time; pushed via the documented path (`SKIP_VERSION_BUMP=1 git push origin main`, then verify 0 ahead / 0 dirty).
+
+---
+
+## Session — 2026-10-01 — art color audit: accents are now theme-aware too, plus a maintained `check:art-themes` gate
 
 **What this batch did.** Audited every color in the illustration kit against every theme, and turned the throwaway probe from the previous session into a maintained check (`scripts/check-art-themes.mjs`, `npm run check:art-themes`, self-serves `dist/`, needs only local Chrome). Result: **all four combos pass** (dark/light × normal/high contrast, 6 scenes = 24 cells, 0 failures).
 

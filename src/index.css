@@ -34,10 +34,11 @@
 
 /* ── Illustration kit theme variables ──────────────────────────────────
    The SVG scenes (src/components/illustrations.tsx) draw their structural
-   colors — surfaces, strokes, star dots — from these vars, so one kit holds
-   on dark, light and high-contrast themes. Jewel accents stay identical in
-   every theme on purpose: they are the brand, and they carry their own
-   contrast on both backgrounds. Ink details inside bright shapes (#18181b
+   colors — surfaces, strokes, star dots — AND their jewel accents from these
+   vars, so one kit holds on dark, light and high-contrast themes. The accents
+   keep their hues but deepen in light mode: the dark-theme pastels wash out
+   against near-white (yellow needed a 700-level shade, not 600 — #facc15 is
+   only 1.47:1 there). Ink details inside bright shapes (#18181b
    badge/window fills, amber coin rims, white marks on colored fills) are
    hardcoded in the kit — dark ink and white-on-color work on light bg too. */
 :root {

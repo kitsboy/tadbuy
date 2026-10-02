@@ -1,6 +1,6 @@
 # Fedimint Integration — Tadbuy
 
-**Auto-generated:** 2026-10-01
+**Auto-generated:** 2026-10-02
 
 ## Overview
 Privacy-preserving ecash payments via federated mints. Lower fees, instant settlement, Chaumian blind signatures.
