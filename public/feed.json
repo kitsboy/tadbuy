@@ -1,0 +1,69 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Tadbuy \u2014 Bitcoin-native ads",
+  "home_page_url": "https://tadbuy.giveabit.io",
+  "feed_url": "https://tadbuy.giveabit.io/feed.json",
+  "description": "Campaigns planned in sats, delivery you can check. Own pages only. Sibling news is not mixed in.",
+  "items": [
+    {
+      "id": "https://tadbuy.giveabit.io/docs",
+      "url": "https://tadbuy.giveabit.io/docs",
+      "title": "Documentation",
+      "content_text": "How a Tadbuy campaign is planned, bought, and settled in sats.",
+      "date_published": "Tue, 01 Sep 2026 12:00:00 GMT",
+      "tags": [
+        "own-page"
+      ]
+    },
+    {
+      "id": "https://tadbuy.giveabit.io/publisher",
+      "url": "https://tadbuy.giveabit.io/publisher",
+      "title": "Publisher portal",
+      "content_text": "Where an independent publisher connects a channel.",
+      "date_published": "Tue, 01 Sep 2026 12:00:00 GMT",
+      "tags": [
+        "own-page"
+      ]
+    },
+    {
+      "id": "https://tadbuy.giveabit.io/ppq",
+      "url": "https://tadbuy.giveabit.io/ppq",
+      "title": "PPQ guide",
+      "content_text": "How placement quality is scored before a buy.",
+      "date_published": "Tue, 01 Sep 2026 12:00:00 GMT",
+      "tags": [
+        "own-page"
+      ]
+    },
+    {
+      "id": "https://tadbuy.giveabit.io/bolt12",
+      "url": "https://tadbuy.giveabit.io/bolt12",
+      "title": "BOLT12",
+      "content_text": "What the BOLT12 payment option is, in plain words.",
+      "date_published": "Tue, 01 Sep 2026 12:00:00 GMT",
+      "tags": [
+        "own-page"
+      ]
+    },
+    {
+      "id": "https://tadbuy.giveabit.io/changelog",
+      "url": "https://tadbuy.giveabit.io/changelog",
+      "title": "Changelog",
+      "content_text": "What changed on the Tadbuy site.",
+      "date_published": "Tue, 01 Sep 2026 12:00:00 GMT",
+      "tags": [
+        "own-page"
+      ]
+    },
+    {
+      "id": "https://tadbuy.giveabit.io/compare",
+      "url": "https://tadbuy.giveabit.io/compare",
+      "title": "Compare",
+      "content_text": "How Tadbuy sits next to an ordinary ad buy.",
+      "date_published": "Tue, 01 Sep 2026 12:00:00 GMT",
+      "tags": [
+        "own-page"
+      ]
+    }
+  ]
+}
