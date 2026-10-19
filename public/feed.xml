@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Tadbuy — Bitcoin-native ads</title>
+    <link>https://tadbuy.giveabit.io</link>
+    <description>Campaigns planned in sats, delivery you can check. Own pages only. Sibling news is not mixed in.</description>
+    <language>en</language>
+    <lastBuildDate>Mon, 19 Oct 2026 07:11:46 GMT</lastBuildDate>
+    <item>
+      <title>Documentation</title>
+      <link>https://tadbuy.giveabit.io/docs</link>
+      <guid isPermaLink="true">https://tadbuy.giveabit.io/docs</guid>
+      <pubDate>Tue, 01 Sep 2026 12:00:00 GMT</pubDate>
+      <description>How a Tadbuy campaign is planned, bought, and settled in sats.</description>
+    </item>
+    <item>
+      <title>Publisher portal</title>
+      <link>https://tadbuy.giveabit.io/publisher</link>
+      <guid isPermaLink="true">https://tadbuy.giveabit.io/publisher</guid>
+      <pubDate>Tue, 01 Sep 2026 12:00:00 GMT</pubDate>
+      <description>Where an independent publisher connects a channel.</description>
+    </item>
+    <item>
+      <title>PPQ guide</title>
+      <link>https://tadbuy.giveabit.io/ppq</link>
+      <guid isPermaLink="true">https://tadbuy.giveabit.io/ppq</guid>
+      <pubDate>Tue, 01 Sep 2026 12:00:00 GMT</pubDate>
+      <description>How placement quality is scored before a buy.</description>
+    </item>
+    <item>
+      <title>BOLT12</title>
+      <link>https://tadbuy.giveabit.io/bolt12</link>
+      <guid isPermaLink="true">https://tadbuy.giveabit.io/bolt12</guid>
+      <pubDate>Tue, 01 Sep 2026 12:00:00 GMT</pubDate>
+      <description>What the BOLT12 payment option is, in plain words.</description>
+    </item>
+    <item>
+      <title>Changelog</title>
+      <link>https://tadbuy.giveabit.io/changelog</link>
+      <guid isPermaLink="true">https://tadbuy.giveabit.io/changelog</guid>
+      <pubDate>Tue, 01 Sep 2026 12:00:00 GMT</pubDate>
+      <description>What changed on the Tadbuy site.</description>
+    </item>
+    <item>
+      <title>Compare</title>
+      <link>https://tadbuy.giveabit.io/compare</link>
+      <guid isPermaLink="true">https://tadbuy.giveabit.io/compare</guid>
+      <pubDate>Tue, 01 Sep 2026 12:00:00 GMT</pubDate>
+      <description>How Tadbuy sits next to an ordinary ad buy.</description>
+    </item>
+  </channel>
+</rss>
