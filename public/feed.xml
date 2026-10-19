@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
+    <atom:link href="https://tadbuy.giveabit.io/feed.xml" rel="self" type="application/rss+xml"/>
     <title>Tadbuy — Bitcoin-native ads</title>
     <link>https://tadbuy.giveabit.io</link>
     <description>Campaigns planned in sats, delivery you can check. Own pages only. Sibling news is not mixed in.</description>
@@ -11,6 +12,7 @@
       <link>https://tadbuy.giveabit.io/docs</link>
       <guid isPermaLink="true">https://tadbuy.giveabit.io/docs</guid>
       <pubDate>Tue, 01 Sep 2026 12:00:00 GMT</pubDate>
+      <category>own-page</category>
       <description>How a Tadbuy campaign is planned, bought, and settled in sats.</description>
     </item>
     <item>
@@ -18,6 +20,7 @@
       <link>https://tadbuy.giveabit.io/publisher</link>
       <guid isPermaLink="true">https://tadbuy.giveabit.io/publisher</guid>
       <pubDate>Tue, 01 Sep 2026 12:00:00 GMT</pubDate>
+      <category>own-page</category>
       <description>Where an independent publisher connects a channel.</description>
     </item>
     <item>
@@ -25,6 +28,7 @@
       <link>https://tadbuy.giveabit.io/ppq</link>
       <guid isPermaLink="true">https://tadbuy.giveabit.io/ppq</guid>
       <pubDate>Tue, 01 Sep 2026 12:00:00 GMT</pubDate>
+      <category>own-page</category>
       <description>How placement quality is scored before a buy.</description>
     </item>
     <item>
@@ -32,6 +36,7 @@
       <link>https://tadbuy.giveabit.io/bolt12</link>
       <guid isPermaLink="true">https://tadbuy.giveabit.io/bolt12</guid>
       <pubDate>Tue, 01 Sep 2026 12:00:00 GMT</pubDate>
+      <category>own-page</category>
       <description>What the BOLT12 payment option is, in plain words.</description>
     </item>
     <item>
@@ -39,6 +44,7 @@
       <link>https://tadbuy.giveabit.io/changelog</link>
       <guid isPermaLink="true">https://tadbuy.giveabit.io/changelog</guid>
       <pubDate>Tue, 01 Sep 2026 12:00:00 GMT</pubDate>
+      <category>own-page</category>
       <description>What changed on the Tadbuy site.</description>
     </item>
     <item>
@@ -46,6 +52,7 @@
       <link>https://tadbuy.giveabit.io/compare</link>
       <guid isPermaLink="true">https://tadbuy.giveabit.io/compare</guid>
       <pubDate>Tue, 01 Sep 2026 12:00:00 GMT</pubDate>
+      <category>own-page</category>
       <description>How Tadbuy sits next to an ordinary ad buy.</description>
     </item>
   </channel>

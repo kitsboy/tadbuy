@@ -6,3 +6,5 @@
 
 - [https://tadbuy.giveabit.io/](https://tadbuy.giveabit.io/)
 - [https://tadbuy.giveabit.io/buy](https://tadbuy.giveabit.io/buy)
+- Feed: https://tadbuy.giveabit.io/feed.xml
+- Feed (JSON): https://tadbuy.giveabit.io/feed.json
