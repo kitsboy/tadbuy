@@ -1,5 +1,6 @@
-# tadbuy — Last Updated 2026-10-21 by Grok
+# tadbuy — Last Updated 2026-10-21 by Buffy
 
-Brief: v5.0.224 — docs sync from projectState
-Commit: sync
-Docs synced: 2026-10-21
+Brief: v5.0.225 — prepare honest sample marketplace flows and Umbrel/Lightning readiness.
+Commit: c4f37d8
+
+No live API, inventory, payment, or settlement enabled. Full verification and next gates: docs/KIMI-HANDOFF.md.

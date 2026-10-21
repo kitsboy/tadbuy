@@ -23,7 +23,7 @@
 - No Umbrel/node was inspected or modified; no credentials, channels, payments, deploys, or funds touched.
 
 **Git State:**
-- Starting HEAD was `7ef3d73` (`origin/main`), with 34+ pre-existing modified/untracked files from the in-progress readiness batch. The completed and verified batch, including this handoff, is in the commit containing this entry; confirm its SHA and `origin/main..HEAD` after the requested push. No unrelated files were intentionally staged. Push uses the repository's version-bump hook and is a production deploy.
+- Feature commit: `65fa9d8873f7c1f506cb71113acaee3c7fbed7cd`. Version-hook commit: `c4f37d8a5508e50567281d369fbf1def674c9b8a` (v5.0.225). Both are on `origin/main`; fetch verified 0 commits ahead/behind. First hook attempt used detached `HEAD` as its nested push ref and failed safely; the full-ref retry pushed both commits. Hook-generated `public/sw.js` cache name remains modified locally and should be committed as a cache-version follow-up. The separate `/Users/cam/projects/tadbuy` worktree was left untouched with its existing unrelated generated-doc changes.
 
 ---
 
