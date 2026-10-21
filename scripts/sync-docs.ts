@@ -59,13 +59,13 @@ ${PROJECT_STATE.marketing.pitch}
 Phase 1: Nostr publishing plus vendor-assisted websites, newsletters, and podcasts. Later phases add Reddit, Meta, Google/YouTube, Spotify, Pinterest, LinkedIn, TikTok, and DOOH only when provider access and reporting are real.
 
 ## Honest product boundary
-Tadbuy coordinates campaign plans, vendor relationships, proof, and future settlement. It does not claim automatic third-party publishing, live reach, or live payout without a connected backend and verified records.
+Tadbuy is being built to coordinate campaign plans, approved vendor inventory, delivery evidence, and future settlement. This preview has no approved vendors, live inventory, payment, or settlement. It does not claim automatic third-party publishing, live reach, or payouts.
 
 ## Differentiators
 ${PROJECT_STATE.executive.differentiators.map(d => `- ${d}`).join('\n')}
 
-## Fedimint Strategy
-Tadbuy integrates **Fedimint ecash** as a first-class payment rail — enabling privacy-preserving, federation-backed ad purchases without on-chain fees. See [docs/FEDIMINT.md](./FEDIMINT.md).
+## Payment-rail status
+No campaign payment rail is connected. Bitcoin and Lightning support are roadmap work only; a synced Umbrel node alone does not provide invoice verification, campaign accounting, or settlement. Fedimint is also an unapproved roadmap option. See [BETA readiness](./BETA.md) and [FEDIMINT](./FEDIMINT.md).
 
 ---
 *Safe Harbour · Part of the [Give A Bit](https://giveabit.io) family.*
@@ -79,24 +79,13 @@ Tadbuy integrates **Fedimint ecash** as a first-class payment rail — enabling 
 ## Revenue Model
 ${f.revenueModel}
 
-Advertisers pay an itemized coordination fee. Vendors set or accept placement prices. Marketplace commission and publisher settlement activate only when the real backend ledger and payment rails are connected.
+No advertiser fee, publisher commission, or settlement schedule has been approved. Future commercial terms require product approval, durable marketplace records, an authoritative payment source, and a reconciled ledger.
 
 ## Distribution roadmap
 See [docs/DISTRIBUTION-ROADMAP.md](./DISTRIBUTION-ROADMAP.md) for the phased channel plan.
 
-## Projections (${f.currency})
-| Year | Platform Revenue | Ad Spend Volume | Active Users |
-|------|-----------------|-----------------|--------------|
-${f.projections.map(p => `| ${p.year} | $${p.revenue.toLocaleString()} | $${p.adSpend.toLocaleString()} | ${p.users.toLocaleString()} |`).join('\n')}
-
-## Unit Economics
-| Metric | Value |
-|--------|-------|
-| Avg Campaign Budget | $${f.unitEconomics.avgCampaignBudgetUsd} |
-| Platform Take Rate | ${f.unitEconomics.platformTakeRate * 100}% |
-| CAC | $${f.unitEconomics.cacUsd} |
-| LTV | $${f.unitEconomics.ltvUsd} |
-| Gross Margin | ${f.unitEconomics.grossMargin * 100}% |
+## Forecast and unit economics
+No validated forecast, ad-spend projection, user-growth target, or unit economics are published. No substantiated source or approved assumptions are available for these figures; they must not be presented as actuals or a forecast.
 
 ## Funding
 - **Stage:** ${f.funding.stage}
@@ -130,7 +119,7 @@ Reddit · Meta (Facebook + Instagram) · Google/YouTube · Spotify · Pinterest 
 ${PROJECT_STATE.marketing.audiences.map(a => `- ${a}`).join('\n')}
 
 ## Payment Rails (Marketing Points)
-No per-rail status is published: in this build no rail settles — payments run in demo mode until the M4 Fedimint mint + Umbrel are connected. \`/beta\` owns the per-flow statuses.
+No per-rail status is implied by listing a protocol here. No Tadbuy campaign rail settles in this build; a synced node or third-party receive address alone is not sufficient. \`/beta\` owns the readiness gates.
 ${PROJECT_STATE.paymentMethods.map(p => `- ${p.name}`).join('\n')}
 
 ## Live URL
@@ -147,34 +136,29 @@ ${PROJECT_STATE.liveUrl}
 ## Overview
 ${PROJECT_STATE.fedimint.description}
 
-## Why Fedimint for Ads?
+## Future design questions (not a payment flow)
 ${PROJECT_STATE.fedimint.benefits.map(b => `- ${b}`).join('\n')}
 
 ## Configuration
 \`\`\`bash
 # .env.local
-VITE_FEDIMINT_INVITE=fm-invite://...
-FEDIMINT_GATEWAY_URL=https://your-mint-gateway
+# No invite or gateway is configured; do not paste federation or node secrets into the public app.
 \`\`\`
 
-## User Flow
-1. Advertiser selects **Fedimint Ecash** at checkout
-2. Join federation via invite code (one-time)
-3. Pay campaign budget in ecash notes
-4. Federation settles to Tadbuy Lightning node
-5. Campaign goes live instantly
+## Future design gates (not an available user flow)
+1. Product owner approves whether Tadbuy should accept campaign funds.
+2. Select and review a federation, guardians/quorum, governance, recovery, limits, and support plan.
+3. Define payment-status authority, replay protection, ledger/reconciliation, refunds, and failure handling.
+4. Complete security and operational review; use test-only fixtures before any real funds.
+5. Obtain explicit release approval. No step is enabled by this documentation.
 
 ## Resources
 - [Fedimint.org](${PROJECT_STATE.fedimint.docsUrl})
 - [Fedimint SDK](${PROJECT_STATE.fedimint.sdkUrl})
 - [Bitcoin Design Guide — Ecash](https://bitcoin.design/guide/how-it-works/ecash/fedimint/)
 
-## API Endpoints
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| /api/fedimint/status | GET | Federation connection status |
-| /api/fedimint/balance | GET | Ecash balance (session) |
-| /api/fedimint/pay | POST | Pay campaign with ecash |
+## API
+No Fedimint API endpoint is deployed or approved for Tadbuy. The legacy status/balance/pay path names are not a deployed integration.
 
 ---
 *Tadbuy ${PROJECT_STATE.version}*
@@ -190,6 +174,8 @@ FEDIMINT_GATEWAY_URL=https://your-mint-gateway
 
 ## Phase: BETA
 
+No campaign payments, publisher marketplace activation, or settlement are enabled. The operator must verify node and Lightning health separately; no node connection or sync telemetry is read by this static app.
+
 | Component | Status |
 |-----------|--------|
 | UI (Cloudflare Pages) | ✅ Live |
@@ -197,19 +183,21 @@ FEDIMINT_GATEWAY_URL=https://your-mint-gateway
 | Global Reach (/geo) | ✅ Live — 100 enhancements, 25 markets |
 | Metrics / Analytics UI | ✅ Live |
 | SPA routing | ✅ Fixed (React Router v7 sync) |
-| API (/api/*) | ✅ UI cut — no page calls /api/* (demo-mode preview; backend is a separate, deferred plan) |
-| Fedimint (Give A Bit Mint) | ⏳ Staged on M4 |
-| Umbrel Lightning | ⏳ Not ready |
-| Real payments | 🔶 Demo mode |
+| Backend API and durable marketplace | ⛔ Not deployed; no live orders or account records |
+| Campaign payment and publisher settlement | ⛔ Disabled; no verified rail or ledger |
+| Fedimint | ⏳ Unapproved roadmap option; no Tadbuy integration |
+| Umbrel Bitcoin / Lightning | ⏳ Operator verification required; not connected to Tadbuy |
+| Real campaign payments and settlement | ⛔ Disabled; no Tadbuy rail or ledger |
 
 ## Distribution status
-- **Phase 1:** Nostr, websites/blogs, newsletters, podcasts
+- **Preview now:** local planning and optional user-signed Nostr note (not a paid placement)
+- **Future vendor-assisted channels:** websites/blogs, newsletters, podcasts only after approved vendors and pilot rules
 - **Later:** Reddit, Meta, Google/YouTube, Spotify, Pinterest
 - **Specialist:** LinkedIn and TikTok
 - **Future:** digital out-of-home screen marketplace
 
 ## Consumer Workflow
-1. Plan campaign → 2. Choose distribution → 3. Prepare creative → 4. Review proof path → 5. Pay when a real rail is connected → 6. Track delivery
+1. Plan a local campaign preview → 2. Review sample distribution concepts → 3. Prepare local creative → 4. Inspect the future proof path. Payment, activation, publisher coordination, and campaign measurement are not available in this build.
 
 ## Key Pages
 | Page | URL |
@@ -226,8 +214,8 @@ ${batches}
 
 See https://tadbuy.giveabit.io/beta for live status.
 
-## Setup
-See [SETUP-GUIDE.md](./SETUP-GUIDE.md) and [M4-SERVER-REF.md](./M4-SERVER-REF.md).
+## Preparation references
+See [BACKEND-SCOPE.md](./BACKEND-SCOPE.md), [FEDIMINT.md](./FEDIMINT.md), and [Wallet readiness](https://tadbuy.giveabit.io/wallet). No server or node is connected by these docs.
 
 ---
 *Part of the [Give A Bit](https://giveabit.io) family.*
@@ -237,13 +225,10 @@ See [SETUP-GUIDE.md](./SETUP-GUIDE.md) and [M4-SERVER-REF.md](./M4-SERVER-REF.md
 
 **Auto-generated:** ${today}
 
-## Shared Fedimint Mint
-- **Name:** Give A Bit Mint
-- **Domain:** giveabit.io
-- **Gateway:** mint.giveabit.io (M4 HERMES)
-- **Status:** staged
+## Fedimint
+No shared federation or gateway is verified as operational or approved for Tadbuy. See [FEDIMINT.md](./FEDIMINT.md) for the roadmap gates.
 
-## Projects Using This Mint
+## Ecosystem projects
 | Project | URL |
 |---------|-----|
 | Tadbuy | https://tadbuy.giveabit.io |
@@ -252,9 +237,10 @@ See [SETUP-GUIDE.md](./SETUP-GUIDE.md) and [M4-SERVER-REF.md](./M4-SERVER-REF.md
 | MotoPass | https://motopass.giveabit.io |
 | OpenStrata | https://openstrata.giveabit.io |
 
-## M3 vs M4
-- **M3:** Code in ~/projects/ — never install Fedimint/Umbrel here
-- **M4:** Server — Fedimint guardian, Umbrel, API proxy, Fedi gateway
+## Ownership and infrastructure
+- Application code changes stay in this repository.
+- Node operation and any future API deployment require the designated operator and product/security approval.
+- Do not infer that any machine, federation, Lightning daemon, or API is connected from this static document.
 
 ---
 *See SETUP-GUIDE.md for connection instructions.*
@@ -265,23 +251,18 @@ See [SETUP-GUIDE.md](./SETUP-GUIDE.md) and [M4-SERVER-REF.md](./M4-SERVER-REF.md
 **Auto-generated:** ${today} · **Version:** ${PROJECT_STATE.version}
 
 ## Overview
-Interactive geo-targeting dashboard at [${PROJECT_STATE.liveUrl}/geo](${PROJECT_STATE.liveUrl}/geo).
+Interactive **example-data planning UI** at [${PROJECT_STATE.liveUrl}/geo](${PROJECT_STATE.liveUrl}/geo). Country and market figures are static illustrations, not live Tadbuy audience, spend, or performance data.
 
-## Features (100 enhancements — batch 24)
-- 25-country market dataset with spend, CPM, trends, BTC adoption
+## Features (interface work — batch 24)
+- 25-country illustrative dataset with example spend, CPM, trends, BTC adoption
 - Interactive world map with country selection
 - Region filters, search, sort, min-CTR slider
 - Watchlist, compare up to 3 markets, export CSV
 - Tabs: Overview · Insights · Learn
 - Buy Ads handoff via \`?geo=CODE\`
 
-## API Endpoints
-| Endpoint | Description |
-|----------|-------------|
-| GET /api/geo/page/stats | Aggregate geo stats |
-| GET /api/geo/page/insights | Recommendations |
-| GET /api/geo/page/trends | Regional trends |
-| GET /api/geo/countries | Country list |
+## Data and operational boundary
+The map, filters, comparisons, recommendations, and exports operate on the bundled sample dataset. No geo-targeting API or provider-side audience activation is connected.
 
 Full manifest: [GEO-PAGE-100.md](./GEO-PAGE-100.md)
 

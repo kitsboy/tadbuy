@@ -54,7 +54,7 @@ export function GeoInsightsPanel({ markets }: GeoInsightsPanelProps) {
       <Card className="glass-panel p-4">
         <CardTitle className="mb-3 flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-accent" />
-          Recommended Markets
+          Example market suggestions · unverified
         </CardTitle>
         <div className="space-y-2">
           {recommended.map(m => (
@@ -66,7 +66,7 @@ export function GeoInsightsPanel({ markets }: GeoInsightsPanelProps) {
               <span className="text-lg">{m.flag}</span>
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-bold text-text truncate">{m.country}</div>
-                <div className="text-[10px] text-muted font-mono">+{m.trend}% trend · {m.ctr}% CTR</div>
+                <div className="text-[10px] text-muted font-mono">Example values · +{m.trend}% trend · {m.ctr}% CTR</div>
               </div>
               <ArrowRight className="w-4 h-4 text-muted group-hover:text-accent transition-colors shrink-0" />
             </Link>
@@ -75,8 +75,8 @@ export function GeoInsightsPanel({ markets }: GeoInsightsPanelProps) {
       </Card>
 
       {underperforming.length > 0 && (
-        <Alert variant="warning" title="Underperforming markets">
-          {underperforming.map(m => m.country).join(', ')} — consider pausing or reallocating spend to higher-CTR regions.
+        <Alert variant="warning" title="Example markets flagged in the static dataset">
+          {underperforming.map(m => m.country).join(', ')} appear in the illustrative dataset. These are not measured campaign results and should not guide live spend.
         </Alert>
       )}
 
@@ -90,14 +90,13 @@ export function GeoInsightsPanel({ markets }: GeoInsightsPanelProps) {
             <span className="text-2xl">{spotlight.flag}</span>
             <div className="flex-1">
               <p className="text-xs text-muted leading-relaxed">
-                Legal tender market with <span className="text-accent font-bold">+{spotlight.trend}%</span> growth.
-                {spotlight.impressions.toLocaleString()} impressions across {spotlight.campaigns} campaigns.
+                This is an example market only. Static dataset values: <span className="text-accent font-bold">+{spotlight.trend}%</span> trend, {spotlight.impressions.toLocaleString()} sample impressions, and {spotlight.campaigns} sample campaigns.
               </p>
               <Link
                 to={`/?geo=${spotlight.code}`}
                 className="inline-flex items-center gap-1 text-xs font-bold text-accent hover:underline mt-2 min-h-[44px] touch-manipulation"
               >
-                Target El Salvador <ArrowRight className="w-3 h-3" />
+                Plan example for El Salvador <ArrowRight className="w-3 h-3" />
               </Link>
             </div>
           </div>
@@ -107,25 +106,25 @@ export function GeoInsightsPanel({ markets }: GeoInsightsPanelProps) {
       <Card className="glass-panel p-4">
         <CardTitle className="mb-3 flex items-center gap-2">
           <Globe className="w-4 h-4" />
-          Coverage
+          Example coverage
         </CardTitle>
         <Progress value={GEO_INSIGHTS.coveragePercent} showLabel variant="accent" />
         <p className="text-[10px] text-muted mt-2">
-          {GEO_INSIGHTS.coveragePercent}% of priority markets actively targeted · avg CPM ${GEO_INSIGHTS.avgCpmUsd}
+          Static example: {GEO_INSIGHTS.coveragePercent}% coverage · avg CPM ${GEO_INSIGHTS.avgCpmUsd}. No markets are actively targeted.
         </p>
       </Card>
 
       <Card className="glass-panel p-4">
         <CardTitle className="mb-3 flex items-center gap-2">
           <Languages className="w-4 h-4" />
-          Language Breakdown
+          Example language mix
         </CardTitle>
         <div className="space-y-2.5">
           {languages.map(([lang, imp]) => (
             <div key={lang}>
               <div className="flex justify-between text-[10px] mb-1">
                 <span className="font-bold text-text">{lang}</span>
-                <span className="text-muted font-mono">{imp.toLocaleString()}</span>
+                <span className="text-muted font-mono">{imp.toLocaleString()} sample impressions</span>
               </div>
               <div className="h-1.5 rounded-full bg-surface border border-border overflow-hidden">
                 <div
@@ -141,7 +140,7 @@ export function GeoInsightsPanel({ markets }: GeoInsightsPanelProps) {
       <Card className="glass-panel p-4">
         <CardTitle className="mb-3 flex items-center gap-2">
           <Clock className="w-4 h-4" />
-          Active Timezones
+          Example timezones
         </CardTitle>
         <div className="space-y-1.5">
           {timezones.map(({ tz, country, flag }) => (

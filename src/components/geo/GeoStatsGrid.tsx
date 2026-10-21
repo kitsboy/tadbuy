@@ -30,36 +30,36 @@ export function GeoStatsGrid({ totals, topMarket, loading }: GeoStatsGridProps) 
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
-      <StatCard icon={Globe} label="Countries" value={totals.countries} color="text-blue" />
+      <StatCard icon={Globe} label="Example countries" value={totals.countries} color="text-blue" />
       <StatCard
         icon={TrendingUp}
-        label="Impressions"
+        label="Sample impressions"
         value={totals.impressions.toLocaleString()}
         color="text-accent"
       />
       <StatCard
         icon={Users}
-        label="Global CTR"
+        label="Sample CTR"
         value={`${totals.ctr.toFixed(2)}%`}
         color="text-purple-400"
       />
       <StatCard
         icon={Target}
-        label="Top Market"
+        label="Example top market"
         value={topMarket.country}
         sub={`${topMarket.code} · ${topMarket.flag}`}
         color="text-green"
       />
       <StatCard
         icon={Zap}
-        label="Total Spend"
+        label="Example spend"
         value={totals.spendSats.toLocaleString()}
         sub="sats"
         color="text-lightning"
       />
       <StatCard
         icon={BarChart2}
-        label="Active Campaigns"
+        label="Sample campaigns"
         value={totals.campaigns}
         color="text-accent"
       />

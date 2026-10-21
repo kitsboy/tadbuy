@@ -1,12 +1,12 @@
 # Tadbuy — Executive Summary
 
-**Auto-generated:** 2026-10-02 · **Version:** v5.0.223
+**Auto-generated:** 2026-10-21 · **Version:** v5.0.224
 
 ## Mission
-Build a sovereign advertising marketplace where advertisers buy transparent placements, independent publishers earn in sats, and campaign delivery is verifiable.
+Prepare a sovereign advertising marketplace where advertisers can plan transparent placements with independent publishers and verifiable delivery.
 
 ## Vision
-One campaign plan across independent distributors — zero surveillance, clear fees, and Bitcoin-native settlement when the rails are ready.
+One campaign plan across independent distributors — privacy-oriented by design, clear fees, and Bitcoin-native settlement only after verified rails and release approval.
 
 ## Traction (live metrics only)
 _Source: /api/metrics. Rows read "—" when the endpoint is unreachable — no estimated or hardcoded counters are published._
@@ -19,21 +19,21 @@ _Source: /api/metrics. Rows read "—" when the endpoint is unreachable — no e
 | Clicks | — |
 
 ## Distribution model
-Tadbuy coordinates Bitcoin-native advertising placements across Nostr and independent websites, newsletters, and podcasts. Advertisers plan once, vendors publish through channels they control, and every delivery has a clear proof path.
+Tadbuy is preparing local campaign planning and illustrative publisher workflows. Live inventory, provider buying, delivery evidence, payment, and settlement are not connected in this preview.
 
 Phase 1: Nostr publishing plus vendor-assisted websites, newsletters, and podcasts. Later phases add Reddit, Meta, Google/YouTube, Spotify, Pinterest, LinkedIn, TikTok, and DOOH only when provider access and reporting are real.
 
 ## Honest product boundary
-Tadbuy coordinates campaign plans, vendor relationships, proof, and future settlement. It does not claim automatic third-party publishing, live reach, or live payout without a connected backend and verified records.
+Tadbuy is being built to coordinate campaign plans, approved vendor inventory, delivery evidence, and future settlement. This preview has no approved vendors, live inventory, payment, or settlement. It does not claim automatic third-party publishing, live reach, or payouts.
 
 ## Differentiators
-- Phase 1 Nostr publishing plus accountable website, newsletter, and podcast inventory
-- Vendor marketplace with transparent placement proof and campaign plans
-- PPQ.AI optimization without surveillance pixels
+- Bitcoin-first campaign planning with no Tadbuy checkout connected in this preview
+- Sample vendor marketplace concepts; no approved live inventory yet
+- Privacy-oriented direction; audience targeting and campaign reporting are not connected
 - Give A Bit ecosystem integration
 
-## Fedimint Strategy
-Tadbuy integrates **Fedimint ecash** as a first-class payment rail — enabling privacy-preserving, federation-backed ad purchases without on-chain fees. See [docs/FEDIMINT.md](./FEDIMINT.md).
+## Payment-rail status
+No campaign payment rail is connected. Bitcoin and Lightning support are roadmap work only; a synced Umbrel node alone does not provide invoice verification, campaign accounting, or settlement. Fedimint is also an unapproved roadmap option. See [BETA readiness](./BETA.md) and [FEDIMINT](./FEDIMINT.md).
 
 ---
 *Safe Harbour · Part of the [Give A Bit](https://giveabit.io) family.*

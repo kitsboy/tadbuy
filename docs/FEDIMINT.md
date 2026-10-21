@@ -1,41 +1,36 @@
 # Fedimint Integration — Tadbuy
 
-**Auto-generated:** 2026-10-02
+**Auto-generated:** 2026-10-21
 
 ## Overview
-Privacy-preserving ecash payments via federated mints. Lower fees, instant settlement, Chaumian blind signatures.
+Fedimint ecash is a roadmap option only. No Tadbuy federation, invite, gateway, or campaign settlement is configured.
 
-## Why Fedimint for Ads?
-- Instant ecash settlement without on-chain fees
-- Privacy via blind signatures
-- Federation-backed Bitcoin reserves
-- Offline-capable token transfers
+## Future design questions (not a payment flow)
+- Potential future ecash payment option, subject to an approved federation and operational design
+- Privacy properties require review of the selected federation, wallets, metadata, and threat model
+- Federation governance, reserves, quorum, recovery, limits, and support remain unverified
+- No offline token transfer or campaign settlement is available in this preview
 
 ## Configuration
 ```bash
 # .env.local
-VITE_FEDIMINT_INVITE=fm-invite://...
-FEDIMINT_GATEWAY_URL=https://your-mint-gateway
+# No invite or gateway is configured; do not paste federation or node secrets into the public app.
 ```
 
-## User Flow
-1. Advertiser selects **Fedimint Ecash** at checkout
-2. Join federation via invite code (one-time)
-3. Pay campaign budget in ecash notes
-4. Federation settles to Tadbuy Lightning node
-5. Campaign goes live instantly
+## Future design gates (not an available user flow)
+1. Product owner approves whether Tadbuy should accept campaign funds.
+2. Select and review a federation, guardians/quorum, governance, recovery, limits, and support plan.
+3. Define payment-status authority, replay protection, ledger/reconciliation, refunds, and failure handling.
+4. Complete security and operational review; use test-only fixtures before any real funds.
+5. Obtain explicit release approval. No step is enabled by this documentation.
 
 ## Resources
 - [Fedimint.org](https://fedimint.org)
 - [Fedimint SDK](https://sdk.fedimint.org)
 - [Bitcoin Design Guide — Ecash](https://bitcoin.design/guide/how-it-works/ecash/fedimint/)
 
-## API Endpoints
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| /api/fedimint/status | GET | Federation connection status |
-| /api/fedimint/balance | GET | Ecash balance (session) |
-| /api/fedimint/pay | POST | Pay campaign with ecash |
+## API
+No Fedimint API endpoint is deployed or approved for Tadbuy. The legacy status/balance/pay path names are not a deployed integration.
 
 ---
-*Tadbuy v5.0.223*
+*Tadbuy v5.0.224*

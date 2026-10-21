@@ -34,24 +34,25 @@ export default function Terms() {
       </div>
 
       <div className="bg-card border border-accent/20 rounded-xl p-4 text-sm text-muted leading-relaxed">
-        <strong className="text-accent">Important:</strong> Please read these Terms of Service
-        carefully before using Tadbuy. By accessing or using the platform you agree to be bound by
-        these terms. If you do not agree, do not use Tadbuy.
+        <strong className="text-accent">Preview notice:</strong> This public demo does not accept
+        campaign funds, create live orders, activate ad delivery, or owe publisher payouts. The
+        terms for a future transacting product are not yet finalized or active.
       </div>
 
       <div className="bg-card border border-border rounded-xl p-6 space-y-8">
         <Section title="1. Service Description">
           <p>
-            Tadbuy is a Bitcoin-native advertising marketplace operated by the Give A Bit family
-            ("Give A Bit", "we", "us") — an independent project, not a registered company. Tadbuy
-            connects advertisers seeking exposure with publishers who monetize their digital
-            properties. All transactions on the platform are denominated and settled exclusively in
-            Bitcoin (BTC) and/or Bitcoin Lightning Network payments.
+            Tadbuy is an early-stage product preview operated by the Give A Bit family
+            ("Give A Bit", "we", "us") — an independent project, not a registered company.
+            This build provides local campaign planning, illustrative marketplace and platform
+            examples, and readiness information. It does not connect advertisers to approved live
+            publisher inventory, accept campaign funds, initiate provider ad buys, activate delivery,
+            or verify campaign results.
           </p>
           <p>
-            Tadbuy provides: (a) a self-serve ad campaign management interface; (b) a publisher
-            portal for monetising traffic; (c) real-time analytics and reporting; (d) Lightning
-            Network settlement infrastructure; and (e) related APIs and developer tools.
+            Some public pages describe intended Bitcoin and Lightning product direction. No Tadbuy
+            campaign payment, invoice, publisher payout, or settlement service is connected in this
+            preview. These pages are product-planning material, not an offer to transact.
           </p>
         </Section>
 
@@ -97,41 +98,27 @@ export default function Terms() {
 
         <Section title="4. Payment Terms">
           <p>
-            Status: demo mode. We hold no funds and no money moves — campaign budgets are
-            saved without real settlement while the Bitcoin rails are being connected. This
-            section describes how the paid product will work once those rails are live.
+            No campaign payment or settlement is available in this preview. Do not send funds,
+            expect campaign credit, or treat any example budget or fee as a quote. Payment, refund,
+            custody, and publisher settlement terms for a future transacting service are not active
+            and require separate review and explicit release approval before launch.
           </p>
-          <Sub title="4.1 Currency">
+          <Sub title="4.1 No payment acceptance">
             <p>
-              All payments on Tadbuy are made exclusively in Bitcoin (BTC) via on-chain transactions
-              or Lightning Network invoices. We do not accept fiat currency, stablecoins, or other
-              cryptocurrencies.
+              This preview does not create Bitcoin, Lightning, or other payment requests for
+              campaign funding. Wallet and network information shown elsewhere is not a Tadbuy
+              campaign payment instruction.
             </p>
           </Sub>
-          <Sub title="4.2 Campaign Funding">
+          <Sub title="4.2 Future commercial terms">
             <p>
-              Advertisers must fund their campaign balance before ads begin serving. Balances are
-              held against your account and debited as impressions and clicks are delivered.
-              Campaign budgets are expressed in satoshis (sats).
+              A future paid service would require approved pricing, funding and custody design,
+              cancellation/refund/dispute policy, settlement verification, accounting, and user
+              support terms. None are established by sample budgets, example fees, or these preview
+              pages.
             </p>
           </Sub>
-          <Sub title="4.3 Refund Policy">
-            <p>
-              <strong className="text-text">Once a campaign has commenced serving,</strong> ad
-              spend is non-refundable. Unfunded portions of a cancelled campaign (balance remaining
-              at cancellation) will be returned to the wallet address on file within 5 business
-              days.
-            </p>
-          </Sub>
-          <Sub title="4.4 Publisher Settlements">
-            <p>
-              Publisher earnings are settled weekly via Lightning Network or on-chain Bitcoin to
-              the address or LNURL provided in your publisher profile. Minimum payout threshold is
-              10,000 sats. Earnings forfeit if an account remains inactive for 24 consecutive
-              months.
-            </p>
-          </Sub>
-          <Sub title="4.5 Taxes">
+          <Sub title="4.3 Taxes">
             <p>
               You are solely responsible for determining and paying any taxes arising from your use
               of Tadbuy. The Company does not withhold or remit taxes on your behalf.
@@ -158,7 +145,12 @@ export default function Terms() {
         </Section>
 
         <Section title="6. Publisher Responsibilities">
-          <p>As a publisher, you represent and warrant that:</p>
+          <p>
+            Publisher onboarding, listing publication, tracking code, live inventory, and publisher
+            payment are not available in this preview. Any profile or inventory form is preparation
+            only and does not create a placement contract, delivery obligation, or payout entitlement.
+          </p>
+          <p>For any future approved publisher service, expected responsibilities may include:</p>
           <ul className="list-disc list-inside space-y-1.5 pl-2">
             <li>You own or control all properties registered in your publisher account.</li>
             <li>
@@ -230,18 +222,16 @@ export default function Terms() {
 
         <Section title="10. Disclaimers">
           <p>
-            THE PLATFORM IS PROVIDED{' '}
+            THE PREVIEW IS PROVIDED{' '}
             <strong className="text-text">"AS IS"</strong> AND{' '}
             <strong className="text-text">"AS AVAILABLE"</strong> WITHOUT ANY WARRANTY OF ANY KIND,
-            EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS
-            FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR UNINTERRUPTED OPERATION. WE DO NOT
-            GUARANTEE THAT CAMPAIGNS WILL ACHIEVE ANY PARTICULAR RESULTS, REACH, OR RETURN ON
-            INVESTMENT.
+            EXPRESS OR IMPLIED. Illustrative budgets, market data, platform descriptions, and seed
+            campaign metrics are not quotes, provider offers, live inventory, or measured results.
           </p>
           <p>
-            Bitcoin and Lightning Network payments carry inherent risks including price volatility,
-            network failures, and irreversibility. You accept full responsibility for all
-            transaction risks.
+            No campaign payment, placement, delivery, result, or payout is promised or created by
+            using this preview. Bitcoin or Lightning payment terms and risks will require separate
+            review before any future transacting release.
           </p>
         </Section>
 
@@ -254,8 +244,8 @@ export default function Terms() {
           </p>
           <p>
             OUR AGGREGATE LIABILITY TO YOU FOR ANY CLAIM ARISING FROM THESE TERMS SHALL NOT EXCEED
-            THE GREATER OF (A) THE TOTAL SATS YOU PAID TO TADBUY IN THE 90 DAYS PRECEDING THE
-            CLAIM, CONVERTED TO CAD AT THE PREVAILING RATE, OR (B) CAD $100.
+            CAD $100, except where applicable law requires otherwise. This preview does not accept
+            campaign payments.
           </p>
         </Section>
 
@@ -299,9 +289,8 @@ export default function Terms() {
           <p>
             Either party may terminate your account at any time. We may suspend or terminate
             your access immediately, without liability, if we determine you have violated these
-            Terms. Upon termination, unpaid publisher earnings above the minimum threshold will
-            be disbursed within 30 days; unused advertiser balance will be refunded per Section
-            4.3.
+            Terms. As this preview does not accept campaign balances or create publisher earnings,
+            no funds are payable or refundable through this service.
           </p>
         </Section>
 

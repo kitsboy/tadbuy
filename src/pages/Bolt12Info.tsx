@@ -6,11 +6,11 @@ import { ArtLightningFlow } from '@/components/illustrations';
 import { SafeLink } from '@/components/SafeLink';
 
 export default function Bolt12Info() {
-  usePageMeta('BOLT 12 Offers', 'Reusable Lightning offers for recurring ad campaign funding.');
+  usePageMeta('BOLT 12 Offers — Research', 'BOLT 12 protocol overview and future design considerations. No Tadbuy offer or payment flow is connected.');
   return (
     <PageShell
       title="BOLT 12 Offers"
-      description="Next-generation Lightning standard for seamless, private, and reusable Bitcoin payments."
+      description="Protocol research only. Tadbuy has no BOLT 12 offer, invoice, payment, or publisher payout integration."
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'BOLT 12' }]}
       maxWidth="max-w-4xl"
       art={<ArtLightningFlow className="opacity-90" />}
@@ -23,9 +23,9 @@ export default function Bolt12Info() {
         <div className="relative z-10 max-w-2xl">
           <h2 className="text-2xl font-bold text-text mb-4">What is BOLT 12?</h2>
           <p className="text-sm text-muted leading-relaxed mb-6">
-            BOLT 11 invoices (the standard Lightning invoices) are single-use and require the receiver to run a web server to generate a new invoice for every payment. 
+            BOLT 11 invoices are commonly single-use payment requests; exact service and invoice-generation requirements depend on the implementation.
             <br /><br />
-            <strong>BOLT 12 "Offers"</strong> solve this. An Offer is a static string (like a permanent QR code) that a user can scan multiple times. When scanned, the user's wallet automatically requests a fresh invoice directly over the Lightning Network via Onion Messages.
+            <strong>BOLT 12 Offers</strong> are a Lightning protocol design for requesting invoices from compatible nodes. Actual behavior depends on wallet and node support, routing, connectivity, and implementation; a static offer is not itself a payment or proof of settlement. Tadbuy does not create or accept BOLT 12 payments in this preview.
           </p>
           <SafeLink href="https://bolt12.org/" target="_blank" showIcon className="inline-flex items-center gap-2 bg-purple text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-purple/80 transition-colors">
             Visit BOLT12.org <ExternalLink className="w-4 h-4" />
@@ -33,13 +33,14 @@ export default function Bolt12Info() {
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold mb-6">Why Tadbuy uses BOLT 12</h2>
+      <h2 className="text-2xl font-bold mb-2">BOLT 12: a research option, not an integration</h2>
+      <p className="mb-6 text-xs text-muted">No Tadbuy Lightning node, offer endpoint, invoice verification, publisher payout, or settlement ledger is connected. Revisit this design only after the node/API, ledger, threat model, and release gates are approved.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="glass-panel p-6">
           <RefreshCw className="w-8 h-8 text-accent mb-4" />
           <CardTitle className="text-xl mb-2">Reusable Campaigns</CardTitle>
           <p className="text-sm text-muted leading-relaxed">
-            Advertisers can fund their campaigns using a single static Offer. You can save the QR code and send more funds whenever your campaign budget runs low, without needing to log back into the dashboard.
+            A compatible node may expose an Offer for repeated invoice requests. Tadbuy currently has no Offer or campaign-top-up flow; no funds can be sent through this page.
           </p>
         </Card>
 
@@ -47,15 +48,15 @@ export default function Bolt12Info() {
           <ShieldCheck className="w-8 h-8 text-green mb-4" />
           <CardTitle className="text-xl mb-2">Enhanced Privacy</CardTitle>
           <p className="text-sm text-muted leading-relaxed">
-            BOLT 12 uses Route Blinding. When you pay a Tadbuy publisher, your node doesn't know their exact identity or IP address, and they don't know yours. It provides ultimate financial privacy.
+            BOLT 12 includes privacy-related protocol mechanisms, including blinded paths in some flows. They do not guarantee anonymity or eliminate metadata, and Tadbuy has not implemented or assessed a BOLT 12 threat model.
           </p>
         </Card>
 
         <Card className="glass-panel p-6">
           <Zap className="w-8 h-8 text-lightning mb-4" />
-          <CardTitle className="text-xl mb-2">Serverless Publisher Payouts</CardTitle>
+          <CardTitle className="text-xl mb-2">Publisher payout design · not available</CardTitle>
           <p className="text-sm text-muted leading-relaxed">
-            Publishers don't need to run complex infrastructure to receive payouts. They simply provide a static BOLT 12 Offer, and Tadbuy streams micro-payments to them as ads are served.
+            Tadbuy does not send publisher payouts or stream micro-payments. Future payout handling needs approved vendor identities, a reconciled ledger, settlement controls, and a reviewed Lightning implementation.
           </p>
         </Card>
       </div>

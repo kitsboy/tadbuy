@@ -1,5 +1,32 @@
 # Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-27
 
+## Session — 2026-10-21 · marketplace preview + Bitcoin-node readiness preparation
+
+**Done:**
+- Continued the uncommitted preview-readiness batch already in this worktree: clear sample-only advertiser/publisher workflow, local-only placement request, delivery-proof boundaries, sample metric labeling, disabled checkout, and readiness links. No vendor is contacted, no inventory is reserved, and no funds or invoices are created.
+- Added an operator-facing Umbrel post-sync checklist to the readiness panel: confirm network and completed/current sync, node/storage/recovery health, then separately identify Lightning implementation and verify daemon/node/peer/channel/liquidity state. It explicitly prohibits channel funding and campaign acceptance as part of this check, keeps credentials private, and lists test-only/payment-ledger/release gates.
+- Fixed `scripts/sync-docs.ts` so `npm run build` no longer reads removed financial forecast/unit-economics fields; the previous generator failure stopped every build. Generated financials now disclose that there is no approved fee model or sourced forecast. Corrected generated executive/BETA/marketing/Fedimint/Ecosystem docs to stop implying an active payment rail or mint.
+- Removed outdated live-checkout, direct-bid, payout, risk-free execution, and active BOLT12 claims from the Documentation/BOLT12 pages. BOLT12 remains protocol research only; the node or a protocol page is not payment verification.
+- Added durable selectors and regression assertions for preview readiness/marketplace honesty. Increased test timeout for documented cold-load route stalls; geo sample-notice test now selects the class actually accepted by the existing Alert component.
+
+**Decisions / boundaries:**
+- Real marketplace operation still requires Cam’s explicit transaction/pilot decision, named consenting vendors, commercial/disclosure/dispute policy, approved backend/data plane, security/custody review, payment-status authority, ledger/reconciliation, operator/support ownership, and release approval. No authorization to operate Umbrel, fund channels, enable invoices, deploy an API, or accept real funds was inferred from the user’s week-away sync estimate.
+- Build prehook regenerates docs/metrics/feed/LATEST-UPDATE and changes `public/sw.js` cache version; review and commit only intended generated artifacts. The geo sample notice originally passed `data-testid` to `Alert`, but `Alert` does not forward that prop; use class selector instead.
+- `origin` has SSH and HTTPS push URLs plus a pre-push hook that auto-bumps and nested-pushes; inspect carefully. Do not alter push URLs or bypass hooks without owner approval.
+
+**Verification:**
+- `npm run lint` passed.
+- `npm run test:payment-core`: 7/7 passed; `npm run check:routes`: 38/38; `npm run check:security`: 0 findings.
+- `npm run build` passed (66 JS chunks; dist verification passed); Rollup continues to emit the existing `EmptyState` circular-chunk warning.
+- `npm run check:boot-fallback` passed (4 scenarios); `npm run check:art-themes` passed all 24 theme/scene cases.
+- E2E: `e2e/preview-readiness.spec.ts`, `e2e/phase2-placement.spec.ts`, `e2e/buyads-preview-honesty.spec.ts` passed 6/6 on final run. Earlier cold loads intermittently left route Suspense on loader (tracked production-only stall); retry/final rerun passed. Dev server reports expected absent server-only envs for non-deployed API/node.
+- No Umbrel/node was inspected or modified; no credentials, channels, payments, deploys, or funds touched.
+
+**Git State:**
+- Starting HEAD was `7ef3d73` (`origin/main`), with 34+ pre-existing modified/untracked files from the in-progress readiness batch. The completed and verified batch, including this handoff, is in the commit containing this entry; confirm its SHA and `origin/main..HEAD` after the requested push. No unrelated files were intentionally staged. Push uses the repository's version-bump hook and is a production deploy.
+
+---
+
 ## Session — 2026-10-20 · Product position and user-clarity review
 
 **Done:**

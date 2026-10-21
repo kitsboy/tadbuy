@@ -1,5 +1,5 @@
 import { Link, useParams, Navigate } from 'react-router-dom';
-import { Bitcoin, Wallet, TrendingUp } from 'lucide-react';
+import { Bitcoin, Wallet, TrendingUp, ShieldAlert } from 'lucide-react';
 import { Card, CardTitle, Button } from '@/components/ui';
 import { PageShell, StatusPill } from '@/components/PageShell';
 import { ArtGlobeZap } from '@/components/illustrations';
@@ -16,8 +16,8 @@ export default function PlatformDetail() {
   const platform = slug ? getPlatformById(slug) : undefined;
 
   usePageMeta(
-    platform ? `${platform.name} Ads — Budget & Payout` : 'Platform',
-    platform?.description ?? 'Ad platform guide',
+    platform ? `${platform.name} Ads — illustrative guide` : 'Platform',
+    platform?.description ?? 'Illustrative ad platform guide; no provider buying or publisher payouts are connected.',
   );
 
   if (!platform) return <Navigate to="/platforms" replace />;
@@ -28,8 +28,8 @@ export default function PlatformDetail() {
 
   return (
     <PageShell
-      title={`${platform.name} — Budget & Payout`}
-      description={platform.description}
+      title={`${platform.name} — illustrative guide`}
+      description={`${platform.description} Budget and CPM values below are examples, not quotes or live bids.`}
       badge={<StatusPill status={platform.integrationStatus} />}
       breadcrumbs={[
         { label: 'Home', href: '/' },
@@ -39,36 +39,41 @@ export default function PlatformDetail() {
       showDemoBadge
       actions={
         <Link to={`/?platforms=${platform.id}`}>
-          <Button className="gap-2 text-xs"><TrendingUp className="w-4 h-4" /> Buy on {platform.name}</Button>
+          <Button className="gap-2 text-xs"><TrendingUp className="w-4 h-4" /> Plan example</Button>
         </Link>
       }
       art={<ArtGlobeZap className="opacity-90" />}
       faq={[
-        { question: `What is the minimum spend on ${platform.name}?`, answer: `Approximately $${platform.minSpendUsd} USD equivalent in sats.` },
+        { question: `What is the minimum spend on ${platform.name}?`, answer: `The ~$${platform.minSpendUsd} figure is an illustrative planning value, not a Tadbuy quote or an active provider minimum. Verify current terms directly with the provider.` },
         { question: `How does ${platform.name} billing work?`, answer: platform.budgetingNotes },
         { question: 'How do publishers get paid?', answer: platform.payoutNotes },
       ]}
     >
       <div className="grid md:grid-cols-3 gap-4">
         <Card className="glass-panel">
-          <CardTitle className="text-xs uppercase tracking-widest text-muted">Billing model</CardTitle>
+          <CardTitle className="text-xs uppercase tracking-widest text-muted">Example billing model</CardTitle>
           <p className="text-2xl font-extrabold text-accent">{platform.billingModel}</p>
-          <p className="text-xs text-muted mt-1">~${cpm.toFixed(2)} CPM (incl. {(PLATFORM_FEE_RATE * 100).toFixed(0)}% fee)</p>
+          <p className="text-xs text-muted mt-1">Illustrative CPM: ~${cpm.toFixed(2)} · not a quote</p>
         </Card>
         <Card className="glass-panel">
-          <CardTitle className="text-xs uppercase tracking-widest text-muted">Min spend</CardTitle>
-          <p className="text-2xl font-extrabold text-text">${platform.minSpendUsd}</p>
-          <p className="text-xs text-muted mt-1">Recommended: ${platform.recommendedBudgetUsd}</p>
+          <CardTitle className="text-xs uppercase tracking-widest text-muted">Example minimum</CardTitle>
+          <p className="text-2xl font-extrabold text-text">~${platform.minSpendUsd}</p>
+          <p className="text-xs text-muted mt-1">Illustrative budget: ~${platform.recommendedBudgetUsd} · verify with provider</p>
         </Card>
         <Card className="glass-panel">
-          <CardTitle className="text-xs uppercase tracking-widest text-muted">Publisher threshold</CardTitle>
-          <p className="text-2xl font-extrabold text-lightning">{platform.publisherPayoutThresholdSats.toLocaleString()} sats</p>
-          <p className="text-xs text-muted mt-1">{platform.revSharePct}% rev-share to publishers</p>
+          <CardTitle className="text-xs uppercase tracking-widest text-muted">Publisher payment</CardTitle>
+          <p className="text-lg font-extrabold text-muted">Not connected</p>
+          <p className="text-xs text-muted mt-1">No Tadbuy rev-share or payout terms are active.</p>
         </Card>
       </div>
 
+      <Card className="glass-panel border-accent/20">
+        <CardTitle className="flex items-center gap-2"><ShieldAlert className="h-4 w-4 text-accent" /> Preview only</CardTitle>
+        <p className="text-xs text-muted">Tadbuy has no connected {platform.name} buying, provider authorization, live publisher inventory, or payout service. All budgets, fees, and formats on this page are illustrative; verify current provider information independently.</p>
+      </Card>
+
       <Card className="glass-panel">
-        <CardTitle>Budgeting</CardTitle>
+        <CardTitle>Illustrative budgeting guide</CardTitle>
         <p className="text-sm text-muted leading-relaxed">{platform.budgetingNotes}</p>
         <p className="text-xs text-muted mt-2">Traditional fee range: {platform.traditionalFeeRange}</p>
       </Card>
@@ -96,7 +101,7 @@ export default function PlatformDetail() {
 
       <FeeBreakdown budgetSats={sampleSats} budgetUsd={sampleBudgetUsd} />
 
-      <Link to="/platforms"><Button variant="secondary">← All platforms</Button></Link>
+      <Link to="/platforms"><Button variant="secondary">← All platform examples</Button></Link>
     </PageShell>
   );
 }

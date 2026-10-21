@@ -161,8 +161,7 @@ export default function Footer() {
             </div>
 
             <p className="text-sm text-zinc-400 mb-6 leading-relaxed max-w-sm">
-              The <span className="text-accent font-semibold">decentralized ad-buying suite</span>. Pay in sats,
-              target the Bitcoin economy, settle on Lightning. No middlemen.
+              The <span className="text-accent font-semibold">Bitcoin-first ad-buying preview</span>. Plan example placements and review readiness. Tadbuy campaign checkout, targeting, and settlement are not connected.
             </p>
 
 {/* Social icons row */}

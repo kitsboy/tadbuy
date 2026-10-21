@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
-import { Zap, Globe, Shield, Sparkles } from 'lucide-react';
+import { Zap, Globe, Activity, ShieldAlert, Sparkles } from 'lucide-react';
 import { Button } from './ui';
 import { StatCard } from './ui/StatCard';
 import { Badge } from './ui/Badge';
@@ -23,34 +23,31 @@ export function HeroBanner() {
         >
           <Badge variant="accent" dot className="mb-5 normal-case tracking-normal text-[11px] px-3 py-1">
             <Sparkles className="w-3 h-3" />
-            Bitcoin-Native DSP
+            Campaign preview · payments disabled
           </Badge>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.1] mb-4">
-            Buy ads with{' '}
-            <span className="bg-gradient-to-r from-accent via-fuchsia-300 to-accent bg-clip-text text-transparent" data-tip="Tadbuy coordinates transparent campaign placements. Vendors control their channels, and advertisers keep a clear proof trail.">
-              Bitcoin
+            Plan Bitcoin-first ads.<br className="hidden sm:block" />
+            <span className="bg-gradient-to-r from-accent via-fuchsia-300 to-accent bg-clip-text text-transparent">
+              No surveillance.
             </span>
-            .<br className="hidden sm:block" />
-            Pay in sats, not surveillance.
           </h1>
 
           <p className="text-sm md:text-base text-muted leading-relaxed max-w-lg mb-6">
-            Start with Nostr, websites, newsletters, and podcasts. Vendors control their channels; Tadbuy coordinates the plan and proof.
-            Pay in sats when settlement is connected.
+            Build a campaign preview and explore sample placements. Nostr notes can be published with your own signer; payment, vendor orders, and campaign delivery are not connected in this build.
           </p>
 
           <div className="flex flex-wrap gap-3">
             <a href="#campaign-builder" className="inline-flex">
               <Button size="lg" className="gap-2">
                 <Zap className="w-4 h-4" />
-                Start Campaign
+                Build campaign preview
               </Button>
             </a>
             <Link to="/marketplace">
               <Button variant="secondary" size="lg" className="gap-2">
                 <Globe className="w-4 h-4" />
-                Browse Marketplace
+                Explore sample placements
               </Button>
             </Link>
           </div>
@@ -63,10 +60,10 @@ export function HeroBanner() {
           className="hidden md:grid grid-cols-2 gap-3"
         >
           {[
-            { icon: Zap, label: 'Lightning', value: '<1s', sub: 'settlement', color: 'text-lightning', tip: 'Settlement over Bitcoin Lightning is near-instant — your campaign goes live and your budget settles in under a second, not days.' },
-            { icon: Globe, label: 'Channels', value: '4', sub: 'Phase 1', color: 'text-blue', tip: 'Start with Nostr, websites, newsletters, and podcasts. More channels arrive only when vendor relationships, provider access, and reporting are ready.' },
-            { icon: Shield, label: 'Privacy', value: '0', sub: 'tracking pixels', color: 'text-green', tip: 'No tracking pixels, no cross-site fingerprinting, no data resale. Your campaign and your audience stay private — that is the product.' },
-            { icon: Sparkles, label: 'AI', value: 'PPQ', sub: 'optimization', color: 'text-purple', tip: 'Pays-Per-Qualified-view: the AI strategist helps you target the audience that actually converts — not vanity impressions.' },
+            { icon: ShieldAlert, label: 'Payments', value: 'Off', sub: 'no rail connected', color: 'text-accent', tip: 'This preview cannot create or verify a Tadbuy payment. Bitcoin and Lightning rails are not connected.' },
+            { icon: Globe, label: 'Inventory', value: 'Sample', sub: 'no live vendors', color: 'text-blue', tip: 'Marketplace listings are illustrative concepts. No publisher supply is approved or available for purchase.' },
+            { icon: Activity, label: 'Reporting', value: 'Offline', sub: 'no metrics API', color: 'text-muted', tip: 'No campaign impression, click, conversion, or spend records are connected to this preview.' },
+            { icon: Zap, label: 'Nostr', value: 'Signer', sub: 'user-initiated', color: 'text-purple', tip: 'You may publish a signed Nostr note through your own browser signer. A relay acknowledgement is not proof of reach or payment.' },
           ].map((stat) => (
             <div key={stat.label} data-tip={stat.tip}>
               <StatCard icon={stat.icon} label={stat.label} value={stat.value} sub={stat.sub} color={stat.color} />

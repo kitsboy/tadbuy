@@ -44,7 +44,7 @@ export function GeoMarketsList({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto divide-y divide-border" role="listbox" aria-label="Markets">
+    <div className="flex-1 overflow-y-auto divide-y divide-border" role="listbox" aria-label="Example markets">
       {markets.map((market, i) => {
         const barWidth = (market.impressions / maxImpressions) * 100;
         const isSelected = selectedCode === market.code;
@@ -80,14 +80,14 @@ export function GeoMarketsList({
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-medium text-text truncate">{market.country}</div>
                 <div className="text-[10px] text-muted font-mono">
-                  {market.impressions.toLocaleString()} imp
+                  {market.impressions.toLocaleString()} sample imp
                 </div>
               </div>
 
               <div className="flex items-center gap-1 shrink-0">
                 <div className="text-right hidden sm:block">
                   <div className="text-xs font-mono text-accent">{market.ctr}%</div>
-                  <div className="text-[10px] text-muted">CTR</div>
+                  <div className="text-[10px] text-muted">Sample CTR</div>
                 </div>
 
                 <div
@@ -95,12 +95,12 @@ export function GeoMarketsList({
                     'flex items-center gap-0.5 text-[10px] font-bold font-mono',
                     market.trend >= 0 ? 'text-green' : 'text-red'
                   )}
-                  title={`${market.trend >= 0 ? '+' : ''}${market.trend}% trend`}
+                  title={`Example dataset trend: ${market.trend >= 0 ? '+' : ''}${market.trend}%`}
                 >
                   {market.trend >= 0
                     ? <TrendingUp className="w-3 h-3" />
                     : <TrendingDown className="w-3 h-3" />}
-                  <span className="hidden sm:inline">{Math.abs(market.trend).toFixed(1)}%</span>
+                  <span className="hidden sm:inline">{Math.abs(market.trend).toFixed(1)}% sample</span>
                 </div>
 
                 <button
@@ -137,7 +137,7 @@ export function GeoMarketsList({
                     onTargetMarket?.(market.code);
                   }}
                   className="p-2 rounded-lg hover:bg-accent/10 border border-transparent hover:border-accent/30 text-accent transition-colors touch-target touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
-                  aria-label={`Target ${market.country}`}
+                  aria-label={`Plan example targeting for ${market.country}`}
                 >
                   <Target className="w-4 h-4" />
                 </Link>

@@ -26,9 +26,9 @@ const TARGETING_VARIANTS = {
 } as const;
 
 const TARGETING_LABELS = {
-  active: 'Active targeting',
-  paused: 'Paused',
-  available: 'Available',
+  active: 'Example: active',
+  paused: 'Example: paused',
+  available: 'Example: available',
 } as const;
 
 export function GeoCountryDetail({ market, onAddToCampaign }: GeoCountryDetailProps) {
@@ -44,10 +44,10 @@ export function GeoCountryDetail({ market, onAddToCampaign }: GeoCountryDetailPr
   }
 
   const stats = [
-    { icon: BarChart2, label: 'Impressions', value: market.impressions.toLocaleString() },
-    { icon: Users, label: 'CTR', value: `${market.ctr}%` },
-    { icon: Zap, label: 'Spend', value: `${market.spendSats.toLocaleString()} sats` },
-    { icon: TrendingUp, label: 'Trend', value: `${market.trend >= 0 ? '+' : ''}${market.trend}%` },
+    { icon: BarChart2, label: 'Sample impressions', value: market.impressions.toLocaleString() },
+    { icon: Users, label: 'Sample CTR', value: `${market.ctr}%` },
+    { icon: Zap, label: 'Example spend', value: `${market.spendSats.toLocaleString()} sats` },
+    { icon: TrendingUp, label: 'Example trend', value: `${market.trend >= 0 ? '+' : ''}${market.trend}%` },
   ];
 
   return (
@@ -60,7 +60,7 @@ export function GeoCountryDetail({ market, onAddToCampaign }: GeoCountryDetailPr
             <p className="text-xs font-mono text-muted mt-0.5">{market.code} · {market.priority}</p>
             <div className="flex flex-wrap gap-1.5 mt-2">
               <Badge variant={BTC_VARIANTS[market.btcAdoption]}>
-                BTC {market.btcAdoption}
+                Example adoption: {market.btcAdoption}
               </Badge>
               <Badge variant={TARGETING_VARIANTS[market.targeting]} dot>
                 {TARGETING_LABELS[market.targeting]}
@@ -85,7 +85,7 @@ export function GeoCountryDetail({ market, onAddToCampaign }: GeoCountryDetailPr
           <div className="flex items-start gap-2">
             <Languages className="w-4 h-4 text-muted mt-0.5 shrink-0" />
             <div>
-              <div className="text-[10px] font-bold text-muted uppercase tracking-wider">Languages</div>
+              <div className="text-[10px] font-bold text-muted uppercase tracking-wider">Example languages</div>
               <div className="flex flex-wrap gap-1.5 mt-1.5">
                 {market.languages.map(lang => (
                   <Badge key={lang} variant="outline" className="normal-case tracking-normal">{lang}</Badge>
@@ -97,22 +97,22 @@ export function GeoCountryDetail({ market, onAddToCampaign }: GeoCountryDetailPr
           <div className="flex items-start gap-2">
             <Clock className="w-4 h-4 text-muted mt-0.5 shrink-0" />
             <div>
-              <div className="text-[10px] font-bold text-muted uppercase tracking-wider">Timezone</div>
+              <div className="text-[10px] font-bold text-muted uppercase tracking-wider">Example timezone</div>
               <p className="text-xs text-text font-mono mt-1">{market.timezone.replace(/_/g, ' ')}</p>
             </div>
           </div>
 
           <div className="text-[10px] text-muted font-mono space-y-1 pt-2 border-t border-border">
             <div className="flex justify-between">
-              <span>Campaigns</span>
+              <span>Example campaigns</span>
               <span className="text-text">{market.campaigns}</span>
             </div>
             <div className="flex justify-between">
-              <span>CPM</span>
+              <span>Example CPM</span>
               <span className="text-text">${market.cpmUsd.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Population reach</span>
+              <span>Population · context only</span>
               <span className="text-text">{(market.populationReach / 1_000_000).toFixed(1)}M</span>
             </div>
           </div>
@@ -123,7 +123,7 @@ export function GeoCountryDetail({ market, onAddToCampaign }: GeoCountryDetailPr
         <Link to={`/?geo=${market.code}`} className="block">
           <Button variant="primary" className="w-full gap-2 min-h-[44px] touch-target touch-manipulation">
             <Target className="w-4 h-4" />
-            Target this market
+            Plan this example market
           </Button>
         </Link>
         <Button
@@ -132,7 +132,7 @@ export function GeoCountryDetail({ market, onAddToCampaign }: GeoCountryDetailPr
           onClick={() => onAddToCampaign?.(market.code)}
         >
           <Plus className="w-4 h-4" />
-          Add to campaign
+          Add example to draft
         </Button>
       </div>
     </div>

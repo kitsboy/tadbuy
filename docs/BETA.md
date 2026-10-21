@@ -1,8 +1,10 @@
 # Tadbuy — BETA Status
 
-**Auto-generated:** 2026-10-02 · **Version:** v5.0.223
+**Auto-generated:** 2026-10-21 · **Version:** v5.0.224
 
 ## Phase: BETA
+
+No campaign payments, publisher marketplace activation, or settlement are enabled. The operator must verify node and Lightning health separately; no node connection or sync telemetry is read by this static app.
 
 | Component | Status |
 |-----------|--------|
@@ -11,19 +13,21 @@
 | Global Reach (/geo) | ✅ Live — 100 enhancements, 25 markets |
 | Metrics / Analytics UI | ✅ Live |
 | SPA routing | ✅ Fixed (React Router v7 sync) |
-| API (/api/*) | ✅ UI cut — no page calls /api/* (demo-mode preview; backend is a separate, deferred plan) |
-| Fedimint (Give A Bit Mint) | ⏳ Staged on M4 |
-| Umbrel Lightning | ⏳ Not ready |
-| Real payments | 🔶 Demo mode |
+| Backend API and durable marketplace | ⛔ Not deployed; no live orders or account records |
+| Campaign payment and publisher settlement | ⛔ Disabled; no verified rail or ledger |
+| Fedimint | ⏳ Unapproved roadmap option; no Tadbuy integration |
+| Umbrel Bitcoin / Lightning | ⏳ Operator verification required; not connected to Tadbuy |
+| Real campaign payments and settlement | ⛔ Disabled; no Tadbuy rail or ledger |
 
 ## Distribution status
-- **Phase 1:** Nostr, websites/blogs, newsletters, podcasts
+- **Preview now:** local planning and optional user-signed Nostr note (not a paid placement)
+- **Future vendor-assisted channels:** websites/blogs, newsletters, podcasts only after approved vendors and pilot rules
 - **Later:** Reddit, Meta, Google/YouTube, Spotify, Pinterest
 - **Specialist:** LinkedIn and TikTok
 - **Future:** digital out-of-home screen marketplace
 
 ## Consumer Workflow
-1. Plan campaign → 2. Choose distribution → 3. Prepare creative → 4. Review proof path → 5. Pay when a real rail is connected → 6. Track delivery
+1. Plan a local campaign preview → 2. Review sample distribution concepts → 3. Prepare local creative → 4. Inspect the future proof path. Payment, activation, publisher coordination, and campaign measurement are not available in this build.
 
 ## Key Pages
 | Page | URL |
@@ -63,8 +67,8 @@
 
 See https://tadbuy.giveabit.io/beta for live status.
 
-## Setup
-See [SETUP-GUIDE.md](./SETUP-GUIDE.md) and [M4-SERVER-REF.md](./M4-SERVER-REF.md).
+## Preparation references
+See [BACKEND-SCOPE.md](./BACKEND-SCOPE.md), [FEDIMINT.md](./FEDIMINT.md), and [Wallet readiness](https://tadbuy.giveabit.io/wallet). No server or node is connected by these docs.
 
 ---
 *Part of the [Give A Bit](https://giveabit.io) family.*

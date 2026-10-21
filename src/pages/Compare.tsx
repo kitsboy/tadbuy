@@ -8,16 +8,16 @@ import { AD_PLATFORMS } from '@/data/platforms';
 import { ArtCampaignScene } from '@/components/illustrations';
 
 const ROWS = [
-  { feature: 'Payment currency', tadbuy: 'Bitcoin / sats only', traditional: 'USD, credit cards, invoicing' },
-  { feature: 'Settlement speed', tadbuy: '< 1 second (Lightning)', traditional: '30–90 day net terms' },
-  { feature: 'Platform fees', tadbuy: '15% transparent', traditional: '20–40% + hidden margins' },
-  { feature: 'User tracking', tadbuy: 'No surveillance pixels', traditional: 'Cross-site cookies & ID graphs' },
-  { feature: 'Data ownership', tadbuy: 'Self-custodial spend', traditional: 'Platform holds your budget' },
-  { feature: 'Audience targeting', tadbuy: 'Geo + interest (PPQ.AI)', traditional: 'Behavioral profiling' },
-  { feature: 'Publisher payout', tadbuy: 'Instant Lightning sats', traditional: 'Monthly ACH/wire' },
-  { feature: 'Minimum spend', tadbuy: '~$5 equivalent in sats', traditional: '$500–$10,000 minimums' },
-  { feature: 'Agent API', tadbuy: 'Nostr + REST agents (roadmap)', traditional: 'Locked enterprise APIs' },
-  { feature: 'Chargebacks', tadbuy: 'None (Bitcoin finality)', traditional: 'Disputes & clawbacks' },
+  { feature: 'Payment currency', tadbuy: 'Bitcoin-first design; no Tadbuy checkout connected', traditional: 'Varies by provider' },
+  { feature: 'Settlement speed', tadbuy: 'Not available in this preview', traditional: 'Depends on provider and contract' },
+  { feature: 'Platform fees', tadbuy: 'Planning assumptions only; not an active rate', traditional: 'Varies by provider and contract' },
+  { feature: 'User tracking', tadbuy: 'No Tadbuy campaign tracking configured in this build', traditional: 'Varies by provider' },
+  { feature: 'Data ownership', tadbuy: 'Campaign drafts stay in this browser', traditional: 'Varies by provider and product' },
+  { feature: 'Audience targeting', tadbuy: 'Local planning inputs only; no audience activation', traditional: 'Varies by provider' },
+  { feature: 'Publisher payout', tadbuy: 'Not connected', traditional: 'Varies by provider and contract' },
+  { feature: 'Minimum spend', tadbuy: 'Example planning values only; not a quote', traditional: 'Varies by provider' },
+  { feature: 'Agent API', tadbuy: 'Roadmap concept; no live buying API', traditional: 'Varies by provider' },
+  { feature: 'Chargebacks', tadbuy: 'No Tadbuy payment or refund policy is active', traditional: 'Varies by provider and payment method' },
 ] as const;
 
 function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
@@ -29,12 +29,12 @@ function Cell({ value, highlight }: { value: string; highlight?: boolean }) {
 }
 
 export default function Compare() {
-  usePageMeta('Compare', 'Tadbuy vs traditional DSP — Bitcoin-native advertising without surveillance.');
+  usePageMeta('Compare', 'Compare Tadbuy’s Bitcoin-first product direction with ad platforms. Tadbuy checkout, buying, targeting, and settlement are not live in this preview.');
 
   return (
     <PageShell
-      title="Tadbuy vs Traditional DSP"
-      description="See how Bitcoin-native ad buying stacks up against legacy demand-side platforms built on surveillance capitalism and fiat settlement delays."
+      title="Tadbuy direction vs traditional DSPs"
+      description="A product-direction comparison, not a live service comparison. Tadbuy’s marketplace, checkout, targeting, delivery, and settlement are not connected in this preview; provider capabilities vary."
       badge={<Badge variant="accent" className="gap-1.5"><Scale className="w-3.5 h-3.5" /> Comparison</Badge>}
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Compare' }]}
       maxWidth="max-w-5xl"
@@ -96,11 +96,9 @@ export default function Compare() {
       </Card>
 
       <Card>
-        <CardTitle>Why switch?</CardTitle>
+        <CardTitle>Product direction</CardTitle>
         <p className="text-sm text-muted leading-relaxed">
-          Traditional DSPs take weeks to settle, charge opaque fees, and build audiences from
-          cross-site tracking. Tadbuy settles in sats, publishes every fee upfront, and targets
-          without surveillance — aligned with Bitcoin&apos;s values of sovereignty and privacy.
+          Tadbuy is being designed around transparent, independent placements and Bitcoin-native settlement. Those capabilities are not live in this preview, and this comparison does not claim verified performance, fee, or settlement advantages over other providers.
         </p>
         <Link to="/platforms" className="text-sm text-accent hover:underline mt-3 inline-block">Explore all platform guides →</Link>
       </Card>

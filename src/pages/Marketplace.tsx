@@ -20,6 +20,7 @@ import { PlacementRequestModal } from '@/components/marketplace/PlacementRequest
 import { usePlacementRequests } from '@/hooks/usePlacementRequests';
 import { TrustProofMoments } from '@/components/trust/TrustProofMoments';
 import { ArtMarketplaceScene } from '@/components/illustrations';
+import { PreviewReadinessPanel } from '@/components/PreviewReadinessPanel';
 
 const PLATFORM_TABS = ["All", ...MARKETPLACE_PLATFORM_TYPES] as const;
 type PlatformTab = typeof PLATFORM_TABS[number];
@@ -417,6 +418,8 @@ export default function Marketplace() {
             </button>
           </div>
         </div>
+
+        <PreviewReadinessPanel compact />
 
         <div className="rounded-2xl border border-blue/30 bg-blue/5 p-4 sm:p-5" data-testid="marketplace-sample-notice">
           <div className="flex items-start gap-3">

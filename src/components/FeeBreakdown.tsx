@@ -26,7 +26,7 @@ export function FeeBreakdown({
   if (compact) {
     return (
       <p className={`text-[10px] text-muted font-mono ${className ?? ''}`}>
-        {formatSats(mediaSats)} media · {formatSats(feeSats)} fee ({(PLATFORM_FEE_RATE * 100).toFixed(0)}%)
+        Example split · not a quote: {formatSats(mediaSats)} media · {formatSats(feeSats)} fee ({(PLATFORM_FEE_RATE * 100).toFixed(0)}%)
       </p>
     );
   }
@@ -35,8 +35,8 @@ export function FeeBreakdown({
     <Card className={`glass-panel tadbuy-jewel-card ${className ?? ''}`}>
       <div className="flex items-center gap-2 mb-3">
         <Info className="w-4 h-4 text-accent" />
-        <span className="text-xs font-bold text-text" data-tip="Exactly where your sats go — shown in full, no hidden margins. Media spend buys impressions; the fee covers routing, support, and Bitcoin infrastructure.">
-          Fee breakdown
+        <span className="text-xs font-bold text-text" data-tip="Illustrative planning split only. No charge is created and these assumptions do not establish a final quote or publisher payment.">
+          Example fee assumptions · not a quote
         </span>
       </div>
       <div className="space-y-2 text-xs">
@@ -48,7 +48,7 @@ export function FeeBreakdown({
           </span>
         </div>
         <div className="flex justify-between">
-          <span className="text-muted">Tadbuy platform fee ({(PLATFORM_FEE_RATE * 100).toFixed(0)}%)</span>
+          <span className="text-muted">Example platform fee ({(PLATFORM_FEE_RATE * 100).toFixed(0)}%)</span>
           <span className="font-mono text-accent">
             {formatSats(feeSats)}
             {feeUsd != null && <span className="text-muted ml-1">({currencySymbol}{feeUsd.toFixed(2)})</span>}
@@ -71,13 +71,13 @@ export function FeeBreakdown({
       >
         <div
           className="tadbuy-split-graph__bar"
-          data-tip={`Media spend: ${formatSats(mediaSats)} sats${mediaUsd != null ? ` (${currencySymbol}${mediaUsd.toFixed(2)})` : ''} — this is the part that actually buys your impressions.`}
+          data-tip={`Example media allocation: ${formatSats(mediaSats)} sats${mediaUsd != null ? ` (${currencySymbol}${mediaUsd.toFixed(2)})` : ''}. No impressions are purchased in this preview.`}
         >
           <div className="tadbuy-split-graph__fill tadbuy-split-graph__fill--media" style={{ height: `${(mediaSats / budgetSats) * 100}%` }} />
         </div>
         <div
           className="tadbuy-split-graph__bar"
-          data-tip={`Platform fee: ${formatSats(feeSats)} sats (${(PLATFORM_FEE_RATE * 100).toFixed(0)}%)${feeUsd != null ? ` (${currencySymbol}${feeUsd.toFixed(2)})` : ''} — the honest cost of routing, support, and Bitcoin infrastructure.`}
+          data-tip={`Example fee assumption: ${formatSats(feeSats)} sats (${(PLATFORM_FEE_RATE * 100).toFixed(0)}%)${feeUsd != null ? ` (${currencySymbol}${feeUsd.toFixed(2)})` : ''}. No payment is due.`}
         >
           <div className="tadbuy-split-graph__fill tadbuy-split-graph__fill--fee" style={{ height: `${(feeSats / budgetSats) * 100}%` }} />
         </div>
@@ -89,7 +89,7 @@ export function FeeBreakdown({
       </div>
 
       <p className="text-[10px] text-muted mt-3 leading-relaxed">
-        No hidden margins. Publishers receive their rev-share from media spend; fee covers routing, support, and Bitcoin infrastructure.
+        Illustrative calculation only: no campaign order, payment, publisher revenue share, or settlement is created in this preview.
       </p>
     </Card>
   );

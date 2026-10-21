@@ -7,7 +7,6 @@ import { Badge, Alert, Tabs, TabsList, TabsTrigger, TabsContent, EmptyState } fr
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { useGeoPage } from '@/hooks/useGeoPage';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { GeoPageHeader } from '@/components/geo/GeoPageHeader';
 import { GeoStatsGrid } from '@/components/geo/GeoStatsGrid';
@@ -16,6 +15,7 @@ import { GeoMarketsList } from '@/components/geo/GeoMarketsList';
 import { GeoCountryDetail } from '@/components/geo/GeoCountryDetail';
 import { GeoInsightsPanel } from '@/components/geo/GeoInsightsPanel';
 import { GeoTargetingModal } from '@/components/geo/GeoTargetingModal';
+import { PreviewReadinessPanel } from '@/components/PreviewReadinessPanel';
 import { GeoExportBar } from '@/components/geo/GeoExportBar';
 import { GEO_MARKETS } from '@/data/geoMarkets';
 import { cn } from '@/lib/utils';
@@ -24,10 +24,10 @@ import {
 } from 'recharts';
 
 const FAQ = [
-  { q: 'How does geo-targeting work?', a: 'Select countries or regions when launching a campaign. Tadbuy routes impressions via PPQ.AI to publishers with inventory in those markets.' },
-  { q: 'Can I target multiple countries?', a: 'Yes — pick as many markets as you like. Budget is split by impression share unless you set manual weights in Full Control mode.' },
-  { q: 'What about El Salvador?', a: 'El Salvador is a P1 Bitcoin-native market with legal tender status. We surface dedicated inventory and higher expected CTR for BTC brands.' },
-  { q: 'Is this live data?', a: 'BETA uses demo aggregates until M4 analytics pipes are fully wired. Refresh pulls from /api/geo when the API is online.' },
+  { q: 'How does geo-targeting work?', a: 'You can add example countries or regions to a local campaign draft. No audience segment, bidding, vendor selection, or delivery is activated in this preview.' },
+  { q: 'Can I plan for multiple countries?', a: 'Yes. Add example markets to a local draft; budget weights and platform delivery are not applied.' },
+  { q: 'What about El Salvador?', a: 'It appears in the illustrative market dataset only. Tadbuy has no verified country inventory, audience data, or market performance.' },
+  { q: 'Is this live data?', a: 'No. Market figures are static examples in this build. Refresh does not fetch a live geo analytics API.' },
 ];
 
 function GeoSpendChart({ markets }: { markets: typeof GEO_MARKETS }) {
@@ -39,7 +39,7 @@ function GeoSpendChart({ markets }: { markets: typeof GEO_MARKETS }) {
     <Card className="p-4">
       <div className="flex items-center gap-2 mb-4">
         <BarChart3 className="w-4 h-4 text-accent" />
-        <span className="text-sm font-bold">Spend by market (USD)</span>
+        <span className="text-sm font-bold">Example spend by market (USD)</span>
       </div>
       <div className="h-48 w-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -49,7 +49,7 @@ function GeoSpendChart({ markets }: { markets: typeof GEO_MARKETS }) {
             <YAxis tick={{ fontSize: 10, fill: '#a1a1aa' }} axisLine={false} tickLine={false} />
             <Tooltip
               contentStyle={{ background: '#27272a', border: '1px solid #3f3f46', borderRadius: 8, fontSize: 12 }}
-              formatter={(v: number) => [`$${v}`, 'Spend']}
+              formatter={(v: number) => [`$${v}`, 'Example spend']}
             />
             <Bar dataKey="spend" radius={[4, 4, 0, 0]} />
           </BarChart>
@@ -64,15 +64,15 @@ function GeoCompareTable({ codes, markets }: { codes: string[]; markets: typeof 
   if (!rows.length) return null;
   return (
     <Card className="p-4 overflow-x-auto">
-      <h3 className="text-sm font-bold mb-3">Market comparison</h3>
+      <h3 className="text-sm font-bold mb-3">Example market comparison</h3>
       <table className="w-full text-xs">
         <thead>
           <tr className="text-muted border-b border-border">
-            <th className="text-left py-2 pr-4">Market</th>
-            <th className="text-right py-2 px-2">Impressions</th>
-            <th className="text-right py-2 px-2">CTR</th>
-            <th className="text-right py-2 px-2">Trend</th>
-            <th className="text-right py-2 pl-2">Spend</th>
+            <th className="text-left py-2 pr-4">Example market</th>
+            <th className="text-right py-2 px-2">Sample impressions</th>
+            <th className="text-right py-2 px-2">Sample CTR</th>
+            <th className="text-right py-2 px-2">Sample trend</th>
+            <th className="text-right py-2 pl-2">Example spend</th>
           </tr>
         </thead>
         <tbody>
@@ -81,7 +81,7 @@ function GeoCompareTable({ codes, markets }: { codes: string[]; markets: typeof 
               <td className="py-2.5 pr-4 font-medium">{m.flag} {m.country}</td>
               <td className="text-right py-2.5 px-2 font-mono text-accent">{m.impressions.toLocaleString()}</td>
               <td className="text-right py-2.5 px-2 font-mono">{m.ctr}%</td>
-              <td className="text-right py-2.5 px-2 font-mono text-green">{m.trend > 0 ? '+' : ''}{m.trend}%</td>
+              <td className="text-right py-2.5 px-2 font-mono text-green">{m.trend > 0 ? '+' : ''}{m.trend}% sample</td>
               <td className="text-right py-2.5 pl-2 font-mono">${m.spendUsd}</td>
             </tr>
           ))}
@@ -93,13 +93,12 @@ function GeoCompareTable({ codes, markets }: { codes: string[]; markets: typeof 
 
 export default function GeoTargeting() {
   usePageMeta(
-    'Global Reach — Geo Targeting',
-    'Explore 25+ Bitcoin ad markets. Map impressions, CTR, and spend by country. Configure geo-targeting for Lightning-native campaigns.'
+    'Global Reach — Geo Planning',
+    'Explore illustrative market-planning examples. This page has no live campaign or audience reporting and does not activate targeting.'
   );
 
   const geo = useGeoPage();
   const reducedMotion = usePrefersReducedMotion();
-  const online = useOnlineStatus();
   const isMobile = useMediaQuery('(max-width: 767px)');
 
   const topMarket = geo.apiStats?.topMarket ?? geo.filtered[0] ?? GEO_MARKETS[0];
@@ -118,26 +117,12 @@ export default function GeoTargeting() {
 
   return (
     <div className="space-y-6 pb-safe px-safe print:space-y-4" id="geo-page">
-      <GeoPageHeader
-        marketCount={geo.allMarkets.length}
-        onRefresh={geo.refetch}
-        refreshing={geo.loading}
-      />
+      <GeoPageHeader marketCount={geo.allMarkets.length} />
 
-      {!online && (
-        <Alert variant="warning" title="Offline">
-          Showing cached market data. Reconnect to refresh live stats.
-        </Alert>
-      )}
-
-      {geo.error && (
-        <Alert variant="error" title="API unavailable">
-          Using local demo data. {geo.error}
-          <button type="button" onClick={geo.refetch} className="ml-2 text-accent underline">
-            Retry
-          </button>
-        </Alert>
-      )}
+      <PreviewReadinessPanel compact />
+      <Alert variant="info" title="Static example market data" className="geo-sample-data-notice">
+        The map, country figures, spending, CTR, campaigns, and trends below are illustrative dataset values—not live Tadbuy results or verified audience data. Filters and exports operate only on these examples.
+      </Alert>
 
       <GeoStatsGrid totals={geo.totals} topMarket={topMarket} loading={geo.loading} />
 
@@ -181,9 +166,9 @@ export default function GeoTargeting() {
                 <div className="px-4 py-3 border-b border-border flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <Globe className="w-4 h-4 text-accent" />
-                    <span className="text-sm font-semibold">Campaign Activity Map</span>
+                    <span className="text-sm font-semibold">Sample market map</span>
                   </div>
-                  <Badge variant="success" dot>LIVE</Badge>
+                  <Badge variant="warning">Sample map · not live</Badge>
                 </div>
                 <div className="flex-1 p-1.5 sm:p-2 min-h-[280px] md:min-h-[400px]">
                   <WorldMap
@@ -196,7 +181,7 @@ export default function GeoTargeting() {
                   />
                 </div>
                 <div className="px-4 py-2 border-t border-border text-[10px] text-muted font-mono flex flex-wrap items-center justify-between gap-2">
-                  <span>Tap a country to inspect · real borders · {geo.filtered.length} markets</span>
+                  <span>Sample markets shown · no delivery data · {geo.filtered.length} examples</span>
                   <span className="text-muted/70">Natural Earth · open map data</span>
                 </div>
               </Card>
@@ -205,13 +190,13 @@ export default function GeoTargeting() {
             {showList && (
               <Card className="overflow-hidden flex flex-col p-0 flex-1">
                 <div className="px-4 py-3 border-b border-border flex items-center justify-between gap-2">
-                  <span className="text-sm font-semibold">Top Markets</span>
+                  <span className="text-sm font-semibold">Example markets</span>
                   <button
                     type="button"
                     onClick={() => geo.setTargetingOpen(true)}
                     className="text-[10px] text-accent hover:text-accent/80 font-mono border border-accent/20 px-2 py-1.5 rounded-full hover:border-accent/50 min-h-[44px] touch-target touch-manipulation"
                   >
-                    + Target New Market
+                    + Plan example market
                   </button>
                 </div>
                 <GeoMarketsList
@@ -229,7 +214,7 @@ export default function GeoTargeting() {
                     onClick={() => geo.setTargetingOpen(true)}
                     className="w-full py-3 rounded-lg text-xs font-bold bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20 hover:border-accent/40 transition-all min-h-[44px] touch-target touch-manipulation"
                   >
-                    Configure Geo-Targeting
+                    Configure example regions
                   </button>
                 </div>
               </Card>
@@ -254,7 +239,7 @@ export default function GeoTargeting() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
             <GeoSpendChart markets={geo.filtered} />
             <Card className="p-4 flex flex-col justify-center gap-3">
-              <span className="text-sm font-bold">Export & share</span>
+              <span className="text-sm font-bold">Export & share examples</span>
               <GeoExportBar markets={geo.filtered} />
             </Card>
           </div>
@@ -270,9 +255,8 @@ export default function GeoTargeting() {
               <Globe className="w-4 h-4 text-accent mt-0.5 shrink-0" />
               <div className="text-xs text-muted leading-relaxed space-y-2">
                 <p>
-                  <span className="text-text font-semibold">Geo-targeting</span> directs ad spend toward
-                  specific countries or regions. All campaigns use real-time bidding — your sats go furthest
-                  in high-CTR markets.
+                  <span className="text-text font-semibold">Geo planning</span> lets you add example
+                  countries or regions to a local draft. No live targeting, bidding, or market performance is available.
                 </p>
                 <Link to="/ppq" className="text-accent font-bold hover:underline inline-flex items-center gap-1 min-h-[44px] touch-target">
                   PPQ.AI targeting guide →
@@ -302,11 +286,11 @@ export default function GeoTargeting() {
           <Card className="p-4 mt-6 flex flex-wrap gap-3 items-center">
             <AlertCircle className="w-4 h-4 text-accent" />
             <span className="text-xs text-muted flex-1">
-              Ready to launch? Hand off to Buy Ads with your selected market pre-filled.
+              Continue to a local planning draft; the selected example market is not an activated target.
             </span>
             <Link to={geo.selected ? `/?geo=${geo.selected.code}` : '/'}>
               <span className="inline-flex px-4 py-2.5 rounded-lg bg-accent text-black text-xs font-bold min-h-[44px] items-center touch-target">
-                Start campaign
+                Plan campaign preview
               </span>
             </Link>
             <Link to="/marketplace" className="text-xs text-accent font-bold hover:underline min-h-[44px] inline-flex items-center touch-target">

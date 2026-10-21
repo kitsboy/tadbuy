@@ -22,7 +22,7 @@ export default function Documentation() {
           <Zap className="w-8 h-8 text-lightning mb-4" />
           <CardTitle className="text-xl mb-2">Getting Started</CardTitle>
           <p className="text-sm text-muted mb-4 leading-relaxed">
-            Launch your first campaign in minutes. Learn how to set budgets, target audiences, and fund your campaign instantly using the Lightning Network.
+            Prepare a local campaign preview with sample budgets and distribution concepts. This preview cannot accept Bitcoin or Lightning payments, create an order, or activate targeting.
           </p>
           <Link to="/" className="text-accent text-sm font-bold flex items-center gap-1 hover:underline">
             Create a Campaign <ArrowRight className="w-4 h-4" />
@@ -44,7 +44,7 @@ export default function Documentation() {
           <Network className="w-8 h-8 text-blue mb-4" />
           <CardTitle className="text-xl mb-2">Publisher Portal</CardTitle>
           <p className="text-sm text-muted mb-4 leading-relaxed">
-            Monetize your app or website. Learn how to list ad slots, accept direct bids, and receive instant payouts via BOLT 12 or On-Chain Bitcoin.
+            Prepare private inventory drafts for properties you control. Publisher approval, live listings, payment verification, and payouts are not available in this preview.
           </p>
           <Link to="/publisher" className="text-blue text-sm font-bold flex items-center gap-1 hover:underline">
             Go to Publisher Portal <ArrowRight className="w-4 h-4" />
@@ -73,9 +73,7 @@ export default function Documentation() {
           <div className="bg-surface/50 border border-border rounded-xl p-6">
             <h3 className="text-lg font-bold text-text mb-2">The Tadbuy Architecture</h3>
             <p className="text-sm text-muted leading-relaxed mb-4">
-              Tadbuy operates as a decentralized demand-side platform (DSP). Instead of holding your funds in custody, Tadbuy generates 
-              cryptographic invoices (BOLT 11 or BOLT 12) that route payments directly to publishers or liquidity pools. 
-              This ensures trustless execution and zero counterparty risk.
+              Tadbuy is currently a static campaign-planning preview, not an operating demand-side platform. No invoice, order, publisher payment, escrow, or campaign activation is connected. Any future Lightning design requires a reviewed payment service, settlement authority, ledger, operational controls, and explicit release approval; it would not be trustless or risk-free by default.
             </p>
             <SafeLink href="https://docs.lightning.engineering/" target="_blank" showIcon className="inline-flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text transition-colors bg-white/5 px-3 py-1.5 rounded-full">
               <ExternalLink className="w-3 h-3" /> Lightning Network Architecture
@@ -85,8 +83,7 @@ export default function Documentation() {
           <div className="bg-surface/50 border border-border rounded-xl p-6">
             <h3 className="text-lg font-bold text-text mb-2">Nostr Integration</h3>
             <p className="text-sm text-muted leading-relaxed mb-4">
-              Tadbuy leverages the Nostr protocol for decentralized identity and ad delivery verification. By signing campaign 
-              events with your Nostr keypair, you establish a verifiable, censorship-resistant reputation as an advertiser.
+              Users may optionally publish a public text note through their own browser signer. A signed Nostr event and relay acknowledgement document publication only; they do not verify advertiser reputation, paid placement, audience, reach, or conversions.
             </p>
             <SafeLink href="https://github.com/nostr-protocol/nostr" target="_blank" showIcon className="inline-flex items-center gap-1.5 text-xs font-bold text-muted hover:text-text transition-colors bg-white/5 px-3 py-1.5 rounded-full">
               <ExternalLink className="w-3 h-3" /> Nostr Protocol Specs

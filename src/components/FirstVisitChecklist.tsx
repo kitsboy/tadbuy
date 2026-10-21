@@ -8,26 +8,26 @@ type Persona = 'advertiser' | 'publisher' | 'browse';
 
 const PERSONA_STEPS: Record<Persona, readonly { id: string; label: string; path: string }[]> = {
   advertiser: [
-    { id: 'create', label: 'Launch your first campaign', path: '/#campaign-builder' },
-    { id: 'wallet', label: 'Add a payment method (Lightning / Fedimint)', path: '/wallet' },
-    { id: 'metrics', label: 'Track your campaign performance', path: '/analytics' },
+    { id: 'create', label: 'Build a local campaign preview', path: '/#campaign-builder' },
+    { id: 'distribution', label: 'Review what can publish vs. what is sample', path: '/beta' },
+    { id: 'metrics', label: 'See which reporting is sample-only', path: '/metrics' },
   ],
   publisher: [
-    { id: 'slots', label: 'List your first ad slot', path: '/publisher' },
-    { id: 'payout', label: 'Set up payout wallet (Lightning)', path: '/wallet' },
-    { id: 'embed', label: 'Add embed code to your site', path: '/publisher' },
+    { id: 'slots', label: 'Draft a profile for channels you control', path: '/publisher' },
+    { id: 'inventory', label: 'Create a private sample listing', path: '/publisher' },
+    { id: 'readiness', label: 'Review payment and pilot readiness', path: '/beta' },
   ],
   browse: [
-    { id: 'watch', label: 'Browse marketplace slots', path: '/marketplace' },
-    { id: 'save', label: 'Save interesting slots to your watchlist', path: '/marketplace' },
-    { id: 'campaigns', label: 'Launch a campaign to support creators', path: '/#campaign-builder' },
+    { id: 'watch', label: 'Explore sample placement concepts', path: '/marketplace' },
+    { id: 'save', label: 'Save example concepts to your watchlist', path: '/marketplace' },
+    { id: 'campaigns', label: 'Build a local campaign preview', path: '/#campaign-builder' },
   ],
 };
 
 const GENERIC_STEPS = [
-  { id: 'create', label: 'Create a campaign', path: '/#campaign-builder' },
-  { id: 'wallet', label: 'Connect wallet (Fedimint / Lightning)', path: '/wallet' },
-  { id: 'metrics', label: 'View metrics & results', path: '/metrics' },
+  { id: 'create', label: 'Build a local campaign preview', path: '/#campaign-builder' },
+  { id: 'wallet', label: 'Check Bitcoin rail readiness', path: '/wallet' },
+  { id: 'metrics', label: 'Review sample reporting', path: '/metrics' },
 ] as const;
 
 export function FirstVisitChecklist() {

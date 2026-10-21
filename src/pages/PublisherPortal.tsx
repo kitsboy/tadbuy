@@ -1,381 +1,57 @@
-import { useState, type FormEvent } from "react";
 import { motion } from "motion/react";
-import { Card, CardTitle, Button } from "@/components/ui";
-import { StatCard, Tabs, TabsList, TabsTrigger, TabsContent, Badge, Progress } from "@/components/ui/index";
+import { Card, CardTitle } from "@/components/ui";
+import { Badge } from "@/components/ui/Badge";
 import { Alert } from "@/components/ui/Alert";
-import {
-  DollarSign, Monitor, Zap, TrendingUp, BarChart2,
-  Copy, Check, ArrowUpRight, Settings, Code2,
-} from "lucide-react";
-import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-} from "recharts";
+import { ShieldAlert } from "lucide-react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { PlacementRequestInbox } from "@/components/publisher/PlacementRequestInbox";
 import { VendorProfileCard } from "@/components/publisher/VendorProfileCard";
 import { VendorInventoryManager } from "@/components/publisher/VendorInventoryManager";
 import { ArtMarketplaceScene } from "@/components/illustrations";
+import { PreviewReadinessPanel } from "@/components/PreviewReadinessPanel";
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
-const EARNINGS_TREND = [
-  { day: 'Mon', sats: 12400 },
-  { day: 'Tue', sats: 9800  },
-  { day: 'Wed', sats: 18200 },
-  { day: 'Thu', sats: 14100 },
-  { day: 'Fri', sats: 22300 },
-  { day: 'Sat', sats: 19800 },
-  { day: 'Sun', sats: 27600 },
-];
-
-const PAYOUT_HISTORY = [
-  { id: 'PAY-001', date: '2026-04-22', amount: 0.00042, status: 'Confirmed', slots: 3 },
-  { id: 'PAY-002', date: '2026-04-18', amount: 0.00081, status: 'Confirmed', slots: 4 },
-  { id: 'PAY-003', date: '2026-04-14', amount: 0.00036, status: 'Confirmed', slots: 2 },
-  { id: 'PAY-004', date: '2026-04-09', amount: 0.00120, status: 'Confirmed', slots: 4 },
-];
-
-const SLOTS = [
-  { id: 'slot_1', name: 'Homepage Hero',  placement: 'Above the fold',   format: '728×90 Leaderboard',  status: 'active',   fillRate: 87, revenueSats: 42000 },
-  { id: 'slot_2', name: 'Sidebar Right',  placement: 'Article sidebar',  format: '300×250 Rectangle',   status: 'active',   fillRate: 64, revenueSats: 18500 },
-  { id: 'slot_3', name: 'Footer Banner',  placement: 'Page footer',      format: '468×60 Banner',       status: 'inactive', fillRate: 0,  revenueSats: 0     },
-];
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-const TOTAL_SATS   = SLOTS.reduce((s, sl) => s + sl.revenueSats, 0);
-const AVG_FILL     = Math.round(SLOTS.filter(s => s.status === 'active').reduce((a, s) => a + s.fillRate, 0) / SLOTS.filter(s => s.status === 'active').length);
-const ACTIVE_COUNT = SLOTS.filter(s => s.status === 'active').length;
-const THIS_MONTH   = 124_200;
-
-// ─── Embed Snippet ────────────────────────────────────────────────────────────
-function EmbedSnippet({ slotId }: { slotId: string }) {
-  const [copied, setCopied] = useState(false);
-  const snippet = `<script src="https://tadbuy.giveabit.io/tadbuy.js" data-slot="${slotId}"><\/script>`;
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(snippet).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-
-  return (
-    <div className="relative group">
-      <pre className="text-[11px] font-mono bg-surface border border-border rounded-xl px-4 py-3 overflow-x-auto text-accent whitespace-pre-wrap break-all leading-relaxed pr-10">
-        {snippet}
-      </pre>
-      <button
-        onClick={handleCopy}
-        className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-surface hover:bg-white/5 border border-border text-muted hover:text-white transition-colors"
-        title="Copy to clipboard"
-      >
-        {copied
-          ? <Check className="w-3.5 h-3.5 text-green" />
-          : <Copy className="w-3.5 h-3.5" />
-        }
-      </button>
-    </div>
-  );
-}
-
-// ─── Toast ────────────────────────────────────────────────────────────────────
-function Toast({ message, visible }: { message: string; visible: boolean }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : 16 }}
-      className="fixed bottom-6 right-6 z-50 bg-zinc-900 border border-border px-4 py-3 rounded-xl shadow-2xl text-sm font-medium flex items-center gap-2 pointer-events-none"
-    >
-      <Check className="w-4 h-4 text-green" />
-      {message}
-    </motion.div>
-  );
-}
+// The preview has no approved vendor, earnings, fill-rate, or payout records.
+// Keep the portal focused on legitimate profile and private-draft preparation.
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function PublisherPortal() {
   usePageTitle('Publisher Portal');
-
-  const [lightningAddress, setLightningAddress] = useState('publisher@walletofsatoshi.com');
-  const [toastVisible, setToastVisible]         = useState(false);
-  const [toastMsg, setToastMsg]                 = useState('');
-  const [selectedSlot, setSelectedSlot]         = useState(SLOTS[0].id);
-
-  const showToast = (msg: string) => {
-    setToastMsg(msg);
-    setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 3000);
-  };
-
-  const handleSavePayment = async (e: FormEvent) => {
-    e.preventDefault();
-    try {
-      const { authFetch } = await import('@/lib/authFetch');
-      const res = await authFetch('/api/publisher/settings', {
-        method: 'POST',
-        body: JSON.stringify({
-          lightningAddress,
-        }),
-      });
-      if (res.ok) {
-        showToast('Lightning address saved successfully! ⚡');
-      } else if (res.status === 401) {
-        showToast('Sign in required to save payout settings.');
-      } else {
-        showToast('Failed to save. Please try again.');
-      }
-    } catch {
-      showToast('Failed to save. Please try again.');
-    }
-  };
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
 
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">Publisher Portal</h1>
-          <p className="text-sm text-muted mt-1">Manage your ad slots and track earnings in real time.</p>
+          <h1 className="text-2xl font-extrabold tracking-tight">Publisher workspace</h1>
+          <p className="text-sm text-muted mt-1">Prepare a profile and draft inventory for channels you control. No vendor listings, audience analytics, or payouts are live in this preview.</p>
         </div>
         <div aria-hidden className="pointer-events-none hidden shrink-0 select-none items-center lg:flex">
           <ArtMarketplaceScene className="opacity-90" />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Revenue" value={`${TOTAL_SATS.toLocaleString()} sats`} icon={DollarSign} color="text-green" />
-        <StatCard label="This Month" value={`${THIS_MONTH.toLocaleString()} sats`} icon={Zap} color="text-lightning" trend={{ value: 12, label: 'vs last mo' }} />
-        <StatCard label="Avg Fill Rate" value={`${AVG_FILL}%`} icon={TrendingUp} color="text-blue" />
-        <StatCard label="Active Slots" value={`${ACTIVE_COUNT} / ${SLOTS.length}`} icon={Monitor} color="text-accent" />
-      </div>
+      <PreviewReadinessPanel compact />
+
+      <Alert variant="warning" title="No live publisher supply or earnings data">
+        Listings are private drafts until backend storage and operator approval are available. There is no connected earnings ledger, fill-rate measurement, or payout service. Do not enter a payout address or expect payment in this preview.
+      </Alert>
 
       <VendorProfileCard />
       <VendorInventoryManager />
       <PlacementRequestInbox />
-
       <Alert variant="info">
         Phase 2 community distribution is vendor-assisted. Add only inventory you control, follow each community&apos;s rules, disclose sponsorship, and submit evidence after publication. Payouts and audience metrics remain staged until the backend ledger is live.
       </Alert>
 
-      <Tabs defaultValue="overview">
-        <TabsList className="w-full flex-wrap">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="slots">Ad Slots</TabsTrigger>
-          <TabsTrigger value="embed">Embed Code</TabsTrigger>
-          <TabsTrigger value="settings">Payment</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="glass-panel">
-              <div className="flex items-center justify-between mb-4">
-                <CardTitle className="mb-0">
-                  <BarChart2 className="w-4 h-4 inline mr-1.5" />Earnings Trend (7d)
-                </CardTitle>
-              </div>
-              <div className="h-52">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={EARNINGS_TREND}>
-                    <defs>
-                      <linearGradient id="earnGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%"  stopColor="#4ade80" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#4ade80" stopOpacity={0}   />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="day" stroke="#a1a1aa" fontSize={11} tickLine={false} axisLine={false} />
-                    <YAxis stroke="#a1a1aa" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#18181b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', fontSize: '11px' }}
-                      formatter={(v: number) => [`${v.toLocaleString()} sats`, 'Earned']}
-                    />
-                    <Area type="monotone" dataKey="sats" stroke="#4ade80" fill="url(#earnGrad)" strokeWidth={2.5} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
-
-            <Card className="glass-panel">
-              <div className="flex items-center justify-between mb-4">
-                <CardTitle className="mb-0">Payout History</CardTitle>
-                <Button size="sm" className="gap-2">
-                  <Zap className="w-3.5 h-3.5" /> Withdraw
-                </Button>
-              </div>
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-muted text-left text-[11px] uppercase tracking-wider border-b border-border">
-                    <th className="pb-3 pr-4">ID</th>
-                    <th className="pb-3 pr-4">Date</th>
-                    <th className="pb-3 pr-4">Amount</th>
-                    <th className="pb-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {PAYOUT_HISTORY.map(p => (
-                    <tr key={p.id} className="border-t border-border/50 hover:bg-surface/30 transition-colors">
-                      <td className="py-2.5 pr-4 font-mono text-[11px] text-muted">{p.id}</td>
-                      <td className="py-2.5 pr-4 text-xs">{p.date}</td>
-                      <td className="py-2.5 pr-4 font-mono text-xs text-green font-bold">{p.amount} BTC</td>
-                      <td className="py-2.5">
-                        <Badge variant="success" dot>{p.status}</Badge>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="slots">
-          <Card className="glass-panel">
-            <div className="flex items-center justify-between mb-5">
-              <CardTitle className="mb-0">
-                <Monitor className="w-4 h-4 inline mr-1.5" />Ad Slot Management
-              </CardTitle>
-              <Button size="sm" variant="secondary" className="gap-1.5 text-[11px]">
-                <Monitor className="w-3.5 h-3.5" /> Add Slot
-              </Button>
-            </div>
-
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-muted text-left text-[11px] uppercase tracking-wider border-b border-border">
-                    <th className="pb-3 pr-6">Slot Name</th>
-                    <th className="pb-3 pr-6">Placement</th>
-                    <th className="pb-3 pr-6">Format</th>
-                    <th className="pb-3 pr-6">Status</th>
-                    <th className="pb-3 pr-6">Fill Rate</th>
-                    <th className="pb-3">Revenue (sats)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {SLOTS.map(slot => (
-                    <tr key={slot.id} className="border-t border-border/50 hover:bg-surface/30 transition-colors group">
-                      <td className="py-3.5 pr-6">
-                        <div className="font-semibold text-sm">{slot.name}</div>
-                        <div className="text-[10px] text-muted font-mono">{slot.id}</div>
-                      </td>
-                      <td className="py-3.5 pr-6 text-xs text-muted">{slot.placement}</td>
-                      <td className="py-3.5 pr-6 text-xs font-mono text-muted">{slot.format}</td>
-                      <td className="py-3.5 pr-6">
-                        <Badge variant={slot.status === 'active' ? 'success' : 'outline'} dot={slot.status === 'active'}>
-                          {slot.status === 'active' ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </td>
-                      <td className="py-3.5 pr-6 min-w-[140px]">
-                        <Progress value={slot.fillRate} showLabel variant="accent" />
-                      </td>
-                      <td className="py-3.5">
-                        <span className={`text-sm font-bold font-mono ${slot.revenueSats > 0 ? 'text-green' : 'text-muted'}`}>
-                          {slot.revenueSats > 0 ? slot.revenueSats.toLocaleString() : '—'}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="md:hidden space-y-3">
-              {SLOTS.map(slot => (
-                <div key={slot.id} className="flex items-start justify-between p-3 bg-surface rounded-xl border border-border hover:border-accent/30 transition-colors">
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold">{slot.name}</div>
-                    <div className="text-[10px] text-muted font-mono mt-0.5">{slot.placement} · {slot.format}</div>
-                    <div className="mt-2">
-                      <Progress value={slot.fillRate} showLabel variant="accent" />
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-1.5 ml-3 shrink-0">
-                    <Badge variant={slot.status === 'active' ? 'success' : 'outline'}>
-                      {slot.status === 'active' ? 'Active' : 'Inactive'}
-                    </Badge>
-                    <span className={`text-xs font-mono font-bold ${slot.revenueSats > 0 ? 'text-green' : 'text-muted'}`}>
-                      {slot.revenueSats > 0 ? `${slot.revenueSats.toLocaleString()} sats` : '—'}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="embed">
-          <Card className="glass-panel">
-            <div className="flex items-center gap-2 mb-5">
-              <Code2 className="w-4 h-4 text-accent" />
-              <CardTitle className="mb-0">Embed Code</CardTitle>
-            </div>
-            <p className="text-xs text-muted mb-4 leading-relaxed">
-              Copy the snippet below and paste it into your site's HTML where you want the ad to appear.
-            </p>
-
-            <div className="flex items-center gap-2 mb-3 flex-wrap">
-              {SLOTS.map(s => (
-                <button
-                  key={s.id}
-                  onClick={() => setSelectedSlot(s.id)}
-                  className={`text-[11px] font-mono px-3 py-1.5 rounded-lg border transition-colors ${
-                    selectedSlot === s.id
-                      ? 'border-accent bg-accent/10 text-accent'
-                      : 'border-border bg-surface text-muted hover:border-white/20 hover:text-white'
-                  }`}
-                >
-                  {s.name}
-                </button>
-              ))}
-            </div>
-
-            <EmbedSnippet slotId={selectedSlot} />
-
-            <p className="text-[10px] text-muted mt-3 font-mono flex items-center gap-1.5">
-              <ArrowUpRight className="w-3 h-3" />
-              Slot ID: <span className="text-white/70">{selectedSlot}</span>
-            </p>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="settings">
-          <Card className="glass-panel">
-            <div className="flex items-center gap-2 mb-5">
-              <Settings className="w-4 h-4 text-accent" />
-              <CardTitle className="mb-0">Payment Settings</CardTitle>
-            </div>
-            <p className="text-xs text-muted mb-5 leading-relaxed">
-              Payouts are sent automatically to your Lightning address. Minimum payout: 10,000 sats.
-            </p>
-
-            <form onSubmit={handleSavePayment} className="space-y-4 max-w-md">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">
-                  Lightning Address
-                </label>
-                <div className="relative">
-                  <Zap className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-lightning pointer-events-none" />
-                  <input
-                    type="text"
-                    value={lightningAddress}
-                    onChange={e => setLightningAddress(e.target.value)}
-                    placeholder="you@walletofsatoshi.com"
-                    className="w-full bg-surface border border-border rounded-xl pl-8 pr-4 py-2.5 text-sm font-mono placeholder:text-muted/50 focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/20 transition-colors"
-                  />
-                </div>
-                <p className="text-[10px] text-muted mt-1.5">
-                  Accepts any Lightning Address (LNURL-pay compatible).
-                </p>
-              </div>
-
-              <Button type="submit" size="sm" className="gap-2">
-                <Check className="w-3.5 h-3.5" /> Save Settings
-              </Button>
-            </form>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      <Toast message={toastMsg} visible={toastVisible} />
+      <Card className="glass-panel border-blue/20">
+        <div className="flex items-center gap-2 mb-2"><ShieldAlert className="w-4 h-4 text-blue" /><CardTitle className="mb-0">Publisher readiness</CardTitle></div>
+        <p className="text-xs leading-relaxed text-muted">The portal supports preparing a profile and private inventory drafts. Revenue, fill rates, embed delivery, payout history, and withdrawals are unavailable until approved publisher supply, a durable backend, verified measurement, and an authorized payment ledger exist.</p>
+        <div className="mt-3 flex flex-wrap gap-2 text-[10px]">
+          <Badge variant="outline">No live publisher listings</Badge>
+          <Badge variant="outline">No earnings ledger</Badge>
+          <Badge variant="outline">No payouts</Badge>
+        </div>
+      </Card>
     </motion.div>
   );
 }

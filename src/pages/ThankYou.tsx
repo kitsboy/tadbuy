@@ -6,13 +6,13 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ArtRocket } from "@/components/illustrations";
 
 export default function ThankYou() {
-  usePageMeta('Thank you — Tadbuy', 'Your Tadbuy inquiry is received. Real people review campaigns that settle in Bitcoin and Lightning — no middleman, no KYC gate.');
+  usePageMeta('Thank you — Tadbuy', 'Your inquiry confirmation. Tadbuy campaign payments, vendor orders, and campaign delivery are not connected in this preview.');
   return (
     <div className="min-h-[70vh] flex items-center justify-center">
       <EmptyState
         icon={CheckCircle2}
         title="Thank you."
-        description="Your Tadbuy request is in. Here is what happens next — and how your ads settle, honestly."
+        description="Your inquiry confirmation is shown. Campaign orders, publisher placements, and payments are not created by this preview."
         className="max-w-xl"
         art={<ArtRocket className="h-24" />}
       >
@@ -20,28 +20,24 @@ export default function ThankYou() {
           <div className="rounded-2xl border border-border bg-card p-5">
             <h2 className="flex items-center gap-2 text-sm font-bold mb-2">
               <ShieldCheck className="w-4 h-4 text-accent" />
-              Your request is being reviewed
+              Inquiry status
             </h2>
             <p className="text-xs text-muted leading-relaxed">
-              A real person on the Tadbuy team reviews your inquiry — campaign brief, publisher
-              interest, or API partnership — and comes back with a clear next step: an estimate, a
-              draft campaign, or the docs you need.
+              If this confirmation followed a request form, check that form&apos;s result for whether it was received. Campaign planning and preview interactions do not contact a vendor or create an order.
             </p>
             <ul className="mt-3 space-y-2 text-xs text-muted">
-              <li className="flex items-start gap-2"><Zap className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" /> <span><strong className="text-text">Lightning rails</strong> — campaigns and payouts settle in Bitcoin &amp; Lightning. No credit card, no KYC gate.</span></li>
-              <li className="flex items-start gap-2"><ShieldCheck className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" /> <span><strong className="text-text">Honest estimates</strong> — you see the media cost; Tadbuy takes a clear, small fee. No hidden ad-tech take.</span></li>
+              <li className="flex items-start gap-2"><Zap className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" /> <span><strong className="text-text">Lightning readiness</strong> — no Tadbuy invoice, payment verification, or campaign settlement is connected in this preview.</span></li>
+              <li className="flex items-start gap-2"><ShieldCheck className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" /> <span><strong className="text-text">Planning only</strong> — example budgets and fee assumptions are not a quote or an active charge.</span></li>
             </ul>
           </div>
           <p className="text-xs text-muted leading-relaxed rounded-2xl border border-border bg-card p-4">
-            Every campaign and settlement is verifiable: invoices, proofs, and payout history live
-            in your wallet and dashboard — Bitcoin-native, self-custody, auditable. Pending stays
-            pending honestly; nothing is ever marked confirmed early.
+            This confirmation does not establish that a campaign order or placement request was saved. Check the form-specific status and contact the Tadbuy team if you need to verify an inquiry; no wallet, invoice, payout history, or settlement record is available here.
           </p>
         </div>
         <div className="flex flex-wrap gap-3 justify-center">
           <Link to="/">
             <Button className="gap-2">
-              Start a campaign <ArrowRight className="w-4 h-4" />
+              Plan a campaign preview <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
           <Link to="/docs">

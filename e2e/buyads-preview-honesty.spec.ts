@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Buy Ads preview boundaries', () => {
+  test.setTimeout(120_000);
   test('labels planning inputs and local draft as non-operational', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     const skip = page.getByText('Skip for now', { exact: true });

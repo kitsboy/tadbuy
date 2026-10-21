@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { paymentPlug } from './src/lib/payment-plug.mjs';
+import { campaigns } from './src/data/campaigns.ts';
+import { MARKETPLACE_SLOTS } from './src/data/marketplaceSlots.ts';
+import { AD_PLATFORMS } from './src/data/platforms.ts';
+import { buildProductMetrics } from './src/lib/metrics/productMetrics.ts';
 import {
   assertUniqueIncomeStreams,
   createFakePlug,
@@ -62,4 +66,29 @@ test('fixture settlement is scoped to the in-memory demo plug and records on-cha
 
 test('non-receiving streams cannot create a payment plug', () => {
   assert.throws(() => createFakePlug('hq'), /does not receive payments/);
+});
+
+test('public metrics clearly identify sample activity and never invent service health', () => {
+  const metrics = buildProductMetrics({
+    campaigns,
+    publisherCount: new Set(MARKETPLACE_SLOTS.map((slot) => slot.publisher)).size,
+    platformCatalogSize: AD_PLATFORMS.length,
+    now: new Date('2026-10-21T12:00:00.000Z'),
+  });
+  const kpi = (key) => metrics.kpis.find((item) => item.key === key);
+
+  assert.equal(metrics.raw.demo, true);
+  assert.equal(metrics.raw.source, 'illustrative-app-state');
+  assert.equal(metrics.health.status, 'amber');
+  assert.equal(metrics.health.latencyMs, 0);
+  assert.equal(metrics.health.uptimePct24h, 0);
+  assert.ok(metrics.health.message.includes('not measured'));
+  assert.ok(kpi('campaigns_total').label.includes('Example'));
+  assert.ok(kpi('campaigns_active').hint.includes('does not activate campaigns'));
+  assert.ok(kpi('sats_processed_total').hint.includes('no sats were processed'));
+  assert.ok(kpi('impressions_delivered').hint.includes('no publisher delivery'));
+  assert.ok(metrics.education.some((item) => item.title === 'Example budget is not GMV'));
+  assert.equal(metrics.offers.find((offer) => offer.id === 'btc_ads').status, 'planned');
+  assert.equal(metrics.offers.find((offer) => offer.id === 'ots_receipt').status, 'planned');
+  assert.ok(metrics.offers.find((offer) => offer.id === 'metrics_v1').hint.includes('illustrative data'));
 });

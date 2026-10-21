@@ -10,21 +10,21 @@ import { FeeBreakdown } from '@/components/FeeBreakdown';
 export default function Platforms() {
   usePageMeta(
     'Ad Platforms',
-    'How budgeting, payouts, and Bitcoin payments work on Twitter/X, Meta, YouTube, Nostr, and more.',
+    'Illustrative platform guides for the Tadbuy roadmap. No provider buying, publisher payouts, or Bitcoin payments are connected in this preview.',
   );
 
   return (
     <PageShell
-      title="Ad Platforms Hub"
-      description="Understand how each network bills advertisers, pays publishers, and settles in Bitcoin via Tadbuy."
-      badge={<StatusPill status="beta" />}
+      title="Platform examples & roadmap"
+      description="Illustrative network and publisher-channel guidance only. Tadbuy has no connected provider integrations, live buying, publisher payouts, or Bitcoin campaign settlement."
+      badge={<StatusPill status="planned" />}
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Platforms' }]}
       showDemoBadge
       maxWidth="max-w-5xl"
       art={<ArtGlobeZap className="opacity-90" />}
       faq={[
-        { question: 'How do I pay for ads?', answer: 'Pay in Bitcoin via Lightning, on-chain, or Fedimint ecash. Tadbuy applies a transparent 15% platform fee.' },
-        { question: 'How do publishers get paid?', answer: 'Direct inventory publishers receive Lightning sats when thresholds are met. Platform-owned inventory follows each network billing rules with Bitcoin funding via Tadbuy.' },
+        { question: 'How do I pay for ads?', answer: 'Campaign payments are not available in this preview. Bitcoin and Lightning are design goals; no invoice or campaign payment can be created here.' },
+        { question: 'How do publishers get paid?', answer: 'Publisher onboarding, earnings records, and payouts are not connected. Draft profile data does not activate inventory or establish a payout obligation.' },
       ]}
     >
       <Card className="glass-panel border-accent/20">
@@ -33,9 +33,8 @@ export default function Platforms() {
           <div>
             <h2 className="text-sm font-bold text-text mb-1">Money flow</h2>
             <p className="text-xs text-muted leading-relaxed">
-              <strong className="text-text">Advertiser</strong> pays Tadbuy in sats →{' '}
-              <strong className="text-text">Tadbuy</strong> allocates budget per platform rules →{' '}
-              <strong className="text-text">Publisher</strong> receives Lightning rev-share on direct inventory.
+              <strong className="text-text">Current preview:</strong> no connected buying, payment, allocation, delivery, or publisher payout flow.{' '}
+              Bitcoin-native settlement is a future design goal, subject to verified infrastructure and explicit release gates.
             </p>
             <Link to="/compare" className="text-xs text-accent hover:underline mt-2 inline-block">Compare vs traditional DSP →</Link>
           </div>
@@ -52,12 +51,12 @@ export default function Platforms() {
             </div>
             <p className="text-xs text-muted flex-1 mb-3">{p.description}</p>
             <div className="text-[10px] text-muted font-mono space-y-1 mb-4">
-              <div>{p.billingModel} · min ~${p.minSpendUsd}</div>
-              <div>Publisher payout: {p.payoutMethod}</div>
+              <div>Example billing model: {p.billingModel} · indicative minimum ~${p.minSpendUsd}</div>
+              <div>Example payout concept: {p.payoutMethod} · not connected</div>
             </div>
             <Link to={`/platforms/${p.slug}`}>
               <Button variant="secondary" className="w-full gap-2 text-xs">
-                Budget & payout guide <ArrowRight className="w-3.5 h-3.5" />
+                View illustrative guide <ArrowRight className="w-3.5 h-3.5" />
               </Button>
             </Link>
           </Card>
@@ -73,9 +72,9 @@ export default function Platforms() {
       </Card>
 
       <div className="flex flex-wrap gap-3">
-        <Link to="/"><Button>Start a campaign</Button></Link>
-        <Link to="/publisher"><Button variant="secondary">Publisher payout setup</Button></Link>
-        <Link to="/ppq"><Button variant="secondary">PPQ budget optimizer</Button></Link>
+        <Link to="/"><Button>Plan a campaign preview</Button></Link>
+        <Link to="/publisher"><Button variant="secondary">Publisher workspace</Button></Link>
+        <Link to="/ppq"><Button variant="secondary">PPQ planning guide</Button></Link>
       </div>
     </PageShell>
   );

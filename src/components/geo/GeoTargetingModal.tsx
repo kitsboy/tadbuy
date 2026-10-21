@@ -9,11 +9,11 @@ type GeoTargetingModalProps = {
 };
 
 const CHECKLIST = [
-  'Select target countries or regions in campaign setup',
-  'Set bid adjustments per market based on CTR data',
-  'Exclude low-performing regions to maximize sats efficiency',
-  'Use language targeting for localized creative',
-  'Monitor real-time impressions on the activity map',
+  'Add example countries or regions to a local campaign draft',
+  'Review unverified sample market data as planning context only',
+  'Edit the creative for your intended language and market',
+  'No bid adjustment or audience segment is applied in this preview',
+  'No live impression activity or market performance is available',
 ];
 
 export function GeoTargetingModal({ isOpen, onClose, geoCode }: GeoTargetingModalProps) {
@@ -24,7 +24,7 @@ export function GeoTargetingModal({ isOpen, onClose, geoCode }: GeoTargetingModa
       isOpen={isOpen}
       onClose={onClose}
       title="Geo-Targeting"
-      description="Direct your Lightning ad spend toward specific countries and regions."
+      description="Add example regions to a local campaign plan. No targeting or Lightning spend is activated."
       size="lg"
       footer={
         <div className="flex flex-col sm:flex-row gap-2">
@@ -45,8 +45,7 @@ export function GeoTargetingModal({ isOpen, onClose, geoCode }: GeoTargetingModa
           <Globe className="w-5 h-5 text-accent shrink-0 mt-0.5" />
           <p className="text-xs text-muted leading-relaxed">
             <span className="text-text font-semibold">Geo-targeting</span> lets you direct ad spend
-            toward specific countries. All campaigns use real-time bidding — your sats go furthest
-            in high-CTR markets with strong Bitcoin adoption.
+            toward example countries or regions. This preview does not activate geographic targeting, bidding, audience measurement, or spend.
           </p>
         </div>
 

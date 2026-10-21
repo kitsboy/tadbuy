@@ -1,10 +1,10 @@
 import { Shield, Zap, Eye, Lock } from 'lucide-react';
 
 const BADGES = [
-  { icon: Zap, label: 'Lightning Native', desc: 'Instant sats settlement' },
-  { icon: Shield, label: 'No Banks', desc: 'Bitcoin-only payments' },
-  { icon: Eye, label: 'Zero Pixels', desc: 'Privacy-first ads' },
-  { icon: Lock, label: 'Self-Custody', desc: 'Your keys, your budget' },
+  { icon: Zap, label: 'Bitcoin-first design', desc: 'Payments are not connected' },
+  { icon: Shield, label: 'No live checkout', desc: 'No campaign funds accepted' },
+  { icon: Eye, label: 'Privacy-oriented', desc: 'No Tadbuy campaign tracking configured' },
+  { icon: Lock, label: 'Local planning', desc: 'Drafts stay in this browser' },
 ];
 
 export function TrustBadges() {

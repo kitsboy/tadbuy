@@ -9,13 +9,12 @@ export interface WorkflowStep {
 }
 
 const STEPS: WorkflowStep[] = [
-  { id: 'browse', title: 'Browse & Plan', description: 'Hero, stats, campaign builder, geo targeting', status: 'live' },
-  { id: 'create', title: 'Create Campaign', description: '4-step wizard: budget, targeting, creative, payment', status: 'live' },
-  { id: 'pay-lightning', title: 'Pay via Lightning', description: 'Real when Umbrel LND env vars set on M4', status: 'beta' },
-  { id: 'pay-fedimint', title: 'Pay via Fedimint', description: 'Demo now — real when Give A Bit Mint live on M4', status: 'staged' },
-  { id: 'pay-btc', title: 'Pay On-chain', description: 'Manual confirm — needs node broadcast on M4', status: 'beta' },
-  { id: 'live', title: 'Campaign Goes Live', description: 'Needs the backend API — not deployed yet', status: 'beta' },
-  { id: 'analytics', title: 'Track Results', description: 'Metrics, funnel, PPQ Intelligence', status: 'live' },
+  { id: 'browse', title: 'Explore', description: 'Browse guides and illustrative placement concepts.', status: 'live' },
+  { id: 'create', title: 'Plan', description: 'Build a campaign preview saved only in this browser.', status: 'live' },
+  { id: 'publish', title: 'Publish a Nostr note', description: 'Optional external action: your browser signer sends the signed note to relays; this does not buy placement or prove reach.', status: 'beta' },
+  { id: 'vendor', title: 'Coordinate a publisher placement', description: 'Sample flow only; no vendors or inventory are currently connected.', status: 'staged' },
+  { id: 'settle', title: 'Pay or settle', description: 'Not available: no Tadbuy payment service, ledger, or campaign account is connected.', status: 'staged' },
+  { id: 'report', title: 'Measure delivery', description: 'Not available: campaign impression, click, and conversion data are not connected.', status: 'staged' },
 ];
 
 const STATUS_ICON = {
@@ -32,7 +31,7 @@ const STATUS_COLOR = {
 
 export function ConsumerWorkflow({ className }: { className?: string }) {
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn('space-y-3', className)} aria-label="What works in this preview" role="list">
       {STEPS.map((step, i) => {
         const Icon = STATUS_ICON[step.status];
         return (

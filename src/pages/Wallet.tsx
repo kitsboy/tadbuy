@@ -10,6 +10,7 @@ import { usePageMeta } from "@/hooks/usePageMeta";
 import { PageShell } from '@/components/PageShell';
 import { ArtLightningFlow } from '@/components/illustrations';
 import { SafeLink } from '@/components/SafeLink';
+import { PreviewReadinessPanel } from '@/components/PreviewReadinessPanel';
 
 const readiness = [
   {
@@ -50,6 +51,8 @@ export default function Wallet() {
       <Alert variant="warning" title="No Tadbuy wallet is connected">
         No balance, invoice, deposit, withdrawal, campaign payment, or settlement can be created or verified here. Do not send funds to this preview expecting a Tadbuy credit.
       </Alert>
+
+      <PreviewReadinessPanel />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {readiness.map(({ title, status, detail, icon: Icon, tone }) => (

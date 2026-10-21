@@ -23,6 +23,7 @@ import { FedimintPanel } from "@/components/payments/FedimintPanel";
 import { MempoolFeeTip } from "@/components/MempoolFeeTip";
 import { CurrencyDisplay } from "@/components/widgets/CurrencyDisplay";
 import { ArtMarketplaceScene } from "@/components/illustrations";
+import { PreviewReadinessPanel } from "@/components/PreviewReadinessPanel";
 
 interface AdVariant {
   id: string;
@@ -319,6 +320,8 @@ export default function BuyAds({ currency = 'USD', rate = 0, symbol = '$' }: { c
       {paymentStatus === 'success' && (
         <SuccessScreen projectId={projectId} campaignName={campaignName} btcAmount={btcAmount} selectedPlatformsData={selectedPlatformsData} outcome={paymentOutcome} onReset={resetForm} />
       )}
+
+      <PreviewReadinessPanel compact />
 
       <div id="campaign-builder" className="mb-8 flex flex-col justify-between gap-4 scroll-mt-24 px-safe md:flex-row md:items-center">
         <div className="min-w-0">

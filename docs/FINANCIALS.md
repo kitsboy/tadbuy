@@ -1,35 +1,22 @@
 # Tadbuy — Financial Overview
 
-**Auto-generated:** 2026-10-02 · **FY:** 2026
+**Auto-generated:** 2026-10-21 · **FY:** 2026
 
 ## Revenue Model
-15% coordination fee on campaign spend + publisher marketplace commission when settlement is enabled
+No revenue model or fee schedule has been approved. Any future fee or commission requires product approval and a connected service.
 
-Advertisers pay an itemized coordination fee. Vendors set or accept placement prices. Marketplace commission and publisher settlement activate only when the real backend ledger and payment rails are connected.
+No advertiser fee, publisher commission, or settlement schedule has been approved. Future commercial terms require product approval, durable marketplace records, an authoritative payment source, and a reconciled ledger.
 
 ## Distribution roadmap
 See [docs/DISTRIBUTION-ROADMAP.md](./DISTRIBUTION-ROADMAP.md) for the phased channel plan.
 
-## Projections (USD)
-| Year | Platform Revenue | Ad Spend Volume | Active Users |
-|------|-----------------|-----------------|--------------|
-| 2026 | $420,000 | $2,800,000 | 2,400 |
-| 2027 | $1,850,000 | $12,300,000 | 18,000 |
-| 2028 | $6,200,000 | $41,300,000 | 72,000 |
-
-## Unit Economics
-| Metric | Value |
-|--------|-------|
-| Avg Campaign Budget | $285 |
-| Platform Take Rate | 15% |
-| CAC | $12 |
-| LTV | $890 |
-| Gross Margin | 78% |
+## Forecast and unit economics
+No validated forecast, ad-spend projection, user-growth target, or unit economics are published. No substantiated source or approved assumptions are available for these figures; they must not be presented as actuals or a forecast.
 
 ## Funding
-- **Stage:** Bootstrapped — Give A Bit family
-- **Runway:** Indefinite via Give A Bit revenue share
-- **Strategic Ask:** Strategic Bitcoin/Lightning infrastructure partners
+- **Stage:** Early-stage preview
+- **Runway:** Not stated
+- **Strategic Ask:** Product discovery and infrastructure planning
 
 ---
 *Auto-synced from projectState.ts on every build.*

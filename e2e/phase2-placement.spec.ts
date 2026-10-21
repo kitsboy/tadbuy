@@ -15,7 +15,7 @@ test.describe('Marketplace sample placement preview', () => {
 
     await expect(page.getByText('Sample request saved locally — no vendor was notified and no payment was made.')).toBeVisible();
     await page.goto('/publisher', { waitUntil: 'domcontentloaded' });
-    await expect(page.getByRole('heading', { name: 'Publisher Portal' })).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByRole('heading', { name: 'Publisher workspace' })).toBeVisible({ timeout: 60_000 });
     await expect(page.getByText('Local sample · simulation only')).toBeVisible({ timeout: 20_000 });
     await expect(page.getByText('No vendor response, delivery state, or evidence record exists.')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Accept request' })).toHaveCount(0);

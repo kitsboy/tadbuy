@@ -1,6 +1,7 @@
 /**
- * Build gab.product-metrics.v1 envelope from app campaign state.
+ * Build gab.product-metrics.v1 envelope from illustrative app campaign state.
  * Used by scripts/generate-metrics.ts (writes public/metrics.json for HQ / CF Pages).
+ * The values are not live campaign, settlement, publisher, or uptime records.
  * Secret-free only — no keys, PII, or macaroons.
  */
 import type { Campaign } from '../db/types';
@@ -48,6 +49,7 @@ export interface ProductMetricsEnvelope {
   education: Array<Record<string, unknown>>;
   links: Array<{ label: string; url: string }>;
   raw: Record<string, unknown>;
+  coverage?: Record<string, unknown>;
 }
 
 function dayKey(d: Date): string {
@@ -122,7 +124,7 @@ function buildSeries(campaigns: Campaign[], now: Date, days: number) {
 }
 
 /**
- * Count campaigns / sats / impressions from app state and build HQ envelope.
+ * Count illustrative campaigns, budgets, and performance values for the HQ envelope.
  */
 export function buildProductMetrics(input: MetricsBuildInput): ProductMetricsEnvelope {
   const now = input.now ?? new Date();
@@ -164,97 +166,97 @@ export function buildProductMetrics(input: MetricsBuildInput): ProductMetricsEnv
       to: now.toISOString(),
     },
     health: {
-      status: 'green',
+      status: 'amber',
       message:
-        'Origin metrics.json generated from app campaign state (scripts/generate-metrics.ts)',
-      latencyMs: 42,
-      uptimePct24h: 99.2,
+        'Illustrative app-state metrics only. Service health is not measured; zero values below are unavailable placeholders, not measurements.',
+      latencyMs: 0,
+      uptimePct24h: 0,
       dependencies: [
         {
           id: 'cloudflare-pages',
-          status: 'green',
-          detail: 'SPA origin tadbuy.giveabit.io',
+          status: 'amber',
+          detail: 'Hosting is configured separately; this build does not measure origin availability.',
         },
         {
           id: 'app-state',
-          status: 'green',
-          detail: `Aggregated ${campaigns.length} campaigns from src/data`,
+          status: 'amber',
+          detail: `Illustrative seed data for ${campaigns.length} campaigns from src/data; not live activity.`,
         },
         {
           id: 'satohash',
-          status: 'green',
-          detail: 'OTS campaign receipts backbone',
+          status: 'amber',
+          detail: 'No live Tadbuy campaign receipt integration is connected.',
         },
         {
           id: 'lnbits',
           status: 'amber',
-          detail: 'Wallet key in HQ Vault when Cam enters it',
+          detail: 'No Tadbuy campaign payment or settlement integration is connected.',
         },
       ],
     },
     kpis: [
       {
         key: 'campaigns_total',
-        label: 'Campaigns total',
+        label: 'Example campaign records',
         value: campaigns.length,
         unit: 'campaigns',
         format: 'number',
         priority: 1,
-        hint: 'All campaigns in app state (draft + funded + live + completed).',
+        hint: 'Illustrative seed campaigns in app state; not live or approved campaigns.',
       },
       {
         key: 'campaigns_active',
-        label: 'Campaigns active',
+        label: 'Example live-labelled records',
         value: live.length,
         unit: 'campaigns',
         format: 'number',
         priority: 1,
-        hint: 'Status = live right now.',
+        hint: 'Seed records labelled live; this build does not activate campaigns.',
       },
       {
         key: 'sats_processed_total',
-        label: 'Sats processed (all time)',
+        label: 'Example campaign budget (sats)',
         value: satsTotal,
         unit: 'sats',
         format: 'sats',
         priority: 1,
-        hint: 'Sum of campaign budgetSats in app state.',
+        hint: 'Sum of illustrative seed budget values; no sats were processed or settled.',
       },
       {
         key: 'sats_processed_30d',
-        label: 'Sats processed 30d',
+        label: 'Example 30-day budget (sats)',
         value: sats30d,
         unit: 'sats',
         format: 'sats',
         priority: 1,
-        hint: 'Budget sats for campaigns created in the last 30 days.',
+        hint: 'Illustrative seed budget values by sample creation date; no sats were processed.',
       },
       {
         key: 'impressions_delivered',
-        label: 'Impressions delivered',
+        label: 'Example impressions (unverified)',
         value: impressions,
         unit: 'impressions',
         format: 'number',
         priority: 2,
-        hint: 'Sum of delivered impressions across campaigns.',
+        hint: 'Illustrative seed values only; no publisher delivery or impression measurement is connected.',
       },
       {
         key: 'clicks_delivered',
-        label: 'Clicks delivered',
+        label: 'Example clicks (unverified)',
         value: clicks,
         unit: 'clicks',
         format: 'number',
         priority: 2,
-        hint: 'Sum of recorded clicks.',
+        hint: 'Illustrative seed values only; no campaign click measurement is connected.',
       },
       {
         key: 'ctr_pct',
-        label: 'CTR',
+        label: 'Example CTR (unverified)',
         value: parseFloat(ctr.toFixed(2)),
         unit: '%',
         format: 'percent',
         priority: 2,
-        hint: 'clicks_delivered / impressions_delivered × 100.',
+        hint: 'Derived from illustrative seed values; not measured campaign performance.',
       },
       {
         key: 'active_publishers',
@@ -267,50 +269,50 @@ export function buildProductMetrics(input: MetricsBuildInput): ProductMetricsEnv
       },
       {
         key: 'active_platforms',
-        label: 'Active platforms',
+        label: 'Platforms in sample catalog',
         value: activePlatforms,
         unit: 'platforms',
         format: 'number',
         priority: 3,
-        hint: 'Ad networks with campaign activity (or catalog size if none).',
+        hint: 'Number of entries in the illustrative platform catalog; not active integrations.',
       },
       {
         key: 'avg_cpm_sats',
-        label: 'Avg CPM',
+        label: 'Example CPM (sats)',
         value: avgCpm,
         unit: 'sats',
         format: 'sats',
         priority: 3,
-        hint: 'Average cost per mille impressions in sats (sats / impressions × 1000).',
+        hint: 'Derived from illustrative seed values; not a measured price or quote.',
       },
       {
         key: 'campaigns_completed',
-        label: 'Campaigns completed',
+        label: 'Example completed campaigns',
         value: completed.length,
         unit: 'campaigns',
         format: 'number',
         priority: 2,
-        hint: 'Flights with status = completed.',
+        hint: 'Seed records labelled completed; no campaign flight ran in this preview.',
       },
     ],
     series: [
       {
         key: 'impressions_daily',
-        label: 'Impressions / day',
+        label: 'Example impressions / day',
         unit: 'impressions',
         color: '#ff9f1c',
         points: pointsImpr,
       },
       {
         key: 'sats_daily',
-        label: 'Sats / day',
+        label: 'Example budget / day (sats)',
         unit: 'sats',
         color: '#f7931a',
         points: pointsSats,
       },
       {
         key: 'campaigns_daily',
-        label: 'Campaigns created / day',
+        label: 'Example campaign records / day',
         unit: 'campaigns',
         color: '#e879f9',
         points: pointsCamp,
@@ -319,31 +321,31 @@ export function buildProductMetrics(input: MetricsBuildInput): ProductMetricsEnv
     funnels: [
       {
         id: 'campaign_funnel',
-        label: 'Campaign lifecycle',
+        label: 'Example campaign lifecycle (not operational)',
         steps: [
           {
             id: 'created',
-            label: 'Created',
+            label: 'Example records',
             count: campaigns.length,
-            hint: 'Campaign brief in app state',
+            hint: 'Illustrative campaign objects in app state.',
           },
           {
             id: 'funded',
-            label: 'Funded',
+            label: 'Non-draft examples',
             count: funded.length,
-            hint: 'Not draft (paid or ready to run)',
+            hint: 'Seed status only; no payment or readiness is implied.',
           },
           {
             id: 'running',
-            label: 'Running',
+            label: 'Example live-labelled records',
             count: live.length,
-            hint: 'Live delivery',
+            hint: 'Seed status only; this build has no active delivery.',
           },
           {
             id: 'completed',
-            label: 'Completed',
+            label: 'Example completed records',
             count: completed.length,
-            hint: 'Flight finished',
+            hint: 'Seed status only; no flight completion is verified.',
           },
         ],
       },
@@ -351,7 +353,7 @@ export function buildProductMetrics(input: MetricsBuildInput): ProductMetricsEnv
     segments: [
       {
         id: 'platform_breakdown',
-        label: 'Platform breakdown (sats)',
+        label: 'Example platform breakdown (sats)',
         rows: platformRows,
       },
     ],
@@ -360,16 +362,16 @@ export function buildProductMetrics(input: MetricsBuildInput): ProductMetricsEnv
         id: 'btc_ads',
         title: 'Bitcoin-native ad buys',
         for: ['katoa', 'giveabit'],
-        status: 'beta',
+        status: 'planned',
         endpoint: 'https://tadbuy.giveabit.io/buy',
-        hint: 'Lightning / BOLT12 / on-chain / Fedimint / Nostr zaps',
+        hint: 'Bitcoin and Lightning are design goals; Tadbuy does not accept campaign payments in this preview.',
       },
       {
         id: 'ots_receipt',
         title: 'Campaign OTS receipts',
         for: ['satohash'],
-        status: 'ga',
-        hint: 'Immutable spend proof via Satohash',
+        status: 'planned',
+        hint: 'Receipt integration is not connected to Tadbuy campaigns in this preview.',
       },
       {
         id: 'metrics_v1',
@@ -377,29 +379,29 @@ export function buildProductMetrics(input: MetricsBuildInput): ProductMetricsEnv
         for: ['hq'],
         status: 'beta',
         endpoint: 'GET /metrics.json',
-        hint: 'Generated from app state on build for HQ poll',
+        hint: 'Build-generated illustrative data only; not a live campaign or settlement feed.',
       },
     ],
     education: [
       {
         id: 'mold_gmv',
-        title: 'Sats processed is GMV',
-        body: `App-state GMV is ${satsTotal.toLocaleString()} sats across ${campaigns.length} campaigns.`,
-        action: 'Track monthlyized GMV once LNbits wallet is in HQ Vault',
+        title: 'Example budget is not GMV',
+        body: `${satsTotal.toLocaleString()} example budget sats across ${campaigns.length} illustrative campaign records; no funds were processed.`,
+        action: 'Only report GMV from reconciled payment and ledger records.',
         opportunity: 'opportunity',
       },
       {
         id: 'mold_funnel',
-        title: 'Funded → running',
-        body: `${funded.length} funded vs ${live.length} running; ${draft.length} still draft.`,
-        action: 'Prioritize flight validation and publisher inventory',
+        title: 'Sample status labels',
+        body: `${funded.length} non-draft, ${live.length} live-labelled, and ${draft.length} draft seed records; no activation occurred.`,
+        action: 'Use approved backend lifecycle events when a real service is authorized.',
         opportunity: 'plan',
       },
       {
         id: 'mold_ctr',
-        title: 'CTR is product quality',
-        body: `${ctr.toFixed(2)}% blended CTR from app campaign totals.`,
-        action: 'Segment CTR in Analytics by platform',
+        title: 'Example CTR is not measured',
+        body: `${ctr.toFixed(2)}% derived from illustrative seed values, not delivered campaign traffic.`,
+        action: 'Only publish CTR with attributable publisher or provider evidence.',
         opportunity: 'info',
       },
     ],
@@ -412,14 +414,14 @@ export function buildProductMetrics(input: MetricsBuildInput): ProductMetricsEnv
       },
     ],
     raw: {
-      demo: false,
-      source: 'app-state',
+      demo: true,
+      source: 'illustrative-app-state',
       enriched: true,
       schemaDepth: 'full-v1',
       umamiWebsiteId: 'e75632e3-b6f4-4fa3-9ec5-8b3107adf783',
       campaignsInState: campaigns.length,
       note:
-        'KPIs counted from src/data/campaigns.ts (+ marketplace publishers, platform catalog). Rebuild via npm run generate-metrics (prebuild). Switch source to supabase when live DB aggregates replace seed campaigns.',
+        'All campaign, budget, impression, click, and platform values come from illustrative seed data in src/data; they do not represent live orders, settlement, delivery, or publisher activity. Rebuild via npm run generate-metrics (prebuild). Replace this generator only after an approved live source and verified metric provenance are available.',
     },
   };
 }

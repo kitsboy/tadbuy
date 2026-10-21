@@ -9,21 +9,21 @@
 export const PROJECT_STATE = {
   version: 'v5.0.224',
   phase: 'BETA' as const,
-  lastSynced: '2026-10-16',
+  lastSynced: '2026-10-21',
   liveUrl: 'https://tadbuy.giveabit.io',
   repo: 'https://github.com/kitsboy/tadbuy',
 
   executive: {
-    mission: 'Build a sovereign advertising marketplace where advertisers buy transparent placements, independent publishers earn in sats, and campaign delivery is verifiable.',
-    vision: 'One campaign plan across independent distributors — zero surveillance, clear fees, and Bitcoin-native settlement when the rails are ready.',
+    mission: 'Prepare a sovereign advertising marketplace where advertisers can plan transparent placements with independent publishers and verifiable delivery.',
+    vision: 'One campaign plan across independent distributors — privacy-oriented by design, clear fees, and Bitcoin-native settlement only after verified rails and release approval.',
     // No traction counters live here on purpose. Unmeasured numbers (campaigns,
     // sats processed, publishers, settlement time) must never ship as if they
     // were measured — the /pitch page and docs/EXECUTIVE.md render live metrics
     // only and show "—" when /api/metrics is unavailable.
     differentiators: [
-      'Phase 1 Nostr publishing plus accountable website, newsletter, and podcast inventory',
-      'Vendor marketplace with transparent placement proof and campaign plans',
-      'PPQ.AI optimization without surveillance pixels',
+      'Bitcoin-first campaign planning with no Tadbuy checkout connected in this preview',
+      'Sample vendor marketplace concepts; no approved live inventory yet',
+      'Privacy-oriented direction; audience targeting and campaign reporting are not connected',
       'Give A Bit ecosystem integration',
     ],
   },
@@ -31,51 +31,39 @@ export const PROJECT_STATE = {
   financials: {
     currency: 'USD',
     fiscalYear: 2026,
-    revenueModel: '15% coordination fee on campaign spend + publisher marketplace commission when settlement is enabled',
-    projections: [
-      { year: 2026, revenue: 420_000, adSpend: 2_800_000, users: 2_400 },
-      { year: 2027, revenue: 1_850_000, adSpend: 12_300_000, users: 18_000 },
-      { year: 2028, revenue: 6_200_000, adSpend: 41_300_000, users: 72_000 },
-    ],
-    unitEconomics: {
-      avgCampaignBudgetUsd: 285,
-      platformTakeRate: 0.15,
-      cacUsd: 12,
-      ltvUsd: 890,
-      grossMargin: 0.78,
-    },
+    revenueModel: 'No revenue model or fee schedule has been approved. Any future fee or commission requires product approval and a connected service.',
     funding: {
-      stage: 'Bootstrapped — Give A Bit family',
-      runway: 'Indefinite via Give A Bit revenue share',
-      ask: 'Strategic Bitcoin/Lightning infrastructure partners',
+      stage: 'Early-stage preview',
+      runway: 'Not stated',
+      ask: 'Product discovery and infrastructure planning',
     },
   },
 
   marketing: {
-    tagline: 'One campaign. Independent distributors. Transparent proof.',
-    pitch: 'Tadbuy coordinates Bitcoin-native advertising placements across Nostr and independent websites, newsletters, and podcasts. Advertisers plan once, vendors publish through channels they control, and every delivery has a clear proof path.',
-    cta: 'Plan your first distribution campaign at tadbuy.giveabit.io',
+    tagline: 'Plan across independent channels. Build toward transparent proof.',
+    pitch: 'Tadbuy is preparing local campaign planning and illustrative publisher workflows. Live inventory, provider buying, delivery evidence, payment, and settlement are not connected in this preview.',
+    cta: 'Explore a local campaign preview at tadbuy.giveabit.io',
     audiences: ['Bitcoin businesses', 'Independent creators', 'Nostr communities', 'Privacy-conscious brands'],
   },
 
   fedimint: {
-    enabled: true,
-    description: 'Privacy-preserving ecash payments via federated mints. Lower fees, instant settlement, Chaumian blind signatures.',
+    enabled: false,
+    description: 'Fedimint ecash is a roadmap option only. No Tadbuy federation, invite, gateway, or campaign settlement is configured.',
     docsUrl: 'https://fedimint.org',
     sdkUrl: 'https://sdk.fedimint.org',
     defaultInvite: '',
     benefits: [
-      'Instant ecash settlement without on-chain fees',
-      'Privacy via blind signatures',
-      'Federation-backed Bitcoin reserves',
-      'Offline-capable token transfers',
+      'Potential future ecash payment option, subject to an approved federation and operational design',
+      'Privacy properties require review of the selected federation, wallets, metadata, and threat model',
+      'Federation governance, reserves, quorum, recovery, limits, and support remain unverified',
+      'No offline token transfer or campaign settlement is available in this preview',
     ],
   },
 
-  // Rails the product is built around. Deliberately no per-rail status: in this build
-  // no rail settles — payments run in demo mode until the M4 Fedimint mint + Umbrel are
-  // connected. `/beta` owns the per-flow statuses (Lightning BETA, Fedimint STAGED,
-  // on-chain BETA) and this data must never contradict it.
+  // Rails the product is being designed around. No Tadbuy campaign payment rail
+  // is connected in this build. A synced Umbrel node would not by itself create a
+  // payment service, authoritative settlement verification, or an account ledger.
+  // `/wallet` and `/beta` describe the current readiness gates.
   paymentMethods: [
     { id: 'lightning', name: 'Lightning' },
     { id: 'fedimint', name: 'Fedimint Ecash' },

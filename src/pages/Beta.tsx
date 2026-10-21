@@ -12,6 +12,7 @@ import { GIVEABIT_ECOSYSTEM } from '@/data/ecosystemConfig';
 import { PROJECT_STATE } from '@/data/projectState';
 import { SafeLink } from '@/components/SafeLink';
 import { ArtBlueprint } from '@/components/illustrations';
+import { PreviewReadinessPanel } from '@/components/PreviewReadinessPanel';
 
 export default function Beta() {
   usePageMeta('BETA Status', 'What works now, what still needs a backend server, and the consumer payment workflow for Tadbuy.');
@@ -30,10 +31,12 @@ export default function Beta() {
     >
 
       <Card>
-        <CardTitle>v5 Enhancement Progress</CardTitle>
-        <Progress value={350} max={350} showLabel variant="accent" />
-        <p className="text-xs text-muted mt-2">14 batches × 25 enhancements = 350 total shipped</p>
+        <CardTitle>Published product roadmap</CardTitle>
+        <Progress value={24} max={24} showLabel variant="accent" />
+        <p className="text-xs text-muted mt-2">Feature-batch counts describe shipped interface work, not live payment, inventory, delivery, or marketplace readiness.</p>
       </Card>
+
+      <PreviewReadinessPanel />
 
       <Card className="glass-panel">
         <CardTitle>API Status</CardTitle>
@@ -47,44 +50,37 @@ export default function Beta() {
       </Card>
 
       <Card className="glass-panel">
-        <CardTitle>Consumer Workflow</CardTitle>
-        <p className="text-xs text-muted mb-4">Your journey from browsing to paying for ads:</p>
+        <CardTitle>Readiness by user step</CardTitle>
+        <p className="text-xs text-muted mb-4">See what you can try now and what must be connected before a real campaign can run.</p>
         <ConsumerWorkflow />
-      </Card>
-
-      <Card className="glass-panel border-green/20">
-        <CardTitle className="flex items-center gap-2"><Shield className="w-4 h-4 text-green" /> Give A Bit Mint (Fedimint)</CardTitle>
+      </Card>        <Card className="glass-panel border-border">
+          <CardTitle className="flex items-center gap-2"><Shield className="w-4 h-4 text-muted" /> Fedimint roadmap status</CardTitle>
         <div className="space-y-3 text-sm">
           <div className="flex justify-between"><span className="text-muted">Status</span><span className="font-bold text-accent uppercase">{federation.status}</span></div>
           <div className="flex justify-between"><span className="text-muted">Domain</span><span className="font-mono">{federation.domain}</span></div>
-          <div className="flex justify-between"><span className="text-muted">Gateway (M4)</span><span className="font-mono text-xs">{federation.stagedGateway}</span></div>
-          <p className="text-xs text-muted leading-relaxed pt-2">
-            One mint for all Give A Bit projects: Tadbuy, Satohash, Give A Bit, MotoPass, OpenStrata.
-            Federation is staged to run on <strong>M4 HERMES</strong> — not M3.
+          <div className="flex justify-between"><span className="text-muted">Gateway (M4)</span><span className="font-mono text-xs">{federation.stagedGateway}</span></div>            <p className="text-xs text-muted leading-relaxed pt-2">
+            No federation is approved or connected to Tadbuy. Federation choice, guardian/quorum, recovery, governance, and release authorization remain open decisions.
           </p>
-          <SafeLink href={infrastructure.fedi.url} target="_blank" showIcon className="inline-flex items-center gap-1 text-xs text-accent font-bold hover:underline">
-            Get Fedi wallet <ExternalLink className="w-3 h-3" />
-          </SafeLink>
         </div>
       </Card>
 
       <div className="grid md:grid-cols-2 gap-4">
         <Card>
-          <CardTitle className="flex items-center gap-2"><Server className="w-4 h-4" /> M4 Server (HERMES)</CardTitle>
+          <CardTitle className="flex items-center gap-2"><Server className="w-4 h-4" /> Infrastructure checklist</CardTitle>
           <ul className="text-xs text-muted space-y-2">
-            <li>• Fedimint guardian + mint</li>
-            <li>• Umbrel full BTC node (when ready)</li>
-            <li>• API proxy — none deployed</li>
-            <li>• Fedi gateway for mint.giveabit.io</li>
+            <li>• Umbrel Bitcoin node sync and health — operator verification required</li>
+            <li>• Lightning daemon, liquidity, and recovery — separate verification required</li>
+            <li>• Tadbuy API and durable records — not deployed</li>
+            <li>• Payment service, settlement authority, ledger, and release approval — not established</li>
           </ul>
-          <p className="text-[10px] text-muted mt-3 font-mono">Ref: docs/M4-SERVER-REF.md</p>
+          <p className="text-[10px] text-muted mt-3">Do not expose node credentials or RPC endpoints to the browser or public internet.</p>
         </Card>
         <Card>
-          <CardTitle className="flex items-center gap-2"><Bitcoin className="w-4 h-4 text-accent" /> Umbrel Node</CardTitle>
+          <CardTitle className="flex items-center gap-2"><Bitcoin className="w-4 h-4 text-accent" /> Bitcoin node readiness</CardTitle>
           <p className="text-xs text-muted">
             Status: <strong className="text-accent">{infrastructure.umbrel.status.replace('_', ' ')}</strong>
           </p>
-          <p className="text-xs text-muted mt-2">When ready, set UMBREL_LND_* env vars on M4 for real Lightning invoices.</p>
+          <p className="text-xs text-muted mt-2">A synced Bitcoin node is a prerequisite, not a payment product by itself. Blockchain sync is in progress and this page cannot inspect its progress. After sync, an operator must verify node health and access locally. Before campaign funds can be accepted, we still need a separately approved payment service, authoritative settlement verification, ledger/reconciliation, spend limits, security review, support, and release approval. Do not send campaign funds to this preview.</p>
         </Card>
       </div>
 
@@ -94,7 +90,7 @@ export default function Beta() {
       </Card>
 
       <div className="flex flex-wrap gap-3">
-        <Link to="/"><Button>Try Campaign Builder</Button></Link>
+        <Link to="/"><Button>Plan a campaign preview</Button></Link>
         <Link to="/pitch"><Button variant="secondary">Investor Pitch</Button></Link>
           <SafeLink href="https://github.com/kitsboy/tadbuy/blob/main/docs/SETUP-GUIDE.md" target="_blank" showIcon>
             <Button variant="secondary">Setup Guide (GitHub)</Button>

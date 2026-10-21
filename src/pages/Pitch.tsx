@@ -1,13 +1,11 @@
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
-import {
-  Zap, Globe, Shield, TrendingUp, Users, BarChart3, Sparkles,
+import {  Zap, Globe, Shield, TrendingUp, Users, BarChart3, Sparkles,
   ArrowRight, ExternalLink, Bitcoin,
 } from 'lucide-react';
 import { Button, Card, CardTitle } from '@/components/ui';
 import { usePageMeta } from '@/hooks/usePageMeta';
 import { PROJECT_STATE } from '@/data/projectState';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { SafeLink } from '@/components/SafeLink';
 import { ArtRocket } from '@/components/illustrations';
 
@@ -39,7 +37,7 @@ export default function Pitch() {
           <p className="text-xl md:text-2xl text-muted max-w-2xl mx-auto mb-2">{marketing.tagline}</p>
           <p className="text-sm text-muted max-w-xl mx-auto mb-8">{marketing.pitch}</p>
           <div className="flex flex-wrap gap-3 justify-center">
-            <Link to="/"><Button size="lg" className="gap-2"><Zap className="w-4 h-4" />Launch Campaign</Button></Link>
+            <Link to="/"><Button size="lg" className="gap-2"><Zap className="w-4 h-4" />Plan a campaign preview</Button></Link>
             <SafeLink href={PROJECT_STATE.repo} target="_blank" showIcon>
               <Button variant="secondary" size="lg" className="gap-2"><ExternalLink className="w-4 h-4" />GitHub</Button>
             </SafeLink>
@@ -82,22 +80,24 @@ export default function Pitch() {
       {/* Problem / Solution */}
       <section className="grid md:grid-cols-2 gap-6">
         <Card className="border-red/20">
-          <CardTitle>The Problem</CardTitle>
+          <CardTitle>The Problem — product thesis</CardTitle>
           <p className="text-sm text-muted leading-relaxed">
-            Digital advertising is surveillance capitalism. Platforms track users, take 20–40% of revenue,
-            and lock advertisers into fiat-only, bank-dependent payment rails.
+            Tadbuy&apos;s product thesis is that advertisers and independent publishers need
+            transparent placement coordination, privacy-respecting measurement, and a future
+            Bitcoin-native settlement option. Provider fees and market claims require current
+            independent evidence.
           </p>
         </Card>
         <Card className="border-green/20">
           <CardTitle>Our Solution</CardTitle>
           <p className="text-sm text-muted leading-relaxed">
-            Independent publishers and Nostr vendors can list placements, accept campaigns, and submit delivery proof. Provider APIs and automated buying are later phases—not assumed capabilities.
+            Tadbuy is being prepared to coordinate independent placements and show delivery evidence. The current build has no approved live inventory, payment service, or campaign activation; provider APIs and automated buying remain later phases.
           </p>
         </Card>
       </section>
 
       {/* Fedimint */}
-      <section className="rounded-2xl border border-green/30 bg-green/5 p-8">
+      <section className="rounded-2xl border border-border bg-surface/50 p-8">
         <div className="flex items-center gap-3 mb-4">
           <Shield className="w-8 h-8 text-green" />
           <div>
@@ -106,18 +106,16 @@ export default function Pitch() {
           </div>
         </div>
         <p className="text-sm text-muted mb-4">{fedimint.description}</p>
-        {/* Grounded in /beta: "Pay via Fedimint — STAGED · Demo now — real when Give A Bit
-            Mint live on M4". The section is a strategy, so it says so instead of reading
-            as a rail that is already accepting sats. */}
         <p className="text-xs text-muted mb-4">
-          <strong className="text-text">Staged — not settling yet.</strong> Fedimint is demo mode in this build and
-          turns real when the Give A Bit mint runs on M4.{' '}
-          <Link to="/beta" className="text-accent hover:underline">BETA status →</Link>
+          <strong className="text-text">Strategy only — not settling.</strong> No Tadbuy payment rail
+          is connected. A future mint or synced node alone would not establish payment verification,
+          ledger reconciliation, or launch approval.{' '}
+          <Link to="/beta" className="text-accent hover:underline">Readiness status →</Link>
         </p>
         <div className="grid md:grid-cols-2 gap-3">
           {fedimint.benefits.map(b => (
             <div key={b} className="flex items-start gap-2 text-sm">
-              <ArrowRight className="w-4 h-4 text-green flex-shrink-0 mt-0.5" />
+              <ArrowRight className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
               <span>{b}</span>
             </div>
           ))}
@@ -143,46 +141,23 @@ export default function Pitch() {
 
       {/* Financials */}
       <section>
-        <h2 className="text-2xl font-extrabold mb-6 flex items-center gap-2">
-          <BarChart3 className="w-6 h-6 text-accent" /> Financial Projections
+        <h2 className="text-2xl font-extrabold mb-3 flex items-center gap-2">
+          <BarChart3 className="w-6 h-6 text-accent" /> Financial readiness
         </h2>
-        <p className="text-sm text-muted mb-4">{financials.revenueModel}</p>
-        <div className="h-64 mb-6">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={financials.projections}>
-              <XAxis dataKey="year" stroke="#71717a" fontSize={11} />
-              <YAxis stroke="#71717a" fontSize={11} tickFormatter={v => `$${(v / 1e6).toFixed(1)}M`} />
-              <Tooltip
-                contentStyle={{ background: '#27272a', border: '1px solid #3f3f46', borderRadius: 8 }}
-                formatter={(v: number) => [`$${v.toLocaleString()}`, '']}
-              />
-              <Bar dataKey="revenue" fill="#ff9f1c" name="Revenue" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="adSpend" fill="#c084fc" name="Ad Volume" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Object.entries(financials.unitEconomics).map(([k, v]) => (
-            <div key={k} className="text-center p-3 rounded-xl bg-surface border border-border">
-              <div className="text-lg font-bold text-accent font-mono">
-                {typeof v === 'number' && v < 1 ? `${(v * 100).toFixed(0)}%` : typeof v === 'number' ? `$${v}` : v}
-              </div>
-              <div className="text-[10px] text-muted uppercase">{k.replace(/([A-Z])/g, ' $1')}</div>
-            </div>
-          ))}
-        </div>
+        <Card className="border-accent/20">
+          <p className="text-sm font-semibold text-text">No validated forecast or unit economics are published.</p>
+          <p className="mt-2 text-xs leading-relaxed text-muted">{financials.revenueModel} Revenue, ad-spend, acquisition, retention, and margin assumptions need evidence and owner approval before they are presented as projections.</p>
+        </Card>
       </section>
 
-      {/* Payment Rails. Deliberately no per-rail status badge: in this build no rail
-          settles (payments are demo mode until the M4 Fedimint mint + Umbrel are
-          connected). /beta owns the per-flow statuses — never contradict it here. */}
+      {/* Payment-rail roadmap; no Tadbuy campaign payment rail is connected. */}
       <section>
         <h2 className="text-2xl font-extrabold mb-2 flex items-center gap-2">
           <Globe className="w-6 h-6 text-accent" /> Sovereign Payment Rails
         </h2>
         <p className="text-xs text-muted mb-4">
           Rails this product is being built around — <strong className="text-text">none settle in this build</strong>.
-          Payments run in demo mode until the M4 Fedimint mint + Umbrel are connected.{' '}
+          A synced Umbrel node is only one prerequisite; payment acceptance also needs an approved service, verified settlement, reconciled ledger, security/operations review, and explicit release approval.{' '}
           <Link to="/beta" className="text-accent hover:underline">See what works →</Link>
         </p>
         <div className="flex flex-wrap gap-2">
@@ -202,35 +177,15 @@ export default function Pitch() {
         <Users className="w-10 h-10 text-accent mx-auto mb-4" />
         <h2 className="text-2xl font-extrabold mb-2">Join the Revolution</h2>
         <p className="text-sm text-muted mb-6 max-w-md mx-auto">
-          {financials.funding.ask}. Bootstrapped via the Give A Bit ecosystem with indefinite runway.
+          {financials.funding.ask}. Tadbuy is an early-stage preview; no revenue, runway, or financing claim is made here.
         </p>
         <Link to="/">
           <Button size="lg" className="gap-2">
-            Start Advertising in Sats <ArrowRight className="w-4 h-4" />
+            Build a campaign preview <ArrowRight className="w-4 h-4" />
           </Button>
         </Link>
       </section>
 
-      {/* Growth chart */}
-      <section>
-        <h2 className="text-lg font-extrabold mb-4">User Growth Trajectory</h2>
-        <div className="h-48">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={financials.projections}>
-              <defs>
-                <linearGradient id="userGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#c084fc" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="#c084fc" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="year" stroke="#71717a" fontSize={11} />
-              <YAxis stroke="#71717a" fontSize={11} />
-              <Tooltip contentStyle={{ background: '#27272a', border: '1px solid #3f3f46', borderRadius: 8 }} />
-              <Area type="monotone" dataKey="users" stroke="#c084fc" fill="url(#userGrad)" strokeWidth={2} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </section>
 
       <section>
         <h2 className="text-lg font-extrabold mb-4">100-Feature Roadmap Progress</h2>

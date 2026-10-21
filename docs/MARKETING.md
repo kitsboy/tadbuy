@@ -1,10 +1,10 @@
 # Tadbuy — Marketing
 
-**Auto-generated:** 2026-10-02
+**Auto-generated:** 2026-10-21
 
-**Tagline:** One campaign. Independent distributors. Transparent proof.
+**Tagline:** Plan across independent channels. Build toward transparent proof.
 
-**Pitch:** Tadbuy coordinates Bitcoin-native advertising placements across Nostr and independent websites, newsletters, and podcasts. Advertisers plan once, vendors publish through channels they control, and every delivery has a clear proof path.
+**Pitch:** Tadbuy is preparing local campaign planning and illustrative publisher workflows. Live inventory, provider buying, delivery evidence, payment, and settlement are not connected in this preview.
 
 ## Phase 1 Channels
 - **Nostr** — NIP-07 signed publication with relay acknowledgements
@@ -15,7 +15,7 @@
 ## Later Channels
 Reddit · Meta (Facebook + Instagram) · Google/YouTube · Spotify · Pinterest · LinkedIn · TikTok · digital out-of-home
 
-**CTA:** Plan your first distribution campaign at tadbuy.giveabit.io
+**CTA:** Explore a local campaign preview at tadbuy.giveabit.io
 
 ## Target Audiences
 - Bitcoin businesses
@@ -24,7 +24,7 @@ Reddit · Meta (Facebook + Instagram) · Google/YouTube · Spotify · Pinterest 
 - Privacy-conscious brands
 
 ## Payment Rails (Marketing Points)
-No per-rail status is published: in this build no rail settles — payments run in demo mode until the M4 Fedimint mint + Umbrel are connected. `/beta` owns the per-flow statuses.
+No per-rail status is implied by listing a protocol here. No Tadbuy campaign rail settles in this build; a synced node or third-party receive address alone is not sufficient. `/beta` owns the readiness gates.
 - Lightning
 - Fedimint Ecash
 - BOLT12 Offers
