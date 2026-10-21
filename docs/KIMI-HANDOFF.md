@@ -8,7 +8,7 @@
 - Applied npm's non-force audit fix, updating Vite within its existing range from 6.4.3 to 6.4.5.
 
 **Decisions / boundaries:**
-- The feature worktree is based on the exact `origin/main` tip. The separate `/Users/cam/projects/tadbuy` checkout remains untouched.
+- The feature worktree began at `de9b167`; while preparing release, `origin/main` advanced with the Vite audit fix and version bump. Those upstream commits were merged and preserved; the separate `/Users/cam/projects/tadbuy` checkout remains untouched.
 - Production deployment is the Cloudflare Pages GitHub integration on pushes to `main`; the Pages workflow verifies the live site and assets. No manual wrangler deploy or production data change.
 - The audit has one remaining low-severity esbuild advisory in the tsx development toolchain; the configured high-severity gate passes. Do not claim the audit is vulnerability-free.
 
@@ -20,7 +20,7 @@
 
 **Git State:**
 - SHA: recorded in this release commit after creation.
-- Unpushed: this release commit (to be pushed to `origin/main` for Pages deployment). The worktree’s feature branch starts at `de9b167`, the exact `origin/main` tip.
+- Unpushed: the release and merge commits (to be pushed to `origin/main` for Pages deployment); base release work started at `de9b167` and includes the later upstream changes.
 
 ---
 
