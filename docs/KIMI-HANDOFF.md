@@ -1,5 +1,41 @@
 # Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-27
 
+## Session — 2026-10-20 · Product position and user-clarity review
+
+**Done:**
+- Reviewed the live Tadbuy shell/BETA notice and current upstream code/data, including Kimi’s 2026-09-27 pilot-gate response.
+- Recorded 10 next-layer UI opportunities (several extend safeguards already shipped upstream):
+  1. Put “Public demo — no Tadbuy payments, backend, or vendor supply” beside the main campaign CTA, not only in BETA chrome.
+  2. Make the first choice “Advertise” or “Publish,” then guide each persona through one short job; tuck protocol surfaces behind “Advanced.”
+  3. Make sample inventory unmistakable on every card/detail view; label bids as example budgets and keep simulated actions from implying an offer was sent.
+  4. Offer “Try a sample campaign” to demonstrate planning without contacting a vendor or moving sats.
+  5. Before finalizing a plan, show a human-readable execution receipt: sample vs real price, actor per step, disclosure, evidence, fees, and whether any payment/action occurs.
+  6. Show metric provenance inline—demo/app-state source, last-updated time, and what it does not measure; omit reach/CTR without defensible evidence.
+  7. Keep the state model honest: local preview must not become “created/funded/live”; signed Nostr publication is not reach or engagement.
+  8. Split trust into explainable evidence: resolver match, human/operator approval, inventory approval, delivery-proof review.
+  9. Give each vendor-assisted channel a mini-checklist naming actor (“you”/publisher), disclosure, proof artifact, and stop point.
+  10. Publish a compact “Live / sample / blocked” readiness panel with decision owner, linked from campaign, marketplace, wallet, and metrics.
+- Suggested order: (1) demo promise and next action; (2) sample marketplace affordances; (3) campaign and metric provenance—before cosmetic polish.
+
+**Current position (confirmed by Kimi, 2026-09-27):**
+- Tadbuy is a public demo-mode preview on static Cloudflare Pages. No approved/reachable Tadbuy API or database exists; no campaign journey transacts money. No Tadbuy receive/send rail or settlement signal is operational. The donation address is not a campaign-payment rail.
+- Safe today: browsing, local-only campaign planning, sample marketplace listings, readiness surfaces, and user-initiated Nostr text publishing. NIP-07 is an explicit external action; signed event/relay acknowledgement is not proof of impressions, conversion, or payment.
+- Staged: campaign activation, vendor onboarding/pilot, payments, payouts, escrow, provider API automation. Kimi confirms the Supabase migration is not applied, backend is not approved, and no first vendors/communities are confirmed.
+- Kimi’s prior answers are recorded below under `Kimi Response — Tadbuy Pilot Gates and Agent Plan — 2026-09-27`; policy, supply, backend/security, and authorization gaps remain decision gates, not unanswered chat.
+- Upstream already improved sample inventory, metric notes, and preview-only payment copy; this is a next-layer agenda, not a claim those protections are absent.
+- Live footer showed v5.0.224, matching fetched upstream `origin/main` (`f5600ed`, 2026-10-19); the original local checkout was stale at `64790b2` / v5.0.198 and 88 commits behind.
+
+**Owners / guardrails:**
+- Continue from Kimi’s 2026-09-27 response. Cam decides whether Tadbuy should transact and approves pilot supply/policy/release; Kimi/THOR owns future backend/ops; Lenny owns security/custody review.
+- No live money, vendor pilot, provider automation, or Fedimint invites without explicit gate approval. CI or demo success is not launch authorization.
+
+**Verification / Git State:**
+- Inspected live navigation, BETA notice and footer version, and checked upstream handoff, roadmap, metrics, payment status and marketplace data. Not a full campaign-interaction or payment test.
+- No app code, production config, payment rail, or provider changed. No build/typecheck/E2E run was needed for this review.
+- Review note is based on current `origin/main` and ready to be committed/pushed with the isolated worktree; the stale checkout’s unrelated generated docs/metrics and service-worker change were not brought across.
+
+---
+
 ## Session — 2026-10-01 (latest) — docs sync + **five UI proposals for Kimi/HERMES (or any LLM) to pick up**
 
 **State of the art batch:** complete, committed, and pushed (`e16f254`). `npm run check:art-themes` is a maintained gate: 6 scenes × 4 theme combos = 24 cells, 0 failures. Full detail in the entry below.
