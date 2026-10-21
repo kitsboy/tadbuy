@@ -19,7 +19,7 @@
     "check:boot-fallback": "node scripts/check-boot-fallback.mjs",
     "check:art-themes": "node scripts/check-art-themes.mjs",
     "check:live-routes": "node scripts/check-live-routes.mjs",
-    "test:payment-core": "node --test test-payment-core.mjs",
+    "test:payment-core": "node --import tsx --test test-payment-core.mjs",
     "check:bundle": "node scripts/report-bundle.mjs",
     "audit:dependencies": "npm audit --audit-level=high",
     "preview": "vite preview",
