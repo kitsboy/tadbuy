@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Platforms hub', () => {
   test('platforms index lists all 8 networks', async ({ page }) => {
     await page.goto('/platforms', { waitUntil: 'networkidle' });
-    await expect(page.getByText('Ad Platforms Hub')).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText('Platform examples & roadmap')).toBeVisible({ timeout: 20_000 });
     await expect(page.getByText('Twitter/X').first()).toBeVisible();
     await expect(page.getByText('Nostr').first()).toBeVisible();
     await expect(page.getByText('TikTok').first()).toBeVisible();
