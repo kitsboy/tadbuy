@@ -1,14 +1,14 @@
 # Tadbuy — Work In Progress & Future Ideas
 
-> **Status:** All items below are **SAVED BUT NOT DEPLOYED**. This is a parking lot for ideas, research, and infrastructure that's been researched and/or built but not yet ready for production.
+> **Status:** Research and deferred work only. Nothing below constitutes production-ready infrastructure, market approval, or launch permission.
 
 ---
 
 ## 📋 **SAVED FOR FUTURE DEPLOYMENT**
 
-### 1. **Social Media Integration** (Research Complete, Infrastructure Ready)
+### 1. **Social and geographic research** (not integrated; no market approved)
 
-**Status:** ✅ **All planning, research, and infrastructure complete. Ready to deploy when Cam gives green light.**
+**Status:** Discovery backlog only. Platform permissions, local compliance, supply, and infrastructure must be independently verified before any implementation or deployment.
 
 #### What's Saved:
 - **Research Prompt:** `docs/GEMINI-RESEARCH-PROMPT.md` (580+ lines)
@@ -17,31 +17,22 @@
   - Includes AI/LLM options, automation, legal/regulatory questions
 
 - **Geographic Strategy:** `docs/GEOGRAPHIC-STRATEGY.md`
-  - 8 Tier-1 jurisdictions identified (US, Japan, Germany, NL, Portugal, Singapore, El Salvador, Argentina)
-  - 67% of global Bitcoin users covered
-  - TikTok explicitly avoided (Chinese ownership risks)
+  - Research-only; no launch jurisdiction is approved.
+  - India, Brazil/LATAM, Japan/Korea and global English/Nostr are candidates for opt-in discovery, not targeting or rollout decisions.
+  - WhatsApp, YouTube, Instagram, ShareChat/Moj and other platforms remain unintegrated; review platform rules and local requirements per campaign.
 
-- **Nostr Relay Infrastructure:** `infrastructure/nostr-relay/`
-  - 8 production-ready TOML configs (one per Tier-1 jurisdiction)
-  - Docker Compose setup
-  - Nginx reverse proxy with SSL/TLS
-  - Health check and update scripts
-  - Full deployment documentation
-  - **Cost:** ~$100-180/month to run all 8 relays
+- **Nostr relay research:** historical material under `infrastructure/nostr-relay/` is not a verified production deployment or approved operating plan. Recheck ownership, security, hosting, maintenance, and cost before considering use.
 
 - **Improvement Roadmap:** `docs/IMPROVEMENT-ROADMAP.md`
   - Q4 2026 - Q1 2027 priorities
   - Performance, accessibility, testing, features
 
-#### Deployment Checklist (When Ready):
-- [ ] Provision 8 VPS instances (1GB RAM, 20GB SSD each)
-- [ ] Point DNS: `us.tadbuy.io`, `jp.tadbuy.io`, etc.
-- [ ] Obtain SSL certificates
-- [ ] Copy `.env.example` to `.env` and fill values
-- [ ] Run `docker-compose up -d`
-- [ ] Verify with `./scripts/health-check.sh`
-- [ ] Integrate with Tadbuy frontend (NIP-07 login)
-- [ ] Launch and announce to Bitcoin/Nostr community
+#### Before any future deployment
+- [ ] Confirm product intent, named owner, operational scope, and budget.
+- [ ] Verify infrastructure and platform access from current official sources.
+- [ ] Complete privacy, security, legal/policy, and rollback review.
+- [ ] Obtain opt-in publisher/community consent and document withdrawal.
+- [ ] Keep payments, provider automation, and public inventory disabled until the release gates in `docs/TADBUY-PILOT-DEFAULTS.md` are satisfied.
 
 ---
 
@@ -49,31 +40,16 @@
 
 ### **To Resume This Work:**
 
-1. **Review the research:**
-   - Read `docs/GEMINI-RESEARCH-PROMPT.md`
-   - Send to Gemini for deep research
-   - Integrate findings into `docs/GEOGRAPHIC-STRATEGY.md`
-
-2. **Deploy infrastructure:**
-   - Start with one relay (US Wyoming recommended)
-   - Test for 2-4 weeks
-   - Roll out remaining 7 regions
-
-3. **Frontend integration:**
-   - Add NIP-07 browser extension login
-   - Implement NIP-57 Zaps (Lightning tips)
-   - Add Nostr profile linking
-
-4. **Community launch:**
-   - Announce on Bitcoin Twitter
-   - Post on Nostr with NIP-42 tags
-   - Partner with Nostr-native projects
+1. Update research using official platform sources and qualified local review; record dates and unknowns.
+2. Interview consenting publishers without implying a partnership or collecting unnecessary personal data.
+3. Prototype only locally with synthetic data until a product and operator approve any external connection.
+4. Treat Nostr zaps, identity linking, relays, and social publishing as separate features with explicit permission, threat models, and privacy review.
 
 ---
 
 ## 💡 **Other Ideas In Progress**
 
-*None at the moment. Add new ideas here as they come up.*
+See the prioritized 20-upgrade backlog in `docs/IMPROVEMENT-ROADMAP.md` and the proposed defaults in `docs/TADBUY-PILOT-DEFAULTS.md`. None of those future product ideas implies a confirmed service, provider relationship, audience, or payment rail.
 
 ---
 
@@ -86,8 +62,8 @@
 
 ---
 
-**Last Updated:** 2026-10-01
-**Current Version:** v5.0.224
+**Last Updated:** 2026-10-21
+**Current Version:** v5.0.227 (version is generated at build time)
 **Saved By:** Grok (M3)
 
 > Also parked (UI, from the 2026-10-01 art audit): five UI proposals are tracked as the

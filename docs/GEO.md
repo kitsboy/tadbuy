@@ -1,6 +1,6 @@
 # Tadbuy — Global Reach (/geo)
 
-**Auto-generated:** 2026-10-21 · **Version:** v5.0.224
+**Auto-generated:** 2026-10-21 · **Version:** v5.0.228
 
 ## Overview
 Interactive **example-data planning UI** at [https://tadbuy.giveabit.io/geo](https://tadbuy.giveabit.io/geo). Country and market figures are static illustrations, not live Tadbuy audience, spend, or performance data.

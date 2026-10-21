@@ -60,10 +60,37 @@ const CommandMenu            = lazy(() => import('./components/CommandMenu'));
 const KeyboardShortcutsHelp = lazy(() => import('./components/KeyboardShortcutsHelp'));
 const NotFound         = lazy(() => import('./pages/NotFound'));
 const Terms            = lazy(() => import('./pages/legal/Terms'));
-const Privacy          = lazy(() => import('./pages/legal/Privacy'));
-const Cookies          = lazy(() => import('./pages/legal/Cookies'));
+const Privacy          = lazy(() => import('./pages/legal/Privacy'));const Cookies           = lazy(() => import('./pages/legal/Cookies'));
 
 // ── Page loader spinner ───────────────────────────────────────────────────────
+function CommandMenuHost() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        setIsOpen(open => !open);
+      } else if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+    const openFromUi = () => setIsOpen(true);
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('tadbuy:open-command-menu', openFromUi);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('tadbuy:open-command-menu', openFromUi);
+    };
+  }, []);
+
+  return isOpen ? (
+    <Suspense fallback={null}>
+      <CommandMenu onClose={() => setIsOpen(false)} />
+    </Suspense>
+  ) : null;
+}
+
 function PageLoader() {
   return (
     // data-page-loader is read by the boot guard in index.html: it is how a
@@ -246,11 +273,11 @@ export default function App() {
         <ScrollProgress />
         <AuthProvider>
           <ToastProvider>
+            <MainContent currency={currency} setCurrency={setCurrency} rates={rates} />
+            <CommandMenuHost />
             <Suspense fallback={null}>
-              <CommandMenu />
               <KeyboardShortcutsHelp />
             </Suspense>
-            <MainContent currency={currency} setCurrency={setCurrency} rates={rates} />
             <BackToTop />
           </ToastProvider>
         </AuthProvider>

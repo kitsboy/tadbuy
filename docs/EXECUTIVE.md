@@ -1,6 +1,6 @@
 # Tadbuy — Executive Summary
 
-**Auto-generated:** 2026-10-21 · **Version:** v5.0.224
+**Auto-generated:** 2026-10-21 · **Version:** v5.0.228
 
 ## Mission
 Prepare a sovereign advertising marketplace where advertisers can plan transparent placements with independent publishers and verifiable delivery.
@@ -8,8 +8,8 @@ Prepare a sovereign advertising marketplace where advertisers can plan transpare
 ## Vision
 One campaign plan across independent distributors — privacy-oriented by design, clear fees, and Bitcoin-native settlement only after verified rails and release approval.
 
-## Traction (live metrics only)
-_Source: /api/metrics. Rows read "—" when the endpoint is unreachable — no estimated or hardcoded counters are published._
+## Traction (no live source connected)
+_No live metrics source is connected; sample app-state values are not published as traction._
 
 | Metric | Value |
 |--------|-------|

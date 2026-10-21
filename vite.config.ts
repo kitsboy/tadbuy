@@ -34,8 +34,7 @@ export default defineConfig(({ mode }) => {
             // React core — loaded immediately
             'vendor-react': ['react', 'react-dom', 'react-router-dom'],
 
-            // Firebase — large, only needed once auth loads
-            'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+            // Firebase is dynamically imported only when configured auth or Firestore is used.
 
             // Charts — only loaded on dashboard/metrics pages
             'vendor-charts': ['recharts', 'd3'],

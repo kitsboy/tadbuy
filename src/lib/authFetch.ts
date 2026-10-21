@@ -20,7 +20,7 @@ export async function getAuthHeaders(
   }
 
   try {
-    const auth = getSafeAuth();
+    const auth = await getSafeAuth();
     const user = auth?.currentUser;
     if (user) {
       const token = await user.getIdToken(forceRefresh);

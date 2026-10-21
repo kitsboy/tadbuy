@@ -2,11 +2,11 @@
   "schema": "gab.product-metrics.v1",
   "productId": "tadbuy",
   "name": "Tadbuy",
-  "updatedAt": "2026-10-21T03:20:17.637Z",
+  "updatedAt": "2026-10-21T17:55:57.021Z",
   "window": {
     "label": "30d",
-    "from": "2026-09-21T03:20:17.637Z",
-    "to": "2026-10-21T03:20:17.637Z"
+    "from": "2026-09-21T17:55:57.021Z",
+    "to": "2026-10-21T17:55:57.021Z"
   },
   "health": {
     "status": "amber",
@@ -67,7 +67,7 @@
     {
       "key": "sats_processed_30d",
       "label": "Example 30-day budget (sats)",
-      "value": 3530000,
+      "value": 1350000,
       "unit": "sats",
       "format": "sats",
       "priority": 1,

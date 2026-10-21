@@ -15,23 +15,13 @@ function writeDoc(filename: string, content: string) {
   console.log(`  ✓ docs/${filename}`);
 }
 
-async function fetchLiveMetrics() {
-  try {
-    const res = await fetch('http://127.0.0.1:3000/api/metrics', { signal: AbortSignal.timeout(2000) });
-    if (res.ok) return await res.json();
-  } catch { /* dev server not running — use static state */ }
-  return null;
-}
-
-async function main() {
+function main() {
   console.log('📄 Syncing auto-evolving docs...');
 
-  const live = await fetchLiveMetrics();
-
-  // Traction is live-only: no static fallbacks. If /api/metrics is unreachable
-  // (as at the CF Pages origin) every row reads "—" rather than an estimate.
-  const num = (v: number | undefined | null) =>
-    typeof v === 'number' ? `${v.toLocaleString()}+` : '—';
+  // This build has no live metrics source. Never query localhost during a build:
+  // a running dev server can return seeded values that look like production data.
+  const unavailable = '—';
+  const sourceNote = 'No live metrics source is connected; sample app-state values are not published as traction.';
 
   writeDoc('EXECUTIVE.md', `# Tadbuy — Executive Summary
 
@@ -43,15 +33,15 @@ ${PROJECT_STATE.executive.mission}
 ## Vision
 ${PROJECT_STATE.executive.vision}
 
-## Traction (live metrics only)
-_Source: /api/metrics. Rows read "—" when the endpoint is unreachable — no estimated or hardcoded counters are published._
+## Traction (no live source connected)
+_${sourceNote}_
 
 | Metric | Value |
 |--------|-------|
-| Campaigns | ${num(live?.totalCampaigns)} |
-| Live campaigns | ${num(live?.liveCampaigns)} |
-| Impressions | ${num(live?.impressions)} |
-| Clicks | ${num(live?.clicks)} |
+| Campaigns | ${unavailable} |
+| Live campaigns | ${unavailable} |
+| Impressions | ${unavailable} |
+| Clicks | ${unavailable} |
 
 ## Distribution model
 ${PROJECT_STATE.marketing.pitch}
@@ -270,19 +260,7 @@ Full manifest: [GEO-PAGE-100.md](./GEO-PAGE-100.md)
 *Part of the [Give A Bit](https://giveabit.io) family.*
 `);
 
-  const sha = process.env.GIT_SHA?.slice(0, 7) ?? 'sync';
-  const latestPath = path.join(ROOT, 'LATEST-UPDATE.md');
-  fs.writeFileSync(latestPath, `# tadbuy — Last Updated ${today} by Grok
-
-Brief: ${PROJECT_STATE.version} — docs sync from projectState
-Commit: ${sha}
-Docs synced: ${today}
-`, 'utf-8');
-
   console.log('✅ Docs sync complete.');
 }
 
-main().catch((e) => {
-  console.error('Docs sync failed:', e);
-  process.exit(1);
-});
+main();

@@ -1,7 +1,7 @@
-import { useState, useMemo, useEffect, type FormEvent } from "react";
+import { useState, useMemo, type FormEvent } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button, Input, Label, Modal, Select } from "@/components/ui";
-import { Chip, SkeletonCard, EmptyState } from "@/components/ui/index";
+import { Chip, EmptyState } from "@/components/ui/index";
 import { useToast } from "@/components/Toast";
 import {
   Search, Filter, Zap, Globe, ChevronDown, X, Star,
@@ -315,7 +315,6 @@ export default function Marketplace() {
   const [bidSlot, setBidSlot] = useState<MarketplaceSlot | null>(null);
   const [maxBid, setMaxBid] = useState(50_000);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [watchlist] = useLocalStorage<string[]>("tadbuy_marketplace_watchlist", []);
   const [showWatchlistOnly, setShowWatchlistOnly] = useState(false);
   const [requestSlot, setRequestSlot] = useState<MarketplaceSlot | null>(null);
@@ -334,11 +333,6 @@ export default function Marketplace() {
     );
     return request;
   };
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 600);
-    return () => clearTimeout(timer);
-  }, []);
 
   // This build has no live marketplace feed; cards below are sample archetypes.
   const featuredSlots = useMemo(
@@ -503,9 +497,7 @@ export default function Marketplace() {
             </div>
 
             <AnimatePresence mode="popLayout">
-              {loading ? (
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">{Array.from({ length: 6 }).map((_, index) => <div key={index}><SkeletonCard /></div>)}</div>
-              ) : filtered.length === 0 ? (
+              {filtered.length === 0 ? (
                 <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   <EmptyState icon={PackageSearch} title="No sample listings match your filters" description="Try adjusting your platform, category, or example budget filters." action={clearFilters} actionLabel="Reset all filters" art={<ArtMarketplaceScene className="h-24" />} />
                 </motion.div>

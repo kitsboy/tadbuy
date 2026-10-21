@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  Search, Megaphone, Layers, BarChart2, Globe, Zap, Network, X, Brain, Plug, Shield,
+  Search, Megaphone, Layers, BarChart2, Globe, Zap, Network, Brain, Plug, Shield,
   FlaskConical, Presentation, Wallet, MapPin, FileText, Code2, Receipt, BookOpen, Target,
   Clock,
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { COMMAND_MENU_OPEN_EVENT } from '@/lib/commandMenu';
 
 const RECENT_KEY = 'tadbuy_recent_pages';
 const MAX_RECENT = 5;
@@ -38,113 +37,57 @@ const COMMAND_ACTIONS = [
   { id: 'ppq', name: 'PPQ Guide', icon: FileText, path: '/ppq', group: 'Info' },
 ] as const;
 
-export default function CommandMenu() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function CommandMenu({ onClose }: { onClose: () => void }) {
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
   const [recentPages, setRecentPages] = useLocalStorage<RecentPage[]>(RECENT_KEY, []);
+  const filtered = useMemo(() => COMMAND_ACTIONS.filter(action => action.name.toLowerCase().includes(search.toLowerCase())), [search]);
 
   useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setIsOpen((open) => !open);
-      }
-      if (e.key === 'Escape') setIsOpen(false);
-    };
-    const openFromUi = () => setIsOpen(true);
-    document.addEventListener('keydown', down);
-    document.addEventListener(COMMAND_MENU_OPEN_EVENT, openFromUi);
-    return () => {
-      document.removeEventListener('keydown', down);
-      document.removeEventListener(COMMAND_MENU_OPEN_EVENT, openFromUi);
-    };
-  }, []);
-
-  useEffect(() => {
-    const match = COMMAND_ACTIONS.find((a) => a.path === location.pathname);
-    if (!match) return;
-
-    let prev: RecentPage[] = [];
-    try {
-      const raw = window.localStorage.getItem(RECENT_KEY);
-      prev = raw ? (JSON.parse(raw) as RecentPage[]) : [];
-    } catch {
-      prev = [];
-    }
+    const match = COMMAND_ACTIONS.find(action => action.path === location.pathname);
+    if (!match || recentPages[0]?.path === match.path) return;
 
     setRecentPages([
       { path: match.path, name: match.name, visitedAt: Date.now() },
-      ...prev.filter((p) => p.path !== match.path),
+      ...recentPages.filter(page => page.path !== match.path),
     ].slice(0, MAX_RECENT));
-  }, [location.pathname, setRecentPages]);
-
-  const filtered = COMMAND_ACTIONS.filter(a => a.name.toLowerCase().includes(search.toLowerCase()));
+  }, [location.pathname, recentPages, setRecentPages]);
 
   const recentActions = search.trim()
     ? []
-    : recentPages
-        .map((r) => COMMAND_ACTIONS.find((a) => a.path === r.path))
-        .filter((a): a is (typeof COMMAND_ACTIONS)[number] => Boolean(a));
+    : recentPages.map(page => COMMAND_ACTIONS.find(action => action.path === page.path)).filter((action): action is (typeof COMMAND_ACTIONS)[number] => Boolean(action));
 
   const handleSelect = (path: string) => {
     navigate(path);
-    setIsOpen(false);
+    onClose();
     setSearch('');
   };
 
   return (
     <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] sm:pt-[20vh] px-4">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/85" onClick={() => setIsOpen(false)} />
-          <motion.div initial={{ opacity: 0, scale: 0.95, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -20 }} transition={{ duration: 0.15 }}
-            className="relative w-full max-w-xl bg-surface border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
-            <div className="flex items-center px-4 py-3 border-b border-white/5">
-              <Search className="w-5 h-5 text-muted mr-3" />
-              <input autoFocus value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Type a command or search..."
-                className="flex-1 bg-transparent border-none outline-none text-text placeholder:text-muted text-lg" />
-              <div className="text-[10px] font-mono text-muted bg-white/5 px-2 py-1 rounded">ESC</div>
-            </div>
-            <div className="max-h-[60vh] overflow-y-auto p-2">
-              {filtered.length === 0 ? (
-                <div className="p-4 text-center text-muted text-sm">No results found.</div>
-              ) : (
-                <div className="space-y-1">
-                  {recentActions.length > 0 && (
-                    <>
-                      <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-muted flex items-center gap-1.5">
-                        <Clock className="w-3 h-3" /> Recent
-                      </div>
-                      {recentActions.map(action => (
-                        <button key={`recent-${action.id}`} onClick={() => handleSelect(action.path)}
-                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-text hover:bg-white/5 transition-colors">
-                          <action.icon className="w-4 h-4 text-accent/70" />
-                          <span className="flex-1">{action.name}</span>
-                          <span className="text-[10px] text-muted/60">{action.group}</span>
-                        </button>
-                      ))}
-                      <div className="my-2 border-t border-white/5" />
-                    </>
-                  )}
-                  {filtered.map(action => (
-                    <button key={action.id} onClick={() => handleSelect(action.path)}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm font-medium text-text hover:bg-white/5 transition-colors">
-                      <action.icon className="w-4 h-4 text-muted" />
-                      <span className="flex-1">{action.name}</span>
-                      <span className="text-[10px] text-muted/60">{action.group}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        </div>
-      )}
+      <div className="fixed inset-0 z-[100] flex items-start justify-center px-4 pt-[15vh] sm:pt-[20vh]">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/85" onClick={onClose} />
+        <motion.div initial={{ opacity: 0, scale: 0.95, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -20 }} transition={{ duration: 0.15 }} className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-white/10 bg-surface shadow-2xl" role="dialog" aria-modal="true" aria-label="Command menu">
+          <div className="flex items-center border-b border-white/5 px-4 py-3">
+            <Search className="mr-3 h-5 w-5 text-muted" />
+            <input autoFocus value={search} onChange={event => setSearch(event.target.value)} placeholder="Type a command or search..." className="flex-1 border-none bg-transparent text-lg text-text outline-none placeholder:text-muted" aria-label="Search commands" />
+            <span className="rounded bg-white/5 px-2 py-1 font-mono text-[10px] text-muted">ESC</span>
+          </div>
+          <div className="max-h-[60vh] overflow-y-auto p-2">
+            {filtered.length === 0 ? <div className="p-4 text-center text-sm text-muted">No results found.</div> : (
+              <div className="space-y-1">
+                {recentActions.length > 0 && <>
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-muted"><Clock className="h-3 w-3" /> Recent</div>
+                  {recentActions.map(action => <button key={`recent-${action.id}`} onClick={() => handleSelect(action.path)} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-text transition-colors hover:bg-white/5"><action.icon className="h-4 w-4 text-accent/70" /><span className="flex-1">{action.name}</span><span className="text-[10px] text-muted/60">{action.group}</span></button>)}
+                  <div className="my-2 border-t border-white/5" />
+                </>}
+                {filtered.map(action => <button key={action.id} onClick={() => handleSelect(action.path)} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-text transition-colors hover:bg-white/5"><action.icon className="h-4 w-4 text-muted" /><span className="flex-1">{action.name}</span><span className="text-[10px] text-muted/60">{action.group}</span></button>)}
+              </div>
+            )}
+          </div>
+        </motion.div>
+      </div>
     </AnimatePresence>
   );
 }

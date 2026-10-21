@@ -1,5 +1,59 @@
 # Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-27
 
+## Session — 2026-10-21 · release and deployment
+
+**Done:**
+- Prepared v5.0.228 with deferred Firebase/auth and command/help payloads, immediate sample marketplace rendering, UI/E2E updates, pilot/readiness documentation, and regenerated static artifacts.
+- Removed the docs build generator's localhost `/api/metrics` fetch. It could mistake seeded dev-server values for live traction; generated Executive metrics now remain unavailable until a real source is connected.
+- Applied npm's non-force audit fix, updating Vite within its existing range from 6.4.3 to 6.4.5.
+
+**Decisions / boundaries:**
+- The feature worktree is based on the exact `origin/main` tip. The separate `/Users/cam/projects/tadbuy` checkout remains untouched.
+- Production deployment is the Cloudflare Pages GitHub integration on pushes to `main`; the Pages workflow verifies the live site and assets. No manual wrangler deploy or production data change.
+- The audit has one remaining low-severity esbuild advisory in the tsx development toolchain; the configured high-severity gate passes. Do not claim the audit is vulnerability-free.
+
+**Verification:**
+- `npm run lint` ✅; `npm run build` ✅ (69 JS chunks; dist verification passed; existing Rollup `EmptyState` circular-chunk warning remains).
+- `npm run test:payment-core` ✅ 7/7; `npm run test:e2e` ✅ 27/27; `npm run check:routes` ✅ 38/38; `npm run check:security` ✅ 0 findings; `npm run check:boot-fallback` ✅ 4 scenarios; `npm run check:bundle` ✅ 70 assets.
+- `npm run audit:dependencies` ✅ at configured high threshold; one low-severity esbuild advisory remains.
+- Generated `docs/EXECUTIVE.md` shows em dashes for all traction metrics; no localhost metrics fetch remains in `scripts/sync-docs.ts`.
+
+**Git State:**
+- SHA: recorded in this release commit after creation.
+- Unpushed: this release commit (to be pushed to `origin/main` for Pages deployment). The worktree’s feature branch starts at `de9b167`, the exact `origin/main` tip.
+
+---
+
+## Session — 2026-10-21 · preview readiness and initial-load performance follow-up
+
+**Done:**
+- Deferred Firebase Auth/Firestore SDK loading so public routes do not request or initialize Firebase when the build has no valid Firebase config; converted consumers to await initialization and kept Firebase as a dynamic dependency.
+- Split Command Menu and keyboard-shortcuts dialog payloads behind user interaction; the command palette still opens through the keyboard shortcut and navbar action, and Escape closes both dialogs.
+- Removed an artificial Marketplace loading delay so its already-available illustrative listings render immediately.
+- Added E2E assertions for no Firebase asset requests on public routes, immediate sample marketplace labels, command-menu keyboard lifecycle, and lazy-loaded keyboard help. Updated the Platforms test to target the actual current page heading.
+- Fixed command-menu recent-page updates to run in an effect, rather than writing React state during render.
+
+**Decisions / boundaries:**
+- Firebase remains available only when explicitly configured; this change is code splitting, not a new authentication or backend approval.
+- Sample placements remain local preview; no real inventory, vendor contact, payments, invoices, or settlement are enabled.
+- Verification was recorded before the release commit/push. This feature worktree is distinct from `/Users/cam/projects/Tadbuy`, which was left untouched; the Cloudflare Pages release path is a push to `main`.
+
+**Verification:**
+- `npm run lint` ✅
+- `npm run check:routes` ✅ (38 lazy modules / 38 route declarations)
+- `npm run check:security` ✅ (0 credential findings)
+- `npm run check:boot-fallback` ✅ (4 scenarios)
+- `npm run build` ✅ (69 JS chunks; dist verification passed). Rollup reports the existing `EmptyState` circular-chunk warning.
+- `npm run check:bundle` ✅ (70 JS/CSS assets; 2437.8 KiB total; no emitted Firebase-named chunk).
+- Production-mode Playwright suite ✅ 27/27, including public routes, command menu, keyboard help, marketplace sample flow, and preview boundaries.
+- `git diff --check` ✅. No payments, deploys, node operations, credentials, or funds touched.
+
+**Git State:**
+- Feature branch: `feat/tadbuy-preview-perf-policies`; base `de9b1675018fdec59d587e4d44699248d13d7458`; no new commits or pushes.
+- Existing uncommitted work includes product/readiness docs, generated docs/metrics/feed/cache changes, lazy Firebase/auth changes, command/keyboard lazy loading, marketplace first-render improvements, and tests. Review generated artifacts before any future commit.
+
+---
+
 ## Session — 2026-10-21 · marketplace preview + Bitcoin-node readiness preparation
 
 **Done:**

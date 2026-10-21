@@ -1,6 +1,6 @@
 # tadbuy — Last Updated 2026-10-21 by Buffy
 
-Brief: v5.0.225 — prepare honest sample marketplace flows and Umbrel/Lightning readiness.
-Commit: c4f37d8
-
-No live API, inventory, payment, or settlement enabled. Full verification and next gates: docs/KIMI-HANDOFF.md.
+Brief: v5.0.228 release — defer Firebase and command UI loading; render marketplace samples immediately and publish only truthful traction data.
+Commit: see Git history (release commit)
+Verification: typecheck, build, 27/27 E2E, payment-core, routes, security, boot fallback, bundle, and high-severity audit passed.
+No live deployment claimed until the main-branch Pages workflow verifies production.

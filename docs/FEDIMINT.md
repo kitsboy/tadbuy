@@ -33,4 +33,4 @@ Fedimint ecash is a roadmap option only. No Tadbuy federation, invite, gateway, 
 No Fedimint API endpoint is deployed or approved for Tadbuy. The legacy status/balance/pay path names are not a deployed integration.
 
 ---
-*Tadbuy v5.0.224*
+*Tadbuy v5.0.228*

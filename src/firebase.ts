@@ -1,6 +1,6 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import type { FirebaseApp } from 'firebase/app';
+import type { Auth } from 'firebase/auth';
+import type { Firestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -20,14 +20,14 @@ const hasFirebaseConfig = Boolean(
   import.meta.env.VITE_FIREBASE_PROJECT_ID
 );
 
-let app;
-let auth;
-let db;
+export let app: FirebaseApp | null = null;
+export let auth: Auth | null = null;
+export let db: Firestore | null = null;
 let initialized = false;
+let initialization: Promise<void> | null = null;
 
-export const initializeFirebase = () => {
+export const initializeFirebase = async () => {
   if (typeof window === 'undefined') {
-    console.warn('[Firebase] Skipping initialization on server-side');
     return { app: null, auth: null, db: null };
   }
 
@@ -36,52 +36,52 @@ export const initializeFirebase = () => {
   }
 
   if (!hasFirebaseConfig) {
-    console.warn('[Firebase] Not configured (missing VITE_FIREBASE_API_KEY) — auth disabled');
     initialized = true;
     return { app: null, auth: null, db: null };
   }
 
-  try {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
-    initialized = true;
-    console.log('[Firebase] Initialized successfully');
-    return { app, auth, db };
-  } catch (error) {
-    console.error('[Firebase] Initialization error:', error);
-    throw error;
+  if (!initialization) {
+    initialization = (async () => {
+      try {
+        const [{ initializeApp }, { getAuth }, { getFirestore }] = await Promise.all([
+          import('firebase/app'),
+          import('firebase/auth'),
+          import('firebase/firestore'),
+        ]);
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        initialized = true;
+        console.log('[Firebase] Initialized successfully');
+      } catch (error) {
+        initialization = null;
+        console.error('[Firebase] Initialization error:', error);
+        throw error;
+      }
+    })();
   }
+
+  await initialization;
+  return { app, auth, db };
 };
 
-export const getSafeAuth = () => {
-  if (typeof window === 'undefined') {
-    console.warn('[Firebase] getSafeAuth called on server-side');
-    return null;
-  }
-
-  if (!initialized) {
-    initializeFirebase();
-  }
-
-  return auth || null;
+export const getSafeAuth = async (): Promise<Auth | null> => {
+  if (typeof window === 'undefined') return null;
+  if (!initialized) await initializeFirebase();
+  return auth;
 };
 
-export const getFirebaseAuth = () => {
-  const a = getSafeAuth();
-  if (!a) throw new Error('Firebase not configured');
-  return a;
+export const getFirebaseAuth = async (): Promise<Auth> => {
+  const safeAuth = await getSafeAuth();
+  if (!safeAuth) throw new Error('Firebase not configured');
+  return safeAuth;
 };
 
-export const getSafeFirestore = () => {
-  if (typeof window === 'undefined' || !initialized) {
-    initializeFirebase();
-  }
+export const getSafeFirestore = async (): Promise<Firestore | null> => {
+  if (typeof window === 'undefined') return null;
+  if (!initialized) await initializeFirebase();
   return db;
 };
 
-// Export 'auth' directly for backward compatibility with Profile.tsx and other files
+// Keep the legacy names available while the Firebase SDK itself loads on demand.
 export { auth as defaultAuth };
-export { auth };
-
-export { app, db };

@@ -1,174 +1,48 @@
-# 🌍 Geographic Strategy for Tadbuy Social Integrations
+# Tadbuy — Geographic and Social-Channel Research
 
-**📦 Infrastructure:** `infrastructure/nostr-relay/` — 8 regional Nostr relay configs, Docker Compose, Nginx reverse proxy, health check scripts, and backup utilities. All 8 Tier-1 jurisdictions have production-ready TOML configurations.
+**Status:** Research backlog only. No market, platform account, relay, advertising permission, vendor supply, partnership, or jurisdiction is approved. This is not legal advice or launch authorization.
 
----
+## Position
 
-## Executive Summary
+Tadbuy is a public demo preview, not a live advertising service. Keep English/global Nostr and opt-in independent-publisher research as the baseline. Regional Bitcoin interest and platform audience statistics do not establish Tadbuy audience, inventory, legal clearance, or product authorization.
 
-For **Phase 1 launch** (Telegram + Nostr), we should target **8 Tier-1 jurisdictions** covering ~67% of global Bitcoin users and crypto-native activity. Nostr needs a global, censorship-resistant approach, while Telegram requires regional legal compliance. TikTok should be **avoided initially** due to strict Chinese ownership constraints on financial content.
+**India is worth researching, not pre-approving or excluding.** Explore publisher-owned WhatsApp communities, YouTube creators, Instagram, and regional-language publishers on ShareChat/Moj only through opt-in discovery and after current platform/category policy review. These are research candidates, not integrations or approved crypto-ad placements.
 
----
+## Discovery priorities (not rollout order)
 
-## 🗺️ PHASE 1 GEOGRAPHIC TARGETING PRIORITIZATION
+| Candidate | Research surfaces | Why explore | Gate before any campaign |
+|---|---|---|---|
+| Global / English | Nostr, independent websites, newsletters, podcasts | Closest fit to current publisher-assisted workflow | Named consenting publisher, disclosure and evidence review |
+| India | WhatsApp-owned publisher/community inventory, YouTube, Instagram, ShareChat/Moj | Multilingual creator ecosystem; test actual opt-in supply | Category/platform eligibility, local-language disclosure, consent/privacy, local counsel, property control |
+| Brazil / LATAM | Nostr, independent newsletters/podcasts/sites, creators | Portuguese/Spanish localization could fit the manual model | Local policy/counsel, consent, language review, actual publisher supply |
+| Japan / Korea | Nostr, LINE/KakaoTalk publisher research, independent creators | Distinct languages and local channel habits merit interviews | Current platform access/rules, policy and privacy review |
 
-### **Tier 1 (Launch - Immediate):** 8 Jurisdictions
-*(Covers ~67% of global Bitcoin users)*
+This is a discovery list, not a recommendation to target these markets. Compare candidates by verified opt-in supply, language effort, property-control evidence, current rules for the exact ad category, privacy/consent, payment constraints, measurement, and qualified local review. Audience statistics count identities/accounts and can include duplication; they are not unique people, Bitcoin audience, Tadbuy inventory, or performance.
 
-| Rank | Jurisdiction | Rationale | Nostr Considerations | Telegram Requirements | TikTok? |
-|------|-------------|-----------|---------------------|----------------------|---------|
-| **1** | **United States** | Largest Bitcoin market, strongest crypto community, high Lightning adoption | Self-hosted relay OK; US-based relays preferred for uptime | Requires LLC for business use; strict KYC for payments | ❌ Too regulatory |
-| **2** | **Japan** | Tier-1 crypto regulation, high BTC ownership, strong Nostr community | Japanese relays (nostr.wirednet.net, nostr.mutestudio.com); local language relay names | Free tier sufficient for basic bot; strict spam laws | ❌ |
-| **3** | **Germany** | Progressive privacy laws, strong Bitcoin culture, high Nostr developer presence | Damus relay infrastructure overlaps; EU-based relays | Requires EU privacy compliance; DSGVO compliant | ❌ |
-| **4** | **Netherlands** | Crypto-friendly, strong Lightning network (Boltz, LNMarkets), high Nostr adoption | Excellent relay diversity; local community relays | Free bot tier acceptable; good compliance environment | ❌ |
-| **5** | **Portugal** | No capital gains tax on crypto, crypto-visa programs, growing Bitcoin community | Minimal censorship risk; Portuguese-speaking relay opportunities | Relaxed financial content policies | ❌ |
-| **6** | **Singapore** | Asian crypto hub, progressive regulation, high-tech adoption | Good APAC relay coverage; English-friendly | Requires local entity for payments; strict AML | ❌ |
-| **7** | **El Salvador** | Bitcoin legal tender, highest per-capita Lightning adoption | High censorship-resistance demand; local Spanish relay | Requires Bitcoin Beach partnership potential | ❌ |
-| **8** | **Argentina** | High inflation, massive Bitcoin adoption for remittances, Nostr censorship circumvention | Key Nostr hub (Spanish-language); anti-censorship demand | Requires local compliance; currency volatility considerations | ❌ |
+## Platform posture
 
-### **Tier 2 (Month 2-3):** 6 Jurisdictions
-*(Expansion phase)*
+- **Nostr:** user-controlled NIP-07 publication. A signed event and relay acknowledgement do not prove impressions or conversion. Do not deploy regional relays based on the old draft; first verify ownership, security, cost, operations, and actual need.
+- **Websites, newsletters, podcasts:** publisher-assisted research and placements; require property control and channel-appropriate evidence.
+- **Reddit:** manual, vendor-owned placements only where community and publisher rules permit. No Ads API automation is approved.
+- **WhatsApp, Instagram, YouTube, ShareChat/Moj, Telegram, LINE, KakaoTalk, Spotify, Pinterest, LinkedIn, TikTok, WeChat:** research/roadmap only. No connection or access is implied. Recheck current platform rules per category and market.
+- **Meta and Google:** some crypto-related ads face restrictions, certification, or written-permission requirements. Approval does not transfer between products, markets, or advertisers.
+- Do not publish blanket country bans, compliance labels, or legal conclusions. Assess each campaign, channel, activity, and jurisdiction individually with current sources and counsel.
 
-| Jurisdiction | Rationale | Considerations |
-|-------------|-----------|----------------|
-| Brazil | Largest LATAM crypto market, growing Nostr | Requires Portuguese localization |
-| South Korea | High crypto adoption, but strict regulation | Careful compliance needed |
-| UK | Financial services hub, crypto-friendly | Regulatory clarity improving |
-| France | EU leader in crypto regulation | Good Nostr relay potential |
-| Czech Republic | Privacy-focused, growing Bitcoin community | Minimal restrictions |
-| Ukraine | Crypto for war finance, high adoption | Censorship circumvention key use case |
+## Research protocol
 
-### **Tier 3 (Avoid Initially):** 
-*(High-risk regions to avoid in Phase 1)*
+1. Invite opt-in interviews; do not scrape users, communities, or contact details.
+2. Record publisher/property controller, consent scope/date, country/language, permitted content, disclosure requirements, and withdrawal contact.
+3. Verify official platform and category eligibility before campaign-specific action.
+4. Record measurement provenance and limits; publication proof is not reach, attention, or conversion.
+5. Keep supply visibly sample-only until an identified owner consents and an operator approves publication.
+6. Reassess per campaign. This document authorizes no outreach, integration, paid targeting, or launch.
 
-| Region | Reason to Avoid | Specific Risks |
-|--------|------------------|----------------|
-| **China** (TikTok, WeChat) | State-owned platforms, blanket crypto bans | Severe legal/censorship risk |
-| **Russia** | Sanctions complexity, regulatory uncertainty | Compliance nightmare |
-| **India** | Restrictive crypto policies, banking restrictions | High seizure risk |
-| **Vietnam** | Ban on crypto payments as legal tender | Legal enforcement risk |
+## Research sources (reviewed 2026-10-21; re-check before use)
 
----
+- DataReportal, [Digital 2025: India](https://datareportal.com/reports/digital-2025-india) — reports 491m social-media user identities for Jan 2025, not unique people or Tadbuy supply.
+- ShareChat, [ShareChat Ads](https://ads.sharechat.com/) — publisher's description of an advertising product, not Tadbuy access or partnership.
+- Google, [Cryptocurrencies and related products policy](https://support.google.com/adspolicy/answer/14009787?hl=en) — category/location-specific eligibility and certification.
+- Meta, [Cryptocurrency products and services policy](https://transparency.meta.com/policies/ad-standards/restricted-goods-services/cryptocurrency-products-and-services/) — prior written permission for listed categories.
+- ASCI, [VDA advertising guideline notice (PDF)](https://www.ascionline.in/wp-content/uploads/2022/09/vda-guidelines-press-release-feb-23.pdf) — verify current applicability/wording with qualified India counsel.
 
-## 🇳🇴 NOSTR GEOGRAPHIC STRATEGY
-
-### **Relay Selection Matrix:**
-```
-Primary Relays (Global Coverage):
-- relay.damus.io (Global, censorship-resistant)
-- nostr.wirednet.net (Japan, uptime focus)
-- relay.minibits.nl (Netherlands, Lightning integration)
-- nostr.mutestudio.com (Japan, creator-focused)
-- nos.lol (US, general purpose)
-
-Regional Additions:
-- Spain/LATAM: relay.nostur.com or local Spanish relays
-- Brazil: br.nostr.wirednet.net
-- Germany: relay.snort.social
-- Argentina: Local self-hosted relay for maximum resilience
-```
-
-### **Language Strategy:**
-- **Phase 1**: English (global Nostr default)
-- **Phase 2**: Spanish (Argentina, LATAM expansion)
-- **Phase 3**: Japanese, Portuguese, German
-
-### **Censorship Resistance:**
-- Target countries with documented social media restrictions
-- Self-hosted relay option for users
-- Localized relay lists (non-US-centric)
-
----
-
-## 📱 TELEGRAM GEOGRAPHIC STRATEGY
-
-### **Compliance Requirements Matrix:**
-
-| Tier | Jurisdictions | Business Account | Payment Features | Restrictions |
-|------|---------------|------------------|------------------|--------------|
-| **Tier A** | US, EU, Japan, Singapore | Required | Full | Strict KYC |
-| **Tier B** | UK, Australia, Canada, NL | Recommended | Limited | Moderate |
-| **Tier C** | Brazil, Korea, Switzerland | Not required | Full | Currency volatility |
-| **Tier D** | Argentina, Ukraine, Turkey | No | Basic only | Political sensitivity |
-
-### **Regional Features:**
-```
-US: Requires LLC for monetized bots; Stripe Connect for payments
-EU: GDPR compliance mandatory; DSGVO-compliant data processing
-LATAM: Currency volatility handling (local inflation hedging with BTC)
-APAC: Multi-language support; local payment providers
-```
-
----
-
-## 🎵 TIKTOK RECOMMENDATION: AVOID ENTIRELY
-
-### **Why NOT TikTok for Phase 1:**
-- **Owned by ByteDance (China):** Chinese law requires data cooperation with government
-- **Crypto Bans in China:** Any Bitcoin promotion triggers immediate flagging
-- **Content Restrictions:** Financial/crypto content heavily moderated
-- **Regulatory Exposure:** Western crypto projects banned by Chinese state media
-- **Data Risks:** User data flows to Chinese servers subject to surveillance
-
-### **Alternative for Asia:**
-- LINE (Japan/Thailand) - crypto-friendly, messaging + timeline
-- KakaoTalk (Korea) - strict but compliant channels
-- Telegram remains primary for Asian markets
-
----
-
-## 💰 LEGAL ENTITY TIMING
-
-### **Entity Formation by Market:**
-```
-Phase 1 Target Markets (Launch):
-- USA: Wyoming LLC (crypto-friendly banking)
-- EU: Czech s.r.o. or German GmbH for broad EU coverage
-
-Phase 2 Expansion:
-- Singapore: Local entity for APAC compliance
-- Japan: Corporation needed for payment services act (PSA) registration
-
-Phase 3 (If Meta/TikTok reconsidered):
-- Separate compliance entity with restricted scope
-- Isolated payment channels
-```
-
----
-
-## 🚀 RECOMMENDED ACTION PLAN
-
-### **Immediate Actions (Week 1):**
-1. ✅ Launch Nostr relay infrastructure in Tier 1 countries
-2. ✅ Deploy Telegram bots in English for Tier 1 markets
-3. ✅ Register domain TLDs for localized experiences (optional)
-
-### **Month 1 Actions:**
-1. ✅ Establish Wyoming LLC for US compliance
-2. ✅ Partner with local Bitcoin communities in Japan/Germany/NL
-3. ✅ Deploy Spanish-language Nostr relay (Argentina focus)
-
-### **Month 2-3 Expansion:**
-1. ✅ Form EU entity (Czech/Germany)
-2. ✅ Localized Telegram bots for Portuguese/Spanish
-3. ✅ TikTok exclusion maintained unless policy changes
-
----
-
-## 📊 GEOGRAPHIC SCORE COMPARISON
-
-| Region | Bitcoin Adoption | Nostr Activity | Telegram Usage | TikTok Risk | Overall Priority |
-|--------|------------------|----------------|----------------|-------------|------------------|
-| **North America** | 9/10 | 8/10 | 7/10 | 10/10 (AVOID) | HIGH |
-| **EU** | 8/10 | 9/10 | 8/10 | 6/10 | HIGH |
-| **APAC (JP/KR/SG)** | 9/10 | 7/10 | 9/10 | 3/10 | HIGH |
-| **LATAM (AR/BR)** | 7/10 | 8/10 | 9/10 | 4/10 | MEDIUM-HIGH |
-| **China/TikTok Region** | 1/10 | N/A | 0/10 | 10/10 | AVOID |
-
----
-
-## 📌 KEY RECOMMENDATION
-
-**Primary Launch Targets: US, Japan, Germany, Netherlands, Portugal, Singapore, El Salvador, Argentina**
-
-**Avoid TikTok and all Chinese-owned platforms entirely** due to irreconcilable risks. Nostr is inherently global (no geographic restrictions), while Telegram requires careful regional compliance — particularly in Tier A jurisdictions.
+**Current recommendation:** no launch market or social integration is approved. Continue Nostr user-controlled and research India and other regions through consenting publisher interviews. Prioritize actual supply, channel access, localization, privacy, measurement, and local review—not unsupported market scores. No platform or country is categorically approved or banned here.

@@ -1,7 +1,36 @@
 # Tadbuy — Improvement Roadmap
 
-**Updated:** 2026-10-01
-**Current direction:** advertiser + independent vendor marketplace
+**Updated:** 2026-10-21
+**Current direction:** public demo preview for advertiser + independent publisher coordination
+
+## 20 prioritized upgrades
+
+This is a product backlog, not a commitment to launch, spend, transact, or integrate a provider. **P0** means user clarity/trust; **P1** enables a safe pilot; **P2** is gated expansion. Effort: S/M/L. Any integration with money, a third-party platform, personal data, or production operations requires its named owner and approval first.
+
+| # | Priority | Upgrade | Benefit | Effort / gate |
+|---:|:---:|---|---|---|
+| 1 | P0 | Route-level performance budgets and cold-route regression tests | Prevent slow-page regressions | M; measure production/core web vitals |
+| 2 | P0 | Lazy-load Firebase/auth and SDK only on auth use | Reduce public-route JS and third-party requests | M; preserve configured sign-in tests |
+| 3 | P0 | Render Marketplace samples immediately; remove artificial wait | Earlier useful content | S; verify first meaningful inventory |
+| 4 | P0 | Defer command palette/help overlays until opened | Reduce initial route chunk work | M; keyboard and mobile regression coverage |
+| 5 | P0 | Standardize route chunk preloading/prefetch on navigation intent | Faster page-to-page navigation | M; avoid eager loading unrelated routes |
+| 6 | P0 | Add per-route Web Vitals/provenance dashboard without personal identifiers | Find slow routes and diagnose | M; privacy review, no new analytics vendor assumed |
+| 7 | P0 | Keep clear demo/sample labels and explicit no-payment/no-contact states | Prevent misleading commercial impressions | S; keep copy consistent across entry points |
+| 8 | P0 | Give advertisers/publishers a concise persona-first guided path | Shorter route to first value | M; user-test before broad restructure |
+| 9 | P0 | Add a fully local sample campaign walkthrough | Demonstrate end-to-end planning safely | M; no network, vendor, or payment side effects |
+| 10 | P0 | Show an execution receipt: actor, example/real cost, disclosure, evidence and next stop | Clarify each step before commitment | M; preview wording only until commercial terms approved |
+| 11 | P0 | Show metric source, freshness, and what each number does not measure | Improve trust in reporting | M; remove any unsupported counters |
+| 12 | P1 | Make campaign and delivery state transitions one documented shared model | Avoid confusion between draft, publication, proof and payment | M; schema/API owner if durable |
+| 13 | P1 | Split identity, inventory, and proof into separate evidence/review signals | Explain trust without false verification | M; human approval still required |
+| 14 | P1 | Add channel playbooks naming publisher/operator, disclosure and proof artifact | Make manual distribution operable | M; review policies per channel |
+| 15 | P1 | Build an operator-owned readiness/gate checklist with named blocker owners | Show live/sample/blocked status accurately | M; do not imply readiness from node sync |
+| 16 | P1 | Add synthetic-only failure/abuse/security regression cases | Test retries, bad proofs and unauthorized transitions | M; no service calls or payment side effects |
+| 17 | P1 | Improve keyboard access, reduced motion, contrast and mobile task flows | Broader usable experience | M; run existing a11y/theme checks |
+| 18 | P1 | Add opt-in publisher research intake with consent, scope and withdrawal | Learn supply without scraping or false partner claims | M; Cam/policy approval before collecting real data |
+| 19 | P2 | Explore India localization and publisher research (WhatsApp, YouTube, Instagram, ShareChat/Moj) | Test multilingual creator-market fit | L; platform rules, local counsel, consent and access gates |
+| 20 | P2 | Evaluate Brazil/LATAM, Japan/Korea and regional creator channels against verified supply | Expand only where the model fits | L; no rollout until evidence and owner approval |
+
+**Recommended work order:** 1–5 (performance), 7–11 (trust/value), 12–18 (safe workflow/review), then 19–20 only after opt-in discovery and policy checks. India is a research candidate, not a launch recommendation; see [Geographic Strategy](./GEOGRAPHIC-STRATEGY.md).
 
 ## Product direction
 
@@ -20,9 +49,9 @@ Tadbuy should not describe a channel as automatically connected until its provid
 - [x] Show execution mode and proof requirements before payment.
 - [x] Keep delivery state separate from payment state.
 - [x] Persist selected distribution channels in campaign drafts.
-- [ ] Add vendor placement records and offer/accept workflow.
-- [ ] Add proof submission for URLs, screenshots, dates, and episode timestamps.
-- [ ] Add the delivery timeline: planned → offered → accepted → published → proof submitted → verified.
+- [x] Add vendor placement records and offer/accept workflow foundations; durable backend/pilot remain gated.
+- [x] Add proof submission fields for URL/reference, screenshots, dates, and episode timestamps.
+- [x] Add the delivery timeline foundations; current public demo must keep local/sample and durable states explicit.
 
 ### P1 — Nostr pilot
 
@@ -37,8 +66,8 @@ Tadbuy should not describe a channel as automatically connected until its provid
 ### P2 — Direct publisher inventory
 
 - [ ] Create vendor profiles with channel, format, audience, geography, price, availability, and proof requirements.
-- [ ] Let vendors list websites, newsletters, podcasts, and Nostr inventory.
-- [ ] Let advertisers request or purchase a placement without implying automatic publication.
+- [x] Let vendors draft owned inventory for future publication; public availability remains operator-approved and backend-gated.
+- [x] Let advertisers preview/request a placement without implying an automatic publication or payment.
 - [ ] Add vendor acceptance, cancellation, revision, and dispute states.
 - [ ] Keep inventory and performance claims partner-owned and evidence-backed.
 

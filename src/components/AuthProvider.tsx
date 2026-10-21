@@ -1,14 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { getSafeAuth, getFirebaseAuth } from '../firebase';
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signOut as fbSignOut,
-  type User,
-} from 'firebase/auth';
+import type { User } from 'firebase/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -43,16 +35,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
+    let cancelled = false;
 
     const initializeAuth = async () => {
       try {
-        const safeAuth = getSafeAuth();
-        if (!safeAuth) {
-          console.warn('[AuthProvider] Safe auth returned null - skipping listener');
+        const safeAuth = await getSafeAuth();
+        if (!safeAuth || cancelled) {
           setLoading(false);
           return;
         }
 
+        const { onAuthStateChanged } = await import('firebase/auth');
+        if (cancelled) return;
         unsubscribe = onAuthStateChanged(
           safeAuth,
           (currentUser) => {
@@ -73,38 +67,49 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     };
 
-    // Run initialization in next tick to avoid any SSR race conditions
+    // Run initialization in next tick to avoid blocking the initial render.
     const timeoutId = setTimeout(initializeAuth, 0);
 
     return () => {
+      cancelled = true;
       clearTimeout(timeoutId);
-      if (unsubscribe) {
-        unsubscribe();
-      }
+      unsubscribe?.();
     };
   }, []);
 
   const signInEmail = async (email: string, password: string) => {
-    const auth = getFirebaseAuth();
+    const [{ signInWithEmailAndPassword }, auth] = await Promise.all([
+      import('firebase/auth'),
+      getFirebaseAuth(),
+    ]);
     const cred = await signInWithEmailAndPassword(auth, email, password);
     return cred.user;
   };
 
   const signUpEmail = async (email: string, password: string) => {
-    const auth = getFirebaseAuth();
+    const [{ createUserWithEmailAndPassword }, auth] = await Promise.all([
+      import('firebase/auth'),
+      getFirebaseAuth(),
+    ]);
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     return cred.user;
   };
 
   const signInGoogle = async () => {
-    const auth = getFirebaseAuth();
+    const [{ GoogleAuthProvider, signInWithPopup }, auth] = await Promise.all([
+      import('firebase/auth'),
+      getFirebaseAuth(),
+    ]);
     const cred = await signInWithPopup(auth, new GoogleAuthProvider());
     return cred.user;
   };
 
   const signOut = async () => {
-    const auth = getFirebaseAuth();
-    await fbSignOut(auth);
+    const [{ signOut }, auth] = await Promise.all([
+      import('firebase/auth'),
+      getFirebaseAuth(),
+    ]);
+    await signOut(auth);
   };
 
   return (
