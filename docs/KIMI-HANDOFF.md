@@ -1,15 +1,15 @@
 # Kimi / HERMES handoff — Tadbuy alignment, specifications, and current UI polish — 2026-09-27
 
-## Session — 2026-10-21 · release and deployment
+## Session — 2026-10-21 · release and deployment (completed)
 
 **Done:**
-- Prepared v5.0.228 with deferred Firebase/auth and command/help payloads, immediate sample marketplace rendering, UI/E2E updates, pilot/readiness documentation, and regenerated static artifacts.
+- Prepared v5.0.230 with deferred Firebase/auth and command/help payloads, immediate sample marketplace rendering, UI/E2E updates, pilot/readiness documentation, and regenerated static artifacts.
 - Removed the docs build generator's localhost `/api/metrics` fetch. It could mistake seeded dev-server values for live traction; generated Executive metrics now remain unavailable until a real source is connected.
 - Applied npm's non-force audit fix, updating Vite within its existing range from 6.4.3 to 6.4.5.
 
 **Decisions / boundaries:**
 - The feature worktree began at `de9b167`; while preparing release, `origin/main` advanced with the Vite audit fix and version bump. Those upstream commits were merged and preserved; the separate `/Users/cam/projects/tadbuy` checkout remains untouched.
-- Production deployment is the Cloudflare Pages GitHub integration on pushes to `main`; the Pages workflow verifies the live site and assets. No manual wrangler deploy or production data change.
+- Production deployment is the Cloudflare Pages GitHub integration on pushes to `main`; release `efff012` was pushed to `main` and the Pages workflow verified the live site and assets. No manual wrangler deploy or production data change.
 - The audit has one remaining low-severity esbuild advisory in the tsx development toolchain; the configured high-severity gate passes. Do not claim the audit is vulnerability-free.
 
 **Verification:**
@@ -19,8 +19,8 @@
 - Generated `docs/EXECUTIVE.md` shows em dashes for all traction metrics; no localhost metrics fetch remains in `scripts/sync-docs.ts`.
 
 **Git State:**
-- SHA: recorded in this release commit after creation.
-- Unpushed: the release and merge commits (to be pushed to `origin/main` for Pages deployment); base release work started at `de9b167` and includes the later upstream changes.
+- Release merge SHA: `efff012bfb62d23d2f6f8d717f1a0ff09bd6f147`, pushed to `origin/main`; deployment workflow run `39650231718` completed successfully.
+- Working feature branch is also at `efff012`; no unpushed release commits at handoff time.
 
 ---
 
