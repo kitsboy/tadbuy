@@ -1,6 +1,10 @@
 # Tadbuy Distribution Roadmap
 
-**Updated:** 2026-09-14
+> **⚠️ SUPERSEDED 2026-10-22.** The **v1 pivot** ([`TADBUY-v1-BLUEPRINT.md`](../TADBUY-v1-BLUEPRINT.md)) replaces the multi-platform DSP / coordinator-marketplace model below with **provable placements**: rate card → one listing → Lightning checkout → receipt, pass-through price + flat fee, principal (never custody). The phases below (Reddit, Meta, Google, LinkedIn, TikTok, DOOH) are **not current scope** — do not re-promote them. Kept for history.
+>
+> **Live roadmap:** [`ROADMAP.md`](../ROADMAP.md). **Eng backlog still valid:** [`IMPROVEMENT-ROADMAP.md`](IMPROVEMENT-ROADMAP.md).
+
+**Updated:** 2026-09-14 (superseded 2026-10-22)
 **Product decision:** Combine campaign coordination with a publisher/vendor placement marketplace.
 
 ## North-star product
